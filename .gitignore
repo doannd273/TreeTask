@@ -1,0 +1,48 @@
+# IntelliJ / Android Studio
+*.iml
+.gradle/
+.idea/workspace.xml
+.idea/tasks.xml
+.idea/gradle.xml
+.idea/assetWizardSettings.xml
+.idea/dictionaries
+.idea/libraries
+.idea/caches
+.idea/modules.xml
+.idea/vcs.xml
+.idea/navEditor.xml
+.idea/deploymentTargetDropDown.xml
+
+# Local Configuration (KHÔNG BAO GIỜ PUSH)
+local.properties
+
+# Build Artifacts (KHÔNG BAO GIỜ PUSH - Sẽ làm Git phình to hàng chục GB)
+build/
+**/build/
+/build
+
+# Signing (KHÔNG BAO GIỜ PUSH - Mất chìa khoá là mất luôn App)
+*.jks
+*.keystore
+*.p8
+*.p12
+key.properties
+
+# Firebase / Secret files (Rất hay bị lộ nếu Repo là Public)
+google-services.json
+firebase_app_id_file.json
+GoogleService-Info.plist
+
+# Mac OS & OS files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Native Android files
+.externalNativeBuild
+.cxx/
+/captures
