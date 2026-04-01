@@ -8,6 +8,7 @@ plugins {
 android {
     namespace = "com.doannd3.treetask.feature.tasks"
     compileSdk = 34
+    resourcePrefix = "tasks_"
     defaultConfig {
         minSdk = 24
         missingDimensionStrategy("environment", "dev")

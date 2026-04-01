@@ -8,6 +8,9 @@ plugins {
 android {
     namespace = "com.doannd3.treetask.feature.chat"
     compileSdk = 34
+
+    resourcePrefix = "chat_"
+
     defaultConfig {
         minSdk = 24
         missingDimensionStrategy("environment", "dev")

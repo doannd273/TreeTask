@@ -62,7 +62,7 @@ class AuthViewModel @Inject constructor(
                     _effect.emit(AuthEffect.NavigateToHome)
                 }
                 is ApiResult.Error -> {
-                    val message = result.message ?: UiText.StringResource(R.string.error_unknown)
+                    val message = result.message ?: UiText.StringResource(R.string.common_error_unknown)
                     _effect.emit(AuthEffect.ShowErrorMessage(message))
                 }
                 is ApiResult.Loading -> Unit // Should not happen here since we handle loading via state
@@ -85,7 +85,7 @@ class AuthViewModel @Inject constructor(
                     _effect.emit(AuthEffect.NavigateToHome)
                 }
                 is ApiResult.Error -> {
-                    val message = result.message ?: UiText.StringResource(R.string.error_unknown)
+                    val message = result.message ?: UiText.StringResource(R.string.common_error_unknown)
                     _effect.emit(AuthEffect.ShowErrorMessage(message))
                 }
                 is ApiResult.Loading -> Unit // Should not happen here since we handle loading via state
@@ -95,7 +95,7 @@ class AuthViewModel @Inject constructor(
 
     override fun handleUnexpectedError(throwable: Throwable) {
         _uiState.update { it.copy(isLoading = false) }
-        val crashMsg = UiText.StringResource(R.string.error_unknown)
+        val crashMsg = UiText.StringResource(R.string.common_error_unknown)
         viewModelScope.launch {
             _effect.emit(AuthEffect.ShowErrorMessage(crashMsg))
         }

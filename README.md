@@ -103,6 +103,36 @@ Quản lý trang cá nhân người dùng.
 
 ---
 
+## 3. Hướng Xử Lý Đa Màn Hình & Tối Ưu UI/UX trên Đa Thiết Bị (Adaptive Design)
+
+Để ứng dụng hiển thị tốt trên nhiều kích thước màn hình (Điện thoại cầm tay, Máy tính bảng - Tablet, Điện thoại gập - Foldable devices), hệ thống sẽ áp dụng các kỹ thuật sau đây bằng Jetpack Compose:
+
+### 3.1. Tính toán kích thước tự động bằng `WindowSizeClass`
+- Dự án sẽ tích hợp thư viện `androidx.compose.material3:material3-window-size-class` để tính toán chính xác kích thước không gian hiển thị của thiết bị đang chạy.
+- Phân loại 3 nhóm kích thước chính:
+    - **Compact**: Chiều rộng `< 600dp` (Đa số kích thước điện thoại đứng).
+    - **Medium**: Chiều rộng `600dp - 840dp` (Tablet cỡ nhỏ, chế độ xoay ngang ở một số mẫu điện thoại, hoặc màn hình gập).
+    - **Expanded**: Chiều rộng `>= 840dp` (Tablet cỡ lớn, Desktop).
+
+### 3.2. Cấu trúc Điều hướng Linh hoạt (Adaptive Navigation)
+- Dựa trên `WindowSizeClass`, thanh điều hướng chính sẽ thay đổi thay vì dùng một kiểu cố định cứng nhắc:
+    - **Màn hình Compact**: Sử dụng thanh điều hướng bên dưới đáy `NavigationBar` (Bottom Navigation).
+    - **Màn hình Medium/Expanded**: Chuyển thanh điều hướng qua bên viền trái dạng dọc `NavigationRail` hoặc `PermanentNavigationDrawer` để nhường toàn bộ không gian chiều dọc cho nội dung thông tin (như cuộn danh sách lớn).
+
+### 3.3. Áp dụng Mẫu giao diện Two-Pane (List-Detail Layout)
+- Các tính năng như **Danh sách Task / Chi tiết Task** hay **Danh sách Chat / Lịch sử tin nhắn** sẽ tự động thay đổi layout:
+    - **Điện thoại thường**: Nhấn item ở danh sách, Navigation mở ra một Layout màn hình toàn phần mới đè lên màn cũ truyền thống.
+    - **Máy tính bảng ngang/Expanded**: Sử dụng `ListDetailPaneScaffold` của Jetpack Compose. Màn hình phân làm 2 vùng chính: khoảng 1/3 là list bên trái và 2/3 là details bên phải. Nhấn vào list sẽ chỉ tải/thay đổi nội dung vùng Detail bên phải chứ không phải navigate màn hình độc lập. Trải nghiệm xem/sửa thông tin sẽ liền mạch, tối ưu phần viền thừa.
+
+### 3.4. Quản lý linh hoạt List/Grid Layout Settings
+- Đối với danh sách dạng lưới (như hình ảnh hoặc biểu đồ), không cố định số lượng cột. Thay vào đó sử dụng `LazyVerticalGrid` với cấu hình linh động như `GridCells.Adaptive(minSize = 150.dp)` để hệ thống tự xếp 2 cột trên phone đứng nhưng tự mở rộng xếp thành 4-5 cột trên Tablet ngang.
+
+### 3.5. Xử lý Trạng thái khi xoay hoặc mở màn hình gập (Configuration Changes)
+- Mọi dữ liệu (UI States, Input đang nhập của người dùng) phải được quản lý kỹ trong `StateFlow/ViewModel` để tồn tại an toàn qua các chu kỳ sống (Activity Recreation).
+- Các User Input State tạm thời trên UI cần sử dụng `rememberSaveable` (lưu tự động vào `Bundle`) thay vì `remember` giới hạn, duy trì trạng thái như nội dung đang gõ dở, filter dang dở khi người dùng xoay đứng/ngang thiết bị hoặc gập/mở thiết bị Foldable.
+
+---
+
 ## User Review Required
 
 > [!IMPORTANT]

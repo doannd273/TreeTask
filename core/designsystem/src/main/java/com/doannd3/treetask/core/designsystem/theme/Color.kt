@@ -1,4 +1,4 @@
-package com.treestudio.treetask.ui.theme
+package com.doannd3.treetask.core.designsystem.theme
 
 import androidx.compose.ui.graphics.Color
 

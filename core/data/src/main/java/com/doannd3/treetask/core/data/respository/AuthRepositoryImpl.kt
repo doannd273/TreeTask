@@ -38,13 +38,13 @@ class AuthRepositoryImpl @Inject constructor(
             } else {
                 ApiResult.Error(
                     message = networkResponse.message?.let { UiText.DynamicString(it) }
-                        ?: UiText.StringResource(R.string.error_unknown),
+                        ?: UiText.StringResource(R.string.common_error_unknown),
                     exception = null
                 )
             }
         } catch (e: Exception) {
             ApiResult.Error(
-                message = UiText.StringResource(R.string.error_network_connection),
+                message = UiText.StringResource(R.string.common_error_network_connection),
                 exception = e
             )
         }
@@ -66,13 +66,13 @@ class AuthRepositoryImpl @Inject constructor(
             } else {
                 ApiResult.Error(
                     message = networkResponse.message?.let { UiText.DynamicString(it) }
-                        ?: UiText.StringResource(R.string.error_unknown),
+                        ?: UiText.StringResource(R.string.common_error_unknown),
                     exception = null
                 )
             }
         } catch (e: Exception) {
             ApiResult.Error(
-                message = UiText.StringResource(R.string.error_network_connection),
+                message = UiText.StringResource(R.string.common_error_network_connection),
                 exception = e
             )
         }

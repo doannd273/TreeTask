@@ -67,6 +67,17 @@ android {
 }
 
 dependencies {
+    // feature
+    implementation(project(":feature:auth"))
+    implementation(project(":feature:chat"))
+    implementation(project(":feature:profile"))
+    implementation(project(":feature:stats"))
+    implementation(project(":feature:tasks"))
+
+    // core
+    implementation(project(":core:designsystem"))
+    implementation(project(":core:datastore"))
+
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
@@ -83,15 +94,20 @@ dependencies {
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
 
-    // leakcanary
+    // navigation compose
+    implementation(libs.androidx.navigation.compose)
+    implementation(libs.androidx.hilt.navigation.compose)
+
+    // # UI & Utilities
     debugImplementation(libs.leakcanary)
+    implementation(libs.timber)
 
     // hilt
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)
 
-    // timber
-    implementation(libs.timber)
-
+    //
     coreLibraryDesugaring(libs.desugar.jdk.libs)
+    implementation(libs.androidx.core.splashscreen)
+    // implementation(libs.androidx.startup)
 }

@@ -6,6 +6,9 @@ plugins {
 android {
     namespace = "com.doannd3.treetask.core.designsystem"
     compileSdk = 34
+
+    resourcePrefix = "designsystem_"
+
     defaultConfig { minSdk = 24 }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17

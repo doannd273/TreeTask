@@ -1,20 +1,22 @@
 package com.treestudio.treetask
 
 import android.app.Application
+import com.treestudio.treetask.initializer.AppInitializer
 import dagger.hilt.android.HiltAndroidApp
-import timber.log.Timber
+import javax.inject.Inject
 
 @HiltAndroidApp
 class TreeTaskApplication: Application() {
 
+    @Inject
+    lateinit var initializers: Set<@JvmSuppressWildcards AppInitializer>
+
     override fun onCreate() {
         super.onCreate()
-        setUpTimber()
-    }
 
-    private fun setUpTimber() {
-        if (BuildConfig.DEBUG) {
-            Timber.plant(Timber.DebugTree())
+        initializers.sortedByDescending { it.priority.value }.forEach {
+            it.init(this)
         }
     }
+
 }

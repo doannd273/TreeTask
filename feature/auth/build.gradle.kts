@@ -8,6 +8,9 @@ plugins {
 android {
     namespace = "com.doannd3.treetask.feature.auth"
     compileSdk = 34
+
+    resourcePrefix = "auth_"
+
     defaultConfig {
         minSdk = 24
         missingDimensionStrategy("environment", "dev")

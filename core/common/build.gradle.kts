@@ -7,6 +7,7 @@ plugins {
 android {
     namespace = "com.doannd3.treetask.core.common"
     compileSdk = 34
+    resourcePrefix = "common_"
     defaultConfig { minSdk = 24 }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
