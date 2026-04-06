@@ -10,7 +10,15 @@ import javax.inject.Inject
 class RegisterUseCase @Inject constructor(
     private val authRepository: AuthRepository
 ) {
-    suspend operator fun invoke(email: String, password: String): ApiResult<Unit> {
+    suspend operator fun invoke(fullName: String, email: String, password: String): ApiResult<Unit> {
+        val fullNameTrimmed = fullName.trim()
+        if (fullNameTrimmed.isBlank()) {
+            return ApiResult.Error(
+                message = UiText.StringResource(R.string.common_error_email_empty),
+                exception = null
+            )
+        }
+
         val mailTrimmed = email.trim()
         if (mailTrimmed.isBlank()) {
             return ApiResult.Error(
@@ -27,6 +35,6 @@ class RegisterUseCase @Inject constructor(
             )
         }
 
-        return authRepository.register(mailTrimmed, passwordTrimmed)
+        return authRepository.register(fullNameTrimmed, mailTrimmed, passwordTrimmed)
     }
 }

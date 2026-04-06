@@ -4,6 +4,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import com.doannd3.treetask.feature.auth.navigation.authGraph
+import com.doannd3.treetask.feature.auth.navigation.forgotPasswordRoute
+import com.doannd3.treetask.feature.auth.navigation.loginRoute
+import com.doannd3.treetask.feature.auth.navigation.registerRoute
+import com.doannd3.treetask.feature.tasks.navigation.navigateToTasksGraph
 import com.treestudio.treetask.ui.TreeTaskAppState
 
 @Composable
@@ -16,18 +20,29 @@ fun TreeTaskNavHost(
     NavHost(
         modifier = modifier,
         navController = navController,
-        startDestination = startDestination // Lấy hằng số tử bên feature:auth
+        startDestination = startDestination
     ) {
-        // Lắp Feature Auth vào
         authGraph(
             onNavigateToHome = {
-                // Ở đây app module gọi logic chuyển sang Task
-                //navController.navigateToTasksGraph() // Hàm extension do bên feature:tasks định nghĩa
+                navController.navigateToTasksGraph()
+            },
+            onNavigateToRegister = {
+                navController.navigate(route = registerRoute)
+            },
+            onNavigateToForgotPassword = {
+                navController.navigate(route = forgotPasswordRoute)
+            },
+            onRegisterBack = {
+                navController.popBackStack()
+            },
+            onNavigateToLogin = {
+                navController.navigate(route = loginRoute)
+            },
+            onForgotPasswordBack = {
+                navController.popBackStack()
             }
         )
-        // Lắp Feature Tasks vào
-//        tasksGraph(
-//            onNavigateToProfile = { navController.navigateToProfileGraph() }
-//        )
+
+
     }
 }

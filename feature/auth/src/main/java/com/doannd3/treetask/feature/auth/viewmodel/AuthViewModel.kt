@@ -36,6 +36,9 @@ class AuthViewModel @Inject constructor(
 
     override fun onEvent(event: AuthEvent) {
         when (event) {
+            is AuthEvent.FullNameChanged -> {
+                _uiState.update { it.copy(fullName = event.fullName, emailError = null) }
+            }
             is AuthEvent.EmailChanged -> {
                 _uiState.update { it.copy(email = event.email, emailError = null) }
             }
@@ -76,7 +79,7 @@ class AuthViewModel @Inject constructor(
         executeSafe {
             _uiState.update { it.copy(isLoading = true, emailError = null, passwordError = null) }
 
-            val result = registerUseCase(state.email, state.password)
+            val result = registerUseCase(state.fullName, state.email, state.password)
 
             _uiState.update { it.copy(isLoading = false) }
 

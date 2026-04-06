@@ -16,6 +16,7 @@ data class RefreshTokenRequest(
 
 @Serializable
 data class RegisterRequest(
+    @SerialName("fullName") val fullName: String,
     @SerialName("email") val email: String,
     @SerialName("password") val password: String,
 )

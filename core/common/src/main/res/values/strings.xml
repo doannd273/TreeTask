@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="common_app_name">Tree Task</string>
     <string name="common_error_email_empty">Email không thể để trống</string>
+    <string name="common_error_fullName_empty">FullName không thể để trống</string>
     <string name="common_error_password_empty">Password không thể để trống</string>
     <string name="common_error_password_short">Mật khẩu phải lớn hơn 6 ký tự</string>
     <string name="common_error_network_timeout">Kết nối máy chủ hết hạn</string>

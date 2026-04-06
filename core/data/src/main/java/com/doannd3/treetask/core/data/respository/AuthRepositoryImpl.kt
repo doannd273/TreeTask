@@ -51,11 +51,12 @@ class AuthRepositoryImpl @Inject constructor(
     }
 
     override suspend fun register(
+        fullName: String,
         email: String,
         password: String
     ): ApiResult<Unit> {
         return try {
-            val networkResponse = authApi.register(RegisterRequest(email, password))
+            val networkResponse = authApi.register(RegisterRequest(fullName, email, password))
             val tokenData = networkResponse.data
             if (networkResponse.success && tokenData != null) {
                 tokenManager.saveToken(
