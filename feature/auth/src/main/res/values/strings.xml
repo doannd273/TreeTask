@@ -5,6 +5,7 @@
     <string name="auth_password_hint">Mật khẩu</string>
     <string name="auth_action_login">Đăng nhập</string>
     <string name="auth_register">Đăng ký</string>
+    <string name="auth_confirm">Xác nhận</string>
     <string name="auth_forgot_password">Quên mật khẩu</string>
     <string name="auth_prompt_no_account">Chưa có tài khoản? %1$s</string>
 </resources>

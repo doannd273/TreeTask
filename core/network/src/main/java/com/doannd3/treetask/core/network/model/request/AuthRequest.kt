@@ -20,3 +20,8 @@ data class RegisterRequest(
     @SerialName("email") val email: String,
     @SerialName("password") val password: String,
 )
+
+@Serializable
+data class ForgotPasswordRequest(
+    @SerialName("email") val email: String,
+)

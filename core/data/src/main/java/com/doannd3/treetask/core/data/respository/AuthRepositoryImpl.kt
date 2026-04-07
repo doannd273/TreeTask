@@ -5,6 +5,7 @@ import com.doannd3.treetask.core.common.R
 import com.doannd3.treetask.core.common.UiText
 import com.doannd3.treetask.core.datastore.TokenManager
 import com.doannd3.treetask.core.domain.repository.AuthRepository
+import com.doannd3.treetask.core.network.model.request.ForgotPasswordRequest
 import com.doannd3.treetask.core.network.model.request.LoginRequest
 import com.doannd3.treetask.core.network.model.request.RegisterRequest
 import com.doannd3.treetask.core.network.service.AuthService
@@ -63,6 +64,28 @@ class AuthRepositoryImpl @Inject constructor(
                     accessToken = tokenData.accessToken,
                     refreshToken = tokenData.refreshToken
                 )
+                ApiResult.Success(Unit)
+            } else {
+                ApiResult.Error(
+                    message = networkResponse.message?.let { UiText.DynamicString(it) }
+                        ?: UiText.StringResource(R.string.common_error_unknown),
+                    exception = null
+                )
+            }
+        } catch (e: Exception) {
+            ApiResult.Error(
+                message = UiText.StringResource(R.string.common_error_network_connection),
+                exception = e
+            )
+        }
+    }
+
+    override suspend fun forgotPassword(email: String): ApiResult<Unit> {
+        return try {
+            val networkResponse = authApi.forgotPassword(
+                ForgotPasswordRequest(email)
+            )
+            if (networkResponse.success) {
                 ApiResult.Success(Unit)
             } else {
                 ApiResult.Error(

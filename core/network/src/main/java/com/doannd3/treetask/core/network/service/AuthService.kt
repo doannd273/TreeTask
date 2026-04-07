@@ -1,6 +1,7 @@
 package com.doannd3.treetask.core.network.service
 
 import com.doannd3.treetask.core.network.ApiResponse
+import com.doannd3.treetask.core.network.model.request.ForgotPasswordRequest
 import com.doannd3.treetask.core.network.model.request.LoginRequest
 import com.doannd3.treetask.core.network.model.request.RefreshTokenRequest
 import com.doannd3.treetask.core.network.model.request.RegisterRequest
@@ -24,4 +25,9 @@ interface AuthService {
     suspend fun register(
         @Body request: RegisterRequest
     ): ApiResponse<RegisterResponse>
+
+    @POST("/api/auth/forgot-password")
+    suspend fun forgotPassword(
+        @Body request: ForgotPasswordRequest
+    ): ApiResponse<Unit>
 }

@@ -8,6 +8,8 @@ interface AuthRepository {
 
     suspend fun register(fullName: String, email: String, password: String): ApiResult<Unit>
 
+    suspend fun forgotPassword(email: String): ApiResult<Unit>
+
     suspend fun logout()
 
     val isSessionExpired: Flow<Boolean>
