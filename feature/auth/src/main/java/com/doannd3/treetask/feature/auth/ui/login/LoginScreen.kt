@@ -7,11 +7,10 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import com.doannd3.treetask.feature.auth.contract.AuthState
 
 @Composable
 fun LoginScreen(
-    state: AuthState,
+    state: LoginState,
     onEmailChange: (String) -> Unit,
     onPasswordChange: (String) -> Unit,
     onSubmitLogin: () -> Unit,
@@ -37,7 +36,7 @@ fun LoginScreen(
 @Preview(showBackground = true)
 fun LoginScreenPreview() {
     LoginScreen(
-        state = AuthState(
+        state = LoginState(
             email = "demo@gmail.com",
             password = "123456"
         ),

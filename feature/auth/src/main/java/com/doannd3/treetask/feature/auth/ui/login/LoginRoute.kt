@@ -11,13 +11,10 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.repeatOnLifecycle
 import com.doannd3.treetask.core.common.asString
 import com.doannd3.treetask.core.designsystem.component.LocalGlobalAppState
-import com.doannd3.treetask.feature.auth.contract.AuthEffect
-import com.doannd3.treetask.feature.auth.contract.AuthEvent
-import com.doannd3.treetask.feature.auth.viewmodel.AuthViewModel
 
 @Composable
 fun LoginRoute(
-    viewModel: AuthViewModel = hiltViewModel(),
+    viewModel: LoginViewModel = hiltViewModel(),
     onNavigateToHome: () -> Unit,
     onNavigateToRegister: () -> Unit,
     onNavigateToForgotPassword: () -> Unit
@@ -30,9 +27,9 @@ fun LoginRoute(
 
     LoginScreen(
         state = state,
-        onEmailChange = { viewModel.onEvent(AuthEvent.EmailChanged(it)) },
-        onPasswordChange = { viewModel.onEvent(AuthEvent.PasswordChanged(it)) },
-        onSubmitLogin = { viewModel.onEvent(AuthEvent.SubmitLogin) },
+        onEmailChange = { viewModel.onEvent(LoginEvent.EmailChanged(it)) },
+        onPasswordChange = { viewModel.onEvent(LoginEvent.PasswordChanged(it)) },
+        onSubmitLogin = { viewModel.onEvent(LoginEvent.SubmitLogin) },
         onNavigateToRegister = onNavigateToRegister,
         onNavigateToForgotPassword = onNavigateToForgotPassword
     )
@@ -41,11 +38,11 @@ fun LoginRoute(
         lifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
             viewModel.effect.collect { effect ->
                 when (effect) {
-                    is AuthEffect.NavigateToHome -> {
+                    is LoginEffect.NavigateToHome -> {
                         onNavigateToHome()
                     }
 
-                    is AuthEffect.ShowErrorMessage -> {
+                    is LoginEffect.ShowErrorMessage -> {
                         val errorStr = effect.message.asString(context)
                         globalAppState.showError(errorStr)
                     }

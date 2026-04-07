@@ -11,7 +11,6 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.doannd3.treetask.feature.auth.contract.ForgotPasswordState
 import com.doannd3.treetask.feature.auth.ui.login.EmailInput
 
 @Composable

@@ -11,9 +11,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.repeatOnLifecycle
 import com.doannd3.treetask.core.common.asString
 import com.doannd3.treetask.core.designsystem.component.LocalGlobalAppState
-import com.doannd3.treetask.feature.auth.contract.ForgotPasswordEffect
-import com.doannd3.treetask.feature.auth.contract.ForgotPasswordEvent
-import com.doannd3.treetask.feature.auth.viewmodel.ForgotPasswordViewModel
 
 @Composable
 fun ForgotPasswordRoute(

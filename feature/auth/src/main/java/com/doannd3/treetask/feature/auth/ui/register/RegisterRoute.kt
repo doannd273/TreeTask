@@ -11,13 +11,10 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.repeatOnLifecycle
 import com.doannd3.treetask.core.common.asString
 import com.doannd3.treetask.core.designsystem.component.LocalGlobalAppState
-import com.doannd3.treetask.feature.auth.contract.AuthEffect
-import com.doannd3.treetask.feature.auth.contract.AuthEvent
-import com.doannd3.treetask.feature.auth.viewmodel.AuthViewModel
 
 @Composable
 fun RegisterRoute(
-    viewModel: AuthViewModel = hiltViewModel(),
+    viewModel: RegisterViewModel = hiltViewModel(),
     onNavigateToHome: () -> Unit,
     onRegisterBack: () -> Unit
 ) {
@@ -29,10 +26,10 @@ fun RegisterRoute(
 
     RegisterScreen(
         state = state,
-        onFullNameChange = { viewModel.onEvent(AuthEvent.FullNameChanged(it)) },
-        onEmailChange = { viewModel.onEvent(AuthEvent.EmailChanged(it)) },
-        onPasswordChange = { viewModel.onEvent(AuthEvent.PasswordChanged(it)) },
-        onSubmitRegister = { viewModel.onEvent(AuthEvent.SubmitRegister) },
+        onFullNameChange = { viewModel.onEvent(RegisterEvent.FullNameChanged(it)) },
+        onEmailChange = { viewModel.onEvent(RegisterEvent.EmailChanged(it)) },
+        onPasswordChange = { viewModel.onEvent(RegisterEvent.PasswordChanged(it)) },
+        onSubmitRegister = { viewModel.onEvent(RegisterEvent.SubmitRegister) },
         onRegisterBack = onRegisterBack
     )
 
@@ -40,11 +37,11 @@ fun RegisterRoute(
         lifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
             viewModel.effect.collect { effect ->
                 when (effect) {
-                    is AuthEffect.NavigateToHome -> {
+                    is RegisterEffect.NavigateToHome -> {
                         onNavigateToHome()
                     }
 
-                    is AuthEffect.ShowErrorMessage -> {
+                    is RegisterEffect.ShowErrorMessage -> {
                         val errorStr = effect.message.asString(context)
                         globalAppState.showError(errorStr)
                     }

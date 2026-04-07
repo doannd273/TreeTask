@@ -1,6 +1,5 @@
 package com.doannd3.treetask.feature.auth.ui.register
 
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -12,14 +11,14 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.doannd3.treetask.feature.auth.contract.AuthState
+import com.doannd3.treetask.feature.auth.ui.login.LoginState
 import com.doannd3.treetask.feature.auth.ui.login.EmailInput
 import com.doannd3.treetask.feature.auth.ui.login.PasswordInput
 
 @Composable
 fun RegisterContent(
     modifier: Modifier = Modifier,
-    state: AuthState,
+    state: RegisterState,
     onFullNameChange: (String) -> Unit,
     onEmailChange: (String) -> Unit,
     onPasswordChange: (String) -> Unit,

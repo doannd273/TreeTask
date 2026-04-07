@@ -1,4 +1,4 @@
-package com.doannd3.treetask.feature.auth.contract
+package com.doannd3.treetask.feature.auth.ui.forgotpassword
 
 import com.doannd3.treetask.core.common.UiText
 

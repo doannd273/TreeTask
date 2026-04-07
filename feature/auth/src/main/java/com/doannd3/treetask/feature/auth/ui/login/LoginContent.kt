@@ -12,12 +12,11 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.doannd3.treetask.feature.auth.contract.AuthState
 
 @Composable
 internal fun LoginContent(
     modifier: Modifier = Modifier,
-    state: AuthState,
+    state: LoginState,
     onEmailChange: (String) -> Unit,
     onPasswordChange: (String) -> Unit,
     onSubmitLogin: () -> Unit,

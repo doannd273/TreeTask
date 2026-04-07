@@ -1,4 +1,4 @@
-package com.doannd3.treetask.feature.auth.viewmodel
+package com.doannd3.treetask.feature.auth.ui.forgotpassword
 
 import androidx.lifecycle.viewModelScope
 import com.doannd3.treetask.core.common.ApiResult
@@ -7,9 +7,6 @@ import com.doannd3.treetask.core.common.MviViewModel
 import com.doannd3.treetask.core.common.R
 import com.doannd3.treetask.core.common.UiText
 import com.doannd3.treetask.core.domain.usecase.auth.ForgotPasswordUseCase
-import com.doannd3.treetask.feature.auth.contract.ForgotPasswordEffect
-import com.doannd3.treetask.feature.auth.contract.ForgotPasswordEvent
-import com.doannd3.treetask.feature.auth.contract.ForgotPasswordState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow

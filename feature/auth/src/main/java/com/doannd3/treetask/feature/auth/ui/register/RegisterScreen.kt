@@ -7,11 +7,11 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import com.doannd3.treetask.feature.auth.contract.AuthState
+import com.doannd3.treetask.feature.auth.ui.login.LoginState
 
 @Composable
 fun RegisterScreen(
-    state: AuthState,
+    state: RegisterState,
     onFullNameChange: (String) -> Unit,
     onEmailChange: (String) -> Unit,
     onPasswordChange: (String) -> Unit,
@@ -37,7 +37,7 @@ fun RegisterScreen(
 @Preview(showBackground = true)
 fun RegisterScreenPreview() {
     RegisterScreen(
-        state = AuthState(
+        state = RegisterState(
             fullName = "Nguyễn Demo",
             email = "demo@gmail.com",
             password = "123456"
