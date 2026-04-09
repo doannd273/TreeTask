@@ -1,5 +1,6 @@
 package com.doannd3.treetask.core.network.service
 
+import com.doannd3.treetask.core.common.ApiResult
 import com.doannd3.treetask.core.network.ApiResponse
 import com.doannd3.treetask.core.network.model.request.ForgotPasswordRequest
 import com.doannd3.treetask.core.network.model.request.LoginRequest
@@ -14,20 +15,20 @@ interface AuthService {
     @POST("/api/auth/refresh-token")
     suspend fun refreshToken(
         @Body request: RefreshTokenRequest
-    ): ApiResponse<TokenResponse>
+    ): ApiResult<TokenResponse>
 
     @POST("/api/auth/login")
     suspend fun login(
         @Body request: LoginRequest
-    ): ApiResponse<TokenResponse>
+    ): ApiResult<TokenResponse>
 
     @POST("/api/auth/register")
     suspend fun register(
         @Body request: RegisterRequest
-    ): ApiResponse<RegisterResponse>
+    ): ApiResult<RegisterResponse>
 
     @POST("/api/auth/forgot-password")
     suspend fun forgotPassword(
         @Body request: ForgotPasswordRequest
-    ): ApiResponse<Unit>
+    ): ApiResult<Unit>
 }

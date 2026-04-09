@@ -38,6 +38,9 @@ class LoginViewModel @Inject constructor(
                 _uiState.update { it.copy(password = event.password) }
             }
             is LoginEvent.SubmitLogin -> submitLogin()
+            is LoginEvent.PasswordVisibleChanged -> {
+                _uiState.update { it.copy(passwordVisible = event.isVisible) }
+            }
         }
     }
 
@@ -59,16 +62,11 @@ class LoginViewModel @Inject constructor(
                     val message = result.message ?: UiText.StringResource(R.string.common_error_unknown)
                     _effect.emit(LoginEffect.ShowErrorMessage(message))
                 }
-                is ApiResult.Loading -> Unit // Should not happen here since we handle loading via state
             }
         }
     }
 
-    override fun handleUnexpectedError(throwable: Throwable) {
-        _uiState.update { it.copy(isLoading = false) }
-        val crashMsg = UiText.StringResource(R.string.common_error_unknown)
-        viewModelScope.launch {
-            _effect.emit(LoginEffect.ShowErrorMessage(crashMsg))
-        }
+    override fun setLoading(isLoading: Boolean) {
+        _uiState.update { it.copy(isLoading = isLoading) }
     }
 }

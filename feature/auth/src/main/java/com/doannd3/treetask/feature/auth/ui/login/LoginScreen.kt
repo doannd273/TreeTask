@@ -13,6 +13,7 @@ fun LoginScreen(
     state: LoginState,
     onEmailChange: (String) -> Unit,
     onPasswordChange: (String) -> Unit,
+    onPasswordVisibleChange: (Boolean) -> Unit,
     onSubmitLogin: () -> Unit,
     onNavigateToRegister: () -> Unit,
     onNavigateToForgotPassword: () -> Unit
@@ -25,9 +26,10 @@ fun LoginScreen(
             state = state,
             onEmailChange = onEmailChange,
             onPasswordChange = onPasswordChange,
+            onPasswordVisibleChange = onPasswordVisibleChange,
             onSubmitLogin = onSubmitLogin,
             onNavigateToRegister = onNavigateToRegister,
-            onNavigateToForgotPassword = onNavigateToForgotPassword,
+            onNavigateToForgotPassword = onNavigateToForgotPassword
         )
     }
 }
@@ -42,6 +44,7 @@ fun LoginScreenPreview() {
         ),
         onEmailChange = {},
         onPasswordChange = {},
+        onPasswordVisibleChange = {},
         onSubmitLogin = {},
         onNavigateToRegister = {},
         onNavigateToForgotPassword = {},

@@ -5,7 +5,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class ApiResponse<T>(
-    @SerialName("success") val success: Boolean,
-    @SerialName("message") val message: String?,
-    @SerialName("data") val data: T?
+    @SerialName("success") val success: Boolean? = null,
+    @SerialName("message") val message: String? = null,
+    @SerialName("data") val data: T? = null
 )

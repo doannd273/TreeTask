@@ -26,8 +26,6 @@ class LoginUseCase @Inject constructor(
             )
         }
 
-        // validate
-
         return authRepository.login(mailTrimmed, passwordTrimmed)
     }
 }

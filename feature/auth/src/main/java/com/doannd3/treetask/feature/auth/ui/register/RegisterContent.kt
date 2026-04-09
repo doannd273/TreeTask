@@ -22,6 +22,7 @@ fun RegisterContent(
     onFullNameChange: (String) -> Unit,
     onEmailChange: (String) -> Unit,
     onPasswordChange: (String) -> Unit,
+    onPasswordVisibleChange: (Boolean) -> Unit,
     onSubmitRegister: () -> Unit,
     onRegisterBack: () -> Unit
 ) {
@@ -52,7 +53,9 @@ fun RegisterContent(
 
             PasswordInput(
                 password = state.password,
-                onPasswordChange = onPasswordChange
+                passwordVisible = state.passwordVisible,
+                onPasswordChange = onPasswordChange,
+                onPasswordVisibleChange = onPasswordVisibleChange,
             )
 
             Spacer(modifier = Modifier.height(16.dp))

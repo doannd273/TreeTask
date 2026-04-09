@@ -6,6 +6,7 @@ import com.doannd3.treetask.core.network.BuildConfig
 import com.doannd3.treetask.core.network.service.AuthService
 import com.doannd3.treetask.core.network.interceptor.AuthAuthenticator
 import com.doannd3.treetask.core.network.interceptor.AuthInterceptor
+import com.doannd3.treetask.core.network.util.ApiResultCallAdapterFactory
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import dagger.Module
 import dagger.Provides
@@ -77,6 +78,7 @@ class NetworkModule {
             .baseUrl(BuildConfig.BASE_URL)
             .client(okHttpClient)
             .addConverterFactory(json.asConverterFactory(contentType))
+            .addCallAdapterFactory(ApiResultCallAdapterFactory(json))
             .build()
     }
 

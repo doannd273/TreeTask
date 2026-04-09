@@ -29,6 +29,7 @@ fun RegisterRoute(
         onFullNameChange = { viewModel.onEvent(RegisterEvent.FullNameChanged(it)) },
         onEmailChange = { viewModel.onEvent(RegisterEvent.EmailChanged(it)) },
         onPasswordChange = { viewModel.onEvent(RegisterEvent.PasswordChanged(it)) },
+        onPasswordVisibleChange = { viewModel.onEvent(RegisterEvent.OnPasswordVisibleChanged(it)) },
         onSubmitRegister = { viewModel.onEvent(RegisterEvent.SubmitRegister) },
         onRegisterBack = onRegisterBack
     )
@@ -46,6 +47,15 @@ fun RegisterRoute(
                         globalAppState.showError(errorStr)
                     }
                 }
+            }
+        }
+    }
+
+    // Lỗi crash/unexpected từ BaseViewModel (CoroutineExceptionHandler)
+    LaunchedEffect(viewModel.baseErrorEffect, lifecycleOwner) {
+        lifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+            viewModel.baseErrorEffect.collect { message ->
+                globalAppState.showError(message.asString(context))
             }
         }
     }

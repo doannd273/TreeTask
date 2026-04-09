@@ -15,6 +15,7 @@ fun RegisterScreen(
     onFullNameChange: (String) -> Unit,
     onEmailChange: (String) -> Unit,
     onPasswordChange: (String) -> Unit,
+    onPasswordVisibleChange: (Boolean) -> Unit,
     onSubmitRegister: () -> Unit,
     onRegisterBack: () -> Unit
 ) {
@@ -27,6 +28,7 @@ fun RegisterScreen(
             onFullNameChange = onFullNameChange,
             onEmailChange = onEmailChange,
             onPasswordChange = onPasswordChange,
+            onPasswordVisibleChange = onPasswordVisibleChange,
             onSubmitRegister = onSubmitRegister,
             onRegisterBack = onRegisterBack,
         )
@@ -45,6 +47,7 @@ fun RegisterScreenPreview() {
         onFullNameChange = {},
         onEmailChange = {},
         onPasswordChange = {},
+        onPasswordVisibleChange = {},
         onSubmitRegister = {},
         onRegisterBack = {}
     )

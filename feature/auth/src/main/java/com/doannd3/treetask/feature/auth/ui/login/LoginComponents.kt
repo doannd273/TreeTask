@@ -9,11 +9,14 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
@@ -21,6 +24,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
@@ -49,7 +53,9 @@ internal fun TreeTaskAppName() {
 @Composable
 internal fun PasswordInput(
     password: String,
-    onPasswordChange: (String) -> Unit
+    passwordVisible: Boolean,
+    onPasswordChange: (String) -> Unit,
+    onPasswordVisibleChange: (Boolean) -> Unit,
 ) {
     OutlinedTextField(
         modifier = Modifier.fillMaxWidth(),
@@ -68,7 +74,21 @@ internal fun PasswordInput(
         value = password,
         onValueChange = { onPasswordChange(it) },
         label = { Text(text = stringResource(R.string.auth_password_hint)) },
-        visualTransformation = PasswordVisualTransformation()
+        trailingIcon = {
+            IconButton(onClick = { onPasswordVisibleChange(!passwordVisible) }) {
+                Icon(
+                    painterResource(
+                        if (passwordVisible)
+                            R.drawable.auth_ic_visibility
+                        else
+                            R.drawable.auth_ic_visibility_off
+                    ),
+                    contentDescription = null
+                )
+            }
+        },
+        visualTransformation = if (passwordVisible) VisualTransformation.None
+        else PasswordVisualTransformation()
     )
 }
 

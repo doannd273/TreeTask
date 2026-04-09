@@ -19,6 +19,7 @@ internal fun LoginContent(
     state: LoginState,
     onEmailChange: (String) -> Unit,
     onPasswordChange: (String) -> Unit,
+    onPasswordVisibleChange: (Boolean) -> Unit,
     onSubmitLogin: () -> Unit,
     onNavigateToRegister: () -> Unit,
     onNavigateToForgotPassword: () -> Unit
@@ -44,7 +45,9 @@ internal fun LoginContent(
 
         PasswordInput(
             password = state.password,
-            onPasswordChange = onPasswordChange
+            passwordVisible = state.passwordVisible,
+            onPasswordChange = onPasswordChange,
+            onPasswordVisibleChange = onPasswordVisibleChange,
         )
 
         Spacer(modifier = Modifier.height(8.dp))

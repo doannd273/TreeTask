@@ -6,6 +6,7 @@ data class RegisterState(
     val fullName: String = "",
     val email: String = "",
     val password: String = "",
+    val passwordVisible: Boolean = false,
     val isLoading: Boolean = false
 )
 
@@ -13,6 +14,7 @@ sealed class RegisterEvent {
     data class FullNameChanged(val fullName: String) : RegisterEvent()
     data class EmailChanged(val email: String) : RegisterEvent()
     data class PasswordChanged(val password: String) : RegisterEvent()
+    data class OnPasswordVisibleChanged(val passwordVisible: Boolean) : RegisterEvent()
     data object SubmitRegister : RegisterEvent()
 }
 

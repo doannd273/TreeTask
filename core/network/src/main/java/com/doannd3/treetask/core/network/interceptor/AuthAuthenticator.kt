@@ -1,8 +1,9 @@
 package com.doannd3.treetask.core.network.interceptor
 
+import com.doannd3.treetask.core.common.ApiResult
 import com.doannd3.treetask.core.datastore.TokenManager
-import com.doannd3.treetask.core.network.service.AuthService
 import com.doannd3.treetask.core.network.model.request.RefreshTokenRequest
+import com.doannd3.treetask.core.network.service.AuthService
 import dagger.Lazy
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
@@ -37,19 +38,18 @@ class AuthAuthenticator @Inject constructor(
                     tokenManager.getRefreshToken().first()
                 } ?: return null
 
-                val refreshResponse = runBlocking {
-                    authApi.get().refreshToken(
-                        RefreshTokenRequest(refreshToken = refreshToken)
-                    )
-                }
-                if (!refreshResponse.success) {
-                    runBlocking { tokenManager.clearToken() } // Bắn bỏ token rác
-                    Timber.w("Refresh Token đã hết hạn vĩnh viễn, buộc User đăng nhập lại!")
-                    return null
+                val refreshResult = runBlocking {
+                    authApi.get().refreshToken(RefreshTokenRequest(refreshToken = refreshToken))
                 }
 
-                val tokenData = refreshResponse.data ?: return null
-
+                val tokenData = when (refreshResult) {
+                    is ApiResult.Success -> refreshResult.data
+                    is ApiResult.Error -> {
+                        runBlocking { tokenManager.clearToken() }
+                        Timber.w("Refresh Token hết hạn hoặc lỗi: ${refreshResult.exception?.message}")
+                        return null
+                    }
+                }
                 val newAccessToken = tokenData.accessToken
                 val newRefreshToken = tokenData.refreshToken
 

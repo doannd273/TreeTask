@@ -23,12 +23,8 @@ class ForgotPasswordViewModel @Inject constructor(
     private val forgotPasswordUseCase: ForgotPasswordUseCase
 ) : BaseViewModel(), MviViewModel<ForgotPasswordState, ForgotPasswordEvent, ForgotPasswordEffect> {
 
-    override fun handleUnexpectedError(throwable: Throwable) {
-        _uiState.update { it.copy(isLoading = false) }
-        val crashMsg = UiText.StringResource(R.string.common_error_unknown)
-        viewModelScope.launch {
-            _effect.emit(ForgotPasswordEffect.ShowErrorMessage(crashMsg))
-        }
+    override fun setLoading(isLoading: Boolean) {
+        _uiState.update { it.copy(isLoading = isLoading) }
     }
 
     private val _uiState = MutableStateFlow(ForgotPasswordState())
@@ -65,7 +61,6 @@ class ForgotPasswordViewModel @Inject constructor(
                     val message = result.message ?: UiText.StringResource(R.string.common_error_unknown)
                     _effect.emit(ForgotPasswordEffect.ShowErrorMessage(message))
                 }
-                is ApiResult.Loading -> Unit // Should not happen here since we handle loading via state
             }
         }
     }
