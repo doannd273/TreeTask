@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="tasks_title">Quản lí công việc</string>
+    <string name="tasks_search_hint">Nhập nội dung tìm kiếm</string>
+</resources>

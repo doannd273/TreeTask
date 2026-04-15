@@ -5,7 +5,7 @@ plugins {
 }
 android {
     namespace = "com.doannd3.treetask.core.designsystem"
-    compileSdk = 34
+    compileSdk = 36
 
     resourcePrefix = "designsystem_"
 

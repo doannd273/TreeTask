@@ -7,7 +7,7 @@ plugins {
 }
 android {
     namespace = "com.doannd3.treetask.feature.stats"
-    compileSdk = 34
+    compileSdk = 36
     resourcePrefix = "stats_"
     defaultConfig {
         minSdk = 24
@@ -41,4 +41,7 @@ dependencies {
 
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)
+
+    implementation(libs.timber)
 }
+

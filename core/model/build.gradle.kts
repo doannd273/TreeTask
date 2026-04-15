@@ -4,7 +4,7 @@ plugins {
 }
 android {
     namespace = "com.doannd3.treetask.core.model"
-    compileSdk = 34
+    compileSdk = 36
     defaultConfig { minSdk = 24 }
     compileOptions {
         isCoreLibraryDesugaringEnabled = true // giúp Android 7 sài java.time

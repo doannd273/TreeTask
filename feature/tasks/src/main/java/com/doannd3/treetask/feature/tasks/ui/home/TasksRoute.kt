@@ -1,4 +1,4 @@
-package com.doannd3.treetask.feature.auth.ui.login
+package com.doannd3.treetask.feature.tasks.ui.home
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -13,11 +13,8 @@ import com.doannd3.treetask.core.common.asString
 import com.doannd3.treetask.core.designsystem.component.LocalGlobalAppState
 
 @Composable
-fun LoginRoute(
-    viewModel: LoginViewModel = hiltViewModel(),
-    onNavigateToHome: () -> Unit,
-    onNavigateToRegister: () -> Unit,
-    onNavigateToForgotPassword: () -> Unit
+fun TasksRoute(
+    viewModel: TasksViewModel = hiltViewModel(),
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
 
@@ -25,25 +22,20 @@ fun LoginRoute(
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
 
-    LoginScreen(
+    TasksScreen(
         state = state,
-        onEmailChange = { viewModel.onEvent(LoginEvent.EmailChanged(it)) },
-        onPasswordChange = { viewModel.onEvent(LoginEvent.PasswordChanged(it)) },
-        onSubmitLogin = { viewModel.onEvent(LoginEvent.SubmitLogin) },
-        onPasswordVisibleChange = { viewModel.onEvent(LoginEvent.PasswordVisibleChanged(it)) },
-        onNavigateToRegister = onNavigateToRegister,
-        onNavigateToForgotPassword = onNavigateToForgotPassword
+        onSearchChange = { viewModel.onEvent(TasksEvent.SearchChanged(it)) },
+        onClearClick = { viewModel.onEvent(TasksEvent.OnClearClick) },
+        onFilterSelect = { viewModel.onEvent(TasksEvent.FilterSelected(it)) },
+        onTaskClick = { viewModel.onEvent(TasksEvent.TaskClick(it)) },
+        onAddTaskClick = { viewModel.onEvent(TasksEvent.AddTaskClick) }
     )
 
     LaunchedEffect(viewModel.effect, lifecycleOwner) {
         lifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
             viewModel.effect.collect { effect ->
                 when (effect) {
-                    is LoginEffect.NavigateToHome -> {
-                        onNavigateToHome()
-                    }
-
-                    is LoginEffect.ShowErrorMessage -> {
+                    is TasksEffect.ShowErrorMessage -> {
                         val errorStr = effect.message.asString(context)
                         globalAppState.showError(errorStr)
                     }

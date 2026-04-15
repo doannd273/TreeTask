@@ -7,7 +7,7 @@ plugins {
 }
 android {
     namespace = "com.doannd3.treetask.feature.auth"
-    compileSdk = 34
+    compileSdk = 36
 
     resourcePrefix = "auth_"
 

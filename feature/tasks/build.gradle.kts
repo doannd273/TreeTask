@@ -7,13 +7,14 @@ plugins {
 }
 android {
     namespace = "com.doannd3.treetask.feature.tasks"
-    compileSdk = 34
+    compileSdk = 36
     resourcePrefix = "tasks_"
     defaultConfig {
         minSdk = 24
         missingDimensionStrategy("environment", "dev")
     }
     compileOptions {
+        isCoreLibraryDesugaringEnabled = true
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
     }
@@ -24,6 +25,8 @@ android {
 }
 dependencies {
     implementation(project(":core:model"))
+    implementation(project(":core:domain"))
+    implementation(project(":core:common"))
     implementation(project(":core:data"))
     implementation(project(":core:designsystem"))
 
@@ -44,4 +47,7 @@ dependencies {
 
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)
+
+    implementation(libs.timber)
+    coreLibraryDesugaring(libs.desugar.jdk.libs)
 }

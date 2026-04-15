@@ -8,6 +8,7 @@ data class Task(
     val title: String,
     val description: String?,
     val status: TaskStatus,
+    val dueDate: Instant,
     val createdAt: Instant,
     val updatedAt: Instant
 )

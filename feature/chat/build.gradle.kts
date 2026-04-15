@@ -7,7 +7,7 @@ plugins {
 }
 android {
     namespace = "com.doannd3.treetask.feature.chat"
-    compileSdk = 34
+    compileSdk = 36
 
     resourcePrefix = "chat_"
 
@@ -47,4 +47,6 @@ dependencies {
 
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)
+
+    implementation(libs.timber)
 }

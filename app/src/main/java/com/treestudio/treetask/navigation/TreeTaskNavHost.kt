@@ -8,6 +8,7 @@ import com.doannd3.treetask.feature.auth.navigation.forgotPasswordRoute
 import com.doannd3.treetask.feature.auth.navigation.loginRoute
 import com.doannd3.treetask.feature.auth.navigation.registerRoute
 import com.doannd3.treetask.feature.tasks.navigation.navigateToTasksGraph
+import com.doannd3.treetask.feature.tasks.navigation.tasksGraph
 import com.treestudio.treetask.ui.TreeTaskAppState
 
 @Composable
@@ -43,6 +44,6 @@ fun TreeTaskNavHost(
             }
         )
 
-
+        tasksGraph()
     }
 }
