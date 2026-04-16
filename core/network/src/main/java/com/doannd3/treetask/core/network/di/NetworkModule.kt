@@ -3,9 +3,10 @@ package com.doannd3.treetask.core.network.di
 import android.content.Context
 import com.chuckerteam.chucker.api.ChuckerInterceptor
 import com.doannd3.treetask.core.network.BuildConfig
-import com.doannd3.treetask.core.network.service.AuthService
 import com.doannd3.treetask.core.network.interceptor.AuthAuthenticator
 import com.doannd3.treetask.core.network.interceptor.AuthInterceptor
+import com.doannd3.treetask.core.network.service.AuthService
+import com.doannd3.treetask.core.network.service.TaskService
 import com.doannd3.treetask.core.network.util.ApiResultCallAdapterFactory
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import dagger.Module
@@ -87,6 +88,11 @@ class NetworkModule {
     fun provideAuthApi(retrofit: Retrofit): AuthService {
         return retrofit.create(AuthService::class.java)
     }
+
+    @Provides
+    @Singleton
+    fun provideTaskService(retrofit: Retrofit): TaskService =
+        retrofit.create(TaskService::class.java)
 
     companion object {
         private const val NETWORK_TIMEOUT = 30L

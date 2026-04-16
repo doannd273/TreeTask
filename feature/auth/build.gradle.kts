@@ -2,11 +2,13 @@ plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.hilt)
     alias(libs.plugins.ksp)
 }
 android {
     namespace = "com.doannd3.treetask.feature.auth"
+    compileSdk = 36
     compileSdk = 36
 
     resourcePrefix = "auth_"

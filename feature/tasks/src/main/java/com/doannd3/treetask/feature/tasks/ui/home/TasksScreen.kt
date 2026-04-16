@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.imePadding
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.lazy.LazyColumn
@@ -93,8 +92,6 @@ fun TasksScreen(
         floatingActionButton = {
             FloatingActionButton(
                 onClick = onAddTaskClick,
-                modifier = Modifier
-                    .offset(x = (-16).dp, y = (-16).dp)
             ) {
                 Icon(
                     painter = painterResource(R.drawable.tasks_ic_add),
@@ -104,7 +101,7 @@ fun TasksScreen(
         }
     ) { paddingValues ->
         TasksContent(
-            modifier = Modifier.padding(paddingValues = paddingValues),
+            modifier = Modifier.padding(bottom = paddingValues.calculateBottomPadding()),
             state = state,
             onEvent = onEvent,
             onTaskClick = onTaskClick,
@@ -124,7 +121,7 @@ fun TasksContent(
             .fillMaxSize()
             .padding(16.dp)
             .imePadding(),
-        verticalArrangement = Arrangement.Center
+        verticalArrangement = Arrangement.Top
     ) {
         SearchTaskInput(
             isLoadingSearch = state.isLoadingSearch,

@@ -39,14 +39,27 @@ class TreeTaskAppState(
     val isTopLevelDestination: Boolean
         @Composable get() = currentDestination?.let { destination ->
             TopLevelDestination.entries.any { topLevelDest ->
-                destination.hierarchy.any { it.route == topLevelDest.route }
+                // BẮT BUỘC PHẢI QUÉT GIA PHẢ BẰNG VÒNG LẶP NÀY
+                destination.hierarchy.any { navDest ->
+
+                    if (topLevelDest.route is String) {
+                        navDest.route == topLevelDest.route
+                    } else {
+                        // So sánh thành công khi lặp tới trúng Lớp Cha (TasksGraphRoute)
+                        navDest.route?.contains(
+                            topLevelDest.route::class.qualifiedName ?: ""
+                        ) == true
+                    }
+
+                }
             }
         } ?: false
+
 
     // --- 3. LOGIC CHUYỂN TRANG VĨ MÔ (BOTTOM TABS) ---
     // Các lệnh chuyển trang nhỏ lẻ (Ví dụ: Từ List qua Detail) thì để Feature Modules tự lo.
     // Lệnh chuyển trang khổng lồ (Ví dụ: Bấm tab Home qua Tab Setting) sẽ do AppState gánh.
-    fun navigateToTopLevelDestination(route: String) {
+    fun navigateToTopLevelDestination(route: Any) {
         navController.navigate(route) {
             //1. PopUpTo đầu nguồn để ko bị xếp chồng màn hình khi lướt tab
             popUpTo(navController.graph.startDestinationId) {

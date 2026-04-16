@@ -1,7 +1,9 @@
 package com.doannd3.treetask.core.data.di
 
 import com.doannd3.treetask.core.data.respository.AuthRepositoryImpl
+import com.doannd3.treetask.core.data.respository.TaskRepositoryImpl
 import com.doannd3.treetask.core.domain.repository.AuthRepository
+import com.doannd3.treetask.core.domain.repository.TaskRepository
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -18,4 +20,8 @@ abstract class DataModule {
         authRepositoryImpl: AuthRepositoryImpl // Đứa con ruột (Data)
     ): AuthRepository                            // Interface màng bọc (Domain)
 
+    @Binds
+    abstract fun bindTasksRepository(
+        taskRepositoryImpl: TaskRepositoryImpl
+    ): TaskRepository
 }
