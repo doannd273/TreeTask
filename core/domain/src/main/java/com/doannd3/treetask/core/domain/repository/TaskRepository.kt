@@ -4,7 +4,7 @@ import com.doannd3.treetask.core.common.ApiResult
 import com.doannd3.treetask.core.model.task.Task
 
 interface TaskRepository {
-    suspend fun getTasks(page: Int, status: String, keyword: String): ApiResult<Task>
+    suspend fun getTasks(page: Int, status: String, keyword: String): ApiResult<List<Task>>
 
     suspend fun createTask()
 

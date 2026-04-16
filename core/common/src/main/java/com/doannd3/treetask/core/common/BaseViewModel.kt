@@ -4,9 +4,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
@@ -30,6 +33,13 @@ abstract class BaseViewModel : ViewModel() {
     protected fun executeSafe(block: suspend CoroutineScope.() -> Unit) {
         viewModelScope.launch(exceptionHandler) {
             block()
+        }
+    }
+
+    protected fun <T> Flow<T>.launchSafeIn(scope: CoroutineScope): Job {
+        // Nhồi exceptionHandler của BaseViewModel vào để cản Crash
+        return scope.launch(exceptionHandler) {
+            collect() // Thu thập dòng chảy
         }
     }
 

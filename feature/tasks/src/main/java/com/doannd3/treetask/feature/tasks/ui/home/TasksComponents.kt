@@ -8,12 +8,14 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -79,6 +81,7 @@ fun TaskStatusChips(
 
 @Composable
 fun SearchTaskInput(
+    isLoadingSearch: Boolean,
     searchQuery: String,
     onSearchChange: (String) -> Unit,
     onClearClick: () -> Unit,
@@ -125,11 +128,23 @@ fun SearchTaskInput(
             )
         },
         trailingIcon = {
-            IconButton(onClick = onClearClick) {
-                Icon(
-                    painterResource(R.drawable.tasks_ic_clear),
-                    contentDescription = null
-                )
+            when {
+                isLoadingSearch -> {
+                    CircularProgressIndicator(
+                        modifier = Modifier.size(18.dp),
+                        strokeWidth = 2.dp,
+                        color = Purple40
+                    )
+                }
+
+                searchQuery.isNotEmpty() -> {
+                    IconButton(onClick = onClearClick) {
+                        Icon(
+                            painterResource(R.drawable.tasks_ic_clear),
+                            contentDescription = null
+                        )
+                    }
+                }
             }
         },
         value = searchQuery,
@@ -233,6 +248,7 @@ fun TaskItemPreview() {
 fun SearchTaskInputPreview() {
     SearchTaskInput(
         searchQuery = "",
+        isLoadingSearch = true,
         onSearchChange = {},
         onClearClick = {},
     )

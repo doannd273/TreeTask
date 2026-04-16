@@ -8,15 +8,40 @@ import androidx.navigation.navigation
 import com.doannd3.treetask.feature.auth.ui.forgotpassword.ForgotPasswordRoute
 import com.doannd3.treetask.feature.auth.ui.login.LoginRoute
 import com.doannd3.treetask.feature.auth.ui.register.RegisterRoute
+import kotlinx.serialization.Serializable
 
-const val authGraphRoutePattern = "auth_graph"
-const val loginRoute = "login_route"
-const val registerRoute = "register_route"
-const val forgotPasswordRoute = "forgot_password_route"
+/**
+ * Khai báo các điểm đến
+ */
+@Serializable
+data object AuthGraphRoute
 
-//
+@Serializable
+data object LoginRoute
+
+@Serializable
+data object RegisterRoute
+
+@Serializable
+data object ForgotPasswordRoute
+
+/**
+ * các hàm mở rộng
+ */
 fun NavController.navigateToAuthGraph(navOptions: NavOptions? = null) {
-    this.navigate(route = authGraphRoutePattern, navOptions = navOptions)
+    this.navigate(route = AuthGraphRoute, navOptions = navOptions)
+}
+
+fun NavController.navigateToRegister(navOptions: NavOptions? = null) {
+    this.navigate(route = RegisterRoute, navOptions = navOptions)
+}
+
+fun NavController.navigateToForgotPassword(navOptions: NavOptions? = null) {
+    this.navigate(route = ForgotPasswordRoute, navOptions = navOptions)
+}
+
+fun NavController.navigateToLogin(navOptions: NavOptions? = null) {
+    this.navigate(route = LoginRoute, navOptions = navOptions)
 }
 
 fun NavGraphBuilder.authGraph(
@@ -27,11 +52,8 @@ fun NavGraphBuilder.authGraph(
     onNavigateToLogin: () -> Unit,
     onForgotPasswordBack: () -> Unit
 ) {
-    navigation(
-        route = authGraphRoutePattern,
-        startDestination = loginRoute
-    ) {
-        composable(route = loginRoute) {
+    navigation<AuthGraphRoute>(startDestination = LoginRoute) {
+        composable<LoginRoute> {
             LoginRoute(
                 onNavigateToHome = onNavigateToHome,
                 onNavigateToRegister = onNavigateToRegister,
@@ -39,14 +61,14 @@ fun NavGraphBuilder.authGraph(
             )
         }
 
-        composable(route = registerRoute) {
+        composable<RegisterRoute> {
             RegisterRoute(
                 onNavigateToHome = onNavigateToHome,
                 onRegisterBack = onRegisterBack
             )
         }
 
-        composable(route = forgotPasswordRoute) {
+        composable<ForgotPasswordRoute> {
             ForgotPasswordRoute(
                 onNavigateToLogin = onNavigateToLogin,
                 onForgotPasswordBack = onForgotPasswordBack

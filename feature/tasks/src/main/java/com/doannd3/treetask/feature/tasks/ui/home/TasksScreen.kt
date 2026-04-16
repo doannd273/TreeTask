@@ -1,22 +1,85 @@
 package com.doannd3.treetask.feature.tasks.ui.home
 
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.repeatOnLifecycle
+import com.doannd3.treetask.core.common.asString
+import com.doannd3.treetask.core.designsystem.component.LocalGlobalAppState
 import com.doannd3.treetask.core.model.task.Task
 import com.doannd3.treetask.core.model.task.TaskStatus
 import java.time.Instant
 
+
+@Composable
+fun TasksRoute(
+    viewModel: TasksViewModel = hiltViewModel(),
+    onTaskClick: (Task) -> Unit,
+    onAddTaskClick: () -> Unit
+) {
+    val state by viewModel.uiState.collectAsStateWithLifecycle()
+
+    val globalAppState = LocalGlobalAppState.current
+    val context = LocalContext.current
+    val lifecycleOwner = LocalLifecycleOwner.current
+
+    TasksScreen(
+        state = state,
+        onEvent = viewModel::onEvent,
+        onTaskClick = onTaskClick,
+        onAddTaskClick = onAddTaskClick
+    )
+
+    LaunchedEffect(viewModel.effect, lifecycleOwner) {
+        lifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+            viewModel.effect.collect { effect ->
+                when (effect) {
+                    is TasksEffect.ShowErrorMessage -> {
+                        val errorStr = effect.message.asString(context)
+                        globalAppState.showError(errorStr)
+                    }
+                }
+            }
+        }
+    }
+
+    // Lỗi crash/unexpected từ BaseViewModel (CoroutineExceptionHandler)
+    LaunchedEffect(viewModel.baseErrorEffect, lifecycleOwner) {
+        lifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+            viewModel.baseErrorEffect.collect { message ->
+                globalAppState.showError(message.asString(context))
+            }
+        }
+    }
+
+    LaunchedEffect(state.isLoading) {
+        if (state.isLoading) globalAppState.showLoading()
+        else globalAppState.hideLoading()
+    }
+}
+
 @Composable
 fun TasksScreen(
     state: TasksState,
-    onSearchChange: (String) -> Unit,
-    onClearClick: () -> Unit,
-    onFilterSelect: (TaskStatus?) -> Unit,
+    onEvent: (TasksEvent) -> Unit,
     onTaskClick: (Task) -> Unit,
     onAddTaskClick: () -> Unit
 ) {
@@ -26,12 +89,49 @@ fun TasksScreen(
         TasksContent(
             modifier = Modifier.padding(paddingValues = paddingValues),
             state = state,
-            onSearchChange = onSearchChange,
-            onClearClick = onClearClick,
-            onFilterSelect = onFilterSelect,
+            onEvent = onEvent,
             onTaskClick = onTaskClick,
             onAddTaskClick = onAddTaskClick,
         )
+    }
+}
+
+@Composable
+fun TasksContent(
+    modifier: Modifier = Modifier,
+    state: TasksState,
+    onEvent: (TasksEvent) -> Unit,
+    onTaskClick: (Task) -> Unit,
+    onAddTaskClick: () -> Unit,
+) {
+    Column(
+        modifier = modifier
+            .fillMaxSize()
+            .padding(16.dp)
+            .imePadding(),
+        verticalArrangement = Arrangement.Center
+    ) {
+        SearchTaskInput(
+            isLoadingSearch = state.isLoadingSearch,
+            searchQuery = state.searchQuery,
+            onSearchChange = { onEvent(TasksEvent.SearchChanged(it)) },
+            onClearClick = { onEvent(TasksEvent.SearchQueryClear) },
+        )
+
+        TaskStatusChips(
+            taskStatusSelected = state.taskStatusSelected,
+            onFilterSelect = { onEvent(TasksEvent.FilterSelected(it)) },
+        )
+
+        LazyColumn(
+            modifier = Modifier.padding(top = 6.dp)
+        ) {
+            items(items = state.tasks, key = { task -> task.id }) { task ->
+                TaskItem(task = task, onClick = {
+                    onTaskClick.invoke(task)
+                })
+            }
+        }
     }
 }
 
@@ -128,9 +228,7 @@ fun TasksScreenPreview() {
 
     TasksScreen(
         state = sampleTasksState,
-        onSearchChange = {},
-        onClearClick = {},
-        onFilterSelect = {},
+        onEvent = {},
         onTaskClick = {},
         onAddTaskClick = {},
     )

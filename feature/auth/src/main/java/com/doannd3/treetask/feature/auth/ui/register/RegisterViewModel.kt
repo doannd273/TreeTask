@@ -39,7 +39,7 @@ class RegisterViewModel @Inject constructor(
                 _uiState.update { it.copy(password = event.password) }
             }
             is RegisterEvent.SubmitRegister -> submitRegister()
-            is RegisterEvent.OnPasswordVisibleChanged -> {
+            is RegisterEvent.PasswordVisibleChanged -> {
                 _uiState.update { it.copy(passwordVisible = event.passwordVisible) }
             }
         }
