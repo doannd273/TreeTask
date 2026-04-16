@@ -4,18 +4,25 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
 import androidx.navigation.navigation
+import kotlinx.serialization.Serializable
 
-const val chatGraphRoutePattern = "chat_graph"
-const val chatRoute = "chat_route"
+@Serializable
+data object ChatGraphRoute
+
+@Serializable
+data object ConversationRoute
 
 fun NavController.navigateToChatGraph(navOptions: NavOptions? = null) {
-    this.navigate(route = chatGraphRoutePattern, navOptions = navOptions)
+    this.navigate(route = ChatGraphRoute, navOptions = navOptions)
+}
+
+fun NavController.navigateToConversation(navOptions: NavOptions? = null) {
+    this.navigate(route = ConversationRoute, navOptions = navOptions)
 }
 
 fun NavGraphBuilder.chatGraph() {
-    navigation(
-        route = chatGraphRoutePattern,
-        startDestination = chatRoute
+    navigation<ChatGraphRoute>(
+        startDestination = ConversationRoute
     ) {
 
     }

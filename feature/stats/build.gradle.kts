@@ -15,6 +15,7 @@ android {
         missingDimensionStrategy("environment", "dev")
     }
     compileOptions {
+        isCoreLibraryDesugaringEnabled = true
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
     }
@@ -44,5 +45,6 @@ dependencies {
     ksp(libs.hilt.compiler)
 
     implementation(libs.timber)
+    coreLibraryDesugaring(libs.desugar.jdk.libs)
 }
 

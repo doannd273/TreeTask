@@ -4,18 +4,25 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
 import androidx.navigation.navigation
+import kotlinx.serialization.Serializable
 
-const val profileGraphRoutePattern = "profile_graph"
-const val profileRoute = "profile_route"
+@Serializable
+data object ProfileGraphRoute
+
+@Serializable
+data object ProfileRoute
 
 fun NavController.navigateToProfileGraph(navOptions: NavOptions? = null) {
-    this.navigate(route = profileGraphRoutePattern, navOptions = navOptions)
+    this.navigate(route = ProfileGraphRoute, navOptions = navOptions)
+}
+
+fun NavController.navigateToProfile(navOptions: NavOptions? = null) {
+    this.navigate(route = ProfileRoute, navOptions = navOptions)
 }
 
 fun NavGraphBuilder.profileGraph() {
-    navigation(
-        route = profileGraphRoutePattern,
-        startDestination = profileRoute
+    navigation<ProfileGraphRoute>(
+        startDestination = ProfileRoute
     ) {
 
     }

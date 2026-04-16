@@ -2,9 +2,9 @@ package com.treestudio.treetask.navigation
 
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
-import com.doannd3.treetask.feature.chat.navigation.chatGraphRoutePattern
-import com.doannd3.treetask.feature.profile.navigation.profileGraphRoutePattern
-import com.doannd3.treetask.feature.stats.navigation.statsGraphRoutePattern
+import com.doannd3.treetask.feature.chat.navigation.ChatGraphRoute
+import com.doannd3.treetask.feature.profile.navigation.ProfileGraphRoute
+import com.doannd3.treetask.feature.stats.navigation.StatsGraphRoute
 import com.doannd3.treetask.feature.tasks.navigation.TasksGraphRoute
 import com.treestudio.treetask.R
 
@@ -14,31 +14,31 @@ enum class TopLevelDestination(
     @StringRes val titleTextId: Int,  // ID Chuỗi chữ ở dưới
     val route: Any                 // Đường dẫn qua Feature tương ứng
 ) {
-    // Ví dụ 2 Tab chính:
     TASKS(
         selectedIcon = R.drawable.ic_tasks_selected,
         unselectedIcon = R.drawable.ic_tasks_unselected,
         titleTextId = R.string.app_tab_tasks,
         route = TasksGraphRoute
     ),
-    PROFILE(
-        selectedIcon = R.drawable.ic_profile_selected,
-        unselectedIcon = R.drawable.ic_profile_unselected,
-        titleTextId = R.string.app_tab_profile,
-        route = profileGraphRoutePattern
+
+    CHAT(
+        selectedIcon = R.drawable.ic_chat_selected,
+        unselectedIcon = R.drawable.ic_chat_unselected,
+        titleTextId = R.string.app_tab_chat,
+        route = ChatGraphRoute
     ),
 
     STATS(
         selectedIcon = R.drawable.ic_stats_selected,
         unselectedIcon = R.drawable.ic_stats_unselected,
         titleTextId = R.string.app_tab_stats,
-        route = statsGraphRoutePattern
+        route = StatsGraphRoute
     ),
 
-    CHAT(
-        selectedIcon = R.drawable.ic_chat_selected,
-        unselectedIcon = R.drawable.ic_chat_unselected,
-        titleTextId = R.string.app_tab_chat,
-        route = chatGraphRoutePattern
-    )
+    PROFILE(
+        selectedIcon = R.drawable.ic_profile_selected,
+        unselectedIcon = R.drawable.ic_profile_unselected,
+        titleTextId = R.string.app_tab_profile,
+        route = ProfileGraphRoute
+    ),
 }
