@@ -16,7 +16,7 @@ import com.treestudio.treetask.ui.component.TreeTaskBottomBar
 
 @Composable
 fun TreeTaskApp(
-    startDestination: String,
+    startDestination: Any,
     appState: TreeTaskAppState = rememberTreeTaskAppState()
 ) {
     // Toàn bộ logic Màn Hình Báo Lỗi/Loading Toàn Sự Kiện (Ở Module core:designsystem)

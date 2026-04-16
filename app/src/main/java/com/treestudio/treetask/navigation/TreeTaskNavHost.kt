@@ -15,7 +15,7 @@ import com.treestudio.treetask.ui.TreeTaskAppState
 
 @Composable
 fun TreeTaskNavHost(
-    startDestination: String,
+    startDestination: Any,
     appState: TreeTaskAppState,
     modifier: Modifier,
 ) {

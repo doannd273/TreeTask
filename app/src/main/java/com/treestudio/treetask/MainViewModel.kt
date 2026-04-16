@@ -6,8 +6,8 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.doannd3.treetask.core.datastore.TokenManager
-import com.doannd3.treetask.feature.auth.navigation.authGraphRoutePattern
-import com.doannd3.treetask.feature.tasks.navigation.tasksGraphRoutePattern
+import com.doannd3.treetask.feature.auth.navigation.AuthGraphRoute
+import com.doannd3.treetask.feature.tasks.navigation.TasksGraphRoute
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
@@ -21,16 +21,16 @@ class MainViewModel @Inject constructor(
     var isLoading by mutableStateOf(true)
         private set
 
-    var startDestination by mutableStateOf<String?>(null)
+    var startDestination by mutableStateOf<Any?>(null)
         private set
 
     init {
         viewModelScope.launch {
             val token = tokenManager.getAccessToken().first()
             startDestination = if (token.isNullOrEmpty()) {
-                authGraphRoutePattern
+                AuthGraphRoute
             } else {
-                tasksGraphRoutePattern
+                TasksGraphRoute
             }
 
             isLoading = false
