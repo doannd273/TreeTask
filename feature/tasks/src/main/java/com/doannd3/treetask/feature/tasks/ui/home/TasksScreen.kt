@@ -5,16 +5,20 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -26,6 +30,7 @@ import com.doannd3.treetask.core.common.asString
 import com.doannd3.treetask.core.designsystem.component.LocalGlobalAppState
 import com.doannd3.treetask.core.model.task.Task
 import com.doannd3.treetask.core.model.task.TaskStatus
+import com.doannd3.treetask.feature.tasks.R
 import java.time.Instant
 
 
@@ -84,14 +89,25 @@ fun TasksScreen(
     onAddTaskClick: () -> Unit
 ) {
     Scaffold(
-        contentWindowInsets = WindowInsets.safeDrawing
+        contentWindowInsets = WindowInsets.safeDrawing,
+        floatingActionButton = {
+            FloatingActionButton(
+                onClick = onAddTaskClick,
+                modifier = Modifier
+                    .offset(x = (-16).dp, y = (-16).dp)
+            ) {
+                Icon(
+                    painter = painterResource(R.drawable.tasks_ic_add),
+                    contentDescription = null,
+                )
+            }
+        }
     ) { paddingValues ->
         TasksContent(
             modifier = Modifier.padding(paddingValues = paddingValues),
             state = state,
             onEvent = onEvent,
             onTaskClick = onTaskClick,
-            onAddTaskClick = onAddTaskClick,
         )
     }
 }
@@ -102,7 +118,6 @@ fun TasksContent(
     state: TasksState,
     onEvent: (TasksEvent) -> Unit,
     onTaskClick: (Task) -> Unit,
-    onAddTaskClick: () -> Unit,
 ) {
     Column(
         modifier = modifier
@@ -132,6 +147,7 @@ fun TasksContent(
                 })
             }
         }
+
     }
 }
 
