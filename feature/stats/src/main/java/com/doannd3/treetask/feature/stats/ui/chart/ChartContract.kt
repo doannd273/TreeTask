@@ -1,4 +1,11 @@
 package com.doannd3.treetask.feature.stats.ui.chart
 
-class ChartContract {
+data class ChartState(
+    val isLoading: Boolean = false
+)
+
+sealed class ChartEvent {
+}
+
+sealed class ChartEffect {
 }

@@ -3,7 +3,9 @@ package com.doannd3.treetask.feature.chat.navigation
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
+import androidx.navigation.compose.composable
 import androidx.navigation.navigation
+import com.doannd3.treetask.feature.chat.ui.conversation.ConversationRoute
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -24,6 +26,8 @@ fun NavGraphBuilder.chatGraph() {
     navigation<ChatGraphRoute>(
         startDestination = ConversationRoute
     ) {
-
+        composable<ConversationRoute> {
+            ConversationRoute()
+        }
     }
 }
