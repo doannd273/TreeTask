@@ -2,10 +2,10 @@ package com.treestudio.treetask.navigation
 
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
-import com.doannd3.treetask.feature.chat.navigation.ChatGraphRoute
-import com.doannd3.treetask.feature.profile.navigation.ProfileGraphRoute
-import com.doannd3.treetask.feature.stats.navigation.StatsGraphRoute
-import com.doannd3.treetask.feature.tasks.navigation.TasksGraphRoute
+import com.doannd3.treetask.feature.chat.navigation.ChatGraphDestination
+import com.doannd3.treetask.feature.profile.navigation.ProfileGraphDestination
+import com.doannd3.treetask.feature.stats.navigation.StatsGraphDestination
+import com.doannd3.treetask.feature.tasks.navigation.TasksGraphDestination
 import com.treestudio.treetask.R
 
 enum class TopLevelDestination(
@@ -18,27 +18,27 @@ enum class TopLevelDestination(
         selectedIcon = R.drawable.ic_tasks_selected,
         unselectedIcon = R.drawable.ic_tasks_unselected,
         titleTextId = R.string.app_tab_tasks,
-        route = TasksGraphRoute
+        route = TasksGraphDestination
     ),
 
     CHAT(
         selectedIcon = R.drawable.ic_chat_selected,
         unselectedIcon = R.drawable.ic_chat_unselected,
         titleTextId = R.string.app_tab_chat,
-        route = ChatGraphRoute
+        route = ChatGraphDestination
     ),
 
     STATS(
         selectedIcon = R.drawable.ic_stats_selected,
         unselectedIcon = R.drawable.ic_stats_unselected,
         titleTextId = R.string.app_tab_stats,
-        route = StatsGraphRoute
+        route = StatsGraphDestination
     ),
 
     PROFILE(
         selectedIcon = R.drawable.ic_profile_selected,
         unselectedIcon = R.drawable.ic_profile_unselected,
         titleTextId = R.string.app_tab_profile,
-        route = ProfileGraphRoute
+        route = ProfileGraphDestination
     ),
 }

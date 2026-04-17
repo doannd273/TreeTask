@@ -9,24 +9,24 @@ import com.doannd3.treetask.feature.chat.ui.conversation.ConversationRoute
 import kotlinx.serialization.Serializable
 
 @Serializable
-data object ChatGraphRoute
+data object ChatGraphDestination
 
 @Serializable
-data object ConversationRoute
+data object ConversationDestination
 
 fun NavController.navigateToChatGraph(navOptions: NavOptions? = null) {
-    this.navigate(route = ChatGraphRoute, navOptions = navOptions)
+    this.navigate(route = ChatGraphDestination, navOptions = navOptions)
 }
 
 fun NavController.navigateToConversation(navOptions: NavOptions? = null) {
-    this.navigate(route = ConversationRoute, navOptions = navOptions)
+    this.navigate(route = ConversationDestination, navOptions = navOptions)
 }
 
 fun NavGraphBuilder.chatGraph() {
-    navigation<ChatGraphRoute>(
-        startDestination = ConversationRoute
+    navigation<ChatGraphDestination>(
+        startDestination = ConversationDestination
     ) {
-        composable<ConversationRoute> {
+        composable<ConversationDestination> {
             ConversationRoute()
         }
     }

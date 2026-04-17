@@ -9,24 +9,24 @@ import com.doannd3.treetask.feature.profile.ui.profile.ProfileRoute
 import kotlinx.serialization.Serializable
 
 @Serializable
-data object ProfileGraphRoute
+data object ProfileGraphDestination
 
 @Serializable
-data object ProfileRoute
+data object ProfileDestination
 
 fun NavController.navigateToProfileGraph(navOptions: NavOptions? = null) {
-    this.navigate(route = ProfileGraphRoute, navOptions = navOptions)
+    this.navigate(route = ProfileGraphDestination, navOptions = navOptions)
 }
 
 fun NavController.navigateToProfile(navOptions: NavOptions? = null) {
-    this.navigate(route = ProfileRoute, navOptions = navOptions)
+    this.navigate(route = ProfileDestination, navOptions = navOptions)
 }
 
 fun NavGraphBuilder.profileGraph() {
-    navigation<ProfileGraphRoute>(
-        startDestination = ProfileRoute
+    navigation<ProfileGraphDestination>(
+        startDestination = ProfileDestination
     ) {
-        composable<ProfileRoute> {
+        composable<ProfileDestination> {
             ProfileRoute()
         }
     }

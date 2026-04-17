@@ -11,43 +11,43 @@ import com.doannd3.treetask.feature.tasks.ui.home.TasksRoute
 import kotlinx.serialization.Serializable
 
 @Serializable
-data object TasksGraphRoute
+data object TasksGraphDestination
 
 @Serializable
-data object TasksRoute
+data object TasksDestination
 
 @Serializable
-data object AddTasksRoute
+data object AddTasksDestination
 
 @Serializable
-data class EditTaskRoute(val taskId: String)
+data class EditTaskDestination(val taskId: String)
 
 fun NavController.navigateToTasksGraph(navOptions: NavOptions? = null) {
-    this.navigate(route = TasksGraphRoute, navOptions = navOptions)
+    this.navigate(route = TasksGraphDestination, navOptions = navOptions)
 }
 
 fun NavController.navigateToEditTask(taskId: String, navOptions: NavOptions? = null) {
-    this.navigate(route = EditTaskRoute(taskId = taskId), navOptions = navOptions)
+    this.navigate(route = EditTaskDestination(taskId = taskId), navOptions = navOptions)
 }
 
 fun NavController.navigateToAddTask(navOptions: NavOptions? = null) {
-    this.navigate(route = AddTasksRoute, navOptions = navOptions)
+    this.navigate(route = AddTasksDestination, navOptions = navOptions)
 }
 
 fun NavGraphBuilder.tasksGraph(
     onTaskClick: (String) -> Unit,
     onAddTaskClick: () -> Unit
 ) {
-    navigation<TasksGraphRoute>(startDestination = TasksRoute) {
-        composable<TasksRoute> {
+    navigation<TasksGraphDestination>(startDestination = TasksDestination) {
+        composable<TasksDestination> {
             TasksRoute(
                 onTaskClick = { task -> onTaskClick(task.id) },
                 onAddTaskClick = onAddTaskClick,
             )
         }
 
-        composable<EditTaskRoute> { backStackEntry ->
-            val args = backStackEntry.toRoute<EditTaskRoute>()
+        composable<EditTaskDestination> { backStackEntry ->
+            val args = backStackEntry.toRoute<EditTaskDestination>()
             val taskId = args.taskId
 
             EditTasksRoute(

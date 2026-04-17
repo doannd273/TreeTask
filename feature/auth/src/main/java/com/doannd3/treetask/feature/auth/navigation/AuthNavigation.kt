@@ -14,34 +14,34 @@ import kotlinx.serialization.Serializable
  * Khai báo các điểm đến
  */
 @Serializable
-data object AuthGraphRoute
+data object AuthGraphDestination
 
 @Serializable
-data object LoginRoute
+data object LoginDestination
 
 @Serializable
-data object RegisterRoute
+data object RegisterDestination
 
 @Serializable
-data object ForgotPasswordRoute
+data object ForgotPasswordDestination
 
 /**
  * các hàm mở rộng
  */
 fun NavController.navigateToAuthGraph(navOptions: NavOptions? = null) {
-    this.navigate(route = AuthGraphRoute, navOptions = navOptions)
+    this.navigate(route = AuthGraphDestination, navOptions = navOptions)
 }
 
 fun NavController.navigateToRegister(navOptions: NavOptions? = null) {
-    this.navigate(route = RegisterRoute, navOptions = navOptions)
+    this.navigate(route = RegisterDestination, navOptions = navOptions)
 }
 
 fun NavController.navigateToForgotPassword(navOptions: NavOptions? = null) {
-    this.navigate(route = ForgotPasswordRoute, navOptions = navOptions)
+    this.navigate(route = ForgotPasswordDestination, navOptions = navOptions)
 }
 
 fun NavController.navigateToLogin(navOptions: NavOptions? = null) {
-    this.navigate(route = LoginRoute, navOptions = navOptions)
+    this.navigate(route = LoginDestination, navOptions = navOptions)
 }
 
 fun NavGraphBuilder.authGraph(
@@ -52,8 +52,8 @@ fun NavGraphBuilder.authGraph(
     onNavigateToLogin: () -> Unit,
     onForgotPasswordBack: () -> Unit
 ) {
-    navigation<AuthGraphRoute>(startDestination = LoginRoute) {
-        composable<LoginRoute> {
+    navigation<AuthGraphDestination>(startDestination = LoginDestination) {
+        composable<LoginDestination> {
             LoginRoute(
                 onNavigateToHome = onNavigateToHome,
                 onNavigateToRegister = onNavigateToRegister,
@@ -61,14 +61,14 @@ fun NavGraphBuilder.authGraph(
             )
         }
 
-        composable<RegisterRoute> {
+        composable<RegisterDestination> {
             RegisterRoute(
                 onNavigateToHome = onNavigateToHome,
                 onRegisterBack = onRegisterBack
             )
         }
 
-        composable<ForgotPasswordRoute> {
+        composable<ForgotPasswordDestination> {
             ForgotPasswordRoute(
                 onNavigateToLogin = onNavigateToLogin,
                 onForgotPasswordBack = onForgotPasswordBack

@@ -9,24 +9,24 @@ import com.doannd3.treetask.feature.stats.ui.chart.ChartRoute
 import kotlinx.serialization.Serializable
 
 @Serializable
-data object StatsGraphRoute
+data object StatsGraphDestination
 
 @Serializable
-data object ChartRoute
+data object ChartDestination
 
 fun NavController.navigateToStatsGraph(navOptions: NavOptions? = null) {
-    this.navigate(route = StatsGraphRoute, navOptions = navOptions)
+    this.navigate(route = StatsGraphDestination, navOptions = navOptions)
 }
 
 fun NavController.navigateToChart(navOptions: NavOptions? = null) {
-    this.navigate(route = ChartRoute, navOptions = navOptions)
+    this.navigate(route = ChartDestination, navOptions = navOptions)
 }
 
 fun NavGraphBuilder.statsGraph() {
-    navigation<StatsGraphRoute>(
-        startDestination = ChartRoute
+    navigation<StatsGraphDestination>(
+        startDestination = ChartDestination
     ) {
-        composable<ChartRoute> {
+        composable<ChartDestination> {
             ChartRoute()
         }
     }
