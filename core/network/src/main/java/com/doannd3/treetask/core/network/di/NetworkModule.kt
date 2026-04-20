@@ -5,8 +5,12 @@ import com.chuckerteam.chucker.api.ChuckerInterceptor
 import com.doannd3.treetask.core.network.BuildConfig
 import com.doannd3.treetask.core.network.interceptor.AuthAuthenticator
 import com.doannd3.treetask.core.network.interceptor.AuthInterceptor
+import com.doannd3.treetask.core.network.interceptor.HeaderInterceptor
 import com.doannd3.treetask.core.network.service.AuthService
+import com.doannd3.treetask.core.network.service.ChatService
+import com.doannd3.treetask.core.network.service.StatsService
 import com.doannd3.treetask.core.network.service.TaskService
+import com.doannd3.treetask.core.network.service.UserService
 import com.doannd3.treetask.core.network.util.ApiResultCallAdapterFactory
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import dagger.Module
@@ -44,7 +48,8 @@ class NetworkModule {
     fun provideOkhttpClient(
         @ApplicationContext context: Context,
         authInterceptor: AuthInterceptor,
-        authAuthenticator: AuthAuthenticator
+        authAuthenticator: AuthAuthenticator,
+        headerInterceptor: HeaderInterceptor
     ): OkHttpClient {
         val loggingInterceptor = HttpLoggingInterceptor().apply {
             level = if (BuildConfig.DEBUG) {
@@ -59,9 +64,10 @@ class NetworkModule {
             .readTimeout(NETWORK_TIMEOUT, TimeUnit.SECONDS)
             .writeTimeout(NETWORK_TIMEOUT, TimeUnit.SECONDS)
             .retryOnConnectionFailure(true)
-            .addInterceptor(loggingInterceptor)
-            .addInterceptor(ChuckerInterceptor(context))
-            .addInterceptor(authInterceptor)
+            .addInterceptor(headerInterceptor) // 1. thêm header
+            .addInterceptor(loggingInterceptor) // 2. log request
+            .addInterceptor(ChuckerInterceptor(context)) // 3. Log vào Chucker UI
+            .addInterceptor(authInterceptor) // 4. Thêm Token Auth
             .authenticator(authAuthenticator).build()
         return okHttpClient
     }
@@ -72,7 +78,6 @@ class NetworkModule {
         okHttpClient: OkHttpClient,
         json: Json
     ): Retrofit {
-        // Định nghĩa Content-Type (thường là application/json)
         val contentType = "application/json".toMediaType()
 
         return Retrofit.Builder()
@@ -91,8 +96,27 @@ class NetworkModule {
 
     @Provides
     @Singleton
-    fun provideTaskService(retrofit: Retrofit): TaskService =
-        retrofit.create(TaskService::class.java)
+    fun provideTaskService(retrofit: Retrofit): TaskService {
+        return retrofit.create(TaskService::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideUserService(retrofit: Retrofit): UserService {
+        return retrofit.create(UserService::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideStatsService(retrofit: Retrofit): StatsService {
+        return retrofit.create(StatsService::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideChatService(retrofit: Retrofit): ChatService {
+        return retrofit.create(ChatService::class.java)
+    }
 
     companion object {
         private const val NETWORK_TIMEOUT = 30L

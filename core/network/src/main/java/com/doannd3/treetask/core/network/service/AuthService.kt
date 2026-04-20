@@ -1,7 +1,6 @@
 package com.doannd3.treetask.core.network.service
 
 import com.doannd3.treetask.core.common.ApiResult
-import com.doannd3.treetask.core.network.ApiResponse
 import com.doannd3.treetask.core.network.model.request.ForgotPasswordRequest
 import com.doannd3.treetask.core.network.model.request.LoginRequest
 import com.doannd3.treetask.core.network.model.request.RefreshTokenRequest
@@ -12,6 +11,7 @@ import retrofit2.http.Body
 import retrofit2.http.POST
 
 interface AuthService {
+
     @POST("/api/auth/refresh-token")
     suspend fun refreshToken(
         @Body request: RefreshTokenRequest

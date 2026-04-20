@@ -9,11 +9,9 @@ data class TokenResponse(
     @SerialName("refreshToken") val refreshToken: String,
 )
 
-// Cho riêng API Register
 @Serializable
 data class RegisterResponse(
     @SerialName("userId") val userId: String,
     @SerialName("accessToken") val accessToken: String,
     @SerialName("refreshToken") val refreshToken: String
-    // Sau này Backend có thể trả thêm "email", "avatar", "createdAt" ở chỗ này!
 )

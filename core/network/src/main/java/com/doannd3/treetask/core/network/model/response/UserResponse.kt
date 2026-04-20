@@ -14,3 +14,17 @@ data class UserResponse(
     @SerialName("updatedAt") val updatedAt: String? = null,
     @SerialName("__v") val version: Int? = null
 )
+
+@Serializable
+data class AvatarUploadResponse(
+    @SerialName("avatar") val avatar: String? = null,
+    @SerialName("message") val message: String? = null
+)
+
+@Serializable
+data class UsersListResponse(
+    @SerialName("users") val users: List<UserResponse> = emptyList(),
+    @SerialName("totalItems") val totalItems: Int? = null,
+    @SerialName("totalPages") val totalPages: Int? = null,
+    @SerialName("currentPage") val currentPage: Int? = null
+)
