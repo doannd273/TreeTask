@@ -12,6 +12,7 @@ android {
         missingDimensionStrategy("environment", "dev")
     }
     compileOptions {
+        isCoreLibraryDesugaringEnabled = true // giúp Android 7 sài java.time
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
     }
@@ -33,4 +34,5 @@ dependencies {
     implementation(libs.timber)
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)
+    coreLibraryDesugaring(libs.desugar.jdk.libs)
 }

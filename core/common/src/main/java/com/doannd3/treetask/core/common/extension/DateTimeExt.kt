@@ -19,3 +19,9 @@ fun String?.toInstantOrNow(): Instant {
         Instant.now()
     }
 }
+
+fun Long.toInstant(): Instant {
+    return Instant.ofEpochMilli(this)
+}
+
+fun Instant.toLong() = toEpochMilli()

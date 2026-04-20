@@ -1,7 +1,7 @@
 package com.doannd3.treetask.core.data.respository
 
 import com.doannd3.treetask.core.common.ApiResult
-import com.doannd3.treetask.core.data.model.toTasks
+import com.doannd3.treetask.core.data.model.toTasksDomain
 import com.doannd3.treetask.core.domain.repository.TaskRepository
 import com.doannd3.treetask.core.model.task.Task
 import com.doannd3.treetask.core.network.service.TaskService
@@ -25,7 +25,7 @@ class TaskRepositoryImpl @Inject constructor(
         )
         return when(result) {
             is ApiResult.Success -> {
-                val data = result.data.tasks?.toTasks() ?: emptyList()
+                val data = result.data.tasks?.toTasksDomain() ?: emptyList()
                 ApiResult.Success(data)
             }
             is ApiResult.Error -> result
