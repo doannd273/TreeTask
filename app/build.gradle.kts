@@ -75,8 +75,11 @@ dependencies {
     implementation(project(":feature:tasks"))
 
     // core
+    implementation(project(":core:domain"))
+    implementation(project(":core:common"))
     implementation(project(":core:designsystem"))
     implementation(project(":core:datastore"))
+    implementation(project(":core:model"))
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)

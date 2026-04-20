@@ -20,33 +20,33 @@ class TokenManager @Inject constructor(
     val sessionExpiredEvent = _sessionExpiredEvent.asSharedFlow()
 
     fun getAccessToken(): Flow<String?> =
-        context.dataStore.data.map { prefs ->
-            prefs[ACCESS_TOKEN]
+        context.authDataStore.data.map { prefs ->
+            prefs[KEY_ACCESS_TOKEN]
         }
 
     fun getRefreshToken(): Flow<String?> =
-        context.dataStore.data.map { prefs ->
-            prefs[REFRESH_TOKEN]
+        context.authDataStore.data.map { prefs ->
+            prefs[KEY_REFRESH_TOKEN]
         }
 
     suspend fun saveToken(accessToken: String, refreshToken: String) {
-        context.dataStore.edit { prefs ->
-            prefs[ACCESS_TOKEN] = accessToken
-            prefs[REFRESH_TOKEN] = refreshToken
+        context.authDataStore.edit { prefs ->
+            prefs[KEY_ACCESS_TOKEN] = accessToken
+            prefs[KEY_REFRESH_TOKEN] = refreshToken
         }
     }
 
     suspend fun clearToken() {
-        context.dataStore.edit { prefs ->
-            prefs.remove(ACCESS_TOKEN)
-            prefs.remove(REFRESH_TOKEN)
+        context.authDataStore.edit { prefs ->
+            prefs.remove(KEY_ACCESS_TOKEN)
+            prefs.remove(KEY_REFRESH_TOKEN)
         }
         // bắn event chết session => navigate to login
         _sessionExpiredEvent.emit(Unit)
     }
 
     companion object {
-        private val ACCESS_TOKEN = stringPreferencesKey("ACCESS_TOKEN")
-        private val REFRESH_TOKEN = stringPreferencesKey("REFRESH_TOKEN")
+        private val KEY_ACCESS_TOKEN = stringPreferencesKey("ACCESS_TOKEN")
+        private val KEY_REFRESH_TOKEN = stringPreferencesKey("REFRESH_TOKEN")
     }
 }

@@ -2,8 +2,10 @@ package com.doannd3.treetask.core.data.di
 
 import com.doannd3.treetask.core.data.respository.AuthRepositoryImpl
 import com.doannd3.treetask.core.data.respository.TaskRepositoryImpl
+import com.doannd3.treetask.core.data.respository.UserRepositoryImpl
 import com.doannd3.treetask.core.domain.repository.AuthRepository
 import com.doannd3.treetask.core.domain.repository.TaskRepository
+import com.doannd3.treetask.core.domain.repository.UserRepository
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -24,4 +26,9 @@ abstract class DataModule {
     abstract fun bindTasksRepository(
         taskRepositoryImpl: TaskRepositoryImpl
     ): TaskRepository
+
+    @Binds
+    abstract fun bindUserRepository(
+        userRepositoryImpl: UserRepositoryImpl
+    ): UserRepository
 }

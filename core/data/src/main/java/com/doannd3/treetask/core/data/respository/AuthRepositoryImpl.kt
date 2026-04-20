@@ -2,6 +2,7 @@ package com.doannd3.treetask.core.data.respository
 
 import com.doannd3.treetask.core.common.ApiResult
 import com.doannd3.treetask.core.datastore.TokenManager
+import com.doannd3.treetask.core.datastore.UserPrefsManager
 import com.doannd3.treetask.core.domain.repository.AuthRepository
 import com.doannd3.treetask.core.network.model.request.ForgotPasswordRequest
 import com.doannd3.treetask.core.network.model.request.LoginRequest
@@ -14,6 +15,7 @@ import javax.inject.Inject
 class AuthRepositoryImpl @Inject constructor(
     private val authApi: AuthService,
     private val tokenManager: TokenManager,
+    private val userPrefsManager: UserPrefsManager,
 ) : AuthRepository {
 
     override val isSessionExpired: Flow<Boolean>
@@ -72,5 +74,6 @@ class AuthRepositoryImpl @Inject constructor(
 
     override suspend fun logout() {
         tokenManager.clearToken()
+        userPrefsManager.clearUserProfile()
     }
 }
