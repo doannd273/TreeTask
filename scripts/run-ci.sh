@@ -6,18 +6,18 @@ set -e  # nếu lỗi thì dừng ngay
 echo "=============================="
 echo "Running Spotless Check"
 echo "=============================="
-./gradlew spotlessCheck --no-daemon
+./gradlew spotlessCheck
 echo ""
 echo "=============================="
 
 echo "Running Detekt"
 echo "=============================="
-./gradlew detekt --no-daemon
+./gradlew detekt
 echo ""
 echo "=============================="
 
 echo "Running Assemble Debug"
 echo "=============================="
-./gradlew assembleDebug --no-daemon
+./gradlew assembleDebug
 echo ""
 echo "DONE: Code quality and build successful! Ready to push."
