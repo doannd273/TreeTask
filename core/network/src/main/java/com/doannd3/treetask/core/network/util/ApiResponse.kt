@@ -1,4 +1,4 @@
-package com.doannd3.treetask.core.network
+package com.doannd3.treetask.core.network.util
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
