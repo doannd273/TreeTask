@@ -32,8 +32,8 @@ class ApiResultCall<T>(
                             } else {
                                 ApiResult.Error(
                                     message =
-                                        body?.message?.let { UiText.DynamicString(it) }
-                                            ?: UiText.StringResource(R.string.common_error_unknown),
+                                    body?.message?.let { UiText.DynamicString(it) }
+                                        ?: UiText.StringResource(R.string.common_error_unknown),
                                     exception = null,
                                 )
                             }
@@ -54,8 +54,8 @@ class ApiResultCall<T>(
                                 }
                             ApiResult.Error(
                                 message =
-                                    errorMessage?.let { UiText.DynamicString(it) }
-                                        ?: UiText.StringResource(R.string.common_error_unknown),
+                                errorMessage?.let { UiText.DynamicString(it) }
+                                    ?: UiText.StringResource(R.string.common_error_unknown),
                                 errorCode = response.code(),
                                 exception = null,
                             )
