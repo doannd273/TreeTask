@@ -1,17 +1,8 @@
 # IntelliJ / Android Studio
 *.iml
 .gradle/
-.idea/workspace.xml
-.idea/tasks.xml
-.idea/gradle.xml
-.idea/assetWizardSettings.xml
-.idea/dictionaries
-.idea/libraries
-.idea/caches
-.idea/modules.xml
-.idea/vcs.xml
-.idea/navEditor.xml
-.idea/deploymentTargetDropDown.xml
+.idea/
+.vscode/
 
 # Local Configuration (KHÔNG BAO GIỜ PUSH)
 local.properties

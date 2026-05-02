@@ -9,6 +9,7 @@ import com.doannd3.treetask.core.network.extensions.addTimeout
 import com.doannd3.treetask.core.network.interceptor.AuthAuthenticator
 import com.doannd3.treetask.core.network.interceptor.AuthInterceptor
 import com.doannd3.treetask.core.network.interceptor.CommonHeaderInterceptor
+import com.doannd3.treetask.core.network.interceptor.NetworkDebugInterceptor
 import com.doannd3.treetask.core.network.util.ApiResultCallAdapterFactory
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import dagger.Module
@@ -54,12 +55,13 @@ class NetworkModule {
     fun provideAuthOkHttpClient(
         @ApplicationContext context: Context,
         commonHeaderInterceptor: CommonHeaderInterceptor,
+        networkDebugInterceptor: NetworkDebugInterceptor,
     ): OkHttpClient {
         return OkHttpClient.Builder()
             .addTimeout()
             .retryOnConnectionFailure(true)
             .addInterceptor(commonHeaderInterceptor)
-            .addNetworkDebugInterceptors()
+            .addNetworkDebugInterceptors(networkDebugInterceptor)
             .addChuckerInterceptors(context = context)
             .addLoggingInterceptors().build()
     }
@@ -70,6 +72,7 @@ class NetworkModule {
     fun provideAuthenticatedOkHttpClient(
         @ApplicationContext context: Context,
         commonHeaderInterceptor: CommonHeaderInterceptor,
+        networkDebugInterceptor: NetworkDebugInterceptor,
         authInterceptor: AuthInterceptor,
         authAuthenticator: AuthAuthenticator,
     ): OkHttpClient {
@@ -79,7 +82,7 @@ class NetworkModule {
             .addInterceptor(commonHeaderInterceptor)
             .addInterceptor(authInterceptor)
             .authenticator(authAuthenticator)
-            .addNetworkDebugInterceptors()
+            .addNetworkDebugInterceptors(networkDebugInterceptor)
             .addChuckerInterceptors(context = context)
             .addLoggingInterceptors()
             .build()

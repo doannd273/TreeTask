@@ -5,8 +5,11 @@ import okhttp3.Interceptor
 import okhttp3.Response
 import timber.log.Timber
 import java.io.IOException
+import javax.inject.Inject
 
-class NetworkDebugInterceptor : Interceptor {
+class NetworkDebugInterceptor
+@Inject
+constructor() : Interceptor {
     override fun intercept(chain: Interceptor.Chain): Response {
         val request = chain.request()
 
@@ -15,10 +18,10 @@ class NetworkDebugInterceptor : Interceptor {
         // Log request
         Timber.d(
             """
-            ➡️ REQUEST
-            ${request.method} ${request.url}
-            Headers: ${request.headers.redact()}
-            """.trimIndent(),
+                ➡️ REQUEST
+                ${request.method} ${request.url}
+                Headers: ${request.headers.redact()}
+                """.trimIndent(),
         )
 
         return try {
@@ -29,9 +32,9 @@ class NetworkDebugInterceptor : Interceptor {
             // 👉 Log response
             Timber.d(
                 """
-                ⬅️ RESPONSE (${duration}ms)
-                ${response.code} ${response.request.url}
-                """.trimIndent(),
+                    ⬅️ RESPONSE (${duration}ms)
+                    ${response.code} ${response.request.url}
+                    """.trimIndent(),
             )
 
             response
@@ -41,9 +44,9 @@ class NetworkDebugInterceptor : Interceptor {
             Timber.e(
                 e,
                 """
-                ❌ ERROR (${duration}ms)
-                ${request.method} ${request.url}
-                """.trimIndent(),
+                    ❌ ERROR (${duration}ms)
+                    ${request.method} ${request.url}
+                    """.trimIndent(),
             )
 
             throw e
