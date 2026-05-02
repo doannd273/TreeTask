@@ -3,8 +3,6 @@ name: TreeTask CI/CD
 # Chạy CI khi có người push code lên main/develop
 # Hoặc khi có ai đó tạo Pull Request đòi merge vào main/develop
 on:
-  push:
-    branches: [ "main", "develop" ]
   pull_request:
     branches: [ "main", "develop" ]
 
