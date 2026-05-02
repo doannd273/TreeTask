@@ -5,48 +5,51 @@ import okhttp3.Interceptor
 import okhttp3.Response
 import timber.log.Timber
 import java.io.IOException
+import javax.inject.Inject
 
-class NetworkDebugInterceptor : Interceptor {
-    override fun intercept(chain: Interceptor.Chain): Response {
-        val request = chain.request()
+class NetworkDebugInterceptor
+    @Inject
+    constructor() : Interceptor {
+        override fun intercept(chain: Interceptor.Chain): Response {
+            val request = chain.request()
 
-        val startTime = System.currentTimeMillis()
+            val startTime = System.currentTimeMillis()
 
-        // Log request
-        Timber.d(
-            """
-            ➡️ REQUEST
-            ${request.method} ${request.url}
-            Headers: ${request.headers.redact()}
-            """.trimIndent(),
-        )
-
-        return try {
-            val response = chain.proceed(request)
-
-            val duration = System.currentTimeMillis() - startTime
-
-            // 👉 Log response
+            // Log request
             Timber.d(
                 """
-                ⬅️ RESPONSE (${duration}ms)
-                ${response.code} ${response.request.url}
-                """.trimIndent(),
-            )
-
-            response
-        } catch (e: IOException) {
-            val duration = System.currentTimeMillis() - startTime
-
-            Timber.e(
-                e,
-                """
-                ❌ ERROR (${duration}ms)
+                ➡️ REQUEST
                 ${request.method} ${request.url}
+                Headers: ${request.headers.redact()}
                 """.trimIndent(),
             )
 
-            throw e
+            return try {
+                val response = chain.proceed(request)
+
+                val duration = System.currentTimeMillis() - startTime
+
+                // 👉 Log response
+                Timber.d(
+                    """
+                    ⬅️ RESPONSE (${duration}ms)
+                    ${response.code} ${response.request.url}
+                    """.trimIndent(),
+                )
+
+                response
+            } catch (e: IOException) {
+                val duration = System.currentTimeMillis() - startTime
+
+                Timber.e(
+                    e,
+                    """
+                    ❌ ERROR (${duration}ms)
+                    ${request.method} ${request.url}
+                    """.trimIndent(),
+                )
+
+                throw e
+            }
         }
     }
-}

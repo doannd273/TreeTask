@@ -12,6 +12,13 @@ on:
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
+# 👇 THÊM ĐOẠN NÀY ĐỂ HUỶ CI CŨ KHI CÓ COMMIT MỚI
+concurrency:
+  # Gom nhóm các tiến trình dựa trên "Tên workflow" + "Tên branch hiện tại"
+  group: ${{ github.workflow }}-${{ github.ref }}
+  # Bật cờ huỷ tiến trình đang chạy dở
+  cancel-in-progress: true
+
 jobs:
   build-and-check:
     name: Build & Code Quality Check
