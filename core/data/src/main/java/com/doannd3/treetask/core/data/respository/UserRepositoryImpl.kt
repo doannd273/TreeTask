@@ -11,7 +11,7 @@ import javax.inject.Inject
 
 class UserRepositoryImpl @Inject constructor(
     private val userService: UserService,
-    private val userPrefsManager: UserPrefsManager
+    private val userPrefsManager: UserPrefsManager,
 ) : UserRepository {
 
     override suspend fun getProfile(): ApiResult<User> {
@@ -32,5 +32,4 @@ class UserRepositoryImpl @Inject constructor(
     override fun getCachedProfile(): Flow<User?> {
         return userPrefsManager.getUserProfile()
     }
-
 }

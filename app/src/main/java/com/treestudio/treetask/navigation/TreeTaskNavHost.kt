@@ -26,9 +26,8 @@ fun TreeTaskNavHost(
     NavHost(
         modifier = modifier,
         navController = navController,
-        startDestination = startDestination
+        startDestination = startDestination,
     ) {
-
         authGraph(
             onNavigateToHome = {
                 navController.navigateToTasksGraph()
@@ -47,7 +46,7 @@ fun TreeTaskNavHost(
             },
             onForgotPasswordBack = {
                 navController.popBackStack()
-            }
+            },
         )
 
         tasksGraph(
@@ -56,7 +55,7 @@ fun TreeTaskNavHost(
             },
             onAddTaskClick = {
                 navController.navigateToAddTask()
-            }
+            },
         )
 
         chatGraph()

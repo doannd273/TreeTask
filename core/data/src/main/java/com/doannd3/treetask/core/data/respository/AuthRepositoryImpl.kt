@@ -23,33 +23,33 @@ class AuthRepositoryImpl @Inject constructor(
 
     override suspend fun login(
         email: String,
-        password: String
+        password: String,
     ): ApiResult<Unit> {
         val result = authApi.login(LoginRequest(email = email, password = password))
         return when (result) {
             is ApiResult.Success -> {
                 tokenManager.saveToken(
                     accessToken = result.data.accessToken,
-                    refreshToken = result.data.refreshToken
+                    refreshToken = result.data.refreshToken,
                 )
                 ApiResult.Success(Unit)
             }
 
-            is ApiResult.Error -> result   // propagate thẳng
+            is ApiResult.Error -> result // propagate thẳng
         }
     }
 
     override suspend fun register(
         fullName: String,
         email: String,
-        password: String
+        password: String,
     ): ApiResult<Unit> {
         val result = authApi.register(
             RegisterRequest(
                 fullName = fullName,
                 email = email,
-                password = password
-            )
+                password = password,
+            ),
         )
         return when (result) {
             is ApiResult.Success -> {
@@ -57,7 +57,7 @@ class AuthRepositoryImpl @Inject constructor(
                 ApiResult.Success(Unit)
             }
 
-            is ApiResult.Error -> result   // propagate thẳng
+            is ApiResult.Error -> result // propagate thẳng
         }
     }
 
@@ -68,7 +68,7 @@ class AuthRepositoryImpl @Inject constructor(
                 ApiResult.Success(Unit)
             }
 
-            is ApiResult.Error -> result   // propagate thẳng
+            is ApiResult.Error -> result // propagate thẳng
         }
     }
 

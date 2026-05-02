@@ -10,5 +10,5 @@ data class Conversation(
     val creatorId: String,
     val participants: List<User>,
     val lastMessage: Message?,
-    val lastMessageAt: Instant?
+    val lastMessageAt: Instant?,
 )

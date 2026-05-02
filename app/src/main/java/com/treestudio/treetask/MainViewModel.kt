@@ -18,7 +18,7 @@ import javax.inject.Inject
 @HiltViewModel
 class MainViewModel @Inject constructor(
     private val tokenManager: TokenManager,
-    private val userRepository: UserRepository
+    private val userRepository: UserRepository,
 ) : ViewModel() {
 
     var isLoading by mutableStateOf(true)
@@ -45,8 +45,11 @@ class MainViewModel @Inject constructor(
 
                 is ApiResult.Error -> {
                     val cached = userRepository.getCachedProfile().first()
-                    startDestination = if (cached != null) TasksGraphDestination
-                    else AuthGraphDestination
+                    startDestination = if (cached != null) {
+                        TasksGraphDestination
+                    } else {
+                        AuthGraphDestination
+                    }
                     isLoading = false
                 }
             }

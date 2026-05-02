@@ -10,3 +10,7 @@ style:
     active: false # Tránh chửi khi viết Compose bị thụt lùi quá sâu
   ReturnCount:
     max: 6 # Cho phép 6 return trong 1 method
+
+performance:
+  SpreadOperator:
+    active: false # Cho phép dùng *args trong hàm getString() của Android

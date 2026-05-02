@@ -11,10 +11,11 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class UserPrefsManager @Inject constructor(
-    @ApplicationContext private val context: Context
+class UserPrefsManager
+@Inject
+constructor(
+    @ApplicationContext private val context: Context,
 ) {
-
     suspend fun saveUserProfile(user: User) {
         context.userDataStore.edit { prefs ->
             prefs[KEY_USER_ID] = user.id
@@ -45,7 +46,7 @@ class UserPrefsManager @Inject constructor(
                 fullName = prefs[KEY_FULL_NAME] ?: "",
                 email = email,
                 avatar = prefs[KEY_AVATAR],
-                phone = prefs[KEY_PHONE]
+                phone = prefs[KEY_PHONE],
             )
         }
 

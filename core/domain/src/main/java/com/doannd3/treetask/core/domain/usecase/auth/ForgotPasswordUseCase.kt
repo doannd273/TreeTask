@@ -7,14 +7,14 @@ import com.doannd3.treetask.core.domain.repository.AuthRepository
 import javax.inject.Inject
 
 class ForgotPasswordUseCase @Inject constructor(
-    private val authRepository: AuthRepository
+    private val authRepository: AuthRepository,
 ) {
     suspend operator fun invoke(email: String): ApiResult<Unit> {
         val mailTrimmed = email.trim()
         if (mailTrimmed.isBlank()) {
             return ApiResult.Error(
                 message = UiText.StringResource(R.string.common_error_email_empty),
-                exception = null
+                exception = null,
             )
         }
 
