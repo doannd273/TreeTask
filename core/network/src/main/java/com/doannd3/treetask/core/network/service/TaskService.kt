@@ -13,28 +13,27 @@ import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface TaskService {
-
     @GET("/api/tasks/getTasks")
     suspend fun getTasks(
         @Query("page") page: Int,
         @Query("limit") limit: Int,
         @Query("status") status: String,
-        @Query("keyword") keyword: String
+        @Query("keyword") keyword: String,
     ): ApiResult<TaskListResponse>
 
     @DELETE("/api/tasks/deleteTask/{taskId}")
     suspend fun deleteTask(
-        @Path("taskId") taskId: String
+        @Path("taskId") taskId: String,
     ): ApiResult<Unit>
 
     @POST("/api/tasks/createTask")
     suspend fun createTask(
-        @Body request: TaskRequest
+        @Body request: TaskRequest,
     ): ApiResult<TaskResponse>
 
     @PUT("/api/tasks/updateTask/{taskId}")
     suspend fun updateTask(
         @Path("taskId") taskId: String,
-        @Body request: TaskRequest
+        @Body request: TaskRequest,
     ): ApiResult<TaskResponse>
 }

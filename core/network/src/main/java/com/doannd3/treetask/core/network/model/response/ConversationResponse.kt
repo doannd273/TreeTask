@@ -14,12 +14,12 @@ data class ConversationResponse(
     @SerialName("lastMessageAt") val lastMessageAt: String? = null,
     @SerialName("createdAt") val createdAt: String? = null,
     @SerialName("updatedAt") val updatedAt: String? = null,
-    @SerialName("__v") val version: Int? = null
+    @SerialName("__v") val version: Int? = null,
 )
 
 @Serializable
 data class LastMessage(
-    @SerialName("type") val type: String? = null
+    @SerialName("type") val type: String? = null,
 )
 
 @Serializable
@@ -27,7 +27,7 @@ data class ParticipantUser(
     @SerialName("_id") val id: String? = null,
     @SerialName("email") val email: String? = null,
     @SerialName("avatar") val avatar: String? = null,
-    @SerialName("phone") val phone: String? = null
+    @SerialName("phone") val phone: String? = null,
 )
 
 @Serializable
@@ -35,7 +35,7 @@ data class ConversationsListResponse(
     @SerialName("conversations") val conversations: List<ConversationResponse> = emptyList(),
     @SerialName("totalItems") val totalItems: Int? = null,
     @SerialName("totalPages") val totalPages: Int? = null,
-    @SerialName("currentPage") val currentPage: Int? = null
+    @SerialName("currentPage") val currentPage: Int? = null,
 )
 
 @Serializable
@@ -47,5 +47,5 @@ data class MessageResponse(
     @SerialName("type") val type: String? = null,
     @SerialName("createdAt") val createdAt: String? = null,
     @SerialName("updatedAt") val updatedAt: String? = null,
-    @SerialName("__v") val version: Int? = null
+    @SerialName("__v") val version: Int? = null,
 )

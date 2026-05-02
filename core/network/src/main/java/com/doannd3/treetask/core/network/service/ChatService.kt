@@ -14,26 +14,25 @@ import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface ChatService {
-
     @POST("/api/conversations/createConversation")
     suspend fun createConversation(
-        @Body request: CreateConversationRequest
+        @Body request: CreateConversationRequest,
     ): ApiResult<ConversationResponse>
 
     @GET("/api/conversations/getConversations")
     suspend fun getConversations(
         @Query("page") page: Int,
-        @Query("limit") limit: Int
+        @Query("limit") limit: Int,
     ): ApiResult<ConversationsListResponse>
 
     @POST("/api/messages/sendMessage")
     suspend fun sendMessage(
-        @Body request: SendMessageRequest
+        @Body request: SendMessageRequest,
     ): ApiResult<MessageResponse>
 
     @PUT("/api/conversations/updateConversation/{conversationId}")
     suspend fun updateConversation(
         @Path("conversationId") conversationId: String,
-        @Body request: CreateConversationRequest
+        @Body request: CreateConversationRequest,
     ): ApiResult<ConversationsListResponse>
 }

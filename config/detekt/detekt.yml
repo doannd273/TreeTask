@@ -1,0 +1,12 @@
+build:
+  maxIssues: 0
+naming:
+  FunctionNaming:
+    ignoreAnnotated: [ 'Composable' ] # Cực kỳ quan trọng: Bỏ qua hàm Compose viết hoa
+style:
+  MagicNumber:
+    active: false # Cho phép hardcode số tạm thời
+  MaxLineLength:
+    active: false # Tránh chửi khi viết Compose bị thụt lùi quá sâu
+  ReturnCount:
+    max: 6 # Cho phép 6 return trong 1 method

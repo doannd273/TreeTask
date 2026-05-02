@@ -12,13 +12,13 @@ data class UserResponse(
     @SerialName("phone") val phone: String? = null,
     @SerialName("createdAt") val createdAt: String? = null,
     @SerialName("updatedAt") val updatedAt: String? = null,
-    @SerialName("__v") val version: Int? = null
+    @SerialName("__v") val version: Int? = null,
 )
 
 @Serializable
 data class AvatarUploadResponse(
     @SerialName("avatar") val avatar: String? = null,
-    @SerialName("message") val message: String? = null
+    @SerialName("message") val message: String? = null,
 )
 
 @Serializable
@@ -26,5 +26,5 @@ data class UsersListResponse(
     @SerialName("users") val users: List<UserResponse> = emptyList(),
     @SerialName("totalItems") val totalItems: Int? = null,
     @SerialName("totalPages") val totalPages: Int? = null,
-    @SerialName("currentPage") val currentPage: Int? = null
+    @SerialName("currentPage") val currentPage: Int? = null,
 )

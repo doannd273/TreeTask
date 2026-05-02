@@ -45,6 +45,7 @@ firebaseBom = "33.5.0"
 # Lint & Code Quality
 detekt = "1.23.6"
 ktlintConfig = "12.1.1"
+spotless = "6.25.0"
 
 # Testing
 junit = "4.13.2"
@@ -55,6 +56,8 @@ espressoCore = "3.7.0"
 desugar = "2.0.4"
 androidx-startup = "1.1.1"
 coreSplashscreen = "1.0.1"
+appcompat = "1.7.1"
+material = "1.13.0"
 
 [libraries]
 # Androidx & Lifecycle
@@ -122,6 +125,12 @@ androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "j
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
 androidx-compose-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest" }
 androidx-compose-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
+androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
+material = { group = "com.google.android.material", name = "material", version.ref = "material" }
+
+# Lint
+detekt-gradle = { module = "io.gitlab.arturbosch.detekt:detekt-gradle-plugin", version.ref = "detekt" }
+spotless-gradle = { module = "com.diffplug.spotless:spotless-plugin-gradle", version.ref = "spotless" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
@@ -136,3 +145,8 @@ firebase-crashlytics = { id = "com.google.firebase.crashlytics", version.ref = "
 firebase-perf = { id = "com.google.firebase.firebase-perf", version.ref = "firebasePerfPlugin" }
 detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
 ktlint = { id = "org.jlleitschuh.gradle.ktlint", version.ref = "ktlintConfig" }
+spotless = { id = "com.diffplug.spotless", version.ref = "spotless" }
+
+# Plugin tự định nghĩa
+treetask-android-detekt = { id = "treetask.android.detekt" }
+treetask-android-spotless = { id = "treetask.android.spotless" }

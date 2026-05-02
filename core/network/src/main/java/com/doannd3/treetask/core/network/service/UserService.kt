@@ -15,25 +15,24 @@ import retrofit2.http.Part
 import retrofit2.http.Query
 
 interface UserService {
-
     @GET("/api/user/getProfile")
     suspend fun getProfile(): ApiResult<UserResponse>
 
     @PUT("/api/user/updateProfile")
     suspend fun updateProfile(
-        @Body request: UserRequest
+        @Body request: UserRequest,
     ): ApiResult<UserResponse>
 
     @Multipart
     @POST("/api/user/uploadAvatar")
     suspend fun uploadFile(
-        @Part avatar: MultipartBody.Part
+        @Part avatar: MultipartBody.Part,
     ): ApiResult<AvatarUploadResponse>
 
     @GET("/api/user/searchUsers")
     suspend fun searchUsers(
         @Query("keyword") keyword: String,
         @Query("page") page: Int,
-        @Query("limit") limit: Int
+        @Query("limit") limit: Int,
     ): ApiResult<UsersListResponse>
 }

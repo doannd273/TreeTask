@@ -11,24 +11,23 @@ import retrofit2.http.Body
 import retrofit2.http.POST
 
 interface AuthService {
-
     @POST("/api/auth/refresh-token")
     suspend fun refreshToken(
-        @Body request: RefreshTokenRequest
+        @Body request: RefreshTokenRequest,
     ): ApiResult<TokenResponse>
 
     @POST("/api/auth/login")
     suspend fun login(
-        @Body request: LoginRequest
+        @Body request: LoginRequest,
     ): ApiResult<TokenResponse>
 
     @POST("/api/auth/register")
     suspend fun register(
-        @Body request: RegisterRequest
+        @Body request: RegisterRequest,
     ): ApiResult<RegisterResponse>
 
     @POST("/api/auth/forgot-password")
     suspend fun forgotPassword(
-        @Body request: ForgotPasswordRequest
+        @Body request: ForgotPasswordRequest,
     ): ApiResult<Unit>
 }

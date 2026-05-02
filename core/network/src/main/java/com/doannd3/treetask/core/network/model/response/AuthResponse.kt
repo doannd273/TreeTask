@@ -13,5 +13,5 @@ data class TokenResponse(
 data class RegisterResponse(
     @SerialName("userId") val userId: String,
     @SerialName("accessToken") val accessToken: String,
-    @SerialName("refreshToken") val refreshToken: String
+    @SerialName("refreshToken") val refreshToken: String,
 )

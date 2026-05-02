@@ -7,19 +7,26 @@ import com.doannd3.treetask.core.network.service.AuthService
 import dagger.Lazy
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
+import kotlinx.serialization.SerializationException
 import okhttp3.Authenticator
 import okhttp3.Request
 import okhttp3.Response
 import okhttp3.Route
+import retrofit2.HttpException
 import timber.log.Timber
+import java.io.IOException
 import javax.inject.Inject
 
-class AuthAuthenticator @Inject constructor(
+class AuthAuthenticator
+@Inject
+constructor(
     private val tokenManager: TokenManager,
-    private val authApi: Lazy<AuthService>
+    private val authApi: Lazy<AuthService>,
 ) : Authenticator {
-
-    override fun authenticate(route: Route?, response: Response): Request? {
+    override fun authenticate(
+        route: Route?,
+        response: Response,
+    ): Request? {
         if (responseCount(response) >= 2) {
             return null
         }
@@ -34,22 +41,25 @@ class AuthAuthenticator @Inject constructor(
             }
 
             try {
-                val refreshToken = runBlocking {
-                    tokenManager.getRefreshToken().first()
-                } ?: return null
+                val refreshToken =
+                    runBlocking {
+                        tokenManager.getRefreshToken().first()
+                    } ?: return null
 
-                val refreshResult = runBlocking {
-                    authApi.get().refreshToken(RefreshTokenRequest(refreshToken = refreshToken))
-                }
-
-                val tokenData = when (refreshResult) {
-                    is ApiResult.Success -> refreshResult.data
-                    is ApiResult.Error -> {
-                        runBlocking { tokenManager.clearToken() }
-                        Timber.w("Refresh Token hết hạn hoặc lỗi: ${refreshResult.exception?.message}")
-                        return null
+                val refreshResult =
+                    runBlocking {
+                        authApi.get().refreshToken(RefreshTokenRequest(refreshToken = refreshToken))
                     }
-                }
+
+                val tokenData =
+                    when (refreshResult) {
+                        is ApiResult.Success -> refreshResult.data
+                        is ApiResult.Error -> {
+                            runBlocking { tokenManager.clearToken() }
+                            Timber.w("Refresh Token hết hạn hoặc lỗi: ${refreshResult.exception?.message}")
+                            return null
+                        }
+                    }
                 val newAccessToken = tokenData.accessToken
                 val newRefreshToken = tokenData.refreshToken
 
@@ -61,15 +71,23 @@ class AuthAuthenticator @Inject constructor(
                 return response.request.newBuilder()
                     .header("Authorization", "Bearer $newAccessToken")
                     .build()
-            } catch (e: Exception) {
-                // log lỗi
-                Timber.e(e, "Lỗi kinh hoàng khi Refresh Token rớt mạng hoặc Server chết")
+            } catch (e: IOException) {
+                // lỗi network
+                Timber.e(e, "Network error khi refresh token")
+
+            } catch (e: SerializationException) {
+                // lỗi parse JSON
+                Timber.e(e, "Parse error khi refresh token")
+
+            } catch (e: HttpException) {
+                // nếu bạn dùng Retrofit + coroutines adapter
+                Timber.e(e, "HTTP error khi refresh token")
+            }
 
                 runBlocking { tokenManager.clearToken() }
                 return null
             }
         }
-    }
 
     private fun responseCount(response: Response): Int {
         var result = 1

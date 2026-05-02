@@ -10,9 +10,7 @@ import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import java.util.concurrent.TimeUnit
 
-fun OkHttpClient.Builder.addDebugInterceptors(
-    context: Context
-): OkHttpClient.Builder {
+fun OkHttpClient.Builder.addDebugInterceptors(context: Context): OkHttpClient.Builder {
     if (BuildConfig.DEBUG) {
         addInterceptor(ChuckerInterceptor(context))
     }
@@ -20,10 +18,15 @@ fun OkHttpClient.Builder.addDebugInterceptors(
 }
 
 fun OkHttpClient.Builder.addLoggingInterceptors(): OkHttpClient.Builder {
-    val loggingInterceptor = HttpLoggingInterceptor().apply {
-        level = if (BuildConfig.DEBUG) HttpLoggingInterceptor.Level.BODY
-        else HttpLoggingInterceptor.Level.NONE
-    }
+    val loggingInterceptor =
+        HttpLoggingInterceptor().apply {
+            level =
+                if (BuildConfig.DEBUG) {
+                    HttpLoggingInterceptor.Level.BODY
+                } else {
+                    HttpLoggingInterceptor.Level.NONE
+                }
+        }
     return addInterceptor(loggingInterceptor)
 }
 
@@ -32,6 +35,3 @@ fun OkHttpClient.Builder.addTimeout(): OkHttpClient.Builder {
         .readTimeout(READ_TIMEOUT, TimeUnit.SECONDS)
         .writeTimeout(WRITE_TIMEOUT, TimeUnit.SECONDS)
 }
-
-
-

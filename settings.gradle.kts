@@ -1,4 +1,5 @@
 pluginManagement {
+    includeBuild("build-logic")
     repositories {
         google {
             content {
@@ -36,4 +37,4 @@ include(":feature:auth")
 include(":feature:tasks")
 include(":feature:stats")
 include(":feature:chat")
-include(":feature:profile") 
+include(":feature:profile")

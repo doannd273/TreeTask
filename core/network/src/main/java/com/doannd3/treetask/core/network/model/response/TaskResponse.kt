@@ -8,7 +8,7 @@ data class TaskListResponse(
     @SerialName("tasks") val tasks: List<TaskResponse>? = emptyList(),
     @SerialName("totalItems") val totalItems: Int = 0,
     @SerialName("totalPages") val totalPages: Int = 0,
-    @SerialName("currentPage") val currentPage: Int = 0
+    @SerialName("currentPage") val currentPage: Int = 0,
 )
 
 @Serializable

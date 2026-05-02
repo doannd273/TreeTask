@@ -7,12 +7,12 @@ import kotlinx.serialization.Serializable
 data class CreateConversationRequest(
     @SerialName("type") val type: String,
     @SerialName("name") val name: String,
-    @SerialName("participantIds") val participantIds: List<String> = emptyList()
+    @SerialName("participantIds") val participantIds: List<String> = emptyList(),
 )
 
 @Serializable
 data class SendMessageRequest(
     @SerialName("conversationId") val conversationId: String,
     @SerialName("content") val content: String,
-    @SerialName("type") val type: String
+    @SerialName("type") val type: String,
 )
