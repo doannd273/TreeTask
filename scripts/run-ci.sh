@@ -1,21 +1,23 @@
 #!/bin/bash
-
 cd "$(dirname "$0")/.."
 
 set -e  # nếu lỗi thì dừng ngay
 
 echo "=============================="
-echo "🚀 Running Gradle Check"
+echo "Running Spotless Check"
 echo "=============================="
-
-./gradlew check
-
+./gradlew spotlessCheck --no-daemon
 echo ""
 echo "=============================="
-echo "🔨 Running Assemble Debug"
+
+echo "Running Detekt"
+echo "=============================="
+./gradlew detekt --no-daemon
+echo ""
 echo "=============================="
 
-./gradlew assembleDebug
-
+echo "Running Assemble Debug"
+echo "=============================="
+./gradlew assembleDebug --no-daemon
 echo ""
-echo "🎉 DONE: check + build successful!"
+echo "DONE: Code quality and build successful! Ready to push."

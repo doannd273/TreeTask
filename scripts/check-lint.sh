@@ -5,9 +5,9 @@ cd "$(dirname "$0")/.."
 set -e  # fail là dừng ngay
 
 echo "===> Running Spotless..."
-./gradlew spotlessCheck
+./gradlew spotlessCheck --no-daemon
 
 echo "===> Running Detekt..."
-./gradlew detekt
+./gradlew detekt --no-daemon
 
 echo "===> All checks passed!"
