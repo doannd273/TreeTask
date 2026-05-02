@@ -2,12 +2,14 @@ package com.doannd3.treetask.core.network.di
 
 import android.content.Context
 import com.doannd3.treetask.core.network.BuildConfig
-import com.doannd3.treetask.core.network.extensions.addDebugInterceptors
+import com.doannd3.treetask.core.network.extensions.addChuckerInterceptors
 import com.doannd3.treetask.core.network.extensions.addLoggingInterceptors
+import com.doannd3.treetask.core.network.extensions.addNetworkDebugInterceptors
 import com.doannd3.treetask.core.network.extensions.addTimeout
 import com.doannd3.treetask.core.network.interceptor.AuthAuthenticator
 import com.doannd3.treetask.core.network.interceptor.AuthInterceptor
 import com.doannd3.treetask.core.network.interceptor.CommonHeaderInterceptor
+import com.doannd3.treetask.core.network.interceptor.NetworkDebugInterceptor
 import com.doannd3.treetask.core.network.util.ApiResultCallAdapterFactory
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import dagger.Module
@@ -53,12 +55,14 @@ class NetworkModule {
     fun provideAuthOkHttpClient(
         @ApplicationContext context: Context,
         commonHeaderInterceptor: CommonHeaderInterceptor,
+        networkDebugInterceptor: NetworkDebugInterceptor,
     ): OkHttpClient {
         return OkHttpClient.Builder()
             .addTimeout()
             .retryOnConnectionFailure(true)
             .addInterceptor(commonHeaderInterceptor)
-            .addDebugInterceptors(context = context)
+            .addNetworkDebugInterceptors(networkDebugInterceptor)
+            .addChuckerInterceptors(context = context)
             .addLoggingInterceptors().build()
     }
 
@@ -68,6 +72,7 @@ class NetworkModule {
     fun provideAuthenticatedOkHttpClient(
         @ApplicationContext context: Context,
         commonHeaderInterceptor: CommonHeaderInterceptor,
+        networkDebugInterceptor: NetworkDebugInterceptor,
         authInterceptor: AuthInterceptor,
         authAuthenticator: AuthAuthenticator,
     ): OkHttpClient {
@@ -77,7 +82,8 @@ class NetworkModule {
             .addInterceptor(commonHeaderInterceptor)
             .addInterceptor(authInterceptor)
             .authenticator(authAuthenticator)
-            .addDebugInterceptors(context = context)
+            .addNetworkDebugInterceptors(networkDebugInterceptor)
+            .addChuckerInterceptors(context = context)
             .addLoggingInterceptors()
             .build()
     }
