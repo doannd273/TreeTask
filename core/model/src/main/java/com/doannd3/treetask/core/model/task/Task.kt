@@ -10,5 +10,5 @@ data class Task(
     val status: TaskStatus,
     val dueDate: Instant,
     val createdAt: Instant,
-    val updatedAt: Instant
+    val updatedAt: Instant,
 )

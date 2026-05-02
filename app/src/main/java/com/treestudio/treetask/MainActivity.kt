@@ -28,7 +28,7 @@ class MainActivity : ComponentActivity() {
             TreeTaskTheme {
                 viewModel.startDestination?.let {
                     TreeTaskApp(
-                        startDestination = it
+                        startDestination = it,
                     )
                 }
             }

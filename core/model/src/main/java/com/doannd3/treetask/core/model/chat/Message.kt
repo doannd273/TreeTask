@@ -8,5 +8,5 @@ data class Message(
     val conversationId: String,
     val sender: User,
     val content: String,
-    val createdAt: Instant
+    val createdAt: Instant,
 )

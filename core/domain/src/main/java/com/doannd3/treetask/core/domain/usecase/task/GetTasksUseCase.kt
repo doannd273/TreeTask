@@ -8,9 +8,9 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
 
-class GetTaskUseCase @Inject constructor(
+class GetTasksUseCase @Inject constructor(
     private val tasksRepository: TaskRepository,
-    private val userPrefManager: UserPrefsManager
+    private val userPrefManager: UserPrefsManager,
 ) {
     operator fun invoke(): Flow<List<Task>> {
         val userId = runBlocking {

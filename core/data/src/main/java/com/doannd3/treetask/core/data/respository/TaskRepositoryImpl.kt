@@ -13,8 +13,8 @@ import javax.inject.Inject
 
 class TaskRepositoryImpl @Inject constructor(
     private val taskService: TaskService,
-    private val taskDao: TaskDao
-): TaskRepository {
+    private val taskDao: TaskDao,
+) : TaskRepository {
     override fun getTasksStream(userId: String): Flow<List<Task>> =
         taskDao.getTasks(userId = userId).map { taskEntities ->
             taskEntities.map { it.toTaskDomain() }
@@ -22,7 +22,7 @@ class TaskRepositoryImpl @Inject constructor(
 
     override suspend fun syncTasks(userId: String): ApiResult<Unit> {
         val result = taskService.getTasks(page = 1, limit = LIMIT, keyword = "", status = "")
-        return when(result) {
+        return when (result) {
             is ApiResult.Success -> {
                 val tasks = result.data.tasks?.map { it.toTaskDomain() } ?: emptyList()
                 val entities = tasks.map { it.toTaskEntity(userId) }

@@ -17,24 +17,24 @@ import androidx.compose.ui.window.DialogProperties
 @Composable
 fun AppLoadingDialog(
     isLoading: Boolean,
-    modifier: Modifier = Modifier // component dùng chung bao giờ cũng phải có param modifier
+    modifier: Modifier = Modifier,
 ) {
-    if (!isLoading) return // Nếu không loading thì ẩn
+    if (!isLoading) return
     Dialog(
-        onDismissRequest = { /* Không làm gì cả để chặn user tắt loading giữa chừng */ },
+        onDismissRequest = { },
         properties = DialogProperties(
-            dismissOnBackPress = false, // Khoá nút Back
-            dismissOnClickOutside = false // Khoá bấm ra ngoài
-        )
+            dismissOnBackPress = false,
+            dismissOnClickOutside = false,
+        ),
     ) {
         Box(
             modifier = modifier
                 .size(100.dp)
                 .background(
                     color = MaterialTheme.colorScheme.surface,
-                    shape = RoundedCornerShape(16.dp)
+                    shape = RoundedCornerShape(16.dp),
                 ),
-            contentAlignment = Alignment.Center
+            contentAlignment = Alignment.Center,
         ) {
             CircularProgressIndicator()
         }

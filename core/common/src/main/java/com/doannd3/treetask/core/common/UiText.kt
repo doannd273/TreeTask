@@ -7,24 +7,25 @@ sealed interface UiText {
 
     // backend, runtime
     data class DynamicString(
-        val value: String
+        val value: String,
     ) : UiText
 
     // text từ strings.xml
     class StringResource(
         @StringRes val resId: Int,
-        vararg val args: Any
+        vararg val args: Any,
     ) : UiText
-
 }
 
 fun UiText.asString(context: Context): String {
     return when (this) {
+        is UiText.DynamicString -> value
 
-        is UiText.DynamicString ->
-            value
-
-        is UiText.StringResource ->
-            context.getString(resId, *args)
+        is UiText.StringResource -> {
+            return when {
+                args.isEmpty() -> context.getString(resId)
+                else -> context.getString(resId, *args)
+            }
+        }
     }
 }

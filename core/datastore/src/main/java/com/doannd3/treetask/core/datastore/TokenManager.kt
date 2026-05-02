@@ -12,11 +12,13 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class TokenManager @Inject constructor(
-    @ApplicationContext private val context: Context
+class TokenManager
+@Inject
+constructor(
+    @ApplicationContext private val context: Context,
 ) {
     // Luồng báo hiệu Token đã chết, UI phải đá văng User ra ngoài màn hình Login
-    private val  _sessionExpiredEvent = MutableSharedFlow<Unit>()
+    private val _sessionExpiredEvent = MutableSharedFlow<Unit>()
     val sessionExpiredEvent = _sessionExpiredEvent.asSharedFlow()
 
     fun getAccessToken(): Flow<String?> =
@@ -29,7 +31,10 @@ class TokenManager @Inject constructor(
             prefs[KEY_REFRESH_TOKEN]
         }
 
-    suspend fun saveToken(accessToken: String, refreshToken: String) {
+    suspend fun saveToken(
+        accessToken: String,
+        refreshToken: String,
+    ) {
         context.authDataStore.edit { prefs ->
             prefs[KEY_ACCESS_TOKEN] = accessToken
             prefs[KEY_REFRESH_TOKEN] = refreshToken
