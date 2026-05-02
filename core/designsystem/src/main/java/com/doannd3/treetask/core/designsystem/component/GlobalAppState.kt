@@ -33,7 +33,7 @@ class GlobalAppState {
     }
 }
 
-// CHÚ Ý: Biến này phải NẰM NGOÀI class GlobalAppState 
+// CHÚ Ý: Biến này phải NẰM NGOÀI class GlobalAppState
 val LocalGlobalAppState = compositionLocalOf<GlobalAppState> {
     error("Vui lòng Provide GlobalAppState trước khi gọi LocalGlobalAppState.current")
 }

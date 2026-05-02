@@ -13,7 +13,7 @@ import com.doannd3.treetask.core.designsystem.R
 fun AppErrorDialog(
     errorMessage: String?,
     modifier: Modifier = Modifier,
-    onDismiss: () -> Unit
+    onDismiss: () -> Unit,
 ) {
     if (errorMessage == null) return
     AlertDialog(
@@ -29,7 +29,7 @@ fun AppErrorDialog(
             TextButton(onClick = onDismiss) {
                 Text(stringResource(R.string.designsystem_action_close))
             }
-        }
+        },
     )
 }
 

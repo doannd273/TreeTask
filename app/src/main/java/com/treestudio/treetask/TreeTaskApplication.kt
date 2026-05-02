@@ -6,7 +6,7 @@ import dagger.hilt.android.HiltAndroidApp
 import javax.inject.Inject
 
 @HiltAndroidApp
-class TreeTaskApplication: Application() {
+class TreeTaskApplication : Application() {
 
     @Inject
     lateinit var initializers: Set<@JvmSuppressWildcards AppInitializer>
@@ -18,5 +18,4 @@ class TreeTaskApplication: Application() {
             it.init(this)
         }
     }
-
 }

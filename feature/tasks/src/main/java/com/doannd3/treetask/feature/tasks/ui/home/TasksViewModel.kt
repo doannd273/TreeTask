@@ -7,7 +7,7 @@ import com.doannd3.treetask.core.common.BaseViewModel
 import com.doannd3.treetask.core.common.MviViewModel
 import com.doannd3.treetask.core.datastore.UserPrefsManager
 import com.doannd3.treetask.core.domain.repository.TaskRepository
-import com.doannd3.treetask.core.domain.usecase.task.GetTaskUseCase
+import com.doannd3.treetask.core.domain.usecase.task.GetTasksUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
@@ -24,7 +24,7 @@ import javax.inject.Inject
 @OptIn(FlowPreview::class)
 @HiltViewModel
 class TasksViewModel @Inject constructor(
-    private val getTasksUseCase: GetTaskUseCase,
+    private val getTasksUseCase: GetTasksUseCase,
     private val taskRepository: TaskRepository,
     private val userPrefManager: UserPrefsManager
 ) : BaseViewModel(), MviViewModel<TasksState, TasksEvent, TasksEffect> {

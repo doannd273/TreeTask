@@ -20,7 +20,7 @@ fun rememberTreeTaskAppState(
     return remember(navController, coroutineScope) {
         TreeTaskAppState(
             navController = navController,
-            coroutineScope = coroutineScope
+            coroutineScope = coroutineScope,
         )
     }
 }
@@ -28,7 +28,7 @@ fun rememberTreeTaskAppState(
 @Stable
 class TreeTaskAppState(
     val navController: NavHostController,
-    val coroutineScope: CoroutineScope
+    val coroutineScope: CoroutineScope,
 ) {
     // --- 2. TRẠNG THÁI HIỆN TẠI (LÝ TƯỞNG CHO BOTTOM NAVIGATION BAR) ---
     // Giúp App biết User đang ở màn nào để bật sáng cái Icon dưới Bottom Bar tương ứng
@@ -47,27 +47,25 @@ class TreeTaskAppState(
                     } else {
                         // So sánh thành công khi lặp tới trúng Lớp Cha (TasksGraphRoute)
                         navDest.route?.contains(
-                            topLevelDest.route::class.qualifiedName ?: ""
+                            topLevelDest.route::class.qualifiedName ?: "",
                         ) == true
                     }
-
                 }
             }
         } ?: false
-
 
     // --- 3. LOGIC CHUYỂN TRANG VĨ MÔ (BOTTOM TABS) ---
     // Các lệnh chuyển trang nhỏ lẻ (Ví dụ: Từ List qua Detail) thì để Feature Modules tự lo.
     // Lệnh chuyển trang khổng lồ (Ví dụ: Bấm tab Home qua Tab Setting) sẽ do AppState gánh.
     fun navigateToTopLevelDestination(route: Any) {
         navController.navigate(route) {
-            //1. PopUpTo đầu nguồn để ko bị xếp chồng màn hình khi lướt tab
+            // 1. PopUpTo đầu nguồn để ko bị xếp chồng màn hình khi lướt tab
             popUpTo(navController.graph.startDestinationId) {
                 saveState = true
             }
-            //2. Chônống mở đúp 1 màn 2 lần
+            // 2. Chônống mở đúp 1 màn 2 lần
             launchSingleTop = true
-            //3. Tự phục hồi lại lướt cuộn cũ nếu quay lại tab
+            // 3. Tự phục hồi lại lướt cuộn cũ nếu quay lại tab
             restoreState = true
         }
     }

@@ -11,7 +11,11 @@ class AndroidSpotlessConventionPlugin : Plugin<Project> {
                 kotlin {
                     target("**/*.kt")
                     targetExclude("**/build/**/*.kt")
-                    ktlint() // Dùng ktlint engine
+                    ktlint().editorConfigOverride(
+                        mapOf(
+                            "ktlint_function_naming_ignore_when_annotated_with" to "Composable"
+                        )
+                    )
                 }
                 kotlinGradle {
                     target("*.gradle.kts")
