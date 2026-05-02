@@ -92,8 +92,7 @@ class ApiResultCall<T>(
     // Delegate các method còn lại
     override fun clone(): Call<ApiResult<T>> = ApiResultCall(delegate.clone(), json)
 
-    override fun execute(): Response<ApiResult<T>> =
-        throw UnsupportedOperationException("Chỉ dùng với suspend")
+    override fun execute(): Response<ApiResult<T>> = throw UnsupportedOperationException("Chỉ dùng với suspend")
 
     override fun isExecuted(): Boolean = delegate.isExecuted
 
