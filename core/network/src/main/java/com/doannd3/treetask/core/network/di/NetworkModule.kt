@@ -1,11 +1,13 @@
 package com.doannd3.treetask.core.network.di
 
 import android.content.Context
-import com.chuckerteam.chucker.api.ChuckerInterceptor
 import com.doannd3.treetask.core.network.BuildConfig
+import com.doannd3.treetask.core.network.extensions.addDebugInterceptors
+import com.doannd3.treetask.core.network.extensions.addLoggingInterceptors
+import com.doannd3.treetask.core.network.extensions.addTimeout
 import com.doannd3.treetask.core.network.interceptor.AuthAuthenticator
 import com.doannd3.treetask.core.network.interceptor.AuthInterceptor
-import com.doannd3.treetask.core.network.interceptor.HeaderInterceptor
+import com.doannd3.treetask.core.network.interceptor.CommonHeaderInterceptor
 import com.doannd3.treetask.core.network.service.AuthService
 import com.doannd3.treetask.core.network.service.ChatService
 import com.doannd3.treetask.core.network.service.StatsService
@@ -21,10 +23,17 @@ import dagger.hilt.components.SingletonComponent
 import kotlinx.serialization.json.Json
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
-import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
-import java.util.concurrent.TimeUnit
+import javax.inject.Qualifier
 import javax.inject.Singleton
+
+@Qualifier
+@Retention(AnnotationRetention.BINARY)
+annotation class AuthNetwork
+
+@Qualifier
+@Retention(AnnotationRetention.BINARY)
+annotation class AuthenticatedNetwork
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -37,88 +46,108 @@ class NetworkModule {
             // Bỏ qua key lạ nếu backend trả về thừa field (giúp app không bị crash)
             ignoreUnknownKeys = true
             // Nếu backend trả về "null" cho field không nullable, ném exception (thường dùng false tùy logic)
-            // coerceInputValues = true
+            coerceInputValues = true
             // Format date, naming strategy (nếu cần)
             // encodeDefaults = true
         }
     }
 
+    // 1. Mạng DÀNH RIÊNG cho Auth (Không kẹp Token)
     @Provides
     @Singleton
-    fun provideOkhttpClient(
+    @AuthNetwork
+    fun provideAuthOkHttpClient(
         @ApplicationContext context: Context,
-        authInterceptor: AuthInterceptor,
-        authAuthenticator: AuthAuthenticator,
-        headerInterceptor: HeaderInterceptor
+        commonHeaderInterceptor: CommonHeaderInterceptor,
     ): OkHttpClient {
-        val loggingInterceptor = HttpLoggingInterceptor().apply {
-            level = if (BuildConfig.DEBUG) {
-                HttpLoggingInterceptor.Level.BODY
-            } else {
-                HttpLoggingInterceptor.Level.NONE
-            }
-        }
-
-        val okHttpClient = OkHttpClient.Builder()
-            .connectTimeout(NETWORK_TIMEOUT, TimeUnit.SECONDS)
-            .readTimeout(NETWORK_TIMEOUT, TimeUnit.SECONDS)
-            .writeTimeout(NETWORK_TIMEOUT, TimeUnit.SECONDS)
+        return OkHttpClient.Builder()
+            .addTimeout()
             .retryOnConnectionFailure(true)
-            .addInterceptor(headerInterceptor) // 1. thêm header
-            .addInterceptor(loggingInterceptor) // 2. log request
-            .addInterceptor(ChuckerInterceptor(context)) // 3. Log vào Chucker UI
-            .addInterceptor(authInterceptor) // 4. Thêm Token Auth
-            .authenticator(authAuthenticator).build()
-        return okHttpClient
+            .addInterceptor(commonHeaderInterceptor)
+            .addDebugInterceptors(context = context)
+            .addLoggingInterceptors().build()
     }
 
     @Provides
     @Singleton
-    fun provideRetrofit(
-        okHttpClient: OkHttpClient,
-        json: Json
-    ): Retrofit {
-        val contentType = "application/json".toMediaType()
-
-        return Retrofit.Builder()
-            .baseUrl(BuildConfig.BASE_URL)
-            .client(okHttpClient)
-            .addConverterFactory(json.asConverterFactory(contentType))
-            .addCallAdapterFactory(ApiResultCallAdapterFactory(json))
+    @AuthenticatedNetwork
+    fun provideAuthenticatedOkHttpClient(
+        @ApplicationContext context: Context,
+        commonHeaderInterceptor: CommonHeaderInterceptor,
+        authInterceptor: AuthInterceptor,
+        authAuthenticator: AuthAuthenticator
+    ): OkHttpClient {
+        return OkHttpClient.Builder()
+            .addTimeout()
+            .retryOnConnectionFailure(true)
+            .addInterceptor(commonHeaderInterceptor)
+            .addInterceptor(authInterceptor)
+            .authenticator(authAuthenticator)
+            .addDebugInterceptors(context = context)
+            .addLoggingInterceptors()
             .build()
     }
 
     @Provides
     @Singleton
-    fun provideAuthApi(retrofit: Retrofit): AuthService {
+    @AuthNetwork
+    fun provideAuthRetrofit(
+        @AuthNetwork authOkHttpClient: OkHttpClient,
+        json: Json
+    ): Retrofit {
+        return createRetrofit(okHttpClient = authOkHttpClient, json = json)
+    }
+
+    @Provides
+    @Singleton
+    @AuthenticatedNetwork
+    fun provideAuthenticatedRetrofit(
+        @AuthenticatedNetwork authenticatedOkHttpClient: OkHttpClient,
+        json: Json
+    ): Retrofit {
+        return createRetrofit(okHttpClient = authenticatedOkHttpClient, json = json)
+    }
+
+    private fun createRetrofit(
+        okHttpClient: OkHttpClient,
+        json: Json
+    ): Retrofit {
+        val contentType = "application/json".toMediaType()
+        return Retrofit.Builder()
+            .baseUrl(BuildConfig.BASE_URL)
+            .addConverterFactory(json.asConverterFactory(contentType))
+            .addCallAdapterFactory(ApiResultCallAdapterFactory(json))
+            .client(okHttpClient)
+            .build()
+    }
+
+    @Provides
+    @Singleton
+    fun provideAuthService(@AuthNetwork retrofit: Retrofit): AuthService {
         return retrofit.create(AuthService::class.java)
     }
 
     @Provides
     @Singleton
-    fun provideTaskService(retrofit: Retrofit): TaskService {
+    fun provideTaskService(@AuthenticatedNetwork retrofit: Retrofit): TaskService {
         return retrofit.create(TaskService::class.java)
     }
 
     @Provides
     @Singleton
-    fun provideUserService(retrofit: Retrofit): UserService {
+    fun provideUserService(@AuthenticatedNetwork retrofit: Retrofit): UserService {
         return retrofit.create(UserService::class.java)
     }
 
     @Provides
     @Singleton
-    fun provideStatsService(retrofit: Retrofit): StatsService {
+    fun provideStatsService(@AuthenticatedNetwork retrofit: Retrofit): StatsService {
         return retrofit.create(StatsService::class.java)
     }
 
     @Provides
     @Singleton
-    fun provideChatService(retrofit: Retrofit): ChatService {
+    fun provideChatService(@AuthenticatedNetwork retrofit: Retrofit): ChatService {
         return retrofit.create(ChatService::class.java)
-    }
-
-    companion object {
-        private const val NETWORK_TIMEOUT = 30L
     }
 }

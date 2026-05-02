@@ -10,7 +10,7 @@ import okhttp3.Response
 import java.util.Locale
 import javax.inject.Inject
 
-class HeaderInterceptor @Inject constructor(
+class CommonHeaderInterceptor @Inject constructor(
     @ApplicationContext private val context: Context,
     private val devicePrefsManager: DevicePrefsManager,
 ) : Interceptor {

@@ -21,15 +21,11 @@ fun TaskResponse.toTaskDomain(): Task {
     )
 }
 
-fun List<TaskResponse>.toTasksDomain(): List<Task> {
-    return this.map { it.toTaskDomain() }
-}
-
 fun Task.toTaskEntity(userId: String) = TaskEntity(
     id = this.id,
     userId = userId,
     title = this.title,
-    description = this.description ?: "",
+    description = this.description,
     status = this.status.name,
     dueDate = this.dueDate.toLong(),
     createdAt = this.createdAt.toLong(),
@@ -46,5 +42,3 @@ fun TaskEntity.toTaskDomain() = Task(
     createdAt = this.createdAt.toInstant(),
     updatedAt = this.updatedAt.toInstant()
 )
-
-fun List<TaskEntity>.toTasksDomain(): List<Task> = this.map { it.toTaskDomain() }

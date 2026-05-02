@@ -14,6 +14,7 @@ data class TasksState(
 )
 
 sealed class TasksEvent {
+    data object Refresh : TasksEvent()
     data class SearchChanged(val searchQuery: String) : TasksEvent()
     data object SearchQueryClear : TasksEvent()
     data class FilterSelected(val taskStatusSelected: TaskStatus?) : TasksEvent()
