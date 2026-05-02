@@ -16,16 +16,16 @@ import com.treestudio.treetask.navigation.TopLevelDestination
 
 @Composable
 fun TreeTaskBottomBar(
-    destinations: List<TopLevelDestination>, // Truyền trọn bộ Enum vào
-    currentDestination: NavDestination?,     // Báo cho UI biết đang đứng ở đâu để sáng đèn lên
-    onNavigateToDestination: (TopLevelDestination) -> Unit, // Callback khi quẹt tab
-    modifier: Modifier = Modifier
+    destinations: List<TopLevelDestination>,
+    currentDestination: NavDestination?,
+    onNavigateToDestination: (TopLevelDestination) -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     NavigationBar(
         modifier = modifier
             .navigationBarsPadding()
             .height(56.dp),
-        windowInsets = WindowInsets(0, 0, 0, 0)
+        windowInsets = WindowInsets(0, 0, 0, 0),
     ) {
         // Lôi từng Menu ra vẽ
         destinations.forEach { destination ->
@@ -46,7 +46,7 @@ fun TreeTaskBottomBar(
                 icon = {
                     Icon(
                         painter = painterResource(if (selected) destination.selectedIcon else destination.unselectedIcon),
-                        contentDescription = null
+                        contentDescription = null,
                     )
                 },
                 /*  label = { Text(stringResource(destination.titleTextId)) },

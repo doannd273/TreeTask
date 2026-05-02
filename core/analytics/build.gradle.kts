@@ -3,6 +3,9 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.hilt)
     alias(libs.plugins.ksp)
+    // lint
+    alias(libs.plugins.treetask.android.detekt)
+    alias(libs.plugins.treetask.android.spotless)
 }
 android {
     namespace = "com.doannd3.treetask.core.analytics"
@@ -17,8 +20,12 @@ android {
     }
 }
 dependencies {
-    //implementation(libs.firebase.analytics)
-    //implementation(libs.firebase.crashlytics)
+    // firebase
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.analytics)
+    implementation(libs.firebase.crashlytics)
+
+    // timber
     implementation(libs.timber)
 
     implementation(libs.hilt.android)

@@ -13,6 +13,6 @@ import dagger.multibindings.IntoSet
 interface InitializerModule {
 
     @Binds
-    @IntoSet // Bùa chú gom vào 1 List Set
+    @IntoSet
     fun bindTimberInitializer(initializer: TimberInitializer): AppInitializer
 }

@@ -3,6 +3,9 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.hilt)
     alias(libs.plugins.ksp)
+    // lint
+    alias(libs.plugins.treetask.android.detekt)
+    alias(libs.plugins.treetask.android.spotless)
 }
 android {
     namespace = "com.doannd3.treetask.core.datastore"

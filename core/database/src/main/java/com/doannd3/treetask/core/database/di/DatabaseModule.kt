@@ -18,11 +18,11 @@ object DatabaseModule {
     @Provides
     @Singleton
     fun providesDatabase(
-        @ApplicationContext context: Context
+        @ApplicationContext context: Context,
     ): TreeTaskDatabase = Room.databaseBuilder(
         context,
         TreeTaskDatabase::class.java,
-        "tree-task-database"
+        "tree-task-database",
     ).build()
 
     @Provides

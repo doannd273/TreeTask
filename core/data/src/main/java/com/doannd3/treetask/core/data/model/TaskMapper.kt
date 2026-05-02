@@ -17,7 +17,7 @@ fun TaskResponse.toTaskDomain(): Task {
         status = TaskStatus.fromStatus(status),
         dueDate = this.dueDate.toInstantOrNow(),
         createdAt = this.createdAt.toInstantOrNow(),
-        updatedAt = this.updatedAt.toInstantOrNow()
+        updatedAt = this.updatedAt.toInstantOrNow(),
     )
 }
 
@@ -29,7 +29,7 @@ fun Task.toTaskEntity(userId: String) = TaskEntity(
     status = this.status.name,
     dueDate = this.dueDate.toLong(),
     createdAt = this.createdAt.toLong(),
-    updatedAt = this.updatedAt.toLong()
+    updatedAt = this.updatedAt.toLong(),
 )
 
 fun TaskEntity.toTaskDomain() = Task(
@@ -40,5 +40,5 @@ fun TaskEntity.toTaskDomain() = Task(
     status = TaskStatus.fromStatus(this.status),
     dueDate = this.dueDate.toInstant(),
     createdAt = this.createdAt.toInstant(),
-    updatedAt = this.updatedAt.toInstant()
+    updatedAt = this.updatedAt.toInstant(),
 )
