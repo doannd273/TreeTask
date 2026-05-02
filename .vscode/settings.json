@@ -1,6 +1,0 @@
-{
-    "java.project.sourcePaths": [
-        "core/network/src/main/java/com/doannd3/treetask/core/network"
-    ],
-    "java.configuration.updateBuildConfiguration": "interactive"
-}
