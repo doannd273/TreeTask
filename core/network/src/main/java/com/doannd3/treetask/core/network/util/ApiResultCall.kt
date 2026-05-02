@@ -44,7 +44,7 @@ class ApiResultCall<T>(
                                 try {
                                     val errorJson = response.errorBody()?.string()
                                     json.decodeFromString<ApiResponse<Unit>>(
-                                        errorJson ?: ""
+                                        errorJson ?: "",
                                     ).message
                                 } catch (e: SerializationException) {
                                     e.printStackTrace()

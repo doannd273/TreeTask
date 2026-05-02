@@ -4,9 +4,9 @@ import com.doannd3.treetask.core.network.extensions.redact
 import okhttp3.Interceptor
 import okhttp3.Response
 import timber.log.Timber
+import java.io.IOException
 
 class NetworkDebugInterceptor : Interceptor {
-
     override fun intercept(chain: Interceptor.Chain): Response {
         val request = chain.request()
 
@@ -18,7 +18,7 @@ class NetworkDebugInterceptor : Interceptor {
             ➡️ REQUEST
             ${request.method} ${request.url}
             Headers: ${request.headers.redact()}
-            """.trimIndent()
+            """.trimIndent(),
         )
 
         return try {
@@ -31,11 +31,11 @@ class NetworkDebugInterceptor : Interceptor {
                 """
                 ⬅️ RESPONSE (${duration}ms)
                 ${response.code} ${response.request.url}
-                """.trimIndent()
+                """.trimIndent(),
             )
 
             response
-        } catch (e: Exception) {
+        } catch (e: IOException) {
             val duration = System.currentTimeMillis() - startTime
 
             Timber.e(
@@ -43,7 +43,7 @@ class NetworkDebugInterceptor : Interceptor {
                 """
                 ❌ ERROR (${duration}ms)
                 ${request.method} ${request.url}
-                """.trimIndent()
+                """.trimIndent(),
             )
 
             throw e

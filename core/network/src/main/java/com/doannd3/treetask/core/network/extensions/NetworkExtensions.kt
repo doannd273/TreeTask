@@ -17,7 +17,7 @@ fun OkHttpClient.Builder.addChuckerInterceptors(context: Context): OkHttpClient.
         addInterceptor(
             ChuckerInterceptor.Builder(context)
                 .alwaysReadResponseBody(true)
-                .build()
+                .build(),
         )
     }
     return this
@@ -57,11 +57,12 @@ fun Headers.redact(): Map<String, String> {
     val map = mutableMapOf<String, String>()
     for (i in 0 until size) {
         val name = name(i)
-        val value = if (name.equals("Authorization", true)) {
-            "██ REDACTED ██"
-        } else {
-            value(i)
-        }
+        val value =
+            if (name.equals("Authorization", true)) {
+                "██ REDACTED ██"
+            } else {
+                value(i)
+            }
         map[name] = value
     }
     return map

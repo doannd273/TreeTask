@@ -74,11 +74,9 @@ constructor(
             } catch (e: IOException) {
                 // lỗi network
                 Timber.e(e, "Network error khi refresh token")
-
             } catch (e: SerializationException) {
                 // lỗi parse JSON
                 Timber.e(e, "Parse error khi refresh token")
-
             } catch (e: HttpException) {
                 // nếu bạn dùng Retrofit + coroutines adapter
                 Timber.e(e, "HTTP error khi refresh token")
