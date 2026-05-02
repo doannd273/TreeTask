@@ -23,9 +23,9 @@ fun OkHttpClient.Builder.addChuckerInterceptors(context: Context): OkHttpClient.
     return this
 }
 
-fun OkHttpClient.Builder.addNetworkDebugInterceptors(): OkHttpClient.Builder {
+fun OkHttpClient.Builder.addNetworkDebugInterceptors(networkDebugInterceptor: NetworkDebugInterceptor): OkHttpClient.Builder {
     if (BuildConfig.DEBUG) {
-        addInterceptor(NetworkDebugInterceptor())
+        addInterceptor(networkDebugInterceptor)
     }
     return this
 }
