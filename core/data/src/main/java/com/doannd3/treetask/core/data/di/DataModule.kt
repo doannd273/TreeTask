@@ -19,16 +19,16 @@ abstract class DataModule {
     // Kỹ thuật gán (Binds) thay thế chữ "Provides" giúp tối ưu hiệu suất bộ nhớ cực mạnh
     @Binds
     abstract fun bindAuthRepository(
-        authRepositoryImpl: AuthRepositoryImpl // Đứa con ruột (Data)
-    ): AuthRepository                            // Interface màng bọc (Domain)
+        authRepositoryImpl: AuthRepositoryImpl,
+    ): AuthRepository
 
     @Binds
     abstract fun bindTasksRepository(
-        taskRepositoryImpl: TaskRepositoryImpl
+        taskRepositoryImpl: TaskRepositoryImpl,
     ): TaskRepository
 
     @Binds
     abstract fun bindUserRepository(
-        userRepositoryImpl: UserRepositoryImpl
+        userRepositoryImpl: UserRepositoryImpl,
     ): UserRepository
 }

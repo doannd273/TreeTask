@@ -8,7 +8,7 @@ import com.doannd3.treetask.core.database.model.TaskEntity
 @Database(
     entities = [TaskEntity::class],
     version = 1,
-    exportSchema = true
+    exportSchema = true,
 )
 abstract class TreeTaskDatabase : RoomDatabase() {
     abstract fun taskDao(): TaskDao

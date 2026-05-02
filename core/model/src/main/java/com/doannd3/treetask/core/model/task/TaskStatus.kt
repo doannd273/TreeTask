@@ -4,7 +4,8 @@ enum class TaskStatus(val status: String) {
     TODO("Cần làm"),
     IN_PROGRESS("Đang thực hiện"),
     PENDING("Đang chờ"),
-    DONE("Hoàn thành");
+    DONE("Hoàn thành"),
+    ;
 
     companion object {
         fun fromStatus(status: String?): TaskStatus {
