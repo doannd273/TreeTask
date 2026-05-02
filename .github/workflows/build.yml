@@ -3,8 +3,6 @@ name: TreeTask CI/CD
 # Chạy CI khi có người push code lên main/develop
 # Hoặc khi có ai đó tạo Pull Request đòi merge vào main/develop
 on:
-  push:
-    branches: [ "main", "develop" ]
   pull_request:
     branches: [ "main", "develop" ]
 
@@ -47,12 +45,12 @@ jobs:
       # Bước 4: Kiểm tra xem code có được format chuẩn chưa (Spotless/Ktlint)
       # Lưu ý: Dùng spotlessCheck để kiểm tra, nếu lỗi CI sẽ chuyển màu Đỏ
       - name: Check Code Format (Spotless)
-        run: ./gradlew spotlessCheck --no-daemon
+        run: ./gradlew spotlessCheck
 
       # Bước 5: Tìm Code Smells & Bugs tiềm ẩn với Detekt
       - name: Check Code Quality (Detekt)
-        run: ./gradlew detekt --no-daemon
+        run: ./gradlew detekt
 
       # Bước 6: Build thử App xem có bị lỗi Crash lúc compile không
       - name: Build Debug APK
-        run: ./gradlew assembleDebug --no-daemon
+        run: ./gradlew assembleDebug
