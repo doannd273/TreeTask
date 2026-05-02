@@ -3,6 +3,7 @@
 .gradle/
 .idea/
 .vscode/
+.kotlin/
 
 # Local Configuration (KHÔNG BAO GIỜ PUSH)
 local.properties
