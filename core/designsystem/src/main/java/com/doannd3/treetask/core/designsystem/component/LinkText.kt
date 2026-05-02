@@ -14,13 +14,13 @@ import androidx.compose.ui.text.style.TextDecoration
 
 enum class LinkTag {
     REGISTER,
-    FORGOT_PASSWORD
+    FORGOT_PASSWORD,
 }
 
 data class LinkPart(
     val text: String,
     val tag: String,
-    val onClick: () -> Unit
+    val onClick: () -> Unit,
 )
 
 @Composable
@@ -30,8 +30,8 @@ fun LinkText(
     modifier: Modifier = Modifier,
     parentStyle: TextStyle = TextStyle.Default,
     linkStyle: SpanStyle = SpanStyle(
-        textDecoration = TextDecoration.Underline
-    )
+        textDecoration = TextDecoration.Underline,
+    ),
 ) {
     val updatedLinks = links.map {
         val updatedOnClick by rememberUpdatedState(it.onClick)
@@ -54,16 +54,16 @@ fun LinkText(
                 addLink(
                     LinkAnnotation.Clickable(
                         tag = link.tag,
-                        linkInteractionListener = { link.onClick() }
+                        linkInteractionListener = { link.onClick() },
                     ),
                     start = start,
-                    end = end
+                    end = end,
                 )
 
                 addStyle(
                     style = linkStyle,
                     start = start,
-                    end = end
+                    end = end,
                 )
             }
         }
@@ -72,6 +72,6 @@ fun LinkText(
     BasicText(
         modifier = modifier,
         text = annotatedText,
-        style = parentStyle
+        style = parentStyle,
     )
 }

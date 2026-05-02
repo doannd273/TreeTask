@@ -5,6 +5,6 @@ sealed interface ApiResult<out T> {
     data class Error(
         val message: UiText? = null,
         val errorCode: Int? = null,
-        val exception: Throwable?
+        val exception: Throwable?,
     ) : ApiResult<Nothing>
 }

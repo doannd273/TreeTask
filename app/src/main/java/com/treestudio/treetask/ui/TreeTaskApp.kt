@@ -17,7 +17,7 @@ import com.treestudio.treetask.ui.component.TreeTaskBottomBar
 @Composable
 fun TreeTaskApp(
     startDestination: Any,
-    appState: TreeTaskAppState = rememberTreeTaskAppState()
+    appState: TreeTaskAppState = rememberTreeTaskAppState(),
 ) {
     // Toàn bộ logic Màn Hình Báo Lỗi/Loading Toàn Sự Kiện (Ở Module core:designsystem)
     // Sẽ được kéo vào đây!
@@ -34,26 +34,26 @@ fun TreeTaskApp(
                         onNavigateToDestination = { topLevelDest ->
                             // Nhờ AppState đổi Tab nội bộ
                             appState.navigateToTopLevelDestination(topLevelDest.route)
-                        }
+                        },
                     )
                 }
-            }
+            },
         ) { paddingValues ->
             TreeTaskNavHost(
                 startDestination = startDestination,
                 appState = appState,
-                modifier = Modifier.padding(paddingValues)
+                modifier = Modifier.padding(paddingValues),
             )
 
             // dialog
             AppErrorDialog(
                 errorMessage = globalAppState.errorMessage,
-                onDismiss = { globalAppState.clearError() }
+                onDismiss = { globalAppState.clearError() },
             )
 
             // loading
             AppLoadingDialog(
-                isLoading = globalAppState.isGlobalLoading
+                isLoading = globalAppState.isGlobalLoading,
             )
         }
     }

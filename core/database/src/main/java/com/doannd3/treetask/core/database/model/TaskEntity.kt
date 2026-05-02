@@ -14,5 +14,5 @@ data class TaskEntity(
     @ColumnInfo(name = "due_date") val dueDate: Long,
     @ColumnInfo(name = "created_at") val createdAt: Long,
     @ColumnInfo(name = "updated_at") val updatedAt: Long,
-    @ColumnInfo(name = "user_id") val userId: String
+    @ColumnInfo(name = "user_id") val userId: String,
 )

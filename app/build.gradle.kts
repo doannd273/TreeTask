@@ -4,6 +4,12 @@ plugins {
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.hilt)
     alias(libs.plugins.ksp)
+    // google, firebase
+    alias(libs.plugins.google.services)
+    alias(libs.plugins.firebase.crashlytics)
+    // lint
+    alias(libs.plugins.treetask.android.detekt)
+    alias(libs.plugins.treetask.android.spotless)
 }
 
 android {
@@ -35,7 +41,7 @@ android {
             isMinifyEnabled = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
+                "proguard-rules.pro",
             )
         }
     }
@@ -109,8 +115,12 @@ dependencies {
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)
 
-    //
+    // java
     coreLibraryDesugaring(libs.desugar.jdk.libs)
     implementation(libs.androidx.core.splashscreen)
-    // implementation(libs.androidx.startup)
+
+    // firebase
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.analytics)
+    implementation(libs.firebase.crashlytics)
 }

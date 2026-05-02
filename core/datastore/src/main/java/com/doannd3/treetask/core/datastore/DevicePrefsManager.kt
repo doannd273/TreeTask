@@ -15,8 +15,10 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class DevicePrefsManager @Inject constructor(
-    @ApplicationContext private val context: Context
+class DevicePrefsManager
+@Inject
+constructor(
+    @ApplicationContext private val context: Context,
 ) {
     private var cachedDeviceId: String? = null
     private val mutex = Mutex()
@@ -51,10 +53,11 @@ class DevicePrefsManager @Inject constructor(
     @SuppressLint("HardwareIds")
     private fun generateId(): String {
         // 1. Thử lấy ANDROID_ID từ hệ thống
-        var deviceId = Settings.Secure.getString(
-            context.contentResolver,
-            Settings.Secure.ANDROID_ID
-        )
+        var deviceId =
+            Settings.Secure.getString(
+                context.contentResolver,
+                Settings.Secure.ANDROID_ID,
+            )
         // 2. Kiểm tra nếu ANDROID_ID không hợp lệ (null hoặc toàn số 0)
         if (deviceId.isNullOrEmpty() || deviceId.startsWith("00000")) {
             // Tự tạo UUID và thêm tiền tố để dễ phân biệt
