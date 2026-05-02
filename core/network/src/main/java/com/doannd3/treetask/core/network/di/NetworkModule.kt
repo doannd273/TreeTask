@@ -2,8 +2,9 @@ package com.doannd3.treetask.core.network.di
 
 import android.content.Context
 import com.doannd3.treetask.core.network.BuildConfig
-import com.doannd3.treetask.core.network.extensions.addDebugInterceptors
+import com.doannd3.treetask.core.network.extensions.addChuckerInterceptors
 import com.doannd3.treetask.core.network.extensions.addLoggingInterceptors
+import com.doannd3.treetask.core.network.extensions.addNetworkDebugInterceptors
 import com.doannd3.treetask.core.network.extensions.addTimeout
 import com.doannd3.treetask.core.network.interceptor.AuthAuthenticator
 import com.doannd3.treetask.core.network.interceptor.AuthInterceptor
@@ -58,7 +59,8 @@ class NetworkModule {
             .addTimeout()
             .retryOnConnectionFailure(true)
             .addInterceptor(commonHeaderInterceptor)
-            .addDebugInterceptors(context = context)
+            .addNetworkDebugInterceptors()
+            .addChuckerInterceptors(context = context)
             .addLoggingInterceptors().build()
     }
 
@@ -77,7 +79,8 @@ class NetworkModule {
             .addInterceptor(commonHeaderInterceptor)
             .addInterceptor(authInterceptor)
             .authenticator(authAuthenticator)
-            .addDebugInterceptors(context = context)
+            .addNetworkDebugInterceptors()
+            .addChuckerInterceptors(context = context)
             .addLoggingInterceptors()
             .build()
     }
