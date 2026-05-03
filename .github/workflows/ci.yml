@@ -30,11 +30,16 @@ jobs:
     with:
       command: ./gradlew detekt
 
-  # Job 3: Build thử App (assembleDebug). 
-  # Lệnh "needs: [ lint, detekt ]" bắt buộc Job này phải đợi Job 1 và Job 2 chạy Xanh xong thì mới được chạy.
-  # Tránh lãng phí số phút CI nếu code đã bị lỗi format từ đầu.
+  # Job 3: Chạy Unit Test tự động. Lá chắn thép chống bug hồi quy.
+  unit-test:
+    uses: ./.github/workflows/android-setup.yml
+    with:
+      command: ./gradlew testDebugUnitTest
+
+  # Job 4: Build thử App (assembleDebug). 
+  # Lệnh "needs" bắt buộc Job này phải đợi các Job kiểm tra chạy Xanh xong thì mới được chạy.
   build:
     uses: ./.github/workflows/android-setup.yml
-    needs: [ lint, detekt ]
+    needs: [ lint, detekt, unit-test ]
     with:
       command: ./gradlew assembleDebug
