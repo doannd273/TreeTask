@@ -46,7 +46,7 @@ internal fun TreeTaskAppName() {
         color = Purple40,
         fontSize = 50.sp,
         fontWeight = FontWeight.Bold,
-        textAlign = TextAlign.Center
+        textAlign = TextAlign.Center,
     )
 }
 
@@ -64,12 +64,12 @@ internal fun PasswordInput(
             unfocusedTextColor = Gray,
         ),
         textStyle = TextStyle(
-            fontSize = 15.sp
+            fontSize = 15.sp,
         ),
         maxLines = 1,
         keyboardOptions = KeyboardOptions(
             keyboardType = KeyboardType.Password,
-            imeAction = ImeAction.Done
+            imeAction = ImeAction.Done,
         ),
         value = password,
         onValueChange = { onPasswordChange(it) },
@@ -78,24 +78,28 @@ internal fun PasswordInput(
             IconButton(onClick = { onPasswordVisibleChange(!passwordVisible) }) {
                 Icon(
                     painterResource(
-                        if (passwordVisible)
+                        if (passwordVisible) {
                             R.drawable.auth_ic_visibility
-                        else
+                        } else {
                             R.drawable.auth_ic_visibility_off
+                        },
                     ),
-                    contentDescription = null
+                    contentDescription = null,
                 )
             }
         },
-        visualTransformation = if (passwordVisible) VisualTransformation.None
-        else PasswordVisualTransformation()
+        visualTransformation = if (passwordVisible) {
+            VisualTransformation.None
+        } else {
+            PasswordVisualTransformation()
+        },
     )
 }
 
 @Composable
 internal fun EmailInput(
     email: String,
-    onEmailChange: (String) -> Unit
+    onEmailChange: (String) -> Unit,
 ) {
     OutlinedTextField(
         modifier = Modifier.fillMaxWidth(),
@@ -104,50 +108,49 @@ internal fun EmailInput(
             unfocusedTextColor = Gray,
         ),
         textStyle = TextStyle(
-            fontSize = 15.sp
+            fontSize = 15.sp,
         ),
         maxLines = 1,
         keyboardOptions = KeyboardOptions(
             keyboardType = KeyboardType.Email,
-            imeAction = ImeAction.Next
+            imeAction = ImeAction.Next,
         ),
         value = email,
         onValueChange = { onEmailChange(it) },
-        label = { Text(text = stringResource(R.string.auth_email_hint)) }
+        label = { Text(text = stringResource(R.string.auth_email_hint)) },
     )
 }
 
 @Composable
 internal fun LoginButton(
-    onSubmitLogin: () -> Unit
+    onSubmitLogin: () -> Unit,
 ) {
     Button(
         modifier = Modifier
             .fillMaxWidth()
             .height(50.dp),
         colors = ButtonDefaults.buttonColors(
-            containerColor = Purple40
+            containerColor = Purple40,
         ),
         shape = RoundedCornerShape(corner = CornerSize(size = 3.dp)),
         onClick = { onSubmitLogin() },
     ) {
         Text(text = stringResource(R.string.auth_action_login), color = White, fontSize = 16.sp)
     }
-
 }
 
 @Composable
 internal fun RegisterTextButton(
-    onNavigateToRegister: () -> Unit
+    onNavigateToRegister: () -> Unit,
 ) {
     Row(
         modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.Center
+        horizontalArrangement = Arrangement.Center,
     ) {
         val registerText = stringResource(R.string.auth_register)
         val text = stringResource(
             R.string.auth_prompt_no_account,
-            registerText
+            registerText,
         )
 
         LinkText(
@@ -156,29 +159,29 @@ internal fun RegisterTextButton(
                 LinkPart(
                     text = registerText,
                     tag = LinkTag.REGISTER.name,
-                    onClick = onNavigateToRegister
-                )
+                    onClick = onNavigateToRegister,
+                ),
             ),
             parentStyle = TextStyle(
                 color = Purple40,
-                fontSize = 15.sp
+                fontSize = 15.sp,
             ),
             linkStyle = SpanStyle(
                 color = Purple40,
                 fontSize = 15.sp,
-                textDecoration = TextDecoration.Underline
-            )
+                textDecoration = TextDecoration.Underline,
+            ),
         )
     }
 }
 
 @Composable
 internal fun ForgotPasswordTextButton(
-    onNavigateToForgotPassword: () -> Unit
+    onNavigateToForgotPassword: () -> Unit,
 ) {
     Row(
         modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.End
+        horizontalArrangement = Arrangement.End,
     ) {
         val forgotPassword = stringResource(R.string.auth_forgot_password)
 
@@ -188,18 +191,18 @@ internal fun ForgotPasswordTextButton(
                 LinkPart(
                     text = forgotPassword,
                     tag = LinkTag.FORGOT_PASSWORD.name,
-                    onClick = onNavigateToForgotPassword
-                )
+                    onClick = onNavigateToForgotPassword,
+                ),
             ),
             parentStyle = TextStyle(
                 color = Purple40,
-                fontSize = 15.sp
+                fontSize = 15.sp,
             ),
             linkStyle = SpanStyle(
                 color = Purple40,
                 fontSize = 15.sp,
-                textDecoration = TextDecoration.Underline
-            )
+                textDecoration = TextDecoration.Underline,
+            ),
         )
     }
 }

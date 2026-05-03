@@ -33,14 +33,14 @@ import com.doannd3.treetask.feature.auth.R
 
 @Composable
 internal fun RegisterButton(
-    onSubmitRegister: () -> Unit
+    onSubmitRegister: () -> Unit,
 ) {
     Button(
         modifier = Modifier
             .fillMaxWidth()
             .height(50.dp),
         colors = ButtonDefaults.buttonColors(
-            containerColor = Purple40
+            containerColor = Purple40,
         ),
         shape = RoundedCornerShape(corner = CornerSize(size = 3.dp)),
         onClick = { onSubmitRegister() },
@@ -52,7 +52,7 @@ internal fun RegisterButton(
 @Composable
 internal fun FullNameInput(
     fullName: String,
-    onFullNameChange: (String) -> Unit
+    onFullNameChange: (String) -> Unit,
 ) {
     OutlinedTextField(
         modifier = Modifier.fillMaxWidth(),
@@ -61,16 +61,16 @@ internal fun FullNameInput(
             unfocusedTextColor = Gray,
         ),
         textStyle = TextStyle(
-            fontSize = 15.sp
+            fontSize = 15.sp,
         ),
         maxLines = 1,
         keyboardOptions = KeyboardOptions(
             keyboardType = KeyboardType.Text,
-            imeAction = ImeAction.Next
+            imeAction = ImeAction.Next,
         ),
         value = fullName,
         onValueChange = { onFullNameChange(it) },
-        label = { Text(text = stringResource(R.string.auth_full_name_hint)) }
+        label = { Text(text = stringResource(R.string.auth_full_name_hint)) },
     )
 }
 
@@ -88,7 +88,7 @@ internal fun RegisterHeader(onRegisterBack: () -> Unit) {
             Icon(
                 painter = painterResource(R.drawable.auth_ic_back_left),
                 contentDescription = null,
-                tint = Purple40
+                tint = Purple40,
             )
         }
 
@@ -96,8 +96,8 @@ internal fun RegisterHeader(onRegisterBack: () -> Unit) {
             text = stringResource(R.string.auth_register),
             color = Purple40,
             style = TextStyle(
-                fontSize = 18.sp
-            )
+                fontSize = 18.sp,
+            ),
         )
     }
 }

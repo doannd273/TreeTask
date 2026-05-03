@@ -12,12 +12,13 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
-class AuthRepositoryImpl @Inject constructor(
+class AuthRepositoryImpl
+@Inject
+constructor(
     private val authApi: AuthService,
     private val tokenManager: TokenManager,
     private val userPrefsManager: UserPrefsManager,
 ) : AuthRepository {
-
     override val isSessionExpired: Flow<Boolean>
         get() = tokenManager.sessionExpiredEvent.map { true }
 
@@ -35,7 +36,9 @@ class AuthRepositoryImpl @Inject constructor(
                 ApiResult.Success(Unit)
             }
 
-            is ApiResult.Error -> result // propagate thẳng
+            is ApiResult.Error -> {
+                result
+            }
         }
     }
 
@@ -44,20 +47,23 @@ class AuthRepositoryImpl @Inject constructor(
         email: String,
         password: String,
     ): ApiResult<Unit> {
-        val result = authApi.register(
-            RegisterRequest(
-                fullName = fullName,
-                email = email,
-                password = password,
-            ),
-        )
+        val result =
+            authApi.register(
+                RegisterRequest(
+                    fullName = fullName,
+                    email = email,
+                    password = password,
+                ),
+            )
         return when (result) {
             is ApiResult.Success -> {
                 tokenManager.saveToken(result.data.accessToken, result.data.refreshToken)
                 ApiResult.Success(Unit)
             }
 
-            is ApiResult.Error -> result // propagate thẳng
+            is ApiResult.Error -> {
+                result
+            }
         }
     }
 
@@ -68,7 +74,9 @@ class AuthRepositoryImpl @Inject constructor(
                 ApiResult.Success(Unit)
             }
 
-            is ApiResult.Error -> result // propagate thẳng
+            is ApiResult.Error -> {
+                result
+            }
         }
     }
 
