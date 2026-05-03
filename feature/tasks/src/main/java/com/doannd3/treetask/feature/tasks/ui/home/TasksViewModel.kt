@@ -26,7 +26,7 @@ import javax.inject.Inject
 class TasksViewModel @Inject constructor(
     private val getTasksUseCase: GetTasksUseCase,
     private val taskRepository: TaskRepository,
-    private val userPrefManager: UserPrefsManager,
+    private val userPrefManager: UserPrefsManager
 ) : BaseViewModel(), MviViewModel<TasksState, TasksEvent, TasksEffect> {
 
     override fun setLoading(isLoading: Boolean) {
@@ -79,4 +79,5 @@ class TasksViewModel @Inject constructor(
                 taskRepository.syncTasks(user?.id.orEmpty()) // Trả về Flow danh sách task của User đó
             }.launchSafeIn(viewModelScope)
     }
+
 }

@@ -15,7 +15,6 @@ class CrashlyticsTree : Timber.Tree() {
         if (priority == Log.VERBOSE || priority == Log.DEBUG || priority == Log.INFO) {
             return
         }
-
         val crashlytics = FirebaseCrashlytics.getInstance()
         crashlytics.setCustomKey("priority", priority)
         tag?.let { crashlytics.setCustomKey("tag", it) }

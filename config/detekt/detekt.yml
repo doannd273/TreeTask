@@ -14,11 +14,3 @@ style:
 performance:
   SpreadOperator:
     active: false # Cho phép dùng *args trong hàm getString() của Android
-
-complexity:
-  LongParameterList:
-    functionThreshold: 10 # Tăng giới hạn tham số lên 10 vì Navigation Graph thường có rất nhiều callback
-    ignoreDefaultParameters: true
-  LongMethod:
-    threshold: 80 # Tăng giới hạn chung lên 80 dòng
-    ignoreAnnotated: [ 'Composable' ] # Hoàn toàn không đếm số dòng đối với hàm dựng UI của Compose
