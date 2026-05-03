@@ -20,11 +20,19 @@ android {
     }
 }
 dependencies {
-    api(project(":core:model"))
-    api(project(":core:common"))
+    api(projects.core.model)
+    api(projects.core.model)
+
     api(libs.junit)
     api(libs.androidx.junit)
     api(libs.androidx.espresso.core)
+
+    // Testing weapons
+    api(libs.mockk)
+    api(libs.turbine)
+    api(libs.truth)
+    api(libs.kotlinx.coroutines.test)
+
     api(libs.hilt.android)
     ksp(libs.hilt.compiler)
 }
