@@ -38,7 +38,7 @@ internal fun ForgotPasswordHeader(onForgotPasswordBack: () -> Unit) {
             Icon(
                 painter = painterResource(R.drawable.auth_ic_back_left),
                 contentDescription = null,
-                tint = Purple40
+                tint = Purple40,
             )
         }
 
@@ -46,22 +46,22 @@ internal fun ForgotPasswordHeader(onForgotPasswordBack: () -> Unit) {
             text = stringResource(R.string.auth_forgot_password),
             color = Purple40,
             style = TextStyle(
-                fontSize = 18.sp
-            )
+                fontSize = 18.sp,
+            ),
         )
     }
 }
 
 @Composable
 internal fun ForgotPasswordButton(
-    onSubmitForgotPassword: () -> Unit
+    onSubmitForgotPassword: () -> Unit,
 ) {
     Button(
         modifier = Modifier
             .fillMaxWidth()
             .height(50.dp),
         colors = ButtonDefaults.buttonColors(
-            containerColor = Purple40
+            containerColor = Purple40,
         ),
         shape = RoundedCornerShape(corner = CornerSize(size = 3.dp)),
         onClick = { onSubmitForgotPassword() },

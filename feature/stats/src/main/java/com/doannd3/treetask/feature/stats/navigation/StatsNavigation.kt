@@ -24,7 +24,7 @@ fun NavController.navigateToChart(navOptions: NavOptions? = null) {
 
 fun NavGraphBuilder.statsGraph() {
     navigation<StatsGraphDestination>(
-        startDestination = ChartDestination
+        startDestination = ChartDestination,
     ) {
         composable<ChartDestination> {
             ChartRoute()

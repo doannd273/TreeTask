@@ -31,7 +31,7 @@ import com.doannd3.treetask.feature.auth.ui.login.EmailInput
 fun ForgotPasswordRoute(
     viewModel: ForgotPasswordViewModel = hiltViewModel(),
     onNavigateToLogin: () -> Unit,
-    onForgotPasswordBack: () -> Unit
+    onForgotPasswordBack: () -> Unit,
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
 
@@ -42,14 +42,13 @@ fun ForgotPasswordRoute(
     ForgotPasswordScreen(
         state = state,
         onEvent = viewModel::onEvent,
-        onForgotPasswordBack = onForgotPasswordBack
+        onForgotPasswordBack = onForgotPasswordBack,
     )
 
     LaunchedEffect(viewModel.effect, lifecycleOwner) {
         lifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
             viewModel.effect.collect { effect ->
                 when (effect) {
-
                     is ForgotPasswordEffect.ShowErrorMessage -> {
                         val errorStr = effect.message.asString(context)
                         globalAppState.showError(errorStr)
@@ -85,10 +84,10 @@ fun ForgotPasswordRoute(
 fun ForgotPasswordScreen(
     state: ForgotPasswordState,
     onEvent: (ForgotPasswordEvent) -> Unit,
-    onForgotPasswordBack: () -> Unit
+    onForgotPasswordBack: () -> Unit,
 ) {
     Scaffold(
-        contentWindowInsets = WindowInsets.safeDrawing
+        contentWindowInsets = WindowInsets.safeDrawing,
     ) { paddingValues ->
         ForgotPasswordContent(
             modifier = Modifier.padding(bottom = paddingValues.calculateBottomPadding()),
@@ -104,28 +103,28 @@ fun ForgotPasswordContent(
     modifier: Modifier = Modifier,
     state: ForgotPasswordState,
     onEvent: (ForgotPasswordEvent) -> Unit,
-    onForgotPasswordBack: () -> Unit
+    onForgotPasswordBack: () -> Unit,
 ) {
     Column(
         modifier = modifier
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
-            .imePadding()
+            .imePadding(),
     ) {
         ForgotPasswordHeader(onForgotPasswordBack = onForgotPasswordBack)
 
         Column(
-            modifier = Modifier.padding(16.dp)
+            modifier = Modifier.padding(16.dp),
         ) {
             EmailInput(
                 email = state.email,
-                onEmailChange = { onEvent(ForgotPasswordEvent.EmailChanged(it)) }
+                onEmailChange = { onEvent(ForgotPasswordEvent.EmailChanged(it)) },
             )
 
             Spacer(modifier = Modifier.height(16.dp))
 
             ForgotPasswordButton(
-                onSubmitForgotPassword = { onEvent(ForgotPasswordEvent.SubmitForgotPassword) }
+                onSubmitForgotPassword = { onEvent(ForgotPasswordEvent.SubmitForgotPassword) },
             )
         }
     }
@@ -139,6 +138,6 @@ fun ForgotPasswordPreview() {
             email = "demo@gmail.com",
         ),
         onEvent = {},
-        onForgotPasswordBack = {}
+        onForgotPasswordBack = {},
     )
 }

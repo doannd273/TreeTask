@@ -36,7 +36,7 @@ fun NavController.navigateToAddTask(navOptions: NavOptions? = null) {
 
 fun NavGraphBuilder.tasksGraph(
     onTaskClick: (String) -> Unit,
-    onAddTaskClick: () -> Unit
+    onAddTaskClick: () -> Unit,
 ) {
     navigation<TasksGraphDestination>(startDestination = TasksDestination) {
         composable<TasksDestination> {
@@ -50,9 +50,7 @@ fun NavGraphBuilder.tasksGraph(
             val args = backStackEntry.toRoute<EditTaskDestination>()
             val taskId = args.taskId
 
-            EditTasksRoute(
-
-            )
+            EditTasksRoute()
         }
     }
 }
