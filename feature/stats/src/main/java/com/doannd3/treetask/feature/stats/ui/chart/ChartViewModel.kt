@@ -12,10 +12,11 @@ import kotlinx.coroutines.flow.asStateFlow
 import javax.inject.Inject
 
 @HiltViewModel
-class ChartViewModel @Inject constructor(
-
-) : BaseViewModel(), MviViewModel<ChartState, ChartEvent, ChartEffect> {
-
+class ChartViewModel
+@Inject
+constructor() :
+    BaseViewModel(),
+    MviViewModel<ChartState, ChartEvent, ChartEffect> {
     private val _uiState = MutableStateFlow(ChartState())
     override val uiState: StateFlow<ChartState> = _uiState.asStateFlow()
 
@@ -23,6 +24,6 @@ class ChartViewModel @Inject constructor(
     override val effect: SharedFlow<ChartEffect> = _effect.asSharedFlow()
 
     override fun onEvent(event: ChartEvent) {
-
+        // TODO
     }
 }

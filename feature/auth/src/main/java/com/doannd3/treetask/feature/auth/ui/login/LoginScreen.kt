@@ -32,7 +32,7 @@ fun LoginRoute(
     viewModel: LoginViewModel = hiltViewModel(),
     onNavigateToHome: () -> Unit,
     onNavigateToRegister: () -> Unit,
-    onNavigateToForgotPassword: () -> Unit
+    onNavigateToForgotPassword: () -> Unit,
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
 
@@ -44,7 +44,7 @@ fun LoginRoute(
         state = state,
         onEvent = viewModel::onEvent,
         onNavigateToRegister = onNavigateToRegister,
-        onNavigateToForgotPassword = onNavigateToForgotPassword
+        onNavigateToForgotPassword = onNavigateToForgotPassword,
     )
 
     LaunchedEffect(viewModel.effect, lifecycleOwner) {
@@ -74,8 +74,11 @@ fun LoginRoute(
     }
 
     LaunchedEffect(state.isLoading) {
-        if (state.isLoading) globalAppState.showLoading()
-        else globalAppState.hideLoading()
+        if (state.isLoading) {
+            globalAppState.showLoading()
+        } else {
+            globalAppState.hideLoading()
+        }
     }
 }
 
@@ -84,21 +87,20 @@ fun LoginScreen(
     state: LoginState,
     onEvent: (LoginEvent) -> Unit,
     onNavigateToRegister: () -> Unit,
-    onNavigateToForgotPassword: () -> Unit
+    onNavigateToForgotPassword: () -> Unit,
 ) {
     Scaffold(
-        contentWindowInsets = WindowInsets.safeDrawing
+        contentWindowInsets = WindowInsets.safeDrawing,
     ) { paddingValues ->
         LoginContent(
             modifier = Modifier.padding(paddingValues = paddingValues),
             state = state,
             onEvent = onEvent,
             onNavigateToRegister = onNavigateToRegister,
-            onNavigateToForgotPassword = onNavigateToForgotPassword
+            onNavigateToForgotPassword = onNavigateToForgotPassword,
         )
     }
 }
-
 
 @Composable
 internal fun LoginContent(
@@ -106,7 +108,7 @@ internal fun LoginContent(
     state: LoginState,
     onEvent: (LoginEvent) -> Unit,
     onNavigateToRegister: () -> Unit,
-    onNavigateToForgotPassword: () -> Unit
+    onNavigateToForgotPassword: () -> Unit,
 ) {
     Column(
         modifier = modifier
@@ -114,7 +116,7 @@ internal fun LoginContent(
             .verticalScroll(rememberScrollState())
             .padding(16.dp)
             .imePadding(),
-        verticalArrangement = Arrangement.Center
+        verticalArrangement = Arrangement.Center,
     ) {
         TreeTaskAppName()
 
@@ -122,7 +124,7 @@ internal fun LoginContent(
 
         EmailInput(
             email = state.email,
-            onEmailChange = { onEvent(LoginEvent.EmailChanged(it)) }
+            onEmailChange = { onEvent(LoginEvent.EmailChanged(it)) },
         )
 
         Spacer(modifier = Modifier.height(8.dp))
@@ -147,7 +149,7 @@ internal fun LoginContent(
         Spacer(modifier = Modifier.height(16.dp))
 
         RegisterTextButton(
-            onNavigateToRegister = onNavigateToRegister
+            onNavigateToRegister = onNavigateToRegister,
         )
     }
 }
@@ -158,7 +160,7 @@ fun LoginScreenPreview() {
     LoginScreen(
         state = LoginState(
             email = "demo@gmail.com",
-            password = "123456"
+            password = "123456",
         ),
         onEvent = {},
         onNavigateToRegister = {},

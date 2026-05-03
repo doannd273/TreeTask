@@ -10,7 +10,7 @@ data class LoginState(
 )
 
 sealed class LoginEvent {
-    data class PasswordVisibleChanged(val isVisible: Boolean): LoginEvent()
+    data class PasswordVisibleChanged(val isVisible: Boolean) : LoginEvent()
     data class EmailChanged(val email: String) : LoginEvent()
     data class PasswordChanged(val password: String) : LoginEvent()
     data object SubmitLogin : LoginEvent()

@@ -16,11 +16,12 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class MainViewModel @Inject constructor(
+class MainViewModel
+@Inject
+constructor(
     private val tokenManager: TokenManager,
     private val userRepository: UserRepository,
 ) : ViewModel() {
-
     var isLoading by mutableStateOf(true)
         private set
 
