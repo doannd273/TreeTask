@@ -16,6 +16,12 @@ echo "=============================="
 echo ""
 echo "=============================="
 
+echo "Running Testing"
+echo "=============================="
+./gradlew testDebugUnitTest
+echo ""
+echo "=============================="
+
 echo "Running Assemble Debug"
 echo "=============================="
 ./gradlew assembleDebug
