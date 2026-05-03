@@ -20,7 +20,7 @@ package com.doannd3.treetask.core.common.log
  */
 object AppTag {
     // Prefix chung cho toàn app → filter Logcat bằng: tag:TT
-    private const val PREFIX = "TreeTask"
+    private const val PREFIX = "TreeTaskTag"
 
     // App lifecycle
     const val APP_INFO = "$PREFIX:AppInfo"
@@ -31,6 +31,9 @@ object AppTag {
     const val CHAT = "$PREFIX:Chat"
     const val PROFILE = "$PREFIX:Profile"
     const val STATS = "$PREFIX:Stats"
+    const val SYNC = "$PREFIX:Sync"
+    const val NAV = "$PREFIX:Nav"
+    const val VIEW_MODEL = "$PREFIX:ViewModel"
 
     // Core infrastructure
     const val NETWORK = "$PREFIX:Network"
