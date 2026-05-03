@@ -7,6 +7,7 @@ plugins {
     // google, firebase
     alias(libs.plugins.google.services)
     alias(libs.plugins.firebase.crashlytics)
+    alias(libs.plugins.firebase.perf)
     // lint
     alias(libs.plugins.treetask.android.detekt)
     alias(libs.plugins.treetask.android.spotless)
@@ -80,7 +81,7 @@ dependencies {
     implementation(projects.feature.stats)
     implementation(projects.feature.tasks)
 
-// core
+    // core
     implementation(projects.core.domain)
     implementation(projects.core.common)
     implementation(projects.core.designsystem)
@@ -96,7 +97,9 @@ dependencies {
     implementation(libs.androidx.compose.ui.graphics)
     implementation(libs.androidx.compose.ui.tooling.preview)
     implementation(libs.androidx.compose.material3)
-    testImplementation(libs.junit)
+
+    // testing
+    testImplementation(projects.core.testing)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(platform(libs.androidx.compose.bom))
@@ -124,4 +127,5 @@ dependencies {
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.analytics)
     implementation(libs.firebase.crashlytics)
+    implementation(libs.firebase.perf)
 }
