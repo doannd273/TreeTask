@@ -65,6 +65,11 @@ appcompat = "1.7.1"
 material = "1.13.0"
 junitJunit = "4.12"
 
+# Version App
+compileSdk = "36"
+minSdk = "24"
+targetSdk = "36"
+
 [libraries]
 # Androidx & Lifecycle
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -166,3 +171,5 @@ spotless = { id = "com.diffplug.spotless", version.ref = "spotless" }
 treetask-android-detekt = { id = "treetask.android.detekt" }
 treetask-android-spotless = { id = "treetask.android.spotless" }
 treetask-android-library = { id = "treetask.android.library" }
+treetask-android-application = { id = "treetask.android.application" }
+

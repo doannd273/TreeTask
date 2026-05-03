@@ -1,6 +1,5 @@
 plugins {
-    alias(libs.plugins.android.application)
-    alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.treetask.android.application)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.hilt)
     alias(libs.plugins.ksp)
@@ -15,18 +14,10 @@ plugins {
 
 android {
     namespace = "com.treestudio.treetask"
-    compileSdk {
-        version = release(36)
-    }
-
     defaultConfig {
         applicationId = "com.treestudio.treetask"
-        minSdk = 24
-        targetSdk = 36
         versionCode = 1
-        versionName = "1.0"
-
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        versionName = "0.0.1"
     }
 
     buildTypes {
@@ -48,11 +39,6 @@ android {
     }
     compileOptions {
         isCoreLibraryDesugaringEnabled = true
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
-    }
-    kotlinOptions {
-        jvmTarget = "17"
     }
     buildFeatures {
         compose = true

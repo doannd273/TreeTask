@@ -24,5 +24,9 @@ gradlePlugin {
             id = "treetask.android.library"
             implementationClass = "AndroidLibraryConventionPlugin"
         }
+        register("androidApplication") {
+            id = "treetask.android.application"
+            implementationClass = "AndroidApplicationConventionPlugin"
+        }
     }
 }
