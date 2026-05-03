@@ -24,7 +24,7 @@ fun NavController.navigateToConversation(navOptions: NavOptions? = null) {
 
 fun NavGraphBuilder.chatGraph() {
     navigation<ChatGraphDestination>(
-        startDestination = ConversationDestination
+        startDestination = ConversationDestination,
     ) {
         composable<ConversationDestination> {
             ConversationRoute()

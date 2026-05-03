@@ -1,6 +1,8 @@
 package com.treestudio.treetask.initializer
 
-enum class InitializationPriority(val value: Int) {
+enum class InitializationPriority(
+    val value: Int,
+) {
     // 1. Phải chạy đầu tiên. Thường là công cụ bắt lỗi, log, bảo mật.
     // Vì nếu app lỗi ngay lúc khởi động, bọn này phải đứng đó để ghi nhận.
     URGENT(100),

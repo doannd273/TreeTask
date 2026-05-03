@@ -60,20 +60,20 @@ fun TaskStatusChips(
 
     LazyRow(
         modifier = Modifier.fillMaxWidth(),
-        contentPadding = PaddingValues(end = 8.dp, top = 8.dp)
+        contentPadding = PaddingValues(end = 8.dp, top = 8.dp),
     ) {
         items(items = statusList) { taskStatus ->
             FilterChip(
                 selected = taskStatusSelected == taskStatus,
                 onClick = {
                     onFilterSelect(
-                        if (taskStatusSelected == taskStatus) null else taskStatus
+                        if (taskStatusSelected == taskStatus) null else taskStatus,
                     )
                 },
                 label = {
                     Text(text = taskStatus.status)
                 },
-                modifier = Modifier.padding(end = 8.dp)
+                modifier = Modifier.padding(end = 8.dp),
             )
         }
     }
@@ -92,11 +92,11 @@ fun SearchTaskInput(
             .border(
                 width = 1.dp,
                 color = Purple40,
-                shape = RoundedCornerShape(6.dp)
+                shape = RoundedCornerShape(6.dp),
             )
             .background(
                 color = White,
-                shape = RoundedCornerShape(6.dp)
+                shape = RoundedCornerShape(6.dp),
             ),
         colors = TextFieldDefaults.colors(
             focusedTextColor = Black,
@@ -108,15 +108,15 @@ fun SearchTaskInput(
 
             focusedContainerColor = Color.Transparent,
             unfocusedContainerColor = Color.Transparent,
-            disabledContainerColor = Color.Transparent
+            disabledContainerColor = Color.Transparent,
         ),
         textStyle = TextStyle(
-            fontSize = 15.sp
+            fontSize = 15.sp,
         ),
         maxLines = 1,
         keyboardOptions = KeyboardOptions(
             keyboardType = KeyboardType.Text,
-            imeAction = ImeAction.Done
+            imeAction = ImeAction.Done,
         ),
         placeholder = {
             Text(text = stringResource(R.string.tasks_search_hint))
@@ -124,7 +124,7 @@ fun SearchTaskInput(
         leadingIcon = {
             Icon(
                 painterResource(R.drawable.tasks_ic_search),
-                contentDescription = null
+                contentDescription = null,
             )
         },
         trailingIcon = {
@@ -133,7 +133,7 @@ fun SearchTaskInput(
                     CircularProgressIndicator(
                         modifier = Modifier.size(18.dp),
                         strokeWidth = 2.dp,
-                        color = Purple40
+                        color = Purple40,
                     )
                 }
 
@@ -141,7 +141,7 @@ fun SearchTaskInput(
                     IconButton(onClick = onClearClick) {
                         Icon(
                             painterResource(R.drawable.tasks_ic_clear),
-                            contentDescription = null
+                            contentDescription = null,
                         )
                     }
                 }
@@ -156,7 +156,7 @@ fun SearchTaskInput(
 fun TaskItem(
     modifier: Modifier = Modifier,
     task: Task,
-    onClick: () -> Unit
+    onClick: () -> Unit,
 ) {
     Card(
         onClick = onClick,
@@ -165,15 +165,16 @@ fun TaskItem(
             .padding(vertical = 6.dp),
         shape = RoundedCornerShape(3.dp),
         colors = CardDefaults.cardColors(containerColor = White),
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
     ) {
         Column(
-            modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)
+            modifier = Modifier.padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
+                verticalAlignment = Alignment.CenterVertically,
             ) {
                 Text(
                     text = task.title,
@@ -181,7 +182,7 @@ fun TaskItem(
                     fontSize = 16.sp,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
-                    modifier = Modifier.weight(1f)
+                    modifier = Modifier.weight(1f),
                 )
 
                 // Hiển thị Status Tag
@@ -193,7 +194,7 @@ fun TaskItem(
                     color = Black,
                     fontSize = 13.sp,
                     maxLines = 2,
-                    overflow = TextOverflow.Ellipsis
+                    overflow = TextOverflow.Ellipsis,
                 )
             }
             Text(
@@ -217,9 +218,9 @@ fun StatusBadge(status: TaskStatus) {
         modifier = Modifier
             .background(
                 shape = RoundedCornerShape(3.dp),
-                color = backgroundColor
+                color = backgroundColor,
             )
-            .padding(vertical = 4.dp, horizontal = 8.dp)
+            .padding(vertical = 4.dp, horizontal = 8.dp),
     ) {
         Text(text = status.status, color = White, fontSize = 13.sp)
     }
@@ -237,7 +238,7 @@ fun TaskItemPreview() {
             status = TaskStatus.IN_PROGRESS,
             dueDate = Instant.parse("2026-04-20T10:00:00Z"),
             createdAt = Instant.parse("2026-04-10T08:00:00Z"),
-            updatedAt = Instant.parse("2026-04-15T09:00:00Z")
+            updatedAt = Instant.parse("2026-04-15T09:00:00Z"),
         ),
         onClick = {},
     )
@@ -261,6 +262,6 @@ fun PreviewTaskStatusChips() {
 
     TaskStatusChips(
         taskStatusSelected = selected,
-        onFilterSelect = {  }
+        onFilterSelect = { },
     )
 }

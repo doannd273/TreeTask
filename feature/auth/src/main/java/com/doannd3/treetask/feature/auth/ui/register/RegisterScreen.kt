@@ -32,7 +32,7 @@ import com.doannd3.treetask.feature.auth.ui.login.PasswordInput
 fun RegisterRoute(
     viewModel: RegisterViewModel = hiltViewModel(),
     onNavigateToHome: () -> Unit,
-    onRegisterBack: () -> Unit
+    onRegisterBack: () -> Unit,
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
 
@@ -43,7 +43,7 @@ fun RegisterRoute(
     RegisterScreen(
         state = state,
         onEvent = viewModel::onEvent,
-        onRegisterBack = onRegisterBack
+        onRegisterBack = onRegisterBack,
     )
 
     LaunchedEffect(viewModel.effect, lifecycleOwner) {
@@ -85,10 +85,10 @@ fun RegisterRoute(
 fun RegisterScreen(
     state: RegisterState,
     onEvent: (RegisterEvent) -> Unit,
-    onRegisterBack: () -> Unit
+    onRegisterBack: () -> Unit,
 ) {
     Scaffold(
-        contentWindowInsets = WindowInsets.safeDrawing
+        contentWindowInsets = WindowInsets.safeDrawing,
     ) { paddingValues ->
         RegisterContent(
             modifier = Modifier.padding(bottom = paddingValues.calculateBottomPadding()),
@@ -104,29 +104,29 @@ fun RegisterContent(
     modifier: Modifier = Modifier,
     state: RegisterState,
     onEvent: (RegisterEvent) -> Unit,
-    onRegisterBack: () -> Unit
+    onRegisterBack: () -> Unit,
 ) {
     Column(
         modifier = modifier
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
-            .imePadding()
+            .imePadding(),
     ) {
         RegisterHeader(onRegisterBack = onRegisterBack)
 
         Column(
-            modifier = Modifier.padding(16.dp)
+            modifier = Modifier.padding(16.dp),
         ) {
             FullNameInput(
                 fullName = state.fullName,
-                onFullNameChange = { onEvent(RegisterEvent.FullNameChanged(it)) }
+                onFullNameChange = { onEvent(RegisterEvent.FullNameChanged(it)) },
             )
 
             Spacer(modifier = Modifier.height(16.dp))
 
             EmailInput(
                 email = state.email,
-                onEmailChange = { onEvent(RegisterEvent.EmailChanged(it)) }
+                onEmailChange = { onEvent(RegisterEvent.EmailChanged(it)) },
             )
 
             Spacer(modifier = Modifier.height(8.dp))
@@ -141,7 +141,7 @@ fun RegisterContent(
             Spacer(modifier = Modifier.height(16.dp))
 
             RegisterButton(
-                onSubmitRegister = { onEvent(RegisterEvent.SubmitRegister) }
+                onSubmitRegister = { onEvent(RegisterEvent.SubmitRegister) },
             )
         }
     }
@@ -154,9 +154,9 @@ fun RegisterScreenPreview() {
         state = RegisterState(
             fullName = "Nguyễn Demo",
             email = "demo@gmail.com",
-            password = "123456"
+            password = "123456",
         ),
         onEvent = {},
-        onRegisterBack = {}
+        onRegisterBack = {},
     )
 }

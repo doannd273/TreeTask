@@ -22,7 +22,8 @@ fun TreeTaskBottomBar(
     modifier: Modifier = Modifier,
 ) {
     NavigationBar(
-        modifier = modifier
+        modifier =
+        modifier
             .navigationBarsPadding()
             .height(56.dp),
         windowInsets = WindowInsets(0, 0, 0, 0),
@@ -32,13 +33,14 @@ fun TreeTaskBottomBar(
 
             // LOGIC CỰC HAY: Bật sáng đèn Icon dù người dùng đang ở Màn Hình Con (Detail) sâu bên trong
             // Miễn là màn con đó chung 1 phả hệ (hierarchy) với Graph bọc ngoài của Tab
-            val selected = currentDestination?.hierarchy?.any { navDest ->
-                if (destination.route is String) {
-                    navDest.route == destination.route
-                } else {
-                    navDest.route?.contains(destination.route::class.qualifiedName ?: "") == true
-                }
-            } == true
+            val selected =
+                currentDestination?.hierarchy?.any { navDest ->
+                    if (destination.route is String) {
+                        navDest.route == destination.route
+                    } else {
+                        navDest.route?.contains(destination.route::class.qualifiedName ?: "") == true
+                    }
+                } == true
 
             NavigationBarItem(
                 selected = selected,

@@ -24,7 +24,7 @@ fun NavController.navigateToProfile(navOptions: NavOptions? = null) {
 
 fun NavGraphBuilder.profileGraph() {
     navigation<ProfileGraphDestination>(
-        startDestination = ProfileDestination
+        startDestination = ProfileDestination,
     ) {
         composable<ProfileDestination> {
             ProfileRoute()
