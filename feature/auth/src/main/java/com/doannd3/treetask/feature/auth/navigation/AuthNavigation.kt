@@ -50,28 +50,28 @@ fun NavGraphBuilder.authGraph(
     onNavigateToForgotPassword: () -> Unit,
     onRegisterBack: () -> Unit,
     onNavigateToLogin: () -> Unit,
-    onForgotPasswordBack: () -> Unit
+    onForgotPasswordBack: () -> Unit,
 ) {
     navigation<AuthGraphDestination>(startDestination = LoginDestination) {
         composable<LoginDestination> {
             LoginRoute(
                 onNavigateToHome = onNavigateToHome,
                 onNavigateToRegister = onNavigateToRegister,
-                onNavigateToForgotPassword = onNavigateToForgotPassword
+                onNavigateToForgotPassword = onNavigateToForgotPassword,
             )
         }
 
         composable<RegisterDestination> {
             RegisterRoute(
                 onNavigateToHome = onNavigateToHome,
-                onRegisterBack = onRegisterBack
+                onRegisterBack = onRegisterBack,
             )
         }
 
         composable<ForgotPasswordDestination> {
             ForgotPasswordRoute(
                 onNavigateToLogin = onNavigateToLogin,
-                onForgotPasswordBack = onForgotPasswordBack
+                onForgotPasswordBack = onForgotPasswordBack,
             )
         }
     }

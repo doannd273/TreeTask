@@ -7,7 +7,6 @@ import javax.inject.Inject
 
 @HiltAndroidApp
 class TreeTaskApplication : Application() {
-
     @Inject
     lateinit var initializers: Set<@JvmSuppressWildcards AppInitializer>
 
