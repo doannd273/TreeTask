@@ -30,11 +30,12 @@ android {
     buildFeatures { compose = true }
 }
 dependencies {
-    implementation(project(":core:model"))
-    implementation(project(":core:domain"))
-    implementation(project(":core:data"))
-    implementation(project(":core:common"))
-    implementation(project(":core:designsystem"))
+    implementation(projects.core.model)
+    implementation(projects.core.domain)
+    implementation(projects.core.data)
+    implementation(projects.core.common)
+    implementation(projects.core.designsystem)
+    implementation(projects.core.analytics)
 
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.compose.ui)

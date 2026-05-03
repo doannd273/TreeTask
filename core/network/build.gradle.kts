@@ -49,9 +49,9 @@ android {
     }
 }
 dependencies {
-    implementation(project(":core:model"))
-    implementation(project(":core:common"))
-    implementation(project(":core:datastore"))
+    implementation(projects.core.model)
+    implementation(projects.core.common)
+    implementation(projects.core.datastore)
 
     implementation(libs.retrofit)
     implementation(libs.retrofit.kotlinx.serialization)

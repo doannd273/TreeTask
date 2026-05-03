@@ -11,7 +11,6 @@ import dagger.multibindings.IntoSet
 @Module
 @InstallIn(SingletonComponent::class)
 interface InitializerModule {
-
     @Binds
     @IntoSet
     fun bindTimberInitializer(initializer: TimberInitializer): AppInitializer

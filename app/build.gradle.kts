@@ -74,19 +74,19 @@ android {
 
 dependencies {
     // feature
-    implementation(project(":feature:auth"))
-    implementation(project(":feature:chat"))
-    implementation(project(":feature:profile"))
-    implementation(project(":feature:stats"))
-    implementation(project(":feature:tasks"))
+    implementation(projects.feature.auth)
+    implementation(projects.feature.chat)
+    implementation(projects.feature.profile)
+    implementation(projects.feature.stats)
+    implementation(projects.feature.tasks)
 
-    // core
-    implementation(project(":core:domain"))
-    implementation(project(":core:common"))
-    implementation(project(":core:designsystem"))
-    implementation(project(":core:datastore"))
-    implementation(project(":core:model"))
-    implementation(project(":core:analytics"))
+// core
+    implementation(projects.core.domain)
+    implementation(projects.core.common)
+    implementation(projects.core.designsystem)
+    implementation(projects.core.datastore)
+    implementation(projects.core.model)
+    implementation(projects.core.analytics)
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
