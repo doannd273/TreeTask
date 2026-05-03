@@ -19,89 +19,89 @@ import java.io.IOException
 import javax.inject.Inject
 
 class AuthAuthenticator
-    @Inject
-    constructor(
-        private val tokenManager: TokenManager,
-        private val authApi: Lazy<AuthService>,
-    ) : Authenticator {
-        override fun authenticate(
-            route: Route?,
-            response: Response,
-        ): Request? {
-            if (responseCount(response) >= 2) {
-                return null
+@Inject
+constructor(
+    private val tokenManager: TokenManager,
+    private val authApi: Lazy<AuthService>,
+) : Authenticator {
+    override fun authenticate(
+        route: Route?,
+        response: Response,
+    ): Request? {
+        if (responseCount(response) >= 2) {
+            return null
+        }
+
+        synchronized(this) {
+            val currentAccessToken = runBlocking { tokenManager.getAccessToken().first() }
+            val originalToken = response.request.header("Authorization")?.removePrefix("Bearer ")
+            if (currentAccessToken != null && currentAccessToken != originalToken) {
+                return response.request
+                    .newBuilder()
+                    .header("Authorization", "Bearer $currentAccessToken")
+                    .build()
             }
 
-            synchronized(this) {
-                val currentAccessToken = runBlocking { tokenManager.getAccessToken().first() }
-                val originalToken = response.request.header("Authorization")?.removePrefix("Bearer ")
-                if (currentAccessToken != null && currentAccessToken != originalToken) {
-                    return response.request
-                        .newBuilder()
-                        .header("Authorization", "Bearer $currentAccessToken")
-                        .build()
-                }
-
-                try {
-                    val refreshToken =
-                        runBlocking {
-                            tokenManager.getRefreshToken().first()
-                        } ?: return null
-
-                    val refreshResult =
-                        runBlocking {
-                            authApi.get().refreshToken(RefreshTokenRequest(refreshToken = refreshToken))
-                        }
-
-                    val tokenData =
-                        when (refreshResult) {
-                            is ApiResult.Success -> {
-                                refreshResult.data
-                            }
-
-                            is ApiResult.Error -> {
-                                runBlocking { tokenManager.clearToken() }
-                                Timber.tag(AppTag.AUTH).w("Refresh Token hết hạn hoặc lỗi: ${refreshResult.exception?.message}")
-                                return null
-                            }
-                        }
-                    val newAccessToken = tokenData.accessToken
-                    val newRefreshToken = tokenData.refreshToken
-
+            try {
+                val refreshToken =
                     runBlocking {
-                        tokenManager.saveToken(newAccessToken, newRefreshToken)
+                        tokenManager.getRefreshToken().first()
+                    } ?: return null
+
+                val refreshResult =
+                    runBlocking {
+                        authApi.get().refreshToken(RefreshTokenRequest(refreshToken = refreshToken))
                     }
 
-                    // retry request cũ
-                    return response.request
-                        .newBuilder()
-                        .header("Authorization", "Bearer $newAccessToken")
-                        .build()
-                } catch (e: IOException) {
-                    // lỗi network
-                    Timber.tag(AppTag.AUTH).e(e, "Network error khi refresh token")
-                } catch (e: SerializationException) {
-                    // lỗi parse JSON
-                    Timber.tag(AppTag.AUTH).e(e, "Parse error khi refresh token")
-                } catch (e: HttpException) {
-                    // nếu bạn dùng Retrofit + coroutines adapter
-                    Timber.tag(AppTag.AUTH).e(e, "HTTP error khi refresh token")
+                val tokenData =
+                    when (refreshResult) {
+                        is ApiResult.Success -> {
+                            refreshResult.data
+                        }
+
+                        is ApiResult.Error -> {
+                            runBlocking { tokenManager.clearToken() }
+                            Timber.tag(AppTag.NETWORK).w("Refresh Token hết hạn hoặc lỗi: ${refreshResult.exception?.message}")
+                            return null
+                        }
+                    }
+                val newAccessToken = tokenData.accessToken
+                val newRefreshToken = tokenData.refreshToken
+
+                runBlocking {
+                    tokenManager.saveToken(newAccessToken, newRefreshToken)
                 }
 
-                runBlocking { tokenManager.clearToken() }
-                return null
+                // retry request cũ
+                return response.request
+                    .newBuilder()
+                    .header("Authorization", "Bearer $newAccessToken")
+                    .build()
+            } catch (e: IOException) {
+                // lỗi network
+                Timber.tag(AppTag.NETWORK).e(e, "Network error khi refresh token")
+            } catch (e: SerializationException) {
+                // lỗi parse JSON
+                Timber.tag(AppTag.NETWORK).e(e, "Parse error khi refresh token")
+            } catch (e: HttpException) {
+                // nếu bạn dùng Retrofit + coroutines adapter
+                Timber.tag(AppTag.NETWORK).e(e, "HTTP error khi refresh token")
             }
-        }
 
-        private fun responseCount(response: Response): Int {
-            var result = 1
-            var r = response.priorResponse
-
-            while (r != null) {
-                result++
-                r = r.priorResponse
-            }
-
-            return result
+            runBlocking { tokenManager.clearToken() }
+            return null
         }
     }
+
+    private fun responseCount(response: Response): Int {
+        var result = 1
+        var r = response.priorResponse
+
+        while (r != null) {
+            result++
+            r = r.priorResponse
+        }
+
+        return result
+    }
+}

@@ -35,5 +35,4 @@ class AppInfoInitializer @Inject constructor() : AppInitializer {
             """.trimIndent(),
         )
     }
-
 }
