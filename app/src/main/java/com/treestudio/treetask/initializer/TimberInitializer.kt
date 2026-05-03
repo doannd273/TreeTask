@@ -6,7 +6,7 @@ import timber.log.Timber
 import javax.inject.Inject
 
 class TimberInitializer @Inject constructor(
-    private val crashlyticsTree: CrashlyticsTree
+    private val crashlyticsTree: CrashlyticsTree,
 ) : AppInitializer {
 
     // Timber phải chạy cực sớm!
