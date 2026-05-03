@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "851276404880",
+    "project_id": "treetask-94b5f",
+    "storage_bucket": "treetask-94b5f.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:851276404880:android:ffd94a94fcfdb15628e015",
+        "android_client_info": {
+          "package_name": "com.treestudio.treetask"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyALcf52InYEGPDlI1cQb2vuBtMpiHfAVLk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

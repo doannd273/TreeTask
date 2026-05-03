@@ -1,6 +1,5 @@
 package com.doannd3.treetask.feature.auth.ui.login
 
-import androidx.lifecycle.viewModelScope
 import com.doannd3.treetask.core.common.ApiResult
 import com.doannd3.treetask.core.common.BaseViewModel
 import com.doannd3.treetask.core.common.MviViewModel
@@ -15,12 +14,11 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class LoginViewModel @Inject constructor(
-    private val loginUseCase: LoginUseCase
+    private val loginUseCase: LoginUseCase,
 ) : BaseViewModel(), MviViewModel<LoginState, LoginEvent, LoginEffect> {
 
     private val _uiState = MutableStateFlow(LoginState())

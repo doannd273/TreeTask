@@ -4,7 +4,6 @@ import android.content.Context
 import androidx.annotation.StringRes
 
 sealed interface UiText {
-
     // backend, runtime
     data class DynamicString(
         val value: String,
@@ -19,7 +18,9 @@ sealed interface UiText {
 
 fun UiText.asString(context: Context): String {
     return when (this) {
-        is UiText.DynamicString -> value
+        is UiText.DynamicString -> {
+            value
+        }
 
         is UiText.StringResource -> {
             return when {

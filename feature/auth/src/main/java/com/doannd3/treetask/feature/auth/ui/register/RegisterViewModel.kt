@@ -18,8 +18,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class RegisterViewModel @Inject constructor(
-    private val registerUseCase: RegisterUseCase
-): BaseViewModel(), MviViewModel<RegisterState, RegisterEvent, RegisterEffect> {
+    private val registerUseCase: RegisterUseCase,
+) : BaseViewModel(), MviViewModel<RegisterState, RegisterEvent, RegisterEffect> {
 
     private val _uiState = MutableStateFlow(RegisterState())
     override val uiState: StateFlow<RegisterState> = _uiState.asStateFlow()

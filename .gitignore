@@ -21,7 +21,6 @@ build/
 key.properties
 
 # Firebase / Secret files (Rất hay bị lộ nếu Repo là Public)
-google-services.json
 firebase_app_id_file.json
 GoogleService-Info.plist
 

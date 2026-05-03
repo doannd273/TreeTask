@@ -14,17 +14,14 @@ fun Instant.toDayMonth(): String {
         .format(formatter)
 }
 
-fun String?.toInstantOrNow(): Instant {
-    return try {
+fun String?.toInstantOrNow(): Instant =
+    try {
         this?.let { Instant.parse(it) } ?: Instant.now()
     } catch (e: DateTimeParseException) {
         Timber.e(e, "Invalid instant format: $this")
         Instant.now()
     }
-}
 
-fun Long.toInstant(): Instant {
-    return Instant.ofEpochMilli(this)
-}
+fun Long.toInstant(): Instant = Instant.ofEpochMilli(this)
 
 fun Instant.toLong() = toEpochMilli()
