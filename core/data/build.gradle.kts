@@ -24,6 +24,7 @@ android {
     }
 }
 dependencies {
+    // core
     implementation(projects.core.model)
     implementation(projects.core.database)
     implementation(projects.core.datastore)
@@ -39,5 +40,6 @@ dependencies {
     ksp(libs.hilt.compiler)
     coreLibraryDesugaring(libs.desugar.jdk.libs)
 
+    // testing
     testImplementation(projects.core.testing)
 }

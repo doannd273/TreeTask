@@ -5,7 +5,9 @@ import com.treestudio.treetask.BuildConfig
 import timber.log.Timber
 import javax.inject.Inject
 
-class TimberInitializer @Inject constructor() : AppInitializer {
+class TimberInitializer @Inject constructor(
+    private val crashlyticsTree: CrashlyticsTree,
+) : AppInitializer {
 
     // Timber phải chạy cực sớm!
     override val priority = InitializationPriority.URGENT
@@ -16,7 +18,7 @@ class TimberInitializer @Inject constructor() : AppInitializer {
             Timber.plant(Timber.DebugTree())
         } else {
             // Lúc đưa lên Play Store: Tắt hết Logcat, chỉ rình lỗi đẩy lên Firebase
-            Timber.plant(CrashlyticsTree())
+            Timber.plant(crashlyticsTree)
         }
     }
 }
