@@ -12,7 +12,8 @@ import kotlinx.coroutines.flow.asStateFlow
 import javax.inject.Inject
 
 @HiltViewModel
-class ProfileViewModel @Inject constructor() : BaseViewModel(),
+class ProfileViewModel @Inject constructor() :
+    BaseViewModel(),
     MviViewModel<ProfileState, ProfileEvent, ProfileEffect> {
 
     private val _uiState = MutableStateFlow(ProfileState())
@@ -22,6 +23,6 @@ class ProfileViewModel @Inject constructor() : BaseViewModel(),
     override val effect: SharedFlow<ProfileEffect> = _effect.asSharedFlow()
 
     override fun onEvent(event: ProfileEvent) {
-
+        // TODO
     }
 }

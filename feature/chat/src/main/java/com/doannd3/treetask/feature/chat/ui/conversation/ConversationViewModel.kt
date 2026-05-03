@@ -12,10 +12,11 @@ import kotlinx.coroutines.flow.asStateFlow
 import javax.inject.Inject
 
 @HiltViewModel
-class ConversationViewModel @Inject constructor(
-
-) : BaseViewModel(), MviViewModel<ConversationState, ConversationEvent, ConversationEffect> {
-
+class ConversationViewModel
+@Inject
+constructor() :
+    BaseViewModel(),
+    MviViewModel<ConversationState, ConversationEvent, ConversationEffect> {
     private val _uiState = MutableStateFlow(ConversationState())
     override val uiState: StateFlow<ConversationState> = _uiState.asStateFlow()
 
@@ -23,6 +24,6 @@ class ConversationViewModel @Inject constructor(
     override val effect: SharedFlow<ConversationEffect> = _effect.asSharedFlow()
 
     override fun onEvent(event: ConversationEvent) {
-
+        // TODO
     }
 }

@@ -5,6 +5,9 @@ plugins {
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.hilt)
     alias(libs.plugins.ksp)
+    // lint
+    alias(libs.plugins.treetask.android.detekt)
+    alias(libs.plugins.treetask.android.spotless)
 }
 android {
     namespace = "com.doannd3.treetask.feature.auth"
@@ -32,6 +35,7 @@ dependencies {
     implementation(project(":core:data"))
     implementation(project(":core:common"))
     implementation(project(":core:designsystem"))
+    implementation(project(":core:analytics"))
 
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.compose.ui)
