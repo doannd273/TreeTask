@@ -1,6 +1,7 @@
 package com.treestudio.treetask.di
 
 import com.treestudio.treetask.initializer.AppInitializer
+import com.treestudio.treetask.initializer.SyncInitializer
 import com.treestudio.treetask.initializer.TimberInitializer
 import dagger.Binds
 import dagger.Module
@@ -14,4 +15,8 @@ interface InitializerModule {
     @Binds
     @IntoSet
     fun bindTimberInitializer(initializer: TimberInitializer): AppInitializer
+
+    @Binds
+    @IntoSet
+    fun bindSyncInitializer(initializer: SyncInitializer): AppInitializer
 }
