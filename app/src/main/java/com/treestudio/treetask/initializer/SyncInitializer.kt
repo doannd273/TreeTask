@@ -30,10 +30,11 @@ class SyncInitializer @Inject constructor() : AppInitializer {
             .setConstraints(constraints)
             .build()
 
+        // Nếu lúc mở app đang có 1 tiến trình sync chạy dở rồi thì kệ nó chạy tiếp
         workManager.enqueueUniqueWork(
             SYNC_WORK_NAME,
-            ExistingWorkPolicy.KEEP, // Nếu lúc mở app đang có 1 tiến trình sync chạy dở rồi thì kệ nó chạy tiếp
-            syncRequest
+            ExistingWorkPolicy.KEEP,
+            syncRequest,
         )
 
         // 3. CÁCH 2: SYNC ĐỊNH KỲ (Mỗi 24h chạy ngầm 1 lần để dọn dẹp)
@@ -44,7 +45,7 @@ class SyncInitializer @Inject constructor() : AppInitializer {
         workManager.enqueueUniquePeriodicWork(
             SYNC_PERIODIC_WORK_NAME,
             ExistingPeriodicWorkPolicy.KEEP,
-            periodicRequest
+            periodicRequest,
         )
     }
 
