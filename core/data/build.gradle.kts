@@ -36,8 +36,13 @@ dependencies {
     implementation(libs.paging.runtime)
     implementation(libs.work.runtime.ktx)
     implementation(libs.timber)
+
+    // hilt
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)
+    implementation(libs.androidx.hilt.work)
+
+    // java
     coreLibraryDesugaring(libs.desugar.jdk.libs)
 
     // testing
