@@ -9,7 +9,7 @@ import dagger.hilt.components.SingletonComponent
 
 @Module
 @InstallIn(SingletonComponent::class)
-abstract class AnalyticsModule {
+interface AnalyticsModule {
     @Binds
-    abstract fun bindAnalyticsHelper(analyticsHelper: FirebaseAnalyticsHelper): AnalyticsHelper
+    fun bindAnalyticsHelper(analyticsHelper: FirebaseAnalyticsHelper): AnalyticsHelper
 }

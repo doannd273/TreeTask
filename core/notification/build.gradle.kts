@@ -20,8 +20,9 @@ android {
     }
 }
 dependencies {
-    implementation(project(":core:model"))
-    implementation(project(":core:common"))
+    implementation(projects.core.model)
+    implementation(projects.core.model)
+
     // implementation(libs.firebase.messaging)
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)
