@@ -15,20 +15,14 @@ import dagger.hilt.components.SingletonComponent
 @Module
 // InstallIn báo cho Hilt biết: Cục Repo này là Singleton (sống cùng tuổi đời của toàn App)
 @InstallIn(SingletonComponent::class)
-abstract class DataModule {
+interface DataModule {
     // Kỹ thuật gán (Binds) thay thế chữ "Provides" giúp tối ưu hiệu suất bộ nhớ cực mạnh
     @Binds
-    abstract fun bindAuthRepository(
-        authRepositoryImpl: AuthRepositoryImpl,
-    ): AuthRepository
+    fun bindAuthRepository(authRepositoryImpl: AuthRepositoryImpl): AuthRepository
 
     @Binds
-    abstract fun bindTasksRepository(
-        taskRepositoryImpl: TaskRepositoryImpl,
-    ): TaskRepository
+    fun bindTasksRepository(taskRepositoryImpl: TaskRepositoryImpl): TaskRepository
 
     @Binds
-    abstract fun bindUserRepository(
-        userRepositoryImpl: UserRepositoryImpl,
-    ): UserRepository
+    fun bindUserRepository(userRepositoryImpl: UserRepositoryImpl): UserRepository
 }
