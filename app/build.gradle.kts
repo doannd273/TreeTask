@@ -16,8 +16,24 @@ android {
     namespace = "com.treestudio.treetask"
     defaultConfig {
         applicationId = "com.treestudio.treetask"
-        versionCode = 1
-        versionName = "0.0.1"
+        // versionCode = tổng số commit (tự tăng mỗi lần có commit mới)
+        versionCode =
+            providers
+                .exec {
+                    commandLine("git", "rev-list", "--count", "HEAD")
+                }.standardOutput.asText
+                .get()
+                .trim()
+                .toInt()
+
+        // versionName = tên Git Tag gần nhất (ví dụ: "1.0.0")
+        versionName =
+            providers
+                .exec {
+                    commandLine("git", "describe", "--tags", "--abbrev=0")
+                }.standardOutput.asText
+                .get()
+                .trim()
     }
 
     buildTypes {
