@@ -19,8 +19,12 @@ android {
         jvmTarget = "17"
     }
 }
+
+ksp {
+    arg("room.schemaLocation", "$projectDir/schemas")
+}
 dependencies {
-    implementation(project(":core:model"))
+    implementation(projects.core.model)
     implementation(libs.room.runtime)
     implementation(libs.room.ktx)
     implementation(libs.room.paging)

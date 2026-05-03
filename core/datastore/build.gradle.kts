@@ -20,7 +20,7 @@ android {
     }
 }
 dependencies {
-    implementation(project(":core:model"))
+    implementation(projects.core.model)
 
     implementation(libs.datastore.preferences)
     implementation(libs.hilt.android)

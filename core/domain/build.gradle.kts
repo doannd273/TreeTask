@@ -20,9 +20,11 @@ android {
     }
 }
 dependencies {
-    implementation(project(":core:model"))
-    implementation(project(":core:common"))
-    implementation(project(":core:datastore"))
+    // core
+    implementation(projects.core.model)
+    implementation(projects.core.common)
+    implementation(projects.core.datastore)
+
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)
 }

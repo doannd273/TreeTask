@@ -24,12 +24,12 @@ android {
     }
 }
 dependencies {
-    implementation(project(":core:model"))
-    implementation(project(":core:database"))
-    implementation(project(":core:datastore"))
-    implementation(project(":core:domain"))
-    implementation(project(":core:common"))
-    implementation(project(":core:network"))
+    implementation(projects.core.model)
+    implementation(projects.core.database)
+    implementation(projects.core.datastore)
+    implementation(projects.core.domain)
+    implementation(projects.core.common)
+    implementation(projects.core.network)
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.paging.runtime)
@@ -38,4 +38,6 @@ dependencies {
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)
     coreLibraryDesugaring(libs.desugar.jdk.libs)
+
+    testImplementation(projects.core.testing)
 }
