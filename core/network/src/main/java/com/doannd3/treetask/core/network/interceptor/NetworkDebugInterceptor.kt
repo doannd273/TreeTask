@@ -1,5 +1,6 @@
 package com.doannd3.treetask.core.network.interceptor
 
+import com.doannd3.treetask.core.common.log.AppTag
 import com.doannd3.treetask.core.network.extensions.redact
 import okhttp3.Interceptor
 import okhttp3.Response
@@ -16,7 +17,7 @@ constructor() : Interceptor {
         val startTime = System.currentTimeMillis()
 
         // Log request
-        Timber.d(
+        Timber.tag(AppTag.NETWORK).d(
             """
                 ➡️ REQUEST
                 ${request.method} ${request.url}
@@ -30,7 +31,7 @@ constructor() : Interceptor {
             val duration = System.currentTimeMillis() - startTime
 
             // 👉 Log response
-            Timber.d(
+            Timber.tag(AppTag.NETWORK).d(
                 """
                     ⬅️ RESPONSE (${duration}ms)
                     ${response.code} ${response.request.url}
@@ -41,7 +42,7 @@ constructor() : Interceptor {
         } catch (e: IOException) {
             val duration = System.currentTimeMillis() - startTime
 
-            Timber.e(
+            Timber.tag(AppTag.NETWORK).e(
                 e,
                 """
                     ❌ ERROR (${duration}ms)
