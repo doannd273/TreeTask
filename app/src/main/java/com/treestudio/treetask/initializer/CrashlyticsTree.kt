@@ -6,7 +6,7 @@ import timber.log.Timber
 import javax.inject.Inject
 
 class CrashlyticsTree @Inject constructor(
-    private val crashlytics: FirebaseCrashlytics
+    private val crashlytics: FirebaseCrashlytics,
 ) : Timber.Tree() {
     override fun log(
         priority: Int,
@@ -18,7 +18,7 @@ class CrashlyticsTree @Inject constructor(
         if (priority == Log.VERBOSE || priority == Log.DEBUG || priority == Log.INFO) {
             return
         }
-        
+
         crashlytics.setCustomKey("priority", priority)
         tag?.let { crashlytics.setCustomKey("tag", it) }
         crashlytics.log(message)
