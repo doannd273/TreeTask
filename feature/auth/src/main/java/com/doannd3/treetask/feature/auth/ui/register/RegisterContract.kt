@@ -7,7 +7,7 @@ data class RegisterState(
     val email: String = "",
     val password: String = "",
     val passwordVisible: Boolean = false,
-    val isLoading: Boolean = false
+    val isLoading: Boolean = false,
 )
 
 sealed class RegisterEvent {
