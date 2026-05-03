@@ -30,10 +30,12 @@ android {
         versionName =
             providers
                 .exec {
-                    commandLine("git", "describe", "--tags", "--abbrev=0")
+                    commandLine("git", "tag", "--sort=-v:refname")
                 }.standardOutput.asText
                 .get()
                 .trim()
+                .lines()
+                .firstOrNull() ?: "1.0.0"
     }
 
     buildTypes {

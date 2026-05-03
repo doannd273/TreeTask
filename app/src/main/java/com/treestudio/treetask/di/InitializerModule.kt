@@ -1,5 +1,6 @@
 package com.treestudio.treetask.di
 
+import com.treestudio.treetask.initializer.AppInfoInitializer
 import com.treestudio.treetask.initializer.AppInitializer
 import com.treestudio.treetask.initializer.SyncInitializer
 import com.treestudio.treetask.initializer.TimberInitializer
@@ -19,4 +20,8 @@ interface InitializerModule {
     @Binds
     @IntoSet
     fun bindSyncInitializer(initializer: SyncInitializer): AppInitializer
+
+    @Binds
+    @IntoSet
+    fun bindAppInfoInitializer(initializer: AppInfoInitializer): AppInitializer
 }
