@@ -19,5 +19,5 @@ val Green = Color(0xFF01904a)
 
 val Red10 = Color(0xFFC27F79)
 
-val Blue = Color(0xFF03A9F4)
-val Yellow = Color(0xFFF6C4BC)
+val ColorDev = Color(0xFFfcc34a)
+val ColorTextDev = Color(0xFF1F1F1F)
