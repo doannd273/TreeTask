@@ -40,16 +40,20 @@ jobs:
 
       # Bước 5: Inject google-services.json cho từng flavor
       - name: Inject google-services.json (dev)
-        if: ${{ secrets.GOOGLE_SERVICES_JSON_DEV != '' }}
+        env:
+          GOOGLE_SERVICES_DEV: ${{ secrets.GOOGLE_SERVICES_JSON_DEV }}
+        if: env.GOOGLE_SERVICES_DEV != ''
         run: |
           mkdir -p app/src/dev
-          echo '${{ secrets.GOOGLE_SERVICES_JSON_DEV }}' > app/src/dev/google-services.json
+          echo "$GOOGLE_SERVICES_DEV" > app/src/dev/google-services.json
 
       - name: Inject google-services.json (prod)
-        if: ${{ secrets.GOOGLE_SERVICES_JSON_PROD != '' }}
+        env:
+          GOOGLE_SERVICES_PROD: ${{ secrets.GOOGLE_SERVICES_JSON_PROD }}
+        if: env.GOOGLE_SERVICES_PROD != ''
         run: |
           mkdir -p app/src/prod
-          echo '${{ secrets.GOOGLE_SERVICES_JSON_PROD }}' > app/src/prod/google-services.json
+          echo "$GOOGLE_SERVICES_PROD" > app/src/prod/google-services.json
 
       # Bước 6: Chạy lệnh được truyền vào từ biến "command"
       - name: Run command
