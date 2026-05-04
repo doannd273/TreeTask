@@ -69,10 +69,16 @@ android {
             dimension = "environment"
             applicationIdSuffix = ".dev"
             resValue("string", "app_name", "TreeTask (DEV)") // tên app ngoài màn hình chính
+
+            buildConfigField("String", "ENV", "\"DEV\"")
+            buildConfigField("Boolean", "IS_DEV", "true")
         }
         create("prod") {
             dimension = "environment"
             resValue("string", "app_name", "TreeTask")
+
+            buildConfigField("String", "ENV", "\"PROD\"")
+            buildConfigField("Boolean", "IS_DEV", "false")
         }
     }
 }
