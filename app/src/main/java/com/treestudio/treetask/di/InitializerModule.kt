@@ -1,5 +1,6 @@
 package com.treestudio.treetask.di
 
+import com.treestudio.treetask.initializer.AnalyticsSessionManager
 import com.treestudio.treetask.initializer.AppInfoInitializer
 import com.treestudio.treetask.initializer.AppInitializer
 import com.treestudio.treetask.initializer.SyncInitializer
@@ -24,4 +25,8 @@ interface InitializerModule {
     @Binds
     @IntoSet
     fun bindAppInfoInitializer(initializer: AppInfoInitializer): AppInitializer
+
+    @Binds
+    @IntoSet
+    fun bindAnalyticsSessionManager(initializer: AnalyticsSessionManager): AppInitializer
 }
