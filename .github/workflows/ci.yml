@@ -21,25 +21,29 @@ jobs:
   # Job 1: Kiểm tra format code (Spotless). Chạy song song độc lập với Job 2.
   lint:
     uses: ./.github/workflows/android-setup.yml
+    secrets: inherit
     with:
       command: ./gradlew spotlessCheck
 
   # Job 2: Kiểm tra Code Smells (Detekt). Chạy song song độc lập với Job 1.
   detekt:
     uses: ./.github/workflows/android-setup.yml
+    secrets: inherit
     with:
       command: ./gradlew detekt
 
   # Job 3: Chạy Unit Test tự động. Lá chắn thép chống bug hồi quy.
   unit-test:
     uses: ./.github/workflows/android-setup.yml
+    secrets: inherit
     with:
       command: ./gradlew testDebugUnitTest
 
-  # Job 4: Build thử App (assembleDebug). 
+  # Job 4: Build thử App (assembleDebug).
   # Lệnh "needs" bắt buộc Job này phải đợi các Job kiểm tra chạy Xanh xong thì mới được chạy.
   build:
     uses: ./.github/workflows/android-setup.yml
+    secrets: inherit
     needs: [ lint, detekt, unit-test ]
     with:
       command: ./gradlew assembleDebug

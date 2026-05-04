@@ -8,6 +8,11 @@ on:
       command:
         required: true
         type: string
+    secrets:
+      GOOGLE_SERVICES_JSON_DEV:
+        required: false
+      GOOGLE_SERVICES_JSON_PROD:
+        required: false
 
 jobs:
   run:
@@ -33,6 +38,19 @@ jobs:
       - name: Make gradlew executable
         run: chmod +x ./gradlew
 
-      # Bước 5: Chạy lệnh được truyền vào từ biến "command"
+      # Bước 5: Inject google-services.json cho từng flavor
+      - name: Inject google-services.json (dev)
+        if: ${{ secrets.GOOGLE_SERVICES_JSON_DEV != '' }}
+        run: |
+          mkdir -p app/src/dev
+          echo '${{ secrets.GOOGLE_SERVICES_JSON_DEV }}' > app/src/dev/google-services.json
+
+      - name: Inject google-services.json (prod)
+        if: ${{ secrets.GOOGLE_SERVICES_JSON_PROD != '' }}
+        run: |
+          mkdir -p app/src/prod
+          echo '${{ secrets.GOOGLE_SERVICES_JSON_PROD }}' > app/src/prod/google-services.json
+
+      # Bước 6: Chạy lệnh được truyền vào từ biến "command"
       - name: Run command
         run: ${{ inputs.command }}
