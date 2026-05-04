@@ -8,6 +8,7 @@ import androidx.activity.viewModels
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.doannd3.treetask.core.designsystem.theme.TreeTaskTheme
 import com.treestudio.treetask.ui.TreeTaskApp
+import com.treestudio.treetask.ui.debug.DebugOverlayWrapper
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -26,9 +27,11 @@ class MainActivity : ComponentActivity() {
         setContent {
             TreeTaskTheme {
                 viewModel.startDestination?.let {
-                    TreeTaskApp(
-                        startDestination = it,
-                    )
+                    DebugOverlayWrapper {
+                        TreeTaskApp(
+                            startDestination = it,
+                        )
+                    }
                 }
             }
         }
