@@ -64,6 +64,7 @@ coreSplashscreen = "1.0.1"
 appcompat = "1.7.1"
 material = "1.13.0"
 junitJunit = "4.12"
+security = "1.1.0-alpha06"
 
 # Version App
 compileSdk = "36"
@@ -130,6 +131,7 @@ firebase-messaging = { group = "com.google.firebase", name = "firebase-messaging
 desugar-jdk-libs = { group = "com.android.tools", name = "desugar_jdk_libs", version.ref = "desugar" }
 androidx-startup = { module = "androidx.startup:startup-runtime", version.ref = "androidx-startup" }
 androidx-core-splashscreen = { module = "androidx.core:core-splashscreen", version.ref = "coreSplashscreen" }
+androidx-security-crypto = { group = "androidx.security", name = "security-crypto", version.ref = "security" }
 
 # Testing
 junit = { group = "junit", name = "junit", version.ref = "junit" }

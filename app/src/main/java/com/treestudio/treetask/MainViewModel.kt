@@ -6,7 +6,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.doannd3.treetask.core.common.ApiResult
-import com.doannd3.treetask.core.datastore.TokenManager
+import com.doannd3.treetask.core.datastore.token.TokenStorage
 import com.doannd3.treetask.core.domain.repository.UserRepository
 import com.doannd3.treetask.feature.auth.navigation.AuthGraphDestination
 import com.doannd3.treetask.feature.tasks.navigation.TasksGraphDestination
@@ -19,7 +19,7 @@ import javax.inject.Inject
 class MainViewModel
 @Inject
 constructor(
-    private val tokenManager: TokenManager,
+    private val tokenStorage: TokenStorage,
     private val userRepository: UserRepository,
 ) : ViewModel() {
     var isLoading by mutableStateOf(true)
@@ -30,7 +30,7 @@ constructor(
 
     init {
         viewModelScope.launch {
-            val token = tokenManager.getAccessToken().first()
+            val token = tokenStorage.getAccessToken().first()
             if (token.isNullOrEmpty()) {
                 startDestination = AuthGraphDestination
                 isLoading = false
@@ -46,11 +46,12 @@ constructor(
 
                 is ApiResult.Error -> {
                     val cached = userRepository.getCachedProfile().first()
-                    startDestination = if (cached != null) {
-                        TasksGraphDestination
-                    } else {
-                        AuthGraphDestination
-                    }
+                    startDestination =
+                        if (cached != null) {
+                            TasksGraphDestination
+                        } else {
+                            AuthGraphDestination
+                        }
                     isLoading = false
                 }
             }
