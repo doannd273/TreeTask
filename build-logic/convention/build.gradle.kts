@@ -5,6 +5,9 @@ plugins {
 dependencies {
     compileOnly(libs.detekt.gradle)
     compileOnly(libs.spotless.gradle)
+    // library plugin android
+    compileOnly(libs.android.gradlePlugin)
+    compileOnly(libs.kotlin.gradlePlugin)
 }
 
 gradlePlugin {
@@ -16,6 +19,14 @@ gradlePlugin {
         register("androidSpotless") {
             id = "treetask.android.spotless"
             implementationClass = "AndroidSpotlessConventionPlugin"
+        }
+        register("androidLibrary") {
+            id = "treetask.android.library"
+            implementationClass = "AndroidLibraryConventionPlugin"
+        }
+        register("androidApplication") {
+            id = "treetask.android.application"
+            implementationClass = "AndroidApplicationConventionPlugin"
         }
     }
 }

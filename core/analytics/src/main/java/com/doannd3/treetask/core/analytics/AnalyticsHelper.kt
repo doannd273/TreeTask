@@ -4,4 +4,6 @@ interface AnalyticsHelper {
     fun setUserId(userId: String)
 
     fun clearUserId()
+
+    fun logEvent(event: AnalyticsEvent)
 }

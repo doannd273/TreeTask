@@ -4,6 +4,7 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Transaction
 import com.doannd3.treetask.core.database.model.TaskEntity
 import kotlinx.coroutines.flow.Flow
 
@@ -21,6 +22,18 @@ interface TaskDao {
     @Query("DELETE FROM tasks WHERE id = :taskId")
     suspend fun deleteTaskById(taskId: String)
 
+    @Query("DELETE FROM tasks WHERE user_id = :userId")
+    suspend fun deleteTaskByUserId(userId: String)
+
     @Query("DELETE FROM tasks")
     suspend fun clearTasks()
+
+    @Transaction
+    suspend fun syncUserTasks(
+        userId: String,
+        tasks: List<TaskEntity>,
+    ) {
+        deleteTaskByUserId(userId = userId)
+        insertTasks(tasks = tasks)
+    }
 }

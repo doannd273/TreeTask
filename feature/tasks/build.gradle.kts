@@ -1,6 +1,5 @@
 plugins {
-    alias(libs.plugins.android.library)
-    alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.treetask.android.library)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.hilt)
@@ -11,29 +10,24 @@ plugins {
 }
 android {
     namespace = "com.doannd3.treetask.feature.tasks"
-    compileSdk = 36
     resourcePrefix = "tasks_"
     defaultConfig {
-        minSdk = 24
         missingDimensionStrategy("environment", "dev")
     }
     compileOptions {
         isCoreLibraryDesugaringEnabled = true
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
-    }
-    kotlinOptions {
-        jvmTarget = "17"
     }
     buildFeatures { compose = true }
 }
 dependencies {
-    implementation(project(":core:model"))
-    implementation(project(":core:domain"))
-    implementation(project(":core:data"))
-    implementation(project(":core:common"))
-    implementation(project(":core:designsystem"))
-    implementation(project(":core:datastore"))
+    // core
+    implementation(projects.core.model)
+    implementation(projects.core.domain)
+    implementation(projects.core.data)
+    implementation(projects.core.common)
+    implementation(projects.core.designsystem)
+    implementation(projects.core.analytics)
+    implementation(projects.core.datastore)
 
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.compose.ui)

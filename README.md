@@ -1,145 +1,63 @@
-# Kế hoạch Triển khai Ứng dụng Android Task Manager (Chi tiết Solution Architecture)
+# TreeTask - Android Task Management App
 
-Bản kế hoạch này được cập nhật sau khi phân tích chi tiết mã nguồn Backend API (`task-backend`). Dưới đây là kiến trúc hệ thống chuẩn xác, bám sát các endpoint thực tế và mô tả chi tiết setup từng tính năng/màn hình.
+A modern, offline-first Android Task Management application built using **Clean Architecture**, **MVI Pattern**, and heavily inspired by Google's official **Now in Android** (NiA) architecture.
 
-## 1. Cấu trúc Kiến trúc Hệ thống (Now In Android Pattern)
+## 🏗 Architecture & Tech Stack
 
-Ứng dụng sẽ áp dụng mô hình **Clean Architecture + Multi-module + MVI Pattern**, quản lý state bằng `StateFlow`/`SharedFlow`.
+This project follows a highly modularized architecture to ensure scalability, robust testing, and separation of concerns.
 
-### Sơ đồ Module Core & Tính năng:
-- **`app`**: File khởi chạy, setup Hilt DI, Navigation Graph tổng.
-- **`core:model`**: Định nghĩa Model gốc dựa trên BE Response (`Task`, `User`, `Conversation`, `Message`).
-- **`core:network`**:
-    - Tích hợp Retrofit, `Kotlinx.serialization`.
-    - Cấu hình Wrapper Response chung: `ApiResponse<T>` map chính xác JSON:
-      `{ "success": Boolean, "message": String?, "data": T? }`.
-    - Thiết lập **Authenticator Interceptor** bắt lỗi HTTP 401 tự động gọi `/api/auth/refresh-token`.
-    - Thiết lập **Socket.IO Client v4.8+** (tương thích backend), quản lý connection stream qua `Flow`.
-- **`core:database`**: Thiết lập RoomDB với các Entity Local để offline caching.
-- **`core:datastore`**: Tích hợp Preferences DataStore (như bạn yêu cầu) để lưu `accessToken` (giới hạn 15m) và `refreshToken` (7d).
-- **`core:data`**: Tầng Interface & Implementation của các Repositories, kết hợp `RemoteMediator` (Paging 3) và Room fallback kết nối mạng (NetworkBoundResource).
-- **`core:designsystem`**: Theme mặc định, Typography, Component dùng chung.
+* **Architecture**: Clean Architecture, Multi-module, MVI (Model-View-Intent)
+* **Language**: Kotlin 2.0+
+* **UI**: Jetpack Compose (Adaptive layouts planned for future updates)
+* **Dependency Injection**: Hilt
+* **Asynchronous Programming**: Kotlin Coroutines & Flow
+* **Networking**: Retrofit2, OkHttp, Chucker, Socket.IO (for Real-time Chat)
+* **Local Storage**: Room Database (Offline-first data layer), Preferences DataStore
+* **Testing**: JUnit4, MockK, Turbine, Truth, Coroutines-Test
+* **Observability**: Firebase Analytics, Firebase Crashlytics, Firebase Performance, LeakCanary
+* **CI/CD**: GitHub Actions (Lint, Detekt, Automated Unit Tests)
 
----
+## 📦 Project Structure
 
-## 2. Kế hoạch Triển khai Từng Màn Hình (Screen-by-Screen)
+The codebase is split into `app`, `feature`, and `core` modules:
 
-### 2.1. Feature: Auth (`feature:auth`)
-Dùng cho luồng đăng nhập, đăng ký và điều hướng ban đầu.
+* **`app`**: The main entry point, navigation graph, and global DI bindings.
+* **`feature:*`**: Encapsulated feature modules (Auth, Tasks, Profile, Chat, Stats). *(Note: UI/UX implementation is actively in progress).*
+* **`core:common`**: Shared utilities, DI qualifiers, and injected Coroutine Dispatchers.
+* **`core:data`**: Repository implementations handling business logic, data merging, and offline-first fallback mechanisms.
+* **`core:database`**: Room DB setup, DAOs, and local entity definitions.
+* **`core:datastore`**: Local preferences (e.g., Auth Tokens) managed securely by DataStore.
+* **`core:domain`**: Core business rules and repository interfaces.
+* **`core:model`**: Immutable business models used across the application.
+* **`core:network`**: API services, Kotlinx Serialization, and robust Auth Interceptors for automatic token refresh.
+* **`core:testing`**: Test dispatchers, mock rules, and shared testing utilities.
+* **`core:analytics`**: Firebase Integration for event tracking and crash reporting.
 
-* **Splash Screen (`SplashScreen`)**:
-    - **Setup**: Màn hình hiển thị logo app tức thời. ViewModel gọi Local DataStore để kiểm tra `accessToken`.
-    - **Logic**: Nếu có token, gọi API `GET /api/user/profile`.
-        - Thành công → Navigate tới `MainActivity` (Nhánh Home).
-        - Lỗi 401 (hoặc null) → Chạy cơ chế refresh token. Nếu refresh fail → Navigate tới `LoginScreen`.
+## 🚀 Setup Instructions
 
-* **Login Screen (`LoginScreen`)**:
-    - **Setup**: 2 TextFields (Email bắt Format trùng DB lowercase, Mật khẩu), Nút Login, Chữ "Đăng ký".
-    - **Logic**: Khi click Login, ViewModel `POST /api/auth/login`. Lấy `data.accessToken` và `data.refreshToken` lưu vào DataStore. Connect Socket ngay sau khi có token.
+To build and run this project on your local machine:
 
-* **Register Screen (`RegisterScreen`)**:
-    - **Setup**: Tương tự login.
-    - **Logic**: `POST /api/auth/register`. Đăng ký thành công Backend sẽ trả về Token (giống hệt Login). Ứng dụng tự động lưu DataStore và Navigate vào `MainActivity` không bắt đăng nhập lại.
+1. **Clone the repository**:
+   ```bash
+   git clone https://github.com/doannd3/TreeTask.git
+   ```
 
-### 2.2. Feature: Task Management (`feature:tasks`)
-Dựa vào các API Task CRUD ở Backend.
+2. **Open the project**:
+   Open the cloned directory in **Android Studio Ladybug** (or a newer version).
 
-* **Danh sách Task (`TasksListScreen`)**:
-    - **Setup**: `LazyColumn` bọc trong `PullRefresh`. Một thanh Search Bar (áp dụng debounce 500ms API calls) và Filter Dropdown (All, `todo`, `in_progress`, `pending`, `done`).
-    - **Logic**: Dùng **Paging 3** + Room Remote Mediator liên kết với `GET /api/tasks?page=1&limit=20&status=&keyword=`.
-    - **Offline support**: Khi đọc API lỗi vì rớt mạng, Room `TaskEntity` sẽ trả ra kết quả truy vấn offline.
+3. **Configure Firebase (Optional but recommended)**:
+   Place your `google-services.json` file into the `app/` directory to enable Firebase Analytics, Performance, and Crashlytics.
 
-* **Add / Edit Task (`TaskBottomSheet`)**:
-    - **Setup**: `ModalBottomSheet` hiển thị Title, Description, Status Select (Tương đương db backend).
-    - **Logic**: Dùng `POST /api/tasks` hoặc `PUT /api/tasks/:id`.
-    - **Offline fallback**: Nếu không có mạng lúc post, tạo/update đối tượng ở Room + flag `sync=PENDING_CREATE/UPDATE` và enqueue Job vào **WorkManager**. Khi có wifi, enqueue trigger gọi API.
+4. **Build and Run**:
+   Sync the Gradle project and click the Run button to install it on an emulator or physical device.
 
-* **Xoá / Phục hồi Task**:
-    - **Logic**: Backend dùng delete hard (xoá vật lý `DELETE /api/tasks/:id`). Mobile gọi hàm xoá và show `Snackbar` "Đã xoá". Chú ý Backend không có cơ chế khôi phục (soft-delete), nên tính năng "Khôi phục task" trên Mobile sẽ là **cache lại ở DB Mobile** 2-3s trước khi call Delete API thực.
+## 🔮 Future Roadmap
 
-### 2.3. Feature: Stats (`feature:stats`)
-Thống kê tổng quan trạng thái công việc.
+The foundational core (Networking, Database, DI, CI/CD, and Unit Testing) is fully established. Upcoming updates will focus on:
 
-* **Stats Dashboard Screen (`StatsScreen`)**:
-    - **Setup**: Layout bao gồm Component PieChart/BarChart (Ví dụ dùng `Vico` hoặc `MPAndroidChart`) và Danh sách hiển thị `Recent Tasks`.
-    - **Logic**: Fetch API `GET /api/tasks/stats`. Backend sẽ trả về count: (`total`, `todo`, `in_progress`, `pending`, `done`) và danh sách `recentTasks`.
-
-### 2.4. Feature: Chat & Realtime (`feature:chat`)
-Tích hợp trực tiếp với Backend `conversationController`, `messageController` và cấu trúc Socket.
-
-* **Danh sách Hội Thoại (`ConversationsScreen`)**:
-    - **Setup**: Paged `LazyColumn` hiển thị lịch sử Group/Private Chat kèm Avatar, Badge New Message.
-    - **Logic**: Fetch API `GET /api/conversations`. Trả về Array conversations có chứa block `lastMessage`.
-    - **Action tạo nhóm**: FAB mở Dialog -> Gọi `GET /api/users/search` (tìm user) -> `POST /api/conversations` với `type` (private/group) và `participantIds`.
-
-* **Chi tiết Hội thoại (`ChatDetailScreen`)**:
-    - **Setup**: Toolbar hiển thị Avatar, Title (Chat 1-1 hiển thị tên user, Group hiển thị tên nhóm). Danh sách tin nhắn `LazyColumn` đảo ngược hướng (`reverseLayout = true`).
-    - **Logic REST**: Load Paging lịch sử qua `GET /api/conversations/:id/messages`.
-    - **Logic Socket**:
-        - Khi vào màn này: Emit `join_conversation` ID.
-        - Nhắn tin: `POST /api/messages` hoặc Emit message tùy thiết kế backend. Đồng thời nghe ngóng event `new_message` bằng StateFlow trong ViewModel.
-        - Typing status: Emit `typing_start` / `typing_stop`.
-
-* **Quản trị Nhóm (`GroupInfoBottomSheet`)**:
-    - Dành cho `type == group`. Creator có quyền:
-        - Đổi tên: `PUT /api/conversations/:id`.
-        - Thêm member: Tìm user từ API search -> gọi API thêm vào Room.
-        - Xóa member / Xóa phòng: `DELETE /api/conversations/:id/participants/:userId`.
-
-### 2.5. Feature: Profile (`feature:profile`)
-Quản lý trang cá nhân người dùng.
-
-* **Profile Screen (`ProfileScreen`)**:
-    - **Setup**: Hiển thị Avatar tròn (load bằng Coil), hiển thị Email, Số điện thoại.
-    - **Logic**: Fetch API `GET /api/user/profile` (lấy User info).
-
-* **Đổi Avatar & Số điện thoại (`EditProfileDialog`)**:
-    - **Logic Avatar**: Dùng image picker bọc ảnh, tạo `MultipartBody.Part` rồi gửi `POST /api/user/avatar`. Backend trả về dạng `/uploads/avatars/...`. Nối với baseUrl để coil load.
-    - **Logic Phone**: Cập nhật bằng API `PUT /api/user/profile`.
-
-* **Đổi mật khẩu / Đăng xuất**:
-    - Form dialog dùng API `PUT /api/user/password`.
-    - Logic Logout: gọi backend `logout` API (clear refresh token db), clear Preferences DataStore Mobile, clear Paging Cache Room, Ngắt Socket -> Navigate về lại `LoginScreen`.
+* **UI/UX Implementation**: Building beautiful, adaptive UI layouts using Jetpack Compose (supporting mobile phones, foldables, and tablets).
+* **Background Syncing**: Integrating `WorkManager` for reliable, background offline-to-online data synchronization.
+* **Real-time Chat**: Wiring up Socket.IO streams to the Compose UI layer.
 
 ---
-
-## 3. Hướng Xử Lý Đa Màn Hình & Tối Ưu UI/UX trên Đa Thiết Bị (Adaptive Design)
-
-Để ứng dụng hiển thị tốt trên nhiều kích thước màn hình (Điện thoại cầm tay, Máy tính bảng - Tablet, Điện thoại gập - Foldable devices), hệ thống sẽ áp dụng các kỹ thuật sau đây bằng Jetpack Compose:
-
-### 3.1. Tính toán kích thước tự động bằng `WindowSizeClass`
-- Dự án sẽ tích hợp thư viện `androidx.compose.material3:material3-window-size-class` để tính toán chính xác kích thước không gian hiển thị của thiết bị đang chạy.
-- Phân loại 3 nhóm kích thước chính:
-    - **Compact**: Chiều rộng `< 600dp` (Đa số kích thước điện thoại đứng).
-    - **Medium**: Chiều rộng `600dp - 840dp` (Tablet cỡ nhỏ, chế độ xoay ngang ở một số mẫu điện thoại, hoặc màn hình gập).
-    - **Expanded**: Chiều rộng `>= 840dp` (Tablet cỡ lớn, Desktop).
-
-### 3.2. Cấu trúc Điều hướng Linh hoạt (Adaptive Navigation)
-- Dựa trên `WindowSizeClass`, thanh điều hướng chính sẽ thay đổi thay vì dùng một kiểu cố định cứng nhắc:
-    - **Màn hình Compact**: Sử dụng thanh điều hướng bên dưới đáy `NavigationBar` (Bottom Navigation).
-    - **Màn hình Medium/Expanded**: Chuyển thanh điều hướng qua bên viền trái dạng dọc `NavigationRail` hoặc `PermanentNavigationDrawer` để nhường toàn bộ không gian chiều dọc cho nội dung thông tin (như cuộn danh sách lớn).
-
-### 3.3. Áp dụng Mẫu giao diện Two-Pane (List-Detail Layout)
-- Các tính năng như **Danh sách Task / Chi tiết Task** hay **Danh sách Chat / Lịch sử tin nhắn** sẽ tự động thay đổi layout:
-    - **Điện thoại thường**: Nhấn item ở danh sách, Navigation mở ra một Layout màn hình toàn phần mới đè lên màn cũ truyền thống.
-    - **Máy tính bảng ngang/Expanded**: Sử dụng `ListDetailPaneScaffold` của Jetpack Compose. Màn hình phân làm 2 vùng chính: khoảng 1/3 là list bên trái và 2/3 là details bên phải. Nhấn vào list sẽ chỉ tải/thay đổi nội dung vùng Detail bên phải chứ không phải navigate màn hình độc lập. Trải nghiệm xem/sửa thông tin sẽ liền mạch, tối ưu phần viền thừa.
-
-### 3.4. Quản lý linh hoạt List/Grid Layout Settings
-- Đối với danh sách dạng lưới (như hình ảnh hoặc biểu đồ), không cố định số lượng cột. Thay vào đó sử dụng `LazyVerticalGrid` với cấu hình linh động như `GridCells.Adaptive(minSize = 150.dp)` để hệ thống tự xếp 2 cột trên phone đứng nhưng tự mở rộng xếp thành 4-5 cột trên Tablet ngang.
-
-### 3.5. Xử lý Trạng thái khi xoay hoặc mở màn hình gập (Configuration Changes)
-- Mọi dữ liệu (UI States, Input đang nhập của người dùng) phải được quản lý kỹ trong `StateFlow/ViewModel` để tồn tại an toàn qua các chu kỳ sống (Activity Recreation).
-- Các User Input State tạm thời trên UI cần sử dụng `rememberSaveable` (lưu tự động vào `Bundle`) thay vì `remember` giới hạn, duy trì trạng thái như nội dung đang gõ dở, filter dang dở khi người dùng xoay đứng/ngang thiết bị hoặc gập/mở thiết bị Foldable.
-
----
-
-## User Review Required
-
-> [!IMPORTANT]
-> Bản Architect và Detail Roadmap đã được chuẩn hoá bám sát sườn Code API thực tế của bạn. Dưới đây là 2 yếu tố quyết định cần bạn duyệt trước khi tôi tiến hành tạo cấu trúc thư mục code:
->
-> 1. **Kiến trúc DB Local: "Backend Delete Hard - App Soft Delete"**
-     > Backend API hiện tại đang `Task.findOneAndDelete()` (Xóa cứng), nên phần bạn yêu cầu "có thể khôi phục qua nút Restore" ở bước xoá tôi sẽ phải làm giả lập (delay xóa DB Server vài giây, hoặc đánh cờ deleted trên RommDB, User bấm Undo sẽ huỷ enqueue request gọi API Delete). Bạn đồng ý cơ chế này chứ?
->
-> 2. **Flow bắt đầu khởi tạo System:**
-     > Tôi sẽ bắt đầu tạo `libs.versions.toml`, cấu trúc base project `app`, và `core` modules (network + Retrofit setup) trước. Rất mong bạn **Phê Duyệt** (Approve) plan này để tôi tiến hành bước đầu tiên.
+*Note: This README serves as the foundational documentation and will be continuously updated as new visual features are deployed.*

@@ -34,7 +34,7 @@ annotation class AuthenticatedNetwork
 
 @Module
 @InstallIn(SingletonComponent::class)
-class NetworkModule {
+object NetworkModule {
     @Provides
     @Singleton
     fun provideJson(): Json {

@@ -1,12 +1,12 @@
 plugins {
-    alias(libs.plugins.android.application)
-    alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.treetask.android.application)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.hilt)
     alias(libs.plugins.ksp)
     // google, firebase
     alias(libs.plugins.google.services)
     alias(libs.plugins.firebase.crashlytics)
+    alias(libs.plugins.firebase.perf)
     // lint
     alias(libs.plugins.treetask.android.detekt)
     alias(libs.plugins.treetask.android.spotless)
@@ -14,18 +14,28 @@ plugins {
 
 android {
     namespace = "com.treestudio.treetask"
-    compileSdk {
-        version = release(36)
-    }
-
     defaultConfig {
         applicationId = "com.treestudio.treetask"
-        minSdk = 24
-        targetSdk = 36
-        versionCode = 1
-        versionName = "1.0"
+        // versionCode = tổng số commit (tự tăng mỗi lần có commit mới)
+        versionCode =
+            providers
+                .exec {
+                    commandLine("git", "rev-list", "--count", "HEAD")
+                }.standardOutput.asText
+                .get()
+                .trim()
+                .toInt()
 
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        // versionName = tên Git Tag gần nhất (ví dụ: "1.0.0")
+        versionName =
+            providers
+                .exec {
+                    commandLine("git", "tag", "--sort=-v:refname")
+                }.standardOutput.asText
+                .get()
+                .trim()
+                .lines()
+                .firstOrNull() ?: "1.0.0"
     }
 
     buildTypes {
@@ -47,11 +57,6 @@ android {
     }
     compileOptions {
         isCoreLibraryDesugaringEnabled = true
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
-    }
-    kotlinOptions {
-        jvmTarget = "17"
     }
     buildFeatures {
         compose = true
@@ -74,19 +79,20 @@ android {
 
 dependencies {
     // feature
-    implementation(project(":feature:auth"))
-    implementation(project(":feature:chat"))
-    implementation(project(":feature:profile"))
-    implementation(project(":feature:stats"))
-    implementation(project(":feature:tasks"))
+    implementation(projects.feature.auth)
+    implementation(projects.feature.chat)
+    implementation(projects.feature.profile)
+    implementation(projects.feature.stats)
+    implementation(projects.feature.tasks)
 
     // core
-    implementation(project(":core:domain"))
-    implementation(project(":core:common"))
-    implementation(project(":core:designsystem"))
-    implementation(project(":core:datastore"))
-    implementation(project(":core:model"))
-    implementation(project(":core:analytics"))
+    implementation(projects.core.domain)
+    implementation(projects.core.common)
+    implementation(projects.core.designsystem)
+    implementation(projects.core.datastore)
+    implementation(projects.core.model)
+    implementation(projects.core.analytics)
+    implementation(projects.core.data)
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
@@ -96,7 +102,9 @@ dependencies {
     implementation(libs.androidx.compose.ui.graphics)
     implementation(libs.androidx.compose.ui.tooling.preview)
     implementation(libs.androidx.compose.material3)
-    testImplementation(libs.junit)
+
+    // testing
+    testImplementation(projects.core.testing)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(platform(libs.androidx.compose.bom))
@@ -115,6 +123,7 @@ dependencies {
     // hilt
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)
+    implementation(libs.androidx.hilt.work)
 
     // java
     coreLibraryDesugaring(libs.desugar.jdk.libs)
@@ -124,4 +133,5 @@ dependencies {
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.analytics)
     implementation(libs.firebase.crashlytics)
+    implementation(libs.firebase.perf)
 }

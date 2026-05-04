@@ -16,13 +16,14 @@ import kotlinx.coroutines.CoroutineScope
 fun rememberTreeTaskAppState(
     coroutineScope: CoroutineScope = rememberCoroutineScope(),
     navController: NavHostController = rememberNavController(),
-): TreeTaskAppState =
-    remember(navController, coroutineScope) {
+): TreeTaskAppState {
+    return remember(navController, coroutineScope) {
         TreeTaskAppState(
             navController = navController,
             coroutineScope = coroutineScope,
         )
     }
+}
 
 @Stable
 class TreeTaskAppState(
@@ -36,23 +37,22 @@ class TreeTaskAppState(
 
     // (Chỉ hiện Bottom Bar ở các màn hình chính)
     val isTopLevelDestination: Boolean
-        @Composable get() =
-            currentDestination?.let { destination ->
-                TopLevelDestination.entries.any { topLevelDest ->
-                    // BẮT BUỘC PHẢI QUÉT GIA PHẢ BẰNG VÒNG LẶP NÀY
-                    destination.hierarchy.any { navDest ->
+        @Composable get() = currentDestination?.let { destination ->
+            TopLevelDestination.entries.any { topLevelDest ->
+                // BẮT BUỘC PHẢI QUÉT GIA PHẢ BẰNG VÒNG LẶP NÀY
+                destination.hierarchy.any { navDest ->
 
-                        if (topLevelDest.route is String) {
-                            navDest.route == topLevelDest.route
-                        } else {
-                            // So sánh thành công khi lặp tới trúng Lớp Cha (TasksGraphRoute)
-                            navDest.route?.contains(
-                                topLevelDest.route::class.qualifiedName ?: "",
-                            ) == true
-                        }
+                    if (topLevelDest.route is String) {
+                        navDest.route == topLevelDest.route
+                    } else {
+                        // So sánh thành công khi lặp tới trúng Lớp Cha (TasksGraphRoute)
+                        navDest.route?.contains(
+                            topLevelDest.route::class.qualifiedName ?: "",
+                        ) == true
                     }
                 }
-            } ?: false
+            }
+        } ?: false
 
     // --- 3. LOGIC CHUYỂN TRANG VĨ MÔ (BOTTOM TABS) ---
     // Các lệnh chuyển trang nhỏ lẻ (Ví dụ: Từ List qua Detail) thì để Feature Modules tự lo.
