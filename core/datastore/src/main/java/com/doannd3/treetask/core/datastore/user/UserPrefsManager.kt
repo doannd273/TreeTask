@@ -1,8 +1,9 @@
-package com.doannd3.treetask.core.datastore
+package com.doannd3.treetask.core.datastore.user
 
 import android.content.Context
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
+import com.doannd3.treetask.core.datastore.extensions.userDataStore
 import com.doannd3.treetask.core.model.user.User
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
@@ -15,8 +16,8 @@ class UserPrefsManager
 @Inject
 constructor(
     @ApplicationContext private val context: Context,
-) {
-    suspend fun saveUserProfile(user: User) {
+) : UserStorage {
+    override suspend fun saveUserProfile(user: User) {
         context.userDataStore.edit { prefs ->
             prefs[KEY_USER_ID] = user.id
             prefs[KEY_FULL_NAME] = user.fullName
@@ -36,7 +37,7 @@ constructor(
         }
     }
 
-    fun getUserProfile(): Flow<User?> =
+    override fun getUserProfile(): Flow<User?> =
         context.userDataStore.data.map { prefs ->
             val userId = prefs[KEY_USER_ID] ?: return@map null
             val email = prefs[KEY_EMAIL] ?: return@map null
@@ -50,7 +51,7 @@ constructor(
             )
         }
 
-    suspend fun clearUserProfile() {
+    override suspend fun clearUserProfile() {
         context.userDataStore.edit { it.clear() }
     }
 

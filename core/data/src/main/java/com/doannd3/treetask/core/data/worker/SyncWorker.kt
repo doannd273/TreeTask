@@ -6,7 +6,7 @@ import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import com.doannd3.treetask.core.common.ApiResult
 import com.doannd3.treetask.core.common.log.AppTag
-import com.doannd3.treetask.core.datastore.UserPrefsManager
+import com.doannd3.treetask.core.datastore.user.UserStorage
 import com.doannd3.treetask.core.domain.repository.TaskRepository
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
@@ -20,13 +20,13 @@ constructor(
     @Assisted context: Context,
     @Assisted workerParams: WorkerParameters,
     private val taskRepository: TaskRepository,
-    private val userPrefsManager: UserPrefsManager,
+    private val userStorage: UserStorage,
 ) : CoroutineWorker(context, workerParams) {
     override suspend fun doWork(): Result {
         Timber.tag(AppTag.NETWORK).i("Bắt đầu quá trình đồng bộ hóa dữ liệu ngầm...")
 
         // 1. Lấy thông tin User hiện tại (hứng phần tử đầu tiên của Flow)
-        val user = userPrefsManager.getUserProfile().firstOrNull()
+        val user = userStorage.getUserProfile().firstOrNull()
 
         // Nếu user đã đăng xuất, hủy luôn nhiệm vụ này (failure), không cần làm gì cả
         if (user == null || user.id.isBlank()) {
