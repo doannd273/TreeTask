@@ -17,8 +17,8 @@ performance:
 
 complexity:
   LongParameterList:
-    functionThreshold: 10 # Tăng giới hạn tham số lên 10 vì Navigation Graph thường có rất nhiều callback
+    functionThreshold: 10
     ignoreDefaultParameters: true
   LongMethod:
-    threshold: 80 # Tăng giới hạn chung lên 80 dòng
-    ignoreAnnotated: [ 'Composable' ] # Hoàn toàn không đếm số dòng đối với hàm dựng UI của Compose
+    threshold: 80
+    ignoreAnnotated: [ 'Composable' ]

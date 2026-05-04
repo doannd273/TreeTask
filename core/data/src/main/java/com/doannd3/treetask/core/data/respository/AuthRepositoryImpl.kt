@@ -15,7 +15,7 @@ import javax.inject.Inject
 class AuthRepositoryImpl
 @Inject
 constructor(
-    private val authApi: AuthService,
+    private val authService: AuthService,
     private val tokenManager: TokenManager,
     private val userPrefsManager: UserPrefsManager,
 ) : AuthRepository {
@@ -26,7 +26,7 @@ constructor(
         email: String,
         password: String,
     ): ApiResult<Unit> {
-        val result = authApi.login(LoginRequest(email = email, password = password))
+        val result = authService.login(LoginRequest(email = email, password = password))
         return when (result) {
             is ApiResult.Success -> {
                 tokenManager.saveToken(
@@ -38,7 +38,7 @@ constructor(
 
             is ApiResult.Error -> {
                 result
-            }
+            } // propagate thẳng
         }
     }
 
@@ -48,7 +48,7 @@ constructor(
         password: String,
     ): ApiResult<Unit> {
         val result =
-            authApi.register(
+            authService.register(
                 RegisterRequest(
                     fullName = fullName,
                     email = email,
@@ -63,12 +63,12 @@ constructor(
 
             is ApiResult.Error -> {
                 result
-            }
+            } // propagate thẳng
         }
     }
 
     override suspend fun forgotPassword(email: String): ApiResult<Unit> {
-        val result = authApi.forgotPassword(ForgotPasswordRequest(email = email))
+        val result = authService.forgotPassword(ForgotPasswordRequest(email = email))
         return when (result) {
             is ApiResult.Success -> {
                 ApiResult.Success(Unit)
@@ -76,7 +76,7 @@ constructor(
 
             is ApiResult.Error -> {
                 result
-            }
+            } // propagate thẳng
         }
     }
 

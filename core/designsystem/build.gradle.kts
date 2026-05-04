@@ -1,6 +1,5 @@
 plugins {
-    alias(libs.plugins.android.library)
-    alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.treetask.android.library)
     alias(libs.plugins.kotlin.compose)
     // lint
     alias(libs.plugins.treetask.android.detekt)
@@ -8,19 +7,9 @@ plugins {
 }
 android {
     namespace = "com.doannd3.treetask.core.designsystem"
-    compileSdk = 36
 
     resourcePrefix = "designsystem_"
-
-    defaultConfig { minSdk = 24 }
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
-    }
     buildFeatures { compose = true }
-    kotlinOptions {
-        jvmTarget = "17"
-    }
 }
 dependencies {
     implementation(libs.androidx.core.ktx)

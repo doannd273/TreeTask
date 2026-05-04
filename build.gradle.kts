@@ -7,8 +7,11 @@ plugins {
     alias(libs.plugins.kotlin.serialization) apply false
     alias(libs.plugins.ksp) apply false
     alias(libs.plugins.hilt) apply false
+    // plugin tự định nghĩa
     alias(libs.plugins.detekt) apply false
     alias(libs.plugins.spotless) apply false
+    // firebase + google
     alias(libs.plugins.google.services) apply false
     alias(libs.plugins.firebase.crashlytics) apply false
+    alias(libs.plugins.firebase.perf) apply false
 }

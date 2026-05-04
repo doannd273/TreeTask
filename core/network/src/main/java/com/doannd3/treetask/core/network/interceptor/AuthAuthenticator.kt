@@ -1,6 +1,7 @@
 package com.doannd3.treetask.core.network.interceptor
 
 import com.doannd3.treetask.core.common.ApiResult
+import com.doannd3.treetask.core.common.log.AppTag
 import com.doannd3.treetask.core.datastore.TokenManager
 import com.doannd3.treetask.core.network.model.request.RefreshTokenRequest
 import com.doannd3.treetask.core.network.service.AuthService
@@ -35,7 +36,8 @@ constructor(
             val currentAccessToken = runBlocking { tokenManager.getAccessToken().first() }
             val originalToken = response.request.header("Authorization")?.removePrefix("Bearer ")
             if (currentAccessToken != null && currentAccessToken != originalToken) {
-                return response.request.newBuilder()
+                return response.request
+                    .newBuilder()
                     .header("Authorization", "Bearer $currentAccessToken")
                     .build()
             }
@@ -53,10 +55,13 @@ constructor(
 
                 val tokenData =
                     when (refreshResult) {
-                        is ApiResult.Success -> refreshResult.data
+                        is ApiResult.Success -> {
+                            refreshResult.data
+                        }
+
                         is ApiResult.Error -> {
                             runBlocking { tokenManager.clearToken() }
-                            Timber.w("Refresh Token hết hạn hoặc lỗi: ${refreshResult.exception?.message}")
+                            Timber.tag(AppTag.NETWORK).w("Refresh Token hết hạn hoặc lỗi: ${refreshResult.exception?.message}")
                             return null
                         }
                     }
@@ -68,18 +73,19 @@ constructor(
                 }
 
                 // retry request cũ
-                return response.request.newBuilder()
+                return response.request
+                    .newBuilder()
                     .header("Authorization", "Bearer $newAccessToken")
                     .build()
             } catch (e: IOException) {
                 // lỗi network
-                Timber.e(e, "Network error khi refresh token")
+                Timber.tag(AppTag.NETWORK).e(e, "Network error khi refresh token")
             } catch (e: SerializationException) {
                 // lỗi parse JSON
-                Timber.e(e, "Parse error khi refresh token")
+                Timber.tag(AppTag.NETWORK).e(e, "Parse error khi refresh token")
             } catch (e: HttpException) {
                 // nếu bạn dùng Retrofit + coroutines adapter
-                Timber.e(e, "HTTP error khi refresh token")
+                Timber.tag(AppTag.NETWORK).e(e, "HTTP error khi refresh token")
             }
 
             runBlocking { tokenManager.clearToken() }
