@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<network-security-config>
+    <!--
+        Cấu hình mặc định: CHỈ cho phép HTTPS, không cho phép HTTP cleartext
+        Áp dụng cho tất cả domain không được khai báo riêng bên dưới
+    -->
+    <base-config cleartextTrafficPermitted="false">
+        <trust-anchors>
+            <!-- Tin tưởng Certificate từ hệ thống (CA bình thường) -->
+            <certificates src="system"/>
+        </trust-anchors>
+    </base-config>
+
+    <!--
+        Ngoại lệ CHỈ dành cho môi trường DEV (localhost, Android Emulator)
+        Cho phép HTTP khi test với server local
+    -->
+    <domain-config cleartextTrafficPermitted="true">
+        <domain includeSubdomains="true">localhost</domain>
+        <!-- 10.0.2.2 là địa chỉ máy host khi chạy trên Android Emulator -->
+        <domain includeSubdomains="true">10.0.2.2</domain>
+        <!-- 10.0.3.2 là địa chỉ máy host khi chạy trên Genymotion -->
+        <domain includeSubdomains="true">10.0.3.2</domain>
+    </domain-config>
+</network-security-config>

@@ -1,8 +1,8 @@
 package com.doannd3.treetask.core.data.respository
 
 import com.doannd3.treetask.core.common.ApiResult
-import com.doannd3.treetask.core.datastore.TokenManager
-import com.doannd3.treetask.core.datastore.UserPrefsManager
+import com.doannd3.treetask.core.datastore.token.TokenStorage
+import com.doannd3.treetask.core.datastore.user.UserStorage
 import com.doannd3.treetask.core.domain.repository.AuthRepository
 import com.doannd3.treetask.core.network.model.request.ForgotPasswordRequest
 import com.doannd3.treetask.core.network.model.request.LoginRequest
@@ -16,11 +16,11 @@ class AuthRepositoryImpl
 @Inject
 constructor(
     private val authService: AuthService,
-    private val tokenManager: TokenManager,
-    private val userPrefsManager: UserPrefsManager,
+    private val tokenStorage: TokenStorage,
+    private val userStorage: UserStorage,
 ) : AuthRepository {
     override val isSessionExpired: Flow<Boolean>
-        get() = tokenManager.sessionExpiredEvent.map { true }
+        get() = tokenStorage.sessionExpiredEvent.map { true }
 
     override suspend fun login(
         email: String,
@@ -29,7 +29,7 @@ constructor(
         val result = authService.login(LoginRequest(email = email, password = password))
         return when (result) {
             is ApiResult.Success -> {
-                tokenManager.saveToken(
+                tokenStorage.saveToken(
                     accessToken = result.data.accessToken,
                     refreshToken = result.data.refreshToken,
                 )
@@ -57,7 +57,7 @@ constructor(
             )
         return when (result) {
             is ApiResult.Success -> {
-                tokenManager.saveToken(result.data.accessToken, result.data.refreshToken)
+                tokenStorage.saveToken(result.data.accessToken, result.data.refreshToken)
                 ApiResult.Success(Unit)
             }
 
@@ -81,7 +81,7 @@ constructor(
     }
 
     override suspend fun logout() {
-        tokenManager.clearToken()
-        userPrefsManager.clearUserProfile()
+        tokenStorage.clearToken()
+        userStorage.clearUserProfile()
     }
 }

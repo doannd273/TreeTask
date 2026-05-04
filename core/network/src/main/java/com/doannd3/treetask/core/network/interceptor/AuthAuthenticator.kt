@@ -2,7 +2,7 @@ package com.doannd3.treetask.core.network.interceptor
 
 import com.doannd3.treetask.core.common.ApiResult
 import com.doannd3.treetask.core.common.log.AppTag
-import com.doannd3.treetask.core.datastore.TokenManager
+import com.doannd3.treetask.core.datastore.token.TokenStorage
 import com.doannd3.treetask.core.network.model.request.RefreshTokenRequest
 import com.doannd3.treetask.core.network.service.AuthService
 import dagger.Lazy
@@ -21,7 +21,7 @@ import javax.inject.Inject
 class AuthAuthenticator
 @Inject
 constructor(
-    private val tokenManager: TokenManager,
+    private val tokenStorage: TokenStorage,
     private val authApi: Lazy<AuthService>,
 ) : Authenticator {
     override fun authenticate(
@@ -33,7 +33,7 @@ constructor(
         }
 
         synchronized(this) {
-            val currentAccessToken = runBlocking { tokenManager.getAccessToken().first() }
+            val currentAccessToken = runBlocking { tokenStorage.getAccessToken().first() }
             val originalToken = response.request.header("Authorization")?.removePrefix("Bearer ")
             if (currentAccessToken != null && currentAccessToken != originalToken) {
                 return response.request
@@ -45,7 +45,7 @@ constructor(
             try {
                 val refreshToken =
                     runBlocking {
-                        tokenManager.getRefreshToken().first()
+                        tokenStorage.getRefreshToken().first()
                     } ?: return null
 
                 val refreshResult =
@@ -60,7 +60,7 @@ constructor(
                         }
 
                         is ApiResult.Error -> {
-                            runBlocking { tokenManager.clearToken() }
+                            runBlocking { tokenStorage.clearToken() }
                             Timber.tag(AppTag.NETWORK).w("Refresh Token hết hạn hoặc lỗi: ${refreshResult.exception?.message}")
                             return null
                         }
@@ -69,7 +69,7 @@ constructor(
                 val newRefreshToken = tokenData.refreshToken
 
                 runBlocking {
-                    tokenManager.saveToken(newAccessToken, newRefreshToken)
+                    tokenStorage.saveToken(newAccessToken, newRefreshToken)
                 }
 
                 // retry request cũ
@@ -88,7 +88,7 @@ constructor(
                 Timber.tag(AppTag.NETWORK).e(e, "HTTP error khi refresh token")
             }
 
-            runBlocking { tokenManager.clearToken() }
+            runBlocking { tokenStorage.clearToken() }
             return null
         }
     }

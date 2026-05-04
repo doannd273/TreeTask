@@ -13,6 +13,7 @@ dependencies {
     implementation(projects.core.model)
 
     implementation(libs.datastore.preferences)
+    implementation(libs.androidx.security.crypto)
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)
 }

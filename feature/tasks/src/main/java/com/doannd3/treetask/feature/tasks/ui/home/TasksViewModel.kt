@@ -5,7 +5,7 @@ package com.doannd3.treetask.feature.tasks.ui.home
 import androidx.lifecycle.viewModelScope
 import com.doannd3.treetask.core.common.BaseViewModel
 import com.doannd3.treetask.core.common.MviViewModel
-import com.doannd3.treetask.core.datastore.UserPrefsManager
+import com.doannd3.treetask.core.datastore.user.UserStorage
 import com.doannd3.treetask.core.domain.repository.TaskRepository
 import com.doannd3.treetask.core.domain.usecase.task.GetTasksUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -23,12 +23,14 @@ import javax.inject.Inject
 
 @OptIn(FlowPreview::class)
 @HiltViewModel
-class TasksViewModel @Inject constructor(
+class TasksViewModel
+@Inject
+constructor(
     private val getTasksUseCase: GetTasksUseCase,
     private val taskRepository: TaskRepository,
-    private val userPrefManager: UserPrefsManager,
-) : BaseViewModel(), MviViewModel<TasksState, TasksEvent, TasksEffect> {
-
+    private val userStorage: UserStorage,
+) : BaseViewModel(),
+    MviViewModel<TasksState, TasksEvent, TasksEffect> {
     override fun setLoading(isLoading: Boolean) {
         _uiState.update { it.copy(isLoading = isLoading, isLoadingSearch = false) }
     }
@@ -69,12 +71,12 @@ class TasksViewModel @Inject constructor(
         getTasksUseCase()
             .onEach { taskList ->
                 _uiState.update { it.copy(tasks = taskList, isLoading = false) }
-            }
-            .launchSafeIn(viewModelScope)
+            }.launchSafeIn(viewModelScope)
     }
 
     private fun syncTasks() {
-        userPrefManager.getUserProfile() // Flow<User>
+        userStorage
+            .getUserProfile() // Flow<User>
             .onEach { user ->
                 taskRepository.syncTasks(user?.id.orEmpty()) // Trả về Flow danh sách task của User đó
             }.launchSafeIn(viewModelScope)

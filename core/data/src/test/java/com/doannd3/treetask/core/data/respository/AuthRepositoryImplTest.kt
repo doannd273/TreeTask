@@ -2,8 +2,8 @@ package com.doannd3.treetask.core.data.respository
 
 import app.cash.turbine.test
 import com.doannd3.treetask.core.common.ApiResult
-import com.doannd3.treetask.core.datastore.TokenManager
-import com.doannd3.treetask.core.datastore.UserPrefsManager
+import com.doannd3.treetask.core.datastore.token.TokenStorage
+import com.doannd3.treetask.core.datastore.user.UserStorage
 import com.doannd3.treetask.core.network.model.response.RegisterResponse
 import com.doannd3.treetask.core.network.model.response.TokenResponse
 import com.doannd3.treetask.core.network.service.AuthService
@@ -19,8 +19,8 @@ import org.junit.Test
 
 class AuthRepositoryImplTest {
     private val authService: AuthService = mockk()
-    private val tokenManager: TokenManager = mockk(relaxed = true)
-    private val userPrefsManager: UserPrefsManager = mockk(relaxed = true)
+    private val tokenManager: TokenStorage = mockk(relaxed = true)
+    private val userPrefsManager: UserStorage = mockk(relaxed = true)
 
     private lateinit var authRepository: AuthRepositoryImpl
 
@@ -30,8 +30,8 @@ class AuthRepositoryImplTest {
         authRepository =
             AuthRepositoryImpl(
                 authService = authService,
-                tokenManager = tokenManager,
-                userPrefsManager = userPrefsManager,
+                tokenStorage = tokenManager,
+                userStorage = userPrefsManager,
             )
     }
 
