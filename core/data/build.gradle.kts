@@ -25,6 +25,7 @@ dependencies {
     implementation(projects.core.network)
 
     implementation(libs.retrofit)
+    implementation(libs.room.ktx)
     implementation(libs.paging.runtime)
     implementation(libs.work.runtime.ktx)
     implementation(libs.timber)

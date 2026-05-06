@@ -5,14 +5,21 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.map
+import androidx.room.withTransaction
+import com.doannd3.treetask.core.common.ApiResult
 import com.doannd3.treetask.core.data.model.toTaskDomain
+import com.doannd3.treetask.core.data.model.toTaskEntity
+import com.doannd3.treetask.core.database.TreeTaskDatabase
 import com.doannd3.treetask.core.database.dao.TaskDao
 import com.doannd3.treetask.core.database.dao.TaskRemoteKeysDao
+import com.doannd3.treetask.core.database.model.TaskRemoteKeysEntity
 import com.doannd3.treetask.core.domain.repository.TaskRepository
 import com.doannd3.treetask.core.model.task.Task
 import com.doannd3.treetask.core.network.service.TaskService
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import retrofit2.HttpException
+import java.io.IOException
 import javax.inject.Inject
 
 class TaskRepositoryImpl
@@ -21,6 +28,7 @@ constructor(
     private val taskService: TaskService,
     private val taskDao: TaskDao,
     private val taskRemoteKeysDao: TaskRemoteKeysDao,
+    private val database: TreeTaskDatabase,
 ) : TaskRepository {
     @OptIn(ExperimentalPagingApi::class)
     override fun getTasks(
@@ -42,13 +50,58 @@ constructor(
                 query = keyword,
                 status = status,
                 userId = userId,
-                taskRemoteKeysDao = taskRemoteKeysDao,
-                taskDao = taskDao,
                 taskService = taskService,
+                database = database,
             ),
             pagingSourceFactory = pagingSourceFactory,
         ).flow.map { pagingData ->
             pagingData.map { it.toTaskDomain() }
         }
     }
+
+    override suspend fun syncTasks(userId: String): ApiResult<Unit> =
+        try {
+            // Background sync: Lấy một lượng dữ liệu vừa đủ (ví dụ trang 1, 50 items)
+            val apiResponse =
+                taskService.getTasks(
+                    page = 1,
+                    limit = 50,
+                    status = "",
+                    keyword = "",
+                )
+
+            when (apiResponse) {
+                is ApiResult.Success -> {
+                    val tasks = apiResponse.data.tasks ?: emptyList()
+
+                    // Cập nhật lại db như logic REFRESH của RemoteMediator trong một transaction
+                    database.withTransaction {
+                        taskRemoteKeysDao.clearRemoteKeys()
+                        taskDao.deleteTaskByUserId(userId)
+
+                        val keys =
+                            tasks.map {
+                                TaskRemoteKeysEntity(
+                                    taskId = it.id ?: "",
+                                    preKey = null,
+                                    nextKey = if (tasks.isEmpty()) null else 2,
+                                )
+                            }
+
+                        taskRemoteKeysDao.insertAll(keys)
+                        taskDao.insertTasks(tasks.map { it.toTaskEntity() })
+                    }
+
+                    ApiResult.Success(Unit)
+                }
+
+                is ApiResult.Error -> {
+                    apiResponse
+                }
+            }
+        } catch (e: IOException) {
+            ApiResult.Error(exception = e)
+        } catch (e: HttpException) {
+            ApiResult.Error(exception = e)
+        }
 }

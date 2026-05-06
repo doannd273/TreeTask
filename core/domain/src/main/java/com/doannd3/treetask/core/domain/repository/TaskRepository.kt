@@ -10,4 +10,6 @@ interface TaskRepository {
         keyword: String,
         userId: String,
     ): Flow<PagingData<Task>>
+
+    suspend fun syncTasks(userId: String): com.doannd3.treetask.core.common.ApiResult<Unit>
 }

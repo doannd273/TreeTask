@@ -4,26 +4,24 @@ import androidx.paging.ExperimentalPagingApi
 import androidx.paging.LoadType
 import androidx.paging.PagingState
 import androidx.paging.RemoteMediator
+import androidx.room.withTransaction
 import com.doannd3.treetask.core.common.ApiResult
 import com.doannd3.treetask.core.data.model.toTaskEntity
-import com.doannd3.treetask.core.database.dao.TaskDao
-import com.doannd3.treetask.core.database.dao.TaskRemoteKeysDao
+import com.doannd3.treetask.core.database.TreeTaskDatabase
 import com.doannd3.treetask.core.database.model.TaskEntity
 import com.doannd3.treetask.core.database.model.TaskRemoteKeysEntity
 import com.doannd3.treetask.core.network.model.response.TaskResponse
 import com.doannd3.treetask.core.network.service.TaskService
 import retrofit2.HttpException
 import java.io.IOException
-import kotlin.collections.map
 
 @OptIn(ExperimentalPagingApi::class)
 class TaskRemoteMediator(
     private val query: String,
     private val status: String,
     private val userId: String,
-    private val taskRemoteKeysDao: TaskRemoteKeysDao,
-    private val taskDao: TaskDao,
     private val taskService: TaskService,
+    private val database: TreeTaskDatabase,
 ) : RemoteMediator<Int, TaskEntity>() {
     override suspend fun load(
         loadType: LoadType,
@@ -79,11 +77,6 @@ class TaskRemoteMediator(
         val tasks = networkTasks ?: emptyList()
         val endOfPaginationReached = tasks.isEmpty()
 
-        if (loadType == LoadType.REFRESH) {
-            taskRemoteKeysDao.clearRemoteKeys()
-            taskDao.deleteTaskByUserId(userId)
-        }
-
         val prevKey = if (page == 1) null else page - 1
         val nextKey = if (endOfPaginationReached) null else page + 1
 
@@ -96,14 +89,20 @@ class TaskRemoteMediator(
                 )
             }
 
-        taskRemoteKeysDao.insertAll(keys)
-        taskDao.insertTasks(tasks.map { it.toTaskEntity() })
+        database.withTransaction {
+            if (loadType == LoadType.REFRESH) {
+                database.taskRemoteKeysDao().clearRemoteKeys()
+                database.taskDao().deleteTaskByUserId(userId)
+            }
+            database.taskRemoteKeysDao().insertAll(keys)
+            database.taskDao().insertTasks(tasks.map { it.toTaskEntity() })
+        }
 
         return MediatorResult.Success(endOfPaginationReached = endOfPaginationReached)
     }
 
     private suspend fun getRemoteKeyForLastItem(state: PagingState<Int, TaskEntity>): TaskRemoteKeysEntity? =
         state.pages.lastOrNull { it.data.isNotEmpty() }?.data?.lastOrNull()?.let { task ->
-            taskRemoteKeysDao.remoteKeysTaskId(task.id)
+            database.taskRemoteKeysDao().remoteKeysTaskId(task.id)
         }
 }
