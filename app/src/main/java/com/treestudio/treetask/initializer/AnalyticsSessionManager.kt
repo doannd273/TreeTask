@@ -14,27 +14,27 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class AnalyticsSessionManager
-    @Inject
-    constructor(
-        private val userRepository: UserRepository,
-        private val analyticsHelper: AnalyticsHelper,
-        @Dispatcher(TreeTaskDispatchers.IO) private val ioDispatcher: CoroutineDispatcher,
-    ) : AppInitializer {
-        private val applicationScope = CoroutineScope(SupervisorJob() + ioDispatcher)
+@Inject
+constructor(
+    private val userRepository: UserRepository,
+    private val analyticsHelper: AnalyticsHelper,
+    @Dispatcher(TreeTaskDispatchers.IO) private val ioDispatcher: CoroutineDispatcher,
+) : AppInitializer {
+    private val applicationScope = CoroutineScope(SupervisorJob() + ioDispatcher)
 
-        override fun init(application: Application) {
-            applicationScope.launch {
-                userRepository
-                    .getCachedProfile()
-                    .map { user -> user?.id }
-                    .distinctUntilChanged()
-                    .collect { userId ->
-                        if (userId != null) {
-                            analyticsHelper.setUserId(userId)
-                        } else {
-                            analyticsHelper.clearUserId()
-                        }
+    override fun init(application: Application) {
+        applicationScope.launch {
+            userRepository
+                .getCachedProfile()
+                .map { user -> user?.id }
+                .distinctUntilChanged()
+                .collect { userId ->
+                    if (userId != null) {
+                        analyticsHelper.setUserId(userId)
+                    } else {
+                        analyticsHelper.clearUserId()
                     }
-            }
+                }
         }
     }
+}

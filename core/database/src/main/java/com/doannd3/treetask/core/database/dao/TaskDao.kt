@@ -7,7 +7,6 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
 import com.doannd3.treetask.core.database.model.TaskEntity
-import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface TaskDao {

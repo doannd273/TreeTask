@@ -2,7 +2,6 @@ package com.doannd3.treetask.core.common
 
 import android.content.Context
 import androidx.annotation.StringRes
-import com.doannd3.treetask.core.common.R
 
 sealed interface UiText {
 

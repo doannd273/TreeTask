@@ -138,9 +138,9 @@ fun TasksContent(
 ) {
     Column(
         modifier =
-            modifier
-                .fillMaxSize()
-                .padding(16.dp),
+        modifier
+            .fillMaxSize()
+            .padding(16.dp),
         verticalArrangement = Arrangement.Top,
     ) {
         SearchTaskInput(
@@ -161,7 +161,7 @@ fun TasksContent(
             items(
                 count = pagingItems.itemCount,
                 key = pagingItems.itemKey { it.id },
-                contentType = pagingItems.itemContentType { "task" }
+                contentType = pagingItems.itemContentType { "task" },
             ) { index ->
                 val task = pagingItems[index]
                 if (task != null) {
@@ -177,7 +177,7 @@ fun TasksContent(
                         item {
                             Box(
                                 modifier = Modifier.fillParentMaxSize(),
-                                contentAlignment = Alignment.Center
+                                contentAlignment = Alignment.Center,
                             ) {
                                 CircularProgressIndicator()
                             }
@@ -189,7 +189,7 @@ fun TasksContent(
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .padding(16.dp),
-                                contentAlignment = Alignment.Center
+                                contentAlignment = Alignment.Center,
                             ) {
                                 CircularProgressIndicator()
                             }
@@ -199,7 +199,7 @@ fun TasksContent(
                         item {
                             Box(
                                 modifier = Modifier.fillMaxWidth(),
-                                contentAlignment = Alignment.Center
+                                contentAlignment = Alignment.Center,
                             ) {
                                 TextButton(onClick = { retry() }) {
                                     Text("Lỗi kết nối. Thử lại")
@@ -236,7 +236,7 @@ fun TasksScreenPreview() {
             dueDate = Instant.parse("2026-04-25T10:00:00Z"),
             createdAt = Instant.parse("2026-04-11T08:00:00Z"),
             updatedAt = Instant.parse("2026-04-12T09:00:00Z"),
-        )
+        ),
     )
 
     val sampleTasksState =

@@ -1,8 +1,6 @@
 package com.doannd3.treetask.core.network.util
 
 import com.doannd3.treetask.core.common.ApiResult
-import com.doannd3.treetask.core.common.R
-import com.doannd3.treetask.core.common.UiText
 import kotlinx.serialization.SerializationException
 import kotlinx.serialization.json.Json
 import okhttp3.Request
