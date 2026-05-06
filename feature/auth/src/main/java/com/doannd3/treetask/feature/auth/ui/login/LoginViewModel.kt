@@ -57,7 +57,7 @@ class LoginViewModel @Inject constructor(
                     _effect.emit(LoginEffect.NavigateToHome)
                 }
                 is ApiResult.Error -> {
-                    val message = result.message ?: UiText.StringResource(R.string.common_error_unknown)
+                    val message = UiText.DynamicString(result.message)
                     _effect.emit(LoginEffect.ShowErrorMessage(message))
                 }
             }

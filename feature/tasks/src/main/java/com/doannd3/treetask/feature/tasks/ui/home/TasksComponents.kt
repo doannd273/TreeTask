@@ -71,7 +71,7 @@ fun TaskStatusChips(
                     )
                 },
                 label = {
-                    Text(text = taskStatus.status)
+                    Text(text = taskStatus.label)
                 },
                 modifier = Modifier.padding(end = 8.dp),
             )
@@ -87,37 +87,38 @@ fun SearchTaskInput(
     onClearClick: () -> Unit,
 ) {
     TextField(
-        modifier = Modifier
-            .fillMaxWidth()
-            .border(
-                width = 1.dp,
-                color = Purple40,
-                shape = RoundedCornerShape(6.dp),
-            )
-            .background(
-                color = White,
-                shape = RoundedCornerShape(6.dp),
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .border(
+                    width = 1.dp,
+                    color = Purple40,
+                    shape = RoundedCornerShape(6.dp),
+                ).background(
+                    color = White,
+                    shape = RoundedCornerShape(6.dp),
+                ),
+        colors =
+            TextFieldDefaults.colors(
+                focusedTextColor = Black,
+                unfocusedTextColor = Gray,
+                focusedIndicatorColor = Color.Transparent,
+                unfocusedIndicatorColor = Color.Transparent,
+                disabledIndicatorColor = Color.Transparent,
+                focusedContainerColor = Color.Transparent,
+                unfocusedContainerColor = Color.Transparent,
+                disabledContainerColor = Color.Transparent,
             ),
-        colors = TextFieldDefaults.colors(
-            focusedTextColor = Black,
-            unfocusedTextColor = Gray,
-
-            focusedIndicatorColor = Color.Transparent,
-            unfocusedIndicatorColor = Color.Transparent,
-            disabledIndicatorColor = Color.Transparent,
-
-            focusedContainerColor = Color.Transparent,
-            unfocusedContainerColor = Color.Transparent,
-            disabledContainerColor = Color.Transparent,
-        ),
-        textStyle = TextStyle(
-            fontSize = 15.sp,
-        ),
+        textStyle =
+            TextStyle(
+                fontSize = 15.sp,
+            ),
         maxLines = 1,
-        keyboardOptions = KeyboardOptions(
-            keyboardType = KeyboardType.Text,
-            imeAction = ImeAction.Done,
-        ),
+        keyboardOptions =
+            KeyboardOptions(
+                keyboardType = KeyboardType.Text,
+                imeAction = ImeAction.Done,
+            ),
         placeholder = {
             Text(text = stringResource(R.string.tasks_search_hint))
         },
@@ -160,9 +161,10 @@ fun TaskItem(
 ) {
     Card(
         onClick = onClick,
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(vertical = 6.dp),
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .padding(vertical = 6.dp),
         shape = RoundedCornerShape(3.dp),
         colors = CardDefaults.cardColors(containerColor = White),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
@@ -208,21 +210,28 @@ fun TaskItem(
 
 @Composable
 fun StatusBadge(status: TaskStatus) {
-    val backgroundColor = when (status) {
-        TaskStatus.TODO -> Gray // Xám xanh
-        TaskStatus.IN_PROGRESS -> Purple40 // Xanh dương
-        TaskStatus.PENDING -> Red10 // Đỏ
-        TaskStatus.DONE -> Green // Xanh lá
-    }
+    val backgroundColor =
+        when (status) {
+            TaskStatus.TODO -> Gray
+
+            // Xám xanh
+            TaskStatus.IN_PROGRESS -> Purple40
+
+            // Xanh dương
+            TaskStatus.PENDING -> Red10
+
+            // Đỏ
+            TaskStatus.DONE -> Green // Xanh lá
+        }
     Row(
-        modifier = Modifier
-            .background(
-                shape = RoundedCornerShape(3.dp),
-                color = backgroundColor,
-            )
-            .padding(vertical = 4.dp, horizontal = 8.dp),
+        modifier =
+            Modifier
+                .background(
+                    shape = RoundedCornerShape(3.dp),
+                    color = backgroundColor,
+                ).padding(vertical = 4.dp, horizontal = 8.dp),
     ) {
-        Text(text = status.status, color = White, fontSize = 13.sp)
+        Text(text = status.label, color = White, fontSize = 13.sp)
     }
 }
 
@@ -230,16 +239,17 @@ fun StatusBadge(status: TaskStatus) {
 @Preview(showBackground = true)
 fun TaskItemPreview() {
     TaskItem(
-        task = Task(
-            id = "1",
-            userId = "user_1",
-            title = "Fix login bug",
-            description = "Crash when login with Google",
-            status = TaskStatus.IN_PROGRESS,
-            dueDate = Instant.parse("2026-04-20T10:00:00Z"),
-            createdAt = Instant.parse("2026-04-10T08:00:00Z"),
-            updatedAt = Instant.parse("2026-04-15T09:00:00Z"),
-        ),
+        task =
+            Task(
+                id = "1",
+                userId = "user_1",
+                title = "Fix login bug",
+                description = "Crash when login with Google",
+                status = TaskStatus.IN_PROGRESS,
+                dueDate = Instant.parse("2026-04-20T10:00:00Z"),
+                createdAt = Instant.parse("2026-04-10T08:00:00Z"),
+                updatedAt = Instant.parse("2026-04-15T09:00:00Z"),
+            ),
         onClick = {},
     )
 }

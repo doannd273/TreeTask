@@ -15,6 +15,9 @@ dependencies {
     implementation(projects.core.common)
     implementation(projects.core.datastore)
 
+    // paging
+    implementation(libs.paging.runtime)
+
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)
 }

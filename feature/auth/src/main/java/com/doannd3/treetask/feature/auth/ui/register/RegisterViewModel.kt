@@ -60,7 +60,7 @@ class RegisterViewModel @Inject constructor(
                     _effect.emit(RegisterEffect.NavigateToHome)
                 }
                 is ApiResult.Error -> {
-                    val message = result.message ?: UiText.StringResource(R.string.common_error_unknown)
+                    val message = UiText.DynamicString(result.message)
                     _effect.emit(RegisterEffect.ShowErrorMessage(message))
                 }
             }

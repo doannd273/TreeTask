@@ -31,9 +31,7 @@ class ApiResultCall<T>(
                                 ApiResult.Success((body.data ?: Unit) as T)
                             } else {
                                 ApiResult.Error(
-                                    message =
-                                    body?.message?.let { UiText.DynamicString(it) }
-                                        ?: UiText.StringResource(R.string.common_error_unknown),
+                                    message = body?.message,
                                     exception = null,
                                 )
                             }
@@ -42,9 +40,10 @@ class ApiResultCall<T>(
                             val errorMessage =
                                 try {
                                     val errorJson = response.errorBody()?.string()
-                                    json.decodeFromString<ApiResponse<Unit>>(
-                                        errorJson ?: "",
-                                    ).message
+                                    json
+                                        .decodeFromString<ApiResponse<Unit>>(
+                                            errorJson ?: "",
+                                        ).message
                                 } catch (e: SerializationException) {
                                     e.printStackTrace()
                                     null
@@ -53,9 +52,7 @@ class ApiResultCall<T>(
                                     null
                                 }
                             ApiResult.Error(
-                                message =
-                                errorMessage?.let { UiText.DynamicString(it) }
-                                    ?: UiText.StringResource(R.string.common_error_unknown),
+                                message = errorMessage,
                                 errorCode = response.code(),
                                 exception = null,
                             )
@@ -70,17 +67,19 @@ class ApiResultCall<T>(
                 ) {
                     val error =
                         when (t) {
-                            is IOException ->
+                            is IOException -> {
                                 ApiResult.Error(
-                                    message = UiText.StringResource(R.string.common_error_network_connection),
+                                    message = t.message,
                                     exception = t,
                                 )
+                            }
 
-                            else ->
+                            else -> {
                                 ApiResult.Error(
-                                    message = UiText.StringResource(R.string.common_error_unknown),
+                                    message = t.message,
                                     exception = t,
                                 )
+                            }
                         }
                     callback.onResponse(this@ApiResultCall, Response.success(error))
                 }
