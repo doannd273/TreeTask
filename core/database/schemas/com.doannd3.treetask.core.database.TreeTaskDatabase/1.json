@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "3257bfbc76019f61f6f02f21ac403220",
+    "identityHash": "9de702528164fc43961a638279ddc6f3",
     "entities": [
       {
         "tableName": "tasks",
@@ -65,12 +65,44 @@
         },
         "indices": [],
         "foreignKeys": []
+      },
+      {
+        "tableName": "task_remote_keys",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`task_id` TEXT NOT NULL, `pre_key` INTEGER, `next_key` INTEGER, PRIMARY KEY(`task_id`))",
+        "fields": [
+          {
+            "fieldPath": "taskId",
+            "columnName": "task_id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "preKey",
+            "columnName": "pre_key",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "nextKey",
+            "columnName": "next_key",
+            "affinity": "INTEGER",
+            "notNull": false
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "task_id"
+          ]
+        },
+        "indices": [],
+        "foreignKeys": []
       }
     ],
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '3257bfbc76019f61f6f02f21ac403220')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '9de702528164fc43961a638279ddc6f3')"
     ]
   }
 }

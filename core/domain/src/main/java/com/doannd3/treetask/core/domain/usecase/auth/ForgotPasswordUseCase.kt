@@ -13,7 +13,7 @@ class ForgotPasswordUseCase @Inject constructor(
         val mailTrimmed = email.trim()
         if (mailTrimmed.isBlank()) {
             return ApiResult.Error(
-                message = UiText.StringResource(R.string.common_error_email_empty),
+                uiText = UiText.StringResource(R.string.common_error_email_empty),
                 exception = null,
             )
         }

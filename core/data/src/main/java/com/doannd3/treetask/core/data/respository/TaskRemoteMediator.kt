@@ -42,7 +42,7 @@ class TaskRemoteMediator(
 
             when (apiResponse) {
                 is ApiResult.Success -> handleSuccessResponse(apiResponse.data.tasks, page, loadType)
-                is ApiResult.Error -> MediatorResult.Error(Exception(apiResponse.message))
+                is ApiResult.Error -> MediatorResult.Error(apiResponse.exception ?: Exception("API Error"))
             }
         } catch (e: IOException) {
             MediatorResult.Error(e)

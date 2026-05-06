@@ -56,7 +56,7 @@ class LoginViewModel @Inject constructor(
                     _effect.emit(LoginEffect.NavigateToHome)
                 }
                 is ApiResult.Error -> {
-                    val message = UiText.DynamicString(result.message)
+                    val message = result.message ?: UiText.DynamicString("Lỗi không xác định")
                     _effect.emit(LoginEffect.ShowErrorMessage(message))
                 }
             }

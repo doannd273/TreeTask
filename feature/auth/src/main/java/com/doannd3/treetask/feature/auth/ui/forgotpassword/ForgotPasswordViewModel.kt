@@ -55,7 +55,7 @@ class ForgotPasswordViewModel @Inject constructor(
                     _effect.emit(ForgotPasswordEffect.NavigateToLogin)
                 }
                 is ApiResult.Error -> {
-                    val message = UiText.DynamicString(result.message)
+                    val message = result.message ?: UiText.DynamicString("Lỗi không xác định")
                     _effect.emit(ForgotPasswordEffect.ShowErrorMessage(message))
                 }
             }
