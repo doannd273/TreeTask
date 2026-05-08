@@ -21,6 +21,17 @@ fun TaskResponse.toTaskDomain(): Task {
     )
 }
 
+fun TaskResponse.toTaskEntity() = TaskEntity(
+    id = this.id.orEmpty(),
+    userId = this.userId.orEmpty(),
+    title = this.title.orEmpty(),
+    description = this.description.orEmpty(),
+    status = this.status.orEmpty(),
+    dueDate = this.dueDate.toInstantOrNow().toLong(),
+    createdAt = this.createdAt.toInstantOrNow().toLong(),
+    updatedAt = this.updatedAt.toInstantOrNow().toLong(),
+)
+
 fun Task.toTaskEntity(userId: String) = TaskEntity(
     id = this.id,
     userId = userId,

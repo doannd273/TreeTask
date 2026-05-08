@@ -71,7 +71,7 @@ fun TaskStatusChips(
                     )
                 },
                 label = {
-                    Text(text = taskStatus.status)
+                    Text(text = taskStatus.label)
                 },
                 modifier = Modifier.padding(end = 8.dp),
             )
@@ -87,34 +87,35 @@ fun SearchTaskInput(
     onClearClick: () -> Unit,
 ) {
     TextField(
-        modifier = Modifier
+        modifier =
+        Modifier
             .fillMaxWidth()
             .border(
                 width = 1.dp,
                 color = Purple40,
                 shape = RoundedCornerShape(6.dp),
-            )
-            .background(
+            ).background(
                 color = White,
                 shape = RoundedCornerShape(6.dp),
             ),
-        colors = TextFieldDefaults.colors(
+        colors =
+        TextFieldDefaults.colors(
             focusedTextColor = Black,
             unfocusedTextColor = Gray,
-
             focusedIndicatorColor = Color.Transparent,
             unfocusedIndicatorColor = Color.Transparent,
             disabledIndicatorColor = Color.Transparent,
-
             focusedContainerColor = Color.Transparent,
             unfocusedContainerColor = Color.Transparent,
             disabledContainerColor = Color.Transparent,
         ),
-        textStyle = TextStyle(
+        textStyle =
+        TextStyle(
             fontSize = 15.sp,
         ),
         maxLines = 1,
-        keyboardOptions = KeyboardOptions(
+        keyboardOptions =
+        KeyboardOptions(
             keyboardType = KeyboardType.Text,
             imeAction = ImeAction.Done,
         ),
@@ -160,7 +161,8 @@ fun TaskItem(
 ) {
     Card(
         onClick = onClick,
-        modifier = modifier
+        modifier =
+        modifier
             .fillMaxWidth()
             .padding(vertical = 6.dp),
         shape = RoundedCornerShape(3.dp),
@@ -208,21 +210,28 @@ fun TaskItem(
 
 @Composable
 fun StatusBadge(status: TaskStatus) {
-    val backgroundColor = when (status) {
-        TaskStatus.TODO -> Gray // Xám xanh
-        TaskStatus.IN_PROGRESS -> Purple40 // Xanh dương
-        TaskStatus.PENDING -> Red10 // Đỏ
-        TaskStatus.DONE -> Green // Xanh lá
-    }
+    val backgroundColor =
+        when (status) {
+            TaskStatus.TODO -> Gray
+
+            // Xám xanh
+            TaskStatus.IN_PROGRESS -> Purple40
+
+            // Xanh dương
+            TaskStatus.PENDING -> Red10
+
+            // Đỏ
+            TaskStatus.DONE -> Green // Xanh lá
+        }
     Row(
-        modifier = Modifier
+        modifier =
+        Modifier
             .background(
                 shape = RoundedCornerShape(3.dp),
                 color = backgroundColor,
-            )
-            .padding(vertical = 4.dp, horizontal = 8.dp),
+            ).padding(vertical = 4.dp, horizontal = 8.dp),
     ) {
-        Text(text = status.status, color = White, fontSize = 13.sp)
+        Text(text = status.label, color = White, fontSize = 13.sp)
     }
 }
 
@@ -230,7 +239,8 @@ fun StatusBadge(status: TaskStatus) {
 @Preview(showBackground = true)
 fun TaskItemPreview() {
     TaskItem(
-        task = Task(
+        task =
+        Task(
             id = "1",
             userId = "user_1",
             title = "Fix login bug",

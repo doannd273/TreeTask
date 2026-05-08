@@ -22,7 +22,6 @@ interface AnalyticsModule {
     companion object {
         @Provides
         @Singleton
-        @android.annotation.SuppressLint("MissingPermission")
         fun provideFirebaseAnalytics(
             @ApplicationContext context: Context,
         ): FirebaseAnalytics = FirebaseAnalytics.getInstance(context)

@@ -1,19 +1,25 @@
 package com.doannd3.treetask.feature.tasks.ui.home
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -24,11 +30,18 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.paging.LoadState
+import androidx.paging.PagingData
+import androidx.paging.compose.LazyPagingItems
+import androidx.paging.compose.collectAsLazyPagingItems
+import androidx.paging.compose.itemContentType
+import androidx.paging.compose.itemKey
 import com.doannd3.treetask.core.common.asString
 import com.doannd3.treetask.core.designsystem.component.LocalGlobalAppState
 import com.doannd3.treetask.core.model.task.Task
 import com.doannd3.treetask.core.model.task.TaskStatus
 import com.doannd3.treetask.feature.tasks.R
+import kotlinx.coroutines.flow.flowOf
 import java.time.Instant
 
 @Composable
@@ -39,12 +52,15 @@ fun TasksRoute(
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
 
+    val pagingItems = state.tasks.collectAsLazyPagingItems()
+
     val globalAppState = LocalGlobalAppState.current
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
 
     TasksScreen(
         state = state,
+        pagingItems = pagingItems,
         onEvent = viewModel::onEvent,
         onTaskClick = onTaskClick,
         onAddTaskClick = onAddTaskClick,
@@ -84,6 +100,7 @@ fun TasksRoute(
 @Composable
 fun TasksScreen(
     state: TasksState,
+    pagingItems: LazyPagingItems<Task>,
     onEvent: (TasksEvent) -> Unit,
     onTaskClick: (Task) -> Unit,
     onAddTaskClick: () -> Unit,
@@ -104,6 +121,7 @@ fun TasksScreen(
         TasksContent(
             modifier = Modifier.padding(bottom = paddingValues.calculateBottomPadding()),
             state = state,
+            pagingItems = pagingItems,
             onEvent = onEvent,
             onTaskClick = onTaskClick,
         )
@@ -114,6 +132,7 @@ fun TasksScreen(
 fun TasksContent(
     modifier: Modifier = Modifier,
     state: TasksState,
+    pagingItems: LazyPagingItems<Task>,
     onEvent: (TasksEvent) -> Unit,
     onTaskClick: (Task) -> Unit,
 ) {
@@ -139,10 +158,56 @@ fun TasksContent(
         LazyColumn(
             modifier = Modifier.padding(top = 6.dp),
         ) {
-            items(items = state.tasks, key = { task -> task.id }) { task ->
-                TaskItem(task = task, onClick = {
-                    onTaskClick.invoke(task)
-                })
+            items(
+                count = pagingItems.itemCount,
+                key = pagingItems.itemKey { it.id },
+                contentType = pagingItems.itemContentType { "task" },
+            ) { index ->
+                val task = pagingItems[index]
+                if (task != null) {
+                    TaskItem(task = task, onClick = {
+                        onTaskClick.invoke(task)
+                    })
+                }
+            }
+
+            pagingItems.apply {
+                when {
+                    loadState.refresh is LoadState.Loading -> {
+                        item {
+                            Box(
+                                modifier = Modifier.fillParentMaxSize(),
+                                contentAlignment = Alignment.Center,
+                            ) {
+                                CircularProgressIndicator()
+                            }
+                        }
+                    }
+                    loadState.append is LoadState.Loading -> {
+                        item {
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(16.dp),
+                                contentAlignment = Alignment.Center,
+                            ) {
+                                CircularProgressIndicator()
+                            }
+                        }
+                    }
+                    loadState.append is LoadState.Error -> {
+                        item {
+                            Box(
+                                modifier = Modifier.fillMaxWidth(),
+                                contentAlignment = Alignment.Center,
+                            ) {
+                                TextButton(onClick = { retry() }) {
+                                    Text("Lỗi kết nối. Thử lại")
+                                }
+                            }
+                        }
+                    }
+                }
             }
         }
     }
@@ -151,58 +216,42 @@ fun TasksContent(
 @Composable
 @Preview(showBackground = true)
 fun TasksScreenPreview() {
+    val sampleTasks = listOf(
+        Task(
+            id = "1",
+            userId = "user_1",
+            title = "Fix login bug",
+            description = "Crash when login with Google",
+            status = TaskStatus.PENDING,
+            dueDate = Instant.parse("2026-04-20T10:00:00Z"),
+            createdAt = Instant.parse("2026-04-10T08:00:00Z"),
+            updatedAt = Instant.parse("2026-04-15T09:00:00Z"),
+        ),
+        Task(
+            id = "2",
+            userId = "user_1",
+            title = "Design home screen",
+            description = "Create UI with Compose",
+            status = TaskStatus.TODO,
+            dueDate = Instant.parse("2026-04-25T10:00:00Z"),
+            createdAt = Instant.parse("2026-04-11T08:00:00Z"),
+            updatedAt = Instant.parse("2026-04-12T09:00:00Z"),
+        ),
+    )
+
     val sampleTasksState =
         TasksState(
             isLoading = false,
             searchQuery = "",
             taskStatusSelected = TaskStatus.IN_PROGRESS,
-            tasks =
-            listOf(
-                Task(
-                    id = "1",
-                    userId = "user_1",
-                    title = "Fix login bug",
-                    description = "Crash when login with Google",
-                    status = TaskStatus.PENDING,
-                    dueDate = Instant.parse("2026-04-20T10:00:00Z"),
-                    createdAt = Instant.parse("2026-04-10T08:00:00Z"),
-                    updatedAt = Instant.parse("2026-04-15T09:00:00Z"),
-                ),
-                Task(
-                    id = "2",
-                    userId = "user_1",
-                    title = "Design home screen",
-                    description = "Create UI with Compose",
-                    status = TaskStatus.TODO,
-                    dueDate = Instant.parse("2026-04-25T10:00:00Z"),
-                    createdAt = Instant.parse("2026-04-11T08:00:00Z"),
-                    updatedAt = Instant.parse("2026-04-12T09:00:00Z"),
-                ),
-                Task(
-                    id = "3",
-                    userId = "user_2",
-                    title = "Write unit test",
-                    description = null,
-                    status = TaskStatus.IN_PROGRESS,
-                    dueDate = Instant.parse("2026-04-18T10:00:00Z"),
-                    createdAt = Instant.parse("2026-04-09T08:00:00Z"),
-                    updatedAt = Instant.parse("2026-04-14T09:00:00Z"),
-                ),
-                Task(
-                    id = "4",
-                    userId = "user_2",
-                    title = "Fix payment issue",
-                    description = "Timeout when calling API",
-                    status = TaskStatus.DONE,
-                    dueDate = Instant.parse("2026-04-15T10:00:00Z"),
-                    createdAt = Instant.parse("2026-04-05T08:00:00Z"),
-                    updatedAt = Instant.parse("2026-04-15T07:00:00Z"),
-                ),
-            ),
+            tasks = flowOf(PagingData.from(sampleTasks)),
         )
+
+    val pagingItems = sampleTasksState.tasks.collectAsLazyPagingItems()
 
     TasksScreen(
         state = sampleTasksState,
+        pagingItems = pagingItems,
         onEvent = {},
         onTaskClick = {},
         onAddTaskClick = {},

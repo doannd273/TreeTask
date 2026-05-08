@@ -1,17 +1,17 @@
 package com.doannd3.treetask.core.database.dao
 
+import androidx.paging.PagingSource
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
 import com.doannd3.treetask.core.database.model.TaskEntity
-import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface TaskDao {
     @Query("SELECT * FROM tasks WHERE user_id = :userId ORDER BY created_at DESC")
-    fun getTasks(userId: String): Flow<List<TaskEntity>>
+    fun getTasks(userId: String): PagingSource<Int, TaskEntity>
 
     @Query("SELECT * FROM tasks WHERE id = :taskId")
     suspend fun getTaskById(taskId: String): TaskEntity?

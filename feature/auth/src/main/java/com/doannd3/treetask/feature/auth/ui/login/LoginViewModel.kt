@@ -3,7 +3,6 @@ package com.doannd3.treetask.feature.auth.ui.login
 import com.doannd3.treetask.core.common.ApiResult
 import com.doannd3.treetask.core.common.BaseViewModel
 import com.doannd3.treetask.core.common.MviViewModel
-import com.doannd3.treetask.core.common.R
 import com.doannd3.treetask.core.common.UiText
 import com.doannd3.treetask.core.domain.usecase.auth.LoginUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -57,7 +56,7 @@ class LoginViewModel @Inject constructor(
                     _effect.emit(LoginEffect.NavigateToHome)
                 }
                 is ApiResult.Error -> {
-                    val message = result.message ?: UiText.StringResource(R.string.common_error_unknown)
+                    val message = result.message ?: UiText.DynamicString("Lỗi không xác định")
                     _effect.emit(LoginEffect.ShowErrorMessage(message))
                 }
             }
