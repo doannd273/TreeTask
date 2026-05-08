@@ -61,10 +61,10 @@ fun TreeTaskApp(
                 ) {
                     Box(
                         modifier =
-                            Modifier
-                                .fillMaxWidth()
-                                .background(Color.Red.copy(alpha = 0.8f))
-                                .padding(vertical = 4.dp),
+                        Modifier
+                            .fillMaxWidth()
+                            .background(Color.Red.copy(alpha = 0.8f))
+                            .padding(vertical = 4.dp),
                         contentAlignment = Alignment.Center,
                     ) {
                         Text(
