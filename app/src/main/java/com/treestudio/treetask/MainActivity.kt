@@ -5,7 +5,10 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.doannd3.treetask.core.designsystem.debug.DebugOverlayWrapper
 import com.doannd3.treetask.core.designsystem.theme.TreeTaskTheme
 import com.treestudio.treetask.ui.TreeTaskApp
@@ -22,23 +25,28 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
 
         splashScreen.setKeepOnScreenCondition {
-            viewModel.isLoading
+            viewModel.isLoadingMain
         }
 
         setContent {
             TreeTaskTheme {
-                viewModel.startDestination?.let {
-                    val overlayState = buildDebugOverlayUiState(
-                        env = BuildConfig.ENV,
-                        isDebug = BuildConfig.DEBUG,
-                    )
-                    DebugOverlayWrapper(
-                        isVisible = overlayState.show,
-                        label = overlayState.label.orEmpty(),
-                    ) {
-                        TreeTaskApp(
-                            startDestination = it,
-                        )
+                viewModel.startDestination?.let { dest ->
+                    key(dest) {
+                        val overlayState =
+                            buildDebugOverlayUiState(
+                                env = BuildConfig.ENV,
+                                isDebug = BuildConfig.DEBUG,
+                            )
+                        DebugOverlayWrapper(
+                            isVisible = overlayState.show,
+                            label = overlayState.label.orEmpty(),
+                        ) {
+                            val isOnline by viewModel.isOnline.collectAsStateWithLifecycle()
+                            TreeTaskApp(
+                                startDestination = dest,
+                                isOnline = isOnline,
+                            )
+                        }
                     }
                 }
             }

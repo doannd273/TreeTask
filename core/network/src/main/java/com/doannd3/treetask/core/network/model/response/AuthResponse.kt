@@ -7,6 +7,7 @@ import kotlinx.serialization.Serializable
 data class TokenResponse(
     @SerialName("accessToken") val accessToken: String,
     @SerialName("refreshToken") val refreshToken: String,
+    @SerialName("user") val user: UserResponse,
 )
 
 @Serializable
@@ -14,4 +15,5 @@ data class RegisterResponse(
     @SerialName("userId") val userId: String,
     @SerialName("accessToken") val accessToken: String,
     @SerialName("refreshToken") val refreshToken: String,
+    @SerialName("user") val user: UserResponse,
 )

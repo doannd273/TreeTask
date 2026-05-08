@@ -15,10 +15,12 @@ constructor(
 ) : AnalyticsHelper {
     override fun setUserId(userId: String) {
         firebaseCrashlytics.setUserId(userId)
+        firebaseAnalytics.setUserId(userId)
     }
 
     override fun clearUserId() {
         firebaseCrashlytics.setUserId("")
+        firebaseAnalytics.setUserId(null)
     }
 
     override fun logEvent(event: AnalyticsEvent) {
@@ -28,6 +30,11 @@ constructor(
                 param(param.key, param.value.take(MAX_PARAM_LENGTH))
             }
         }
+    }
+
+    override fun logError(exception: Throwable, message: String?) {
+        message?.let { firebaseCrashlytics.log(it) }
+        firebaseCrashlytics.recordException(exception)
     }
 
     // Khai báo hằng số ở đây

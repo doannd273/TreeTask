@@ -1,6 +1,7 @@
 package com.doannd3.treetask.core.data.respository
 
 import com.doannd3.treetask.core.common.ApiResult
+import com.doannd3.treetask.core.data.model.toUser
 import com.doannd3.treetask.core.datastore.token.TokenStorage
 import com.doannd3.treetask.core.datastore.user.UserStorage
 import com.doannd3.treetask.core.domain.repository.AuthRepository
@@ -29,10 +30,15 @@ constructor(
         val result = authService.login(LoginRequest(email = email, password = password))
         return when (result) {
             is ApiResult.Success -> {
+                // save token
                 tokenStorage.saveToken(
                     accessToken = result.data.accessToken,
                     refreshToken = result.data.refreshToken,
                 )
+                // save profile user
+                val user = result.data.user.toUser()
+                userStorage.saveUserProfile(user)
+
                 ApiResult.Success(Unit)
             }
 
@@ -57,7 +63,15 @@ constructor(
             )
         return when (result) {
             is ApiResult.Success -> {
-                tokenStorage.saveToken(result.data.accessToken, result.data.refreshToken)
+                // save token
+                tokenStorage.saveToken(
+                    result.data.accessToken,
+                    result.data.refreshToken,
+                )
+
+                // save profile user
+                val user = result.data.user.toUser()
+                userStorage.saveUserProfile(user)
                 ApiResult.Success(Unit)
             }
 

@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="common_app_name">Tree Task</string>
-    <string name="common_error_email_empty">Email không thể để trống</string>
-    <string name="common_error_fullName_empty">FullName không thể để trống</string>
-    <string name="common_error_password_empty">Password không thể để trống</string>
-    <string name="common_error_password_short">Mật khẩu phải lớn hơn 6 ký tự</string>
-    <string name="common_error_network_timeout">Kết nối máy chủ hết hạn</string>
-    <string name="common_error_unknown">Có lỗi không xác định</string>
-    <string name="common_error_network_connection">Lỗi đứt mạng kết nối</string>
+    <string name="common_error_email_empty">Email cannot be empty</string>
+    <string name="common_error_fullName_empty">Full name cannot be empty</string>
+    <string name="common_error_password_empty">Password cannot be empty</string>
+    <string name="common_error_password_short">Password must be at least 6 characters</string>
+    <string name="common_error_network_timeout">Server connection timed out</string>
+    <string name="common_error_unknown">An unknown error occurred</string>
+    <string name="common_error_network_connection">Network connection error</string>
 </resources>

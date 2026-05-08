@@ -7,7 +7,7 @@ sealed interface UiText {
 
     // backend, runtime
     data class DynamicString(
-        val value: String,
+        val value: String?,
     ) : UiText
 
     // text từ strings.xml
@@ -19,7 +19,7 @@ sealed interface UiText {
 
 fun UiText.asString(context: Context): String {
     return when (this) {
-        is UiText.DynamicString -> value
+        is UiText.DynamicString -> value ?: context.getString(R.string.common_error_unknown)
 
         is UiText.StringResource -> {
             return when {

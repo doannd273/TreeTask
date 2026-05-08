@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="auth_email_hint">Email</string>
-    <string name="auth_full_name_hint">FullName</string>
-    <string name="auth_password_hint">Mật khẩu</string>
-    <string name="auth_action_login">Đăng nhập</string>
-    <string name="auth_register">Đăng ký</string>
-    <string name="auth_confirm">Xác nhận</string>
-    <string name="auth_forgot_password">Quên mật khẩu</string>
-    <string name="auth_prompt_no_account">Chưa có tài khoản? %1$s</string>
+    <string name="auth_full_name_hint">Full Name</string>
+    <string name="auth_password_hint">Password</string>
+    <string name="auth_action_login">Login</string>
+    <string name="auth_register">Register</string>
+    <string name="auth_confirm">Confirm</string>
+    <string name="auth_forgot_password">Forgot password</string>
+    <string name="auth_prompt_no_account">Don\'t have an account? %1$s</string>
 </resources>

@@ -8,10 +8,14 @@ import com.doannd3.treetask.core.domain.repository.UserRepository
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-class AnalyticsSessionManager @Inject constructor(
+class AnalyticsSessionManager
+@Inject
+constructor(
     private val userRepository: UserRepository,
     private val analyticsHelper: AnalyticsHelper,
     @Dispatcher(TreeTaskDispatchers.IO) private val ioDispatcher: CoroutineDispatcher,
@@ -20,13 +24,17 @@ class AnalyticsSessionManager @Inject constructor(
 
     override fun init(application: Application) {
         applicationScope.launch {
-            userRepository.getCachedProfile().collect { user ->
-                if (user != null) {
-                    analyticsHelper.setUserId(user.id)
-                } else {
-                    analyticsHelper.clearUserId()
+            userRepository
+                .getCachedProfile()
+                .map { user -> user?.id }
+                .distinctUntilChanged()
+                .collect { userId ->
+                    if (userId != null) {
+                        analyticsHelper.setUserId(userId)
+                    } else {
+                        analyticsHelper.clearUserId()
+                    }
                 }
-            }
         }
     }
 }

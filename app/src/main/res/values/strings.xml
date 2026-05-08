@@ -3,4 +3,5 @@
     <string name="app_tab_profile">Profile</string>
     <string name="app_tab_chat">Chat</string>
     <string name="app_tab_stats">Stats</string>
+    <string name="app_offline_banner">You are offline</string>
 </resources>
