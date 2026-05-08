@@ -18,6 +18,11 @@ dependencies {
     // paging
     implementation(libs.paging.runtime)
 
+    // / hilt
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)
+
+    // testing
+    testImplementation(projects.core.testing)
+    testImplementation(kotlin("test"))
 }

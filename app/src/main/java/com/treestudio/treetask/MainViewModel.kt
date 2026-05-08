@@ -3,15 +3,21 @@ package com.treestudio.treetask
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.doannd3.treetask.core.common.ApiResult
+import com.doannd3.treetask.core.common.BaseViewModel
+import com.doannd3.treetask.core.data.util.NetworkMonitor
 import com.doannd3.treetask.core.datastore.token.TokenStorage
+import com.doannd3.treetask.core.domain.repository.AuthRepository
 import com.doannd3.treetask.core.domain.repository.UserRepository
 import com.doannd3.treetask.feature.auth.navigation.AuthGraphDestination
 import com.doannd3.treetask.feature.tasks.navigation.TasksGraphDestination
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -21,19 +27,28 @@ class MainViewModel
 constructor(
     private val tokenStorage: TokenStorage,
     private val userRepository: UserRepository,
-) : ViewModel() {
-    var isLoading by mutableStateOf(true)
+    private val authRepository: AuthRepository,
+    networkMonitor: NetworkMonitor,
+) : BaseViewModel() {
+    var isLoadingMain by mutableStateOf(true)
         private set
 
     var startDestination by mutableStateOf<Any?>(null)
         private set
+
+    val isOnline: StateFlow<Boolean> = networkMonitor.isOnline
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5_000),
+            initialValue = true,
+        )
 
     init {
         viewModelScope.launch {
             val token = tokenStorage.getAccessToken().first()
             if (token.isNullOrEmpty()) {
                 startDestination = AuthGraphDestination
-                isLoading = false
+                isLoadingMain = false
                 return@launch
             }
 
@@ -41,7 +56,7 @@ constructor(
             when (result) {
                 is ApiResult.Success -> {
                     startDestination = TasksGraphDestination
-                    isLoading = false
+                    isLoadingMain = false
                 }
 
                 is ApiResult.Error -> {
@@ -52,9 +67,13 @@ constructor(
                         } else {
                             AuthGraphDestination
                         }
-                    isLoading = false
+                    isLoadingMain = false
                 }
             }
         }
+
+        authRepository.isSessionExpired.onEach {
+            startDestination = AuthGraphDestination
+        }.launchSafeIn(viewModelScope)
     }
 }

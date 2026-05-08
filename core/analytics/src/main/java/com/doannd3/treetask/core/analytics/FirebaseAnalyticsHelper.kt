@@ -32,6 +32,11 @@ constructor(
         }
     }
 
+    override fun logError(exception: Throwable, message: String?) {
+        message?.let { firebaseCrashlytics.log(it) }
+        firebaseCrashlytics.recordException(exception)
+    }
+
     // Khai báo hằng số ở đây
     companion object {
         private const val MAX_PARAM_LENGTH = 100

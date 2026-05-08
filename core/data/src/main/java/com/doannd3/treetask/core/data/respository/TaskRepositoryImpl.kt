@@ -41,7 +41,7 @@ constructor(
         return Pager(
             config =
             PagingConfig(
-                pageSize = 20,
+                pageSize = LIMIT,
                 prefetchDistance = 5,
                 enablePlaceholders = false,
             ),
@@ -65,7 +65,7 @@ constructor(
             val apiResponse =
                 taskService.getTasks(
                     page = 1,
-                    limit = 50,
+                    limit = LIMIT,
                     status = "",
                     keyword = "",
                 )
@@ -104,4 +104,8 @@ constructor(
         } catch (e: HttpException) {
             ApiResult.Error(exception = e)
         }
+
+    companion object {
+        const val LIMIT = 20
+    }
 }

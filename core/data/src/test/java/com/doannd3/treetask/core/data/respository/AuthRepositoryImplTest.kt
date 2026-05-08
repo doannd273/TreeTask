@@ -6,6 +6,7 @@ import com.doannd3.treetask.core.datastore.token.TokenStorage
 import com.doannd3.treetask.core.datastore.user.UserStorage
 import com.doannd3.treetask.core.network.model.response.RegisterResponse
 import com.doannd3.treetask.core.network.model.response.TokenResponse
+import com.doannd3.treetask.core.network.model.response.UserResponse
 import com.doannd3.treetask.core.network.service.AuthService
 import com.google.common.truth.Truth.assertThat
 import io.mockk.coEvery
@@ -23,6 +24,13 @@ class AuthRepositoryImplTest {
     private val userPrefsManager: UserStorage = mockk(relaxed = true)
 
     private lateinit var authRepository: AuthRepositoryImpl
+    private val fakeUserResponse =
+        UserResponse(
+            id = "user_123",
+            fullName = "Doan ND",
+            email = "test@treetask.com",
+            avatar = "https://avatar.url",
+        )
 
     @Before
     fun setUp() {
@@ -71,6 +79,7 @@ class AuthRepositoryImplTest {
                 TokenResponse(
                     accessToken = "fake_access_token",
                     refreshToken = "fake_refresh_token",
+                    user = fakeUserResponse,
                 )
             // Dạy con bot API: Hễ có ai gọi login() với email và pass đó, thì trả về fakeResponse
             coEvery {
@@ -88,6 +97,11 @@ class AuthRepositoryImplTest {
             coVerify(exactly = 1) {
                 tokenManager.saveToken("fake_access_token", "fake_refresh_token")
             }
+
+            // 3. Chắc chắn rằng hàm saveUserProfile đã được gọi đúng 1 lần
+            coVerify(exactly = 1) {
+                userPrefsManager.saveUserProfile(any())
+            }
         }
 
     @Test
@@ -102,6 +116,7 @@ class AuthRepositoryImplTest {
                     userId = "fake_user_id",
                     accessToken = "fake_access_token",
                     refreshToken = "fake_refresh_token",
+                    user = fakeUserResponse,
                 )
             // Dạy con bot API: Hễ có ai gọi register() với fullName, email và pass đó, thì trả về fakeResponse
             coEvery {
@@ -118,6 +133,11 @@ class AuthRepositoryImplTest {
             // 2. Chắc chắn rằng hàm saveToken đã được gọi đúng 1 lần với token chính xác
             coVerify(exactly = 1) {
                 tokenManager.saveToken("fake_access_token", "fake_refresh_token")
+            }
+
+            // 3. Chắc chắn rằng hàm saveUserProfile đã được gọi đúng 1 lần
+            coVerify(exactly = 1) {
+                userPrefsManager.saveUserProfile(any())
             }
         }
 
