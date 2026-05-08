@@ -36,6 +36,10 @@ android {
                 .trim()
                 .lines()
                 .firstOrNull() ?: "1.0.0"
+
+        // Chỉ bundle ngôn ngữ EN và VI, loại bỏ các bản dịch thừa từ thư viện bên thứ 3
+        @Suppress("DEPRECATION")
+        resourceConfigurations.addAll(listOf("en", "vi"))
     }
 
     buildTypes {

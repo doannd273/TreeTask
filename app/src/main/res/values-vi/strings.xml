@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_tab_tasks">Công việc</string>
+    <string name="app_tab_profile">Hồ sơ</string>
+    <string name="app_tab_chat">Trò chuyện</string>
+    <string name="app_tab_stats">Thống kê</string>
+    <string name="app_offline_banner">Đang ở chế độ ngoại tuyến</string>
+</resources>
