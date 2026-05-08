@@ -50,6 +50,11 @@ android {
         // Chỉ bundle ngôn ngữ EN và VI, loại bỏ các bản dịch thừa từ thư viện bên thứ 3
         @Suppress("DEPRECATION")
         resourceConfigurations.addAll(listOf("en", "vi"))
+
+        ndk {
+            // Chỉ lấy các kiến trúc chip điện thoại phổ biến nhất hiện nay
+            abiFilters.addAll(listOf("armeabi-v7a", "arm64-v8a", "x86", "x86_64"))
+        }
     }
 
     signingConfigs {
@@ -109,6 +114,15 @@ android {
 
             buildConfigField("String", "ENV", "\"PROD\"")
             buildConfigField("Boolean", "IS_DEV", "false")
+        }
+    }
+
+    // Đặt tên app đầu ra cho dễ nhớ, app release
+    applicationVariants.all {
+        outputs.all {
+            val output = this as com.android.build.gradle.internal.api.BaseVariantOutputImpl
+            val fileName = "TreeTask_${versionName}_$versionCode.apk"
+            output.outputFileName = fileName
         }
     }
 }
