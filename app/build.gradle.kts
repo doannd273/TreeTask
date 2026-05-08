@@ -60,20 +60,21 @@ android {
     signingConfigs {
         create("release") {
             // Ưu tiên local.properties, nếu không có thì lấy từ Environment Variable (cho CI)
-            val keystorePath = properties.getProperty("signing.storeFilePath") 
-                ?: System.getenv("RELEASE_KEYSTORE_PATH")
-            
+            val keystorePath =
+                properties.getProperty("signing.storeFilePath")
+                    ?: System.getenv("RELEASE_KEYSTORE_PATH")
+
             if (keystorePath != null && keystorePath.isNotEmpty()) {
                 storeFile = file(keystorePath)
             }
-            
-            storePassword = properties.getProperty("signing.storePassword") 
+
+            storePassword = properties.getProperty("signing.storePassword")
                 ?: System.getenv("RELEASE_KEYSTORE_PASSWORD")
-                
-            keyAlias = properties.getProperty("signing.keyAlias") 
+
+            keyAlias = properties.getProperty("signing.keyAlias")
                 ?: System.getenv("RELEASE_KEY_ALIAS")
-                
-            keyPassword = properties.getProperty("signing.keyPassword") 
+
+            keyPassword = properties.getProperty("signing.keyPassword")
                 ?: System.getenv("RELEASE_KEY_PASSWORD")
         }
     }
