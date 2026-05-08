@@ -1,3 +1,5 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.treetask.android.application)
     alias(libs.plugins.kotlin.compose)
@@ -14,6 +16,14 @@ plugins {
 
 android {
     namespace = "com.treestudio.treetask"
+
+    // Đọc file local.properties để lấy URL động
+    val properties = Properties()
+    val localPropertiesFile = rootProject.file("local.properties")
+    if (localPropertiesFile.exists()) {
+        properties.load(localPropertiesFile.inputStream())
+    }
+
     defaultConfig {
         applicationId = "com.treestudio.treetask"
         // versionCode = tổng số commit (tự tăng mỗi lần có commit mới)
@@ -40,6 +50,33 @@ android {
         // Chỉ bundle ngôn ngữ EN và VI, loại bỏ các bản dịch thừa từ thư viện bên thứ 3
         @Suppress("DEPRECATION")
         resourceConfigurations.addAll(listOf("en", "vi"))
+
+        ndk {
+            // Chỉ lấy các kiến trúc chip điện thoại phổ biến nhất hiện nay
+            abiFilters.addAll(listOf("armeabi-v7a", "arm64-v8a", "x86", "x86_64"))
+        }
+    }
+
+    signingConfigs {
+        create("release") {
+            // Ưu tiên local.properties, nếu không có thì lấy từ Environment Variable (cho CI)
+            val keystorePath =
+                properties.getProperty("signing.storeFilePath")
+                    ?: System.getenv("RELEASE_KEYSTORE_PATH")
+
+            if (keystorePath != null && keystorePath.isNotEmpty()) {
+                storeFile = file(keystorePath)
+            }
+
+            storePassword = properties.getProperty("signing.storePassword")
+                ?: System.getenv("RELEASE_KEYSTORE_PASSWORD")
+
+            keyAlias = properties.getProperty("signing.keyAlias")
+                ?: System.getenv("RELEASE_KEY_ALIAS")
+
+            keyPassword = properties.getProperty("signing.keyPassword")
+                ?: System.getenv("RELEASE_KEY_PASSWORD")
+        }
     }
 
     buildTypes {
@@ -53,10 +90,17 @@ android {
             isDebuggable = false
             isShrinkResources = true
             isMinifyEnabled = true
+
+            signingConfig = signingConfigs.getByName("release") // Gắn cấu hình ký vào bản release
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro",
             )
+
+            // Bổ sung dòng này để Crashlytics upload file mapping
+            configure<com.google.firebase.crashlytics.buildtools.gradle.CrashlyticsExtension> {
+                mappingFileUploadEnabled = true
+            }
         }
     }
     compileOptions {
@@ -83,6 +127,15 @@ android {
 
             buildConfigField("String", "ENV", "\"PROD\"")
             buildConfigField("Boolean", "IS_DEV", "false")
+        }
+    }
+
+    // Đặt tên app đầu ra cho dễ nhớ, app release
+    applicationVariants.all {
+        outputs.all {
+            val output = this as com.android.build.gradle.internal.api.BaseVariantOutputImpl
+            val fileName = "TreeTask_${versionName}_$versionCode.apk"
+            output.outputFileName = fileName
         }
     }
 }
