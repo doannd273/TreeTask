@@ -1,3 +1,5 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.treetask.android.application)
     alias(libs.plugins.kotlin.compose)
@@ -14,6 +16,14 @@ plugins {
 
 android {
     namespace = "com.treestudio.treetask"
+
+    // Đọc file local.properties để lấy URL động
+    val properties = Properties()
+    val localPropertiesFile = rootProject.file("local.properties")
+    if (localPropertiesFile.exists()) {
+        properties.load(localPropertiesFile.inputStream())
+    }
+
     defaultConfig {
         applicationId = "com.treestudio.treetask"
         // versionCode = tổng số commit (tự tăng mỗi lần có commit mới)
@@ -42,6 +52,15 @@ android {
         resourceConfigurations.addAll(listOf("en", "vi"))
     }
 
+    signingConfigs {
+        create("release") {
+            storeFile = file(properties.getProperty("signing.storeFilePath") ?: "")
+            storePassword = properties.getProperty("signing.storePassword")
+            keyAlias = properties.getProperty("signing.keyAlias")
+            keyPassword = properties.getProperty("signing.keyPassword")
+        }
+    }
+
     buildTypes {
         debug {
             isMinifyEnabled = false
@@ -53,6 +72,8 @@ android {
             isDebuggable = false
             isShrinkResources = true
             isMinifyEnabled = true
+
+            signingConfig = signingConfigs.getByName("release") // Gắn cấu hình ký vào bản release
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro",
