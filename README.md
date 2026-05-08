@@ -8,30 +8,30 @@ This project follows a highly modularized architecture to ensure scalability, ro
 
 * **Architecture**: Clean Architecture, Multi-module, MVI (Model-View-Intent)
 * **Language**: Kotlin 2.0+
-* **UI**: Jetpack Compose (Adaptive layouts planned for future updates)
+* **UI**: Jetpack Compose (Material 3)
 * **Dependency Injection**: Hilt
 * **Asynchronous Programming**: Kotlin Coroutines & Flow
-* **Networking**: Retrofit2, OkHttp, Chucker, Socket.IO (for Real-time Chat)
+* **Networking**: Retrofit2, OkHttp, Kotlinx Serialization, Socket.IO (planned)
 * **Local Storage**: Room Database (Offline-first data layer), Preferences DataStore
 * **Testing**: JUnit4, MockK, Turbine, Truth, Coroutines-Test
 * **Observability**: Firebase Analytics, Firebase Crashlytics, Firebase Performance, LeakCanary
 * **CI/CD**: GitHub Actions (Lint, Detekt, Automated Unit Tests)
+* **Localization**: Multi-language support (English & Vietnamese)
+* **Security & Optimization**: R8/ProGuard obfuscation, EncryptedSharedPreferences (planned)
 
-## 📦 Project Structure
+## 📦 Key Features (Ready)
 
-The codebase is split into `app`, `feature`, and `core` modules:
-
-* **`app`**: The main entry point, navigation graph, and global DI bindings.
-* **`feature:*`**: Encapsulated feature modules (Auth, Tasks, Profile, Chat, Stats). *(Note: UI/UX implementation is actively in progress).*
-* **`core:common`**: Shared utilities, DI qualifiers, and injected Coroutine Dispatchers.
-* **`core:data`**: Repository implementations handling business logic, data merging, and offline-first fallback mechanisms.
-* **`core:database`**: Room DB setup, DAOs, and local entity definitions.
-* **`core:datastore`**: Local preferences (e.g., Auth Tokens) managed securely by DataStore.
-* **`core:domain`**: Core business rules and repository interfaces.
-* **`core:model`**: Immutable business models used across the application.
-* **`core:network`**: API services, Kotlinx Serialization, and robust Auth Interceptors for automatic token refresh.
-* **`core:testing`**: Test dispatchers, mock rules, and shared testing utilities.
-* **`core:analytics`**: Firebase Integration for event tracking and crash reporting.
+* **Offline-first Sync**: Uses `RemoteMediator` for seamless data synchronization between Room and REST API.
+* **Real-time Network Monitor**: Dynamic UI feedback (Offline Banner) when connectivity changes.
+* **Robust Authentication**: 
+    * Support for Login/Register with instant profile sync.
+    * Automatic Token Refresh mechanism via OkHttp Interceptors.
+    * **Global Session Management**: Automatic forced logout and backstack clearing when sessions expire.
+* **Localization (i18n)**: Fully translated for EN and VI locales.
+* **Advanced Analytics**: Custom event tracking (`task_created`, `sync_failed`, `login_method`) and non-fatal error reporting via Crashlytics.
+* **Clean Code & Quality**: 
+    * Strict Linting rules (Detekt, Spotless).
+    * High Unit Test coverage for UseCases and Repositories.
 
 ## 🚀 Setup Instructions
 
@@ -45,19 +45,20 @@ To build and run this project on your local machine:
 2. **Open the project**:
    Open the cloned directory in **Android Studio Ladybug** (or a newer version).
 
-3. **Configure Firebase (Optional but recommended)**:
-   Place your `google-services.json` file into the `app/` directory to enable Firebase Analytics, Performance, and Crashlytics.
+3. **Configure Firebase**:
+   Place your `google-services.json` file into the `app/` directory to enable Analytics, Performance, and Crashlytics.
 
 4. **Build and Run**:
-   Sync the Gradle project and click the Run button to install it on an emulator or physical device.
+   Sync the Gradle project and click the Run button.
 
 ## 🔮 Future Roadmap
 
-The foundational core (Networking, Database, DI, CI/CD, and Unit Testing) is fully established. Upcoming updates will focus on:
+The foundational core is fully established. Upcoming updates will focus on:
 
-* **UI/UX Implementation**: Building beautiful, adaptive UI layouts using Jetpack Compose (supporting mobile phones, foldables, and tablets).
-* **Background Syncing**: Integrating `WorkManager` for reliable, background offline-to-online data synchronization.
+* **UI/UX Polishing**: Implementing "Premium" design elements like glassmorphism and smooth animations in the Profile and Tasks screens.
+* **Task Management Features**: Adding, editing, and deleting tasks with complex scheduling.
+* **Settings Module**: Dark Mode toggle, language switcher, and notification preferences.
 * **Real-time Chat**: Wiring up Socket.IO streams to the Compose UI layer.
 
 ---
-*Note: This README serves as the foundational documentation and will be continuously updated as new visual features are deployed.*
+*Note: This README is continuously updated as new features are deployed.*
