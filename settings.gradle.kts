@@ -23,7 +23,11 @@ dependencyResolutionManagement {
 }
 
 rootProject.name = "TreeTask"
+
+// app
 include(":app")
+
+// core
 include(":core:model")
 include(":core:network")
 include(":core:database")
@@ -35,6 +39,9 @@ include(":core:common")
 include(":core:testing")
 include(":core:notification")
 include(":core:analytics")
+include(":core:permisstion")
+
+// feature
 include(":feature:auth")
 include(":feature:tasks")
 include(":feature:stats")

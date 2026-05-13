@@ -48,10 +48,15 @@ dependencies {
     implementation(libs.okhttp)
     implementation(libs.okhttp.logging)
     implementation(libs.kotlinx.serialization.json)
-    // implementation(libs.socket.io)
+
+    // chucker
     debugImplementation(libs.chucker.debug)
     releaseImplementation(libs.chucker.release)
+
+    // hilt
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)
+
+    // timber
     implementation(libs.timber)
 }

@@ -24,6 +24,8 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
+        requestPermissions()
+
         splashScreen.setKeepOnScreenCondition {
             viewModel.isLoadingMain
         }
@@ -51,5 +53,8 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
+    }
+
+    private fun requestPermissions() {
     }
 }
