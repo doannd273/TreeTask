@@ -9,7 +9,7 @@ plugins {
 }
 
 android {
-    namespace = "com.doannd3.treetask.permisstion"
+    namespace = "com.doannd3.treetask.core.permission"
 
     buildFeatures {
         buildConfig = true

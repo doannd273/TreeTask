@@ -39,7 +39,7 @@ include(":core:common")
 include(":core:testing")
 include(":core:notification")
 include(":core:analytics")
-include(":core:permisstion")
+include(":core:permission")
 
 // feature
 include(":feature:auth")
