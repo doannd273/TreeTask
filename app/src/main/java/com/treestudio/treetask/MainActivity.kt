@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
@@ -11,6 +12,9 @@ import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.doannd3.treetask.core.designsystem.debug.DebugOverlayWrapper
 import com.doannd3.treetask.core.designsystem.theme.TreeTaskTheme
+import com.doannd3.treetask.core.permission.AppPermission
+import com.doannd3.treetask.core.permission.PermissionChecker
+import com.doannd3.treetask.core.permission.PermissionStatus
 import com.treestudio.treetask.ui.TreeTaskApp
 import com.treestudio.treetask.ui.debug.buildDebugOverlayUiState
 import dagger.hilt.android.AndroidEntryPoint
@@ -19,10 +23,22 @@ import dagger.hilt.android.AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     private val viewModel: MainViewModel by viewModels()
 
+    private val notificationPermissionLauncher =
+        registerForActivityResult(
+            ActivityResultContracts.RequestMultiplePermissions(),
+        ) { permissionMap ->
+        }
+
+    private val permissionChecked by lazy {
+        PermissionChecker(applicationContext)
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         val splashScreen = installSplashScreen()
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+
+        requestDebugNotificationPermissionIfNeeded()
 
         splashScreen.setKeepOnScreenCondition {
             viewModel.isLoadingMain
@@ -49,6 +65,23 @@ class MainActivity : ComponentActivity() {
                         }
                     }
                 }
+            }
+        }
+    }
+
+    private fun requestDebugNotificationPermissionIfNeeded() {
+        if (!BuildConfig.DEBUG) return
+
+        val status = permissionChecked.check(AppPermission.PostNotification)
+        when (status) {
+            is PermissionStatus.Denied -> {
+                notificationPermissionLauncher.launch(status.missingPermissions.toTypedArray())
+            }
+
+            PermissionStatus.Granted,
+            PermissionStatus.NotRequired,
+            -> {
+                Unit
             }
         }
     }
