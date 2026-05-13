@@ -1,19 +1,12 @@
 package com.treestudio.treetask.navigation
 
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.rememberNavController
-import com.doannd3.treetask.feature.auth.navigation.LoginDestination
 import com.doannd3.treetask.feature.auth.navigation.authGraph
 import com.doannd3.treetask.feature.auth.navigation.navigateToForgotPassword
 import com.doannd3.treetask.feature.auth.navigation.navigateToLogin
 import com.doannd3.treetask.feature.auth.navigation.navigateToRegister
-import com.doannd3.treetask.feature.auth.ui.login.LoginRoute
 import com.doannd3.treetask.feature.chat.navigation.chatGraph
 import com.doannd3.treetask.feature.profile.navigation.profileGraph
 import com.doannd3.treetask.feature.stats.navigation.statsGraph
@@ -22,7 +15,6 @@ import com.doannd3.treetask.feature.tasks.navigation.navigateToEditTask
 import com.doannd3.treetask.feature.tasks.navigation.navigateToTasksGraph
 import com.doannd3.treetask.feature.tasks.navigation.tasksGraph
 import com.treestudio.treetask.ui.TreeTaskAppState
-import kotlinx.coroutines.CoroutineScope
 
 @Composable
 fun TreeTaskNavHost(
@@ -73,5 +65,3 @@ fun TreeTaskNavHost(
         profileGraph()
     }
 }
-
-
