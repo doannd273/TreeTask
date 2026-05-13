@@ -41,18 +41,8 @@ fun TreeTaskApp(
 
     CompositionLocalProvider(LocalGlobalAppState provides globalAppState) {
         Scaffold(
-            bottomBar = {
-                if (appState.isTopLevelDestination) {
-                    TreeTaskBottomBar(
-                        destinations = TopLevelDestination.entries,
-                        currentDestination = appState.currentDestination,
-                        onNavigateToDestination = { topLevelDest ->
-                            // Nhờ AppState đổi Tab nội bộ
-                            appState.navigateToTopLevelDestination(topLevelDest.route)
-                        },
-                    )
-                }
-            },
+
+            // Top
             topBar = {
                 AnimatedVisibility(
                     visible = !isOnline,
@@ -76,6 +66,22 @@ fun TreeTaskApp(
                     }
                 }
             },
+
+            // bottom
+            bottomBar = {
+                if (appState.isTopLevelDestination) {
+                    TreeTaskBottomBar(
+                        destinations = TopLevelDestination.entries,
+                        currentDestination = appState.currentDestination,
+                        onNavigateToDestination = { topLevelDest ->
+                            // Nhờ AppState đổi Tab nội bộ
+                            appState.navigateToTopLevelDestination(topLevelDest.route)
+                        },
+                    )
+                }
+            },
+
+
         ) { paddingValues ->
             TreeTaskNavHost(
                 startDestination = startDestination,
