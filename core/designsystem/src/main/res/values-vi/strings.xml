@@ -2,4 +2,5 @@
 <resources>
     <string name="designsystem_error_dialog_title">Thông báo</string>
     <string name="designsystem_action_close">Đóng</string>
+    <string name="designsystem_action_ok">OK</string>
 </resources>

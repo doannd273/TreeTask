@@ -32,14 +32,14 @@ import com.doannd3.treetask.core.designsystem.theme.White
 import com.doannd3.treetask.feature.auth.R
 
 @Composable
-internal fun RegisterButton(
-    onSubmitRegister: () -> Unit,
-) {
+internal fun RegisterButton(onSubmitRegister: () -> Unit) {
     Button(
-        modifier = Modifier
+        modifier =
+        Modifier
             .fillMaxWidth()
             .height(50.dp),
-        colors = ButtonDefaults.buttonColors(
+        colors =
+        ButtonDefaults.buttonColors(
             containerColor = Purple40,
         ),
         shape = RoundedCornerShape(corner = CornerSize(size = 3.dp)),
@@ -56,15 +56,18 @@ internal fun FullNameInput(
 ) {
     OutlinedTextField(
         modifier = Modifier.fillMaxWidth(),
-        colors = OutlinedTextFieldDefaults.colors(
+        colors =
+        OutlinedTextFieldDefaults.colors(
             focusedTextColor = Black,
             unfocusedTextColor = Gray,
         ),
-        textStyle = TextStyle(
+        textStyle =
+        TextStyle(
             fontSize = 15.sp,
         ),
-        maxLines = 1,
-        keyboardOptions = KeyboardOptions(
+        singleLine = true,
+        keyboardOptions =
+        KeyboardOptions(
             keyboardType = KeyboardType.Text,
             imeAction = ImeAction.Next,
         ),
@@ -77,7 +80,8 @@ internal fun FullNameInput(
 @Composable
 internal fun RegisterHeader(onRegisterBack: () -> Unit) {
     Row(
-        modifier = Modifier
+        modifier =
+        Modifier
             .fillMaxWidth()
             .height(50.dp)
             .background(color = White)
@@ -95,7 +99,8 @@ internal fun RegisterHeader(onRegisterBack: () -> Unit) {
         Text(
             text = stringResource(R.string.auth_register),
             color = Purple40,
-            style = TextStyle(
+            style =
+            TextStyle(
                 fontSize = 18.sp,
             ),
         )

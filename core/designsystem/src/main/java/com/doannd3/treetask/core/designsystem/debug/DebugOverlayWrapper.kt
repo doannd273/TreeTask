@@ -16,8 +16,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.doannd3.treetask.core.designsystem.theme.ColorDev
-import com.doannd3.treetask.core.designsystem.theme.ColorTextDev
+import com.doannd3.treetask.core.designsystem.theme.DevBackground
+import com.doannd3.treetask.core.designsystem.theme.DevText
 
 @SuppressLint("UnusedBoxWithConstraintsScope")
 @Composable
@@ -36,10 +36,10 @@ fun DebugOverlayWrapper(
                 Modifier
                     .align(Alignment.TopEnd)
                     .offset(y = offsetY)
-                    .background(ColorDev)
+                    .background(DevBackground)
                     .padding(horizontal = 10.dp),
                 text = label,
-                color = ColorTextDev,
+                color = DevText,
                 fontSize = 13.sp,
                 fontWeight = FontWeight.Bold,
             )

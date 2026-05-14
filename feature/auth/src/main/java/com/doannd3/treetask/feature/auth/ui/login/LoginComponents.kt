@@ -66,7 +66,7 @@ internal fun PasswordInput(
         textStyle = TextStyle(
             fontSize = 15.sp,
         ),
-        maxLines = 1,
+        singleLine = true,
         keyboardOptions = KeyboardOptions(
             keyboardType = KeyboardType.Password,
             imeAction = ImeAction.Done,
@@ -110,7 +110,7 @@ internal fun EmailInput(
         textStyle = TextStyle(
             fontSize = 15.sp,
         ),
-        maxLines = 1,
+        singleLine = true,
         keyboardOptions = KeyboardOptions(
             keyboardType = KeyboardType.Email,
             imeAction = ImeAction.Next,

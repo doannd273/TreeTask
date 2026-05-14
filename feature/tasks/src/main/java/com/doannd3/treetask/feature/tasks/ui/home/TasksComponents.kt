@@ -41,10 +41,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.doannd3.treetask.core.common.extension.toDayMonth
 import com.doannd3.treetask.core.designsystem.theme.Black
+import com.doannd3.treetask.core.designsystem.theme.ErrorPrimary
 import com.doannd3.treetask.core.designsystem.theme.Gray
-import com.doannd3.treetask.core.designsystem.theme.Green
 import com.doannd3.treetask.core.designsystem.theme.Purple40
-import com.doannd3.treetask.core.designsystem.theme.Red10
+import com.doannd3.treetask.core.designsystem.theme.Success
 import com.doannd3.treetask.core.designsystem.theme.White
 import com.doannd3.treetask.core.model.task.Task
 import com.doannd3.treetask.core.model.task.TaskStatus
@@ -113,7 +113,7 @@ fun SearchTaskInput(
         TextStyle(
             fontSize = 15.sp,
         ),
-        maxLines = 1,
+        singleLine = true,
         keyboardOptions =
         KeyboardOptions(
             keyboardType = KeyboardType.Text,
@@ -218,10 +218,10 @@ fun StatusBadge(status: TaskStatus) {
             TaskStatus.IN_PROGRESS -> Purple40
 
             // Xanh dương
-            TaskStatus.PENDING -> Red10
+            TaskStatus.PENDING -> ErrorPrimary
 
             // Đỏ
-            TaskStatus.DONE -> Green // Xanh lá
+            TaskStatus.DONE -> Success // Xanh lá
         }
     Row(
         modifier =
