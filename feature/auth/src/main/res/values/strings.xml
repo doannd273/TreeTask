@@ -8,4 +8,8 @@
     <string name="auth_confirm">Confirm</string>
     <string name="auth_forgot_password">Forgot password</string>
     <string name="auth_prompt_no_account">Don\'t have an account? %1$s</string>
+    <string name="auth_forgot_password_success">Check your email to reset your password</string>
+    <string name="auth_cd_show_password">Show password</string>
+    <string name="auth_cd_hide_password">Hide password</string>
+    <string name="auth_cd_navigate_back">Go back</string>
 </resources>

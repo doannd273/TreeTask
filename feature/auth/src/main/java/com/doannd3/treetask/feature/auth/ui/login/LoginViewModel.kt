@@ -16,10 +16,12 @@ import kotlinx.coroutines.flow.update
 import javax.inject.Inject
 
 @HiltViewModel
-class LoginViewModel @Inject constructor(
+class LoginViewModel
+@Inject
+constructor(
     private val loginUseCase: LoginUseCase,
-) : BaseViewModel(), MviViewModel<LoginState, LoginEvent, LoginEffect> {
-
+) : BaseViewModel(),
+    MviViewModel<LoginState, LoginEvent, LoginEffect> {
     private val _uiState = MutableStateFlow(LoginState())
     override val uiState: StateFlow<LoginState> = _uiState.asStateFlow()
 
@@ -31,10 +33,15 @@ class LoginViewModel @Inject constructor(
             is LoginEvent.EmailChanged -> {
                 _uiState.update { it.copy(email = event.email) }
             }
+
             is LoginEvent.PasswordChanged -> {
                 _uiState.update { it.copy(password = event.password) }
             }
-            is LoginEvent.SubmitLogin -> submitLogin()
+
+            is LoginEvent.SubmitLogin -> {
+                submitLogin()
+            }
+
             is LoginEvent.PasswordVisibleChanged -> {
                 _uiState.update { it.copy(passwordVisible = event.isVisible) }
             }
@@ -43,6 +50,10 @@ class LoginViewModel @Inject constructor(
 
     private fun submitLogin() {
         val state = uiState.value
+
+        if (state.isLoading) {
+            return
+        }
 
         executeSafe {
             _uiState.update { it.copy(isLoading = true) }
@@ -55,6 +66,7 @@ class LoginViewModel @Inject constructor(
                 is ApiResult.Success -> {
                     _effect.emit(LoginEffect.NavigateToHome)
                 }
+
                 is ApiResult.Error -> {
                     val message = result.message ?: UiText.DynamicString("Lỗi không xác định")
                     _effect.emit(LoginEffect.ShowErrorMessage(message))

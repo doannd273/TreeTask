@@ -3,4 +3,6 @@
     <string name="designsystem_error_dialog_title">Notice</string>
     <string name="designsystem_action_close">Close</string>
     <string name="designsystem_action_ok">OK</string>
+    <string name="designsystem_success_dialog_title">Success</string>
+    <string name="designsystem_info_dialog_title">Notice</string>
 </resources>
