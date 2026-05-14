@@ -53,6 +53,7 @@ internal fun TreeTaskAppName() {
 
 @Composable
 internal fun PasswordInput(
+    modifier: Modifier,
     password: String,
     passwordVisible: Boolean,
     onPasswordChange: (String) -> Unit,
@@ -60,7 +61,7 @@ internal fun PasswordInput(
     onImeDone: () -> Unit = {},
 ) {
     OutlinedTextField(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = modifier,
         colors =
         OutlinedTextFieldDefaults.colors(
             focusedTextColor = Black,
@@ -77,9 +78,7 @@ internal fun PasswordInput(
             imeAction = ImeAction.Done,
         ),
         keyboardActions =
-        KeyboardActions {
-            onImeDone()
-        },
+        KeyboardActions(onDone = { onImeDone() }),
         value = password,
         onValueChange = { onPasswordChange(it) },
         label = { Text(text = stringResource(R.string.auth_password_hint)) },
@@ -116,12 +115,15 @@ internal fun PasswordInput(
 
 @Composable
 internal fun EmailInput(
+    modifier: Modifier,
     email: String,
     onEmailChange: (String) -> Unit,
+    imeAction: ImeAction = ImeAction.Next,
     onImeNext: () -> Unit = {},
+    onImeDone: () -> Unit = {},
 ) {
     OutlinedTextField(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = modifier,
         colors =
         OutlinedTextFieldDefaults.colors(
             focusedTextColor = Black,
@@ -135,12 +137,13 @@ internal fun EmailInput(
         keyboardOptions =
         KeyboardOptions(
             keyboardType = KeyboardType.Email,
-            imeAction = ImeAction.Next,
+            imeAction = imeAction,
         ),
         keyboardActions =
-        KeyboardActions {
-            onImeNext()
-        },
+        KeyboardActions(
+            onNext = { onImeNext() },
+            onDone = { onImeDone() },
+        ),
         value = email,
         onValueChange = { onEmailChange(it) },
         label = { Text(text = stringResource(R.string.auth_email_hint)) },
