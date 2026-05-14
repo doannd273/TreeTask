@@ -20,13 +20,18 @@ data object TasksDestination
 data object AddTasksDestination
 
 @Serializable
-data class EditTaskDestination(val taskId: String)
+data class EditTaskDestination(
+    val taskId: String,
+)
 
 fun NavController.navigateToTasksGraph(navOptions: NavOptions? = null) {
     this.navigate(route = TasksGraphDestination, navOptions = navOptions)
 }
 
-fun NavController.navigateToEditTask(taskId: String, navOptions: NavOptions? = null) {
+fun NavController.navigateToEditTask(
+    taskId: String,
+    navOptions: NavOptions? = null,
+) {
     this.navigate(route = EditTaskDestination(taskId = taskId), navOptions = navOptions)
 }
 

@@ -90,7 +90,11 @@ fun ForgotPasswordScreen(
         contentWindowInsets = WindowInsets.safeDrawing,
     ) { paddingValues ->
         ForgotPasswordContent(
-            modifier = Modifier.padding(bottom = paddingValues.calculateBottomPadding()),
+            modifier =
+                Modifier.padding(
+                    top = paddingValues.calculateTopPadding(),
+                    bottom = paddingValues.calculateBottomPadding(),
+                ),
             state = state,
             onEvent = onEvent,
             onForgotPasswordBack = onForgotPasswordBack,
@@ -106,10 +110,11 @@ fun ForgotPasswordContent(
     onForgotPasswordBack: () -> Unit,
 ) {
     Column(
-        modifier = modifier
-            .fillMaxSize()
-            .verticalScroll(rememberScrollState())
-            .imePadding(),
+        modifier =
+            modifier
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState())
+                .imePadding(),
     ) {
         ForgotPasswordHeader(onForgotPasswordBack = onForgotPasswordBack)
 
@@ -134,9 +139,10 @@ fun ForgotPasswordContent(
 @Preview(showBackground = true)
 fun ForgotPasswordPreview() {
     ForgotPasswordScreen(
-        state = ForgotPasswordState(
-            email = "demo@gmail.com",
-        ),
+        state =
+            ForgotPasswordState(
+                email = "demo@gmail.com",
+            ),
         onEvent = {},
         onForgotPasswordBack = {},
     )
