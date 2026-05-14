@@ -127,11 +127,11 @@ internal fun LoginContent(
 
     Column(
         modifier =
-            modifier
-                .fillMaxSize()
-                .verticalScroll(rememberScrollState())
-                .padding(16.dp)
-                .imePadding(),
+        modifier
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState())
+            .padding(16.dp)
+            .imePadding(),
         verticalArrangement = Arrangement.Center,
     ) {
         TreeTaskAppName()
@@ -188,10 +188,10 @@ internal fun LoginContent(
 fun LoginScreenPreview() {
     LoginScreen(
         state =
-            LoginState(
-                email = "demo@gmail.com",
-                password = "123456",
-            ),
+        LoginState(
+            email = "demo@gmail.com",
+            password = "123456",
+        ),
         onEvent = {},
         onNavigateToRegister = {},
         onNavigateToForgotPassword = {},

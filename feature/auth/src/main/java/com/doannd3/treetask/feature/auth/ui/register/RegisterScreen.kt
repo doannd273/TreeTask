@@ -99,9 +99,9 @@ fun RegisterScreen(
     ) { paddingValues ->
         RegisterContent(
             modifier =
-                Modifier.padding(
-                    bottom = paddingValues.calculateBottomPadding(),
-                ),
+            Modifier.padding(
+                bottom = paddingValues.calculateBottomPadding(),
+            ),
             state = state,
             onEvent = onEvent,
             onRegisterBack = onRegisterBack,
@@ -127,10 +127,10 @@ fun RegisterContent(
 
     Column(
         modifier =
-            modifier
-                .fillMaxSize()
-                .verticalScroll(rememberScrollState())
-                .imePadding(),
+        modifier
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState())
+            .imePadding(),
     ) {
         RegisterHeader(onRegisterBack = onRegisterBack)
 
@@ -151,7 +151,7 @@ fun RegisterContent(
                 modifier = Modifier
                     .fillMaxWidth()
                     .focusRequester(emailFocusRequester),
-                    email = state . email,
+                email = state.email,
                 onEmailChange = { onEvent(RegisterEvent.EmailChanged(it)) },
                 imeAction = ImeAction.Next,
                 onImeNext = {
@@ -190,11 +190,11 @@ fun RegisterContent(
 fun RegisterScreenPreview() {
     RegisterScreen(
         state =
-            RegisterState(
-                fullName = "Nguyễn Demo",
-                email = "demo@gmail.com",
-                password = "123456",
-            ),
+        RegisterState(
+            fullName = "Nguyễn Demo",
+            email = "demo@gmail.com",
+            password = "123456",
+        ),
         onEvent = {},
         onRegisterBack = {},
     )

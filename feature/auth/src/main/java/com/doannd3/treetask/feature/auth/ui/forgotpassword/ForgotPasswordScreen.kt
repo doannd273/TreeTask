@@ -98,9 +98,9 @@ fun ForgotPasswordScreen(
     ) { paddingValues ->
         ForgotPasswordContent(
             modifier =
-                Modifier.padding(
-                    bottom = paddingValues.calculateBottomPadding(),
-                ),
+            Modifier.padding(
+                bottom = paddingValues.calculateBottomPadding(),
+            ),
             state = state,
             onEvent = onEvent,
             onForgotPasswordBack = onForgotPasswordBack,
@@ -122,10 +122,10 @@ fun ForgotPasswordContent(
 
     Column(
         modifier =
-            modifier
-                .fillMaxSize()
-                .verticalScroll(rememberScrollState())
-                .imePadding(),
+        modifier
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState())
+            .imePadding(),
     ) {
         ForgotPasswordHeader(onForgotPasswordBack = onForgotPasswordBack)
 
@@ -139,7 +139,7 @@ fun ForgotPasswordContent(
                 imeAction = ImeAction.Done,
                 onImeDone = {
                     onSubmitForgotPasswordDebounced()
-                }
+                },
             )
 
             Spacer(modifier = Modifier.height(16.dp))
@@ -157,9 +157,9 @@ fun ForgotPasswordContent(
 fun ForgotPasswordPreview() {
     ForgotPasswordScreen(
         state =
-            ForgotPasswordState(
-                email = "demo@gmail.com",
-            ),
+        ForgotPasswordState(
+            email = "demo@gmail.com",
+        ),
         onEvent = {},
         onForgotPasswordBack = {},
     )

@@ -63,22 +63,22 @@ internal fun PasswordInput(
     OutlinedTextField(
         modifier = modifier,
         colors =
-            OutlinedTextFieldDefaults.colors(
-                focusedTextColor = Black,
-                unfocusedTextColor = Gray,
-            ),
+        OutlinedTextFieldDefaults.colors(
+            focusedTextColor = Black,
+            unfocusedTextColor = Gray,
+        ),
         textStyle =
-            TextStyle(
-                fontSize = 15.sp,
-            ),
+        TextStyle(
+            fontSize = 15.sp,
+        ),
         singleLine = true,
         keyboardOptions =
-            KeyboardOptions(
-                keyboardType = KeyboardType.Password,
-                imeAction = ImeAction.Done,
-            ),
+        KeyboardOptions(
+            keyboardType = KeyboardType.Password,
+            imeAction = ImeAction.Done,
+        ),
         keyboardActions =
-            KeyboardActions(onDone = { onImeDone() }),
+        KeyboardActions(onDone = { onImeDone() }),
         value = password,
         onValueChange = { onPasswordChange(it) },
         label = { Text(text = stringResource(R.string.auth_password_hint)) },
@@ -105,11 +105,11 @@ internal fun PasswordInput(
             }
         },
         visualTransformation =
-            if (passwordVisible) {
-                VisualTransformation.None
-            } else {
-                PasswordVisualTransformation()
-            },
+        if (passwordVisible) {
+            VisualTransformation.None
+        } else {
+            PasswordVisualTransformation()
+        },
     )
 }
 
@@ -125,25 +125,25 @@ internal fun EmailInput(
     OutlinedTextField(
         modifier = modifier,
         colors =
-            OutlinedTextFieldDefaults.colors(
-                focusedTextColor = Black,
-                unfocusedTextColor = Gray,
-            ),
+        OutlinedTextFieldDefaults.colors(
+            focusedTextColor = Black,
+            unfocusedTextColor = Gray,
+        ),
         textStyle =
-            TextStyle(
-                fontSize = 15.sp,
-            ),
+        TextStyle(
+            fontSize = 15.sp,
+        ),
         singleLine = true,
         keyboardOptions =
-            KeyboardOptions(
-                keyboardType = KeyboardType.Email,
-                imeAction = imeAction,
-            ),
+        KeyboardOptions(
+            keyboardType = KeyboardType.Email,
+            imeAction = imeAction,
+        ),
         keyboardActions =
-            KeyboardActions(
-                onNext = { onImeNext() },
-                onDone = { onImeDone() },
-            ),
+        KeyboardActions(
+            onNext = { onImeNext() },
+            onDone = { onImeDone() },
+        ),
         value = email,
         onValueChange = { onEmailChange(it) },
         label = { Text(text = stringResource(R.string.auth_email_hint)) },
@@ -157,13 +157,13 @@ internal fun LoginButton(
 ) {
     Button(
         modifier =
-            Modifier
-                .fillMaxWidth()
-                .height(50.dp),
+        Modifier
+            .fillMaxWidth()
+            .height(50.dp),
         colors =
-            ButtonDefaults.buttonColors(
-                containerColor = Purple40,
-            ),
+        ButtonDefaults.buttonColors(
+            containerColor = Purple40,
+        ),
         shape = RoundedCornerShape(corner = CornerSize(size = 3.dp)),
         enabled = isEnable,
         onClick = { onSubmitLogin() },
@@ -188,24 +188,24 @@ internal fun RegisterTextButton(onNavigateToRegister: () -> Unit) {
         LinkText(
             text = text,
             links =
-                listOf(
-                    LinkPart(
-                        text = registerText,
-                        tag = LinkTag.REGISTER.name,
-                        onClick = onNavigateToRegister,
-                    ),
+            listOf(
+                LinkPart(
+                    text = registerText,
+                    tag = LinkTag.REGISTER.name,
+                    onClick = onNavigateToRegister,
                 ),
+            ),
             parentStyle =
-                TextStyle(
-                    color = Purple40,
-                    fontSize = 15.sp,
-                ),
+            TextStyle(
+                color = Purple40,
+                fontSize = 15.sp,
+            ),
             linkStyle =
-                SpanStyle(
-                    color = Purple40,
-                    fontSize = 15.sp,
-                    textDecoration = TextDecoration.Underline,
-                ),
+            SpanStyle(
+                color = Purple40,
+                fontSize = 15.sp,
+                textDecoration = TextDecoration.Underline,
+            ),
         )
     }
 }
@@ -221,24 +221,24 @@ internal fun ForgotPasswordTextButton(onNavigateToForgotPassword: () -> Unit) {
         LinkText(
             text = forgotPassword,
             links =
-                listOf(
-                    LinkPart(
-                        text = forgotPassword,
-                        tag = LinkTag.FORGOT_PASSWORD.name,
-                        onClick = onNavigateToForgotPassword,
-                    ),
+            listOf(
+                LinkPart(
+                    text = forgotPassword,
+                    tag = LinkTag.FORGOT_PASSWORD.name,
+                    onClick = onNavigateToForgotPassword,
                 ),
+            ),
             parentStyle =
-                TextStyle(
-                    color = Purple40,
-                    fontSize = 15.sp,
-                ),
+            TextStyle(
+                color = Purple40,
+                fontSize = 15.sp,
+            ),
             linkStyle =
-                SpanStyle(
-                    color = Purple40,
-                    fontSize = 15.sp,
-                    textDecoration = TextDecoration.Underline,
-                ),
+            SpanStyle(
+                color = Purple40,
+                fontSize = 15.sp,
+                textDecoration = TextDecoration.Underline,
+            ),
         )
     }
 }
