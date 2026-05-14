@@ -27,11 +27,12 @@ import com.doannd3.treetask.feature.auth.R
 @Composable
 internal fun ForgotPasswordHeader(onForgotPasswordBack: () -> Unit) {
     Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(50.dp)
-            .background(color = White)
-            .padding(horizontal = 8.dp),
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .height(50.dp)
+                .background(color = White)
+                .padding(horizontal = 8.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         IconButton(onClick = onForgotPasswordBack) {
@@ -45,9 +46,10 @@ internal fun ForgotPasswordHeader(onForgotPasswordBack: () -> Unit) {
         Text(
             text = stringResource(R.string.auth_forgot_password),
             color = Purple40,
-            style = TextStyle(
-                fontSize = 18.sp,
-            ),
+            style =
+                TextStyle(
+                    fontSize = 18.sp,
+                ),
         )
     }
 }
@@ -58,12 +60,14 @@ internal fun ForgotPasswordButton(
     onSubmitForgotPassword: () -> Unit,
 ) {
     Button(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(50.dp),
-        colors = ButtonDefaults.buttonColors(
-            containerColor = Purple40,
-        ),
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .height(50.dp),
+        colors =
+            ButtonDefaults.buttonColors(
+                containerColor = Purple40,
+            ),
         shape = RoundedCornerShape(corner = CornerSize(size = 3.dp)),
         enabled = isEnable,
         onClick = { onSubmitForgotPassword() },

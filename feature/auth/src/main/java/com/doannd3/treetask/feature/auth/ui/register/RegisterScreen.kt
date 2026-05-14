@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
@@ -17,8 +18,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -96,9 +99,9 @@ fun RegisterScreen(
     ) { paddingValues ->
         RegisterContent(
             modifier =
-            Modifier.padding(
-                bottom = paddingValues.calculateBottomPadding(),
-            ),
+                Modifier.padding(
+                    bottom = paddingValues.calculateBottomPadding(),
+                ),
             state = state,
             onEvent = onEvent,
             onRegisterBack = onRegisterBack,
@@ -124,10 +127,10 @@ fun RegisterContent(
 
     Column(
         modifier =
-        modifier
-            .fillMaxSize()
-            .verticalScroll(rememberScrollState())
-            .imePadding(),
+            modifier
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState())
+                .imePadding(),
     ) {
         RegisterHeader(onRegisterBack = onRegisterBack)
 
@@ -145,8 +148,12 @@ fun RegisterContent(
             Spacer(modifier = Modifier.height(16.dp))
 
             EmailInput(
-                email = state.email,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .focusRequester(emailFocusRequester),
+                    email = state . email,
                 onEmailChange = { onEvent(RegisterEvent.EmailChanged(it)) },
+                imeAction = ImeAction.Next,
                 onImeNext = {
                     passwordFocusRequester.requestFocus()
                 },
@@ -155,6 +162,9 @@ fun RegisterContent(
             Spacer(modifier = Modifier.height(8.dp))
 
             PasswordInput(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .focusRequester(passwordFocusRequester),
                 password = state.password,
                 passwordVisible = state.passwordVisible,
                 onPasswordChange = { onEvent(RegisterEvent.PasswordChanged(it)) },
@@ -180,11 +190,11 @@ fun RegisterContent(
 fun RegisterScreenPreview() {
     RegisterScreen(
         state =
-        RegisterState(
-            fullName = "Nguyễn Demo",
-            email = "demo@gmail.com",
-            password = "123456",
-        ),
+            RegisterState(
+                fullName = "Nguyễn Demo",
+                email = "demo@gmail.com",
+                password = "123456",
+            ),
         onEvent = {},
         onRegisterBack = {},
     )
