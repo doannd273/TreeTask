@@ -78,9 +78,7 @@ internal fun FullNameInput(
             imeAction = ImeAction.Next,
         ),
         keyboardActions =
-        KeyboardActions {
-            onImeNext()
-        },
+        KeyboardActions(onNext = { onImeNext() }),
         value = fullName,
         onValueChange = { onFullNameChange(it) },
         label = { Text(text = stringResource(R.string.auth_full_name_hint)) },
