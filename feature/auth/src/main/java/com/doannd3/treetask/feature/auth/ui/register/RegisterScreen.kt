@@ -97,7 +97,6 @@ fun RegisterScreen(
         RegisterContent(
             modifier =
             Modifier.padding(
-                top = paddingValues.calculateTopPadding(),
                 bottom = paddingValues.calculateBottomPadding(),
             ),
             state = state,

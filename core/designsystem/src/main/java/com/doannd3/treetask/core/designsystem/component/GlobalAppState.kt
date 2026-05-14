@@ -17,7 +17,7 @@ class GlobalAppState {
     fun showError(message: String?) {
         val errorDialogState = AppDialogState(
             type = AppDialogType.Error,
-            message = message
+            message = message,
         )
 
         this@GlobalAppState.appDialogState = errorDialogState
@@ -27,7 +27,7 @@ class GlobalAppState {
         val errorDialogState = AppDialogState(
             type = AppDialogType.Error,
             message = message,
-            title = title
+            title = title,
         )
 
         this@GlobalAppState.appDialogState = errorDialogState
@@ -36,7 +36,7 @@ class GlobalAppState {
     fun showSuccess(message: String?) {
         val errorDialogState = AppDialogState(
             type = AppDialogType.Success,
-            message = message
+            message = message,
         )
 
         this@GlobalAppState.appDialogState = errorDialogState
@@ -46,7 +46,7 @@ class GlobalAppState {
         val errorDialogState = AppDialogState(
             type = AppDialogType.Success,
             message = message,
-            onDismiss = onDismiss
+            onDismiss = onDismiss,
         )
 
         this@GlobalAppState.appDialogState = errorDialogState
@@ -56,7 +56,7 @@ class GlobalAppState {
         val errorDialogState = AppDialogState(
             type = AppDialogType.Success,
             message = message,
-            title = title
+            title = title,
         )
 
         this@GlobalAppState.appDialogState = errorDialogState

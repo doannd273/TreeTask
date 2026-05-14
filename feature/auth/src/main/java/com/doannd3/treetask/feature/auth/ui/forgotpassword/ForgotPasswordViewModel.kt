@@ -18,61 +18,61 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ForgotPasswordViewModel
-    @Inject
-    constructor(
-        private val forgotPasswordUseCase: ForgotPasswordUseCase,
-    ) : BaseViewModel(),
-        MviViewModel<ForgotPasswordState, ForgotPasswordEvent, ForgotPasswordEffect> {
-        override fun setLoading(isLoading: Boolean) {
-            _uiState.update { it.copy(isLoading = isLoading) }
-        }
+@Inject
+constructor(
+    private val forgotPasswordUseCase: ForgotPasswordUseCase,
+) : BaseViewModel(),
+    MviViewModel<ForgotPasswordState, ForgotPasswordEvent, ForgotPasswordEffect> {
+    override fun setLoading(isLoading: Boolean) {
+        _uiState.update { it.copy(isLoading = isLoading) }
+    }
 
-        private val _uiState = MutableStateFlow(ForgotPasswordState())
-        override val uiState: StateFlow<ForgotPasswordState> = _uiState.asStateFlow()
+    private val _uiState = MutableStateFlow(ForgotPasswordState())
+    override val uiState: StateFlow<ForgotPasswordState> = _uiState.asStateFlow()
 
-        private val _effect = MutableSharedFlow<ForgotPasswordEffect>()
-        override val effect: SharedFlow<ForgotPasswordEffect> = _effect.asSharedFlow()
+    private val _effect = MutableSharedFlow<ForgotPasswordEffect>()
+    override val effect: SharedFlow<ForgotPasswordEffect> = _effect.asSharedFlow()
 
-        override fun onEvent(event: ForgotPasswordEvent) {
-            when (event) {
-                is ForgotPasswordEvent.EmailChanged -> {
-                    _uiState.update { it.copy(email = event.email) }
-                }
-
-                is ForgotPasswordEvent.SubmitForgotPassword -> {
-                    submitForgotPassword()
-                }
-            }
-        }
-
-        private fun submitForgotPassword() {
-            val state = uiState.value
-
-            if (state.isLoading) {
-                return
+    override fun onEvent(event: ForgotPasswordEvent) {
+        when (event) {
+            is ForgotPasswordEvent.EmailChanged -> {
+                _uiState.update { it.copy(email = event.email) }
             }
 
-            executeSafe {
-                _uiState.update { it.copy(isLoading = true) }
+            is ForgotPasswordEvent.SubmitForgotPassword -> {
+                submitForgotPassword()
+            }
+        }
+    }
 
-                val result = forgotPasswordUseCase(state.email)
+    private fun submitForgotPassword() {
+        val state = uiState.value
 
-                _uiState.update { it.copy(isLoading = false) }
+        if (state.isLoading) {
+            return
+        }
 
-                when (result) {
-                    is ApiResult.Success -> {
-                        _effect.emit(
-                            ForgotPasswordEffect.ShowSuccessMessage(
-                                message = UiText.StringResource(R.string.auth_forgot_password_success),
-                            ),
-                        )
-                    }
+        executeSafe {
+            _uiState.update { it.copy(isLoading = true) }
 
-                    is ApiResult.Error -> {
-                        val message = result.message ?: UiText.DynamicString("Lỗi không xác định")
-                        _effect.emit(ForgotPasswordEffect.ShowErrorMessage(message))
-                    }
+            val result = forgotPasswordUseCase(state.email)
+
+            _uiState.update { it.copy(isLoading = false) }
+
+            when (result) {
+                is ApiResult.Success -> {
+                    _effect.emit(
+                        ForgotPasswordEffect.ShowSuccessMessage(
+                            message = UiText.StringResource(R.string.auth_forgot_password_success),
+                        ),
+                    )
+                }
+
+                is ApiResult.Error -> {
+                    val message = result.message ?: UiText.DynamicString("Lỗi không xác định")
+                    _effect.emit(ForgotPasswordEffect.ShowErrorMessage(message))
                 }
             }
         }
     }
+}

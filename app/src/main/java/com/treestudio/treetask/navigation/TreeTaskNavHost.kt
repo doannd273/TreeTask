@@ -3,9 +3,10 @@ package com.treestudio.treetask.navigation
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
+import androidx.navigation.navOptions
+import com.doannd3.treetask.feature.auth.navigation.AuthGraphDestination
 import com.doannd3.treetask.feature.auth.navigation.authGraph
 import com.doannd3.treetask.feature.auth.navigation.navigateToForgotPassword
-import com.doannd3.treetask.feature.auth.navigation.navigateToLogin
 import com.doannd3.treetask.feature.auth.navigation.navigateToRegister
 import com.doannd3.treetask.feature.chat.navigation.chatGraph
 import com.doannd3.treetask.feature.profile.navigation.profileGraph
@@ -30,7 +31,14 @@ fun TreeTaskNavHost(
     ) {
         authGraph(
             onNavigateToHome = {
-                navController.navigateToTasksGraph()
+                navController.navigateToTasksGraph(
+                    navOptions = navOptions {
+                        popUpTo(AuthGraphDestination) {
+                            inclusive = true
+                        }
+                        launchSingleTop = true
+                    },
+                )
             },
             onNavigateToRegister = {
                 navController.navigateToRegister()
@@ -42,7 +50,7 @@ fun TreeTaskNavHost(
                 navController.popBackStack()
             },
             onNavigateToLogin = {
-                navController.navigateToLogin()
+                navController.popBackStack()
             },
             onForgotPasswordBack = {
                 navController.popBackStack()

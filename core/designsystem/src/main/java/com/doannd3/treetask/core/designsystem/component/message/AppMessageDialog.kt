@@ -51,9 +51,9 @@ fun AppMessageDialog(
     Dialog(onDismissRequest = onDismiss) {
         Surface(
             modifier =
-                modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 24.dp, vertical = 8.dp),
+            modifier
+                .fillMaxWidth()
+                .padding(horizontal = 24.dp, vertical = 8.dp),
             shape = RoundedCornerShape(20.dp),
             color = MaterialTheme.colorScheme.surface,
             tonalElevation = 8.dp,
@@ -61,10 +61,10 @@ fun AppMessageDialog(
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 Column(
                     modifier =
-                        Modifier
-                            .padding(16.dp)
-                            .heightIn(max = 400.dp)
-                            .verticalScroll(scrollState),
+                    Modifier
+                        .padding(16.dp)
+                        .heightIn(max = 400.dp)
+                        .verticalScroll(scrollState),
                     horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
                     Text(
@@ -111,11 +111,11 @@ fun AppErrorDialogPreview() {
     MaterialTheme {
         AppMessageDialog(
             appDialogState =
-                AppDialogState(
-                    title = "Thông báo lỗi",
-                    message = "Đăng nhập thất bại. Vui lòng kiểm tra lại email hoặc mật khẩu.",
-                    type = AppDialogType.Error,
-                ),
+            AppDialogState(
+                title = "Thông báo lỗi",
+                message = "Đăng nhập thất bại. Vui lòng kiểm tra lại email hoặc mật khẩu.",
+                type = AppDialogType.Error,
+            ),
             onDismiss = {},
         )
     }
