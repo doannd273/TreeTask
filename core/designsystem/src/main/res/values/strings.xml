@@ -2,4 +2,5 @@
 <resources>
     <string name="designsystem_error_dialog_title">Notice</string>
     <string name="designsystem_action_close">Close</string>
+    <string name="designsystem_action_ok">OK</string>
 </resources>
