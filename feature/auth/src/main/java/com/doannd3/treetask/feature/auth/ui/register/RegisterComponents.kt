@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -32,7 +33,10 @@ import com.doannd3.treetask.core.designsystem.theme.White
 import com.doannd3.treetask.feature.auth.R
 
 @Composable
-internal fun RegisterButton(onSubmitRegister: () -> Unit) {
+internal fun RegisterButton(
+    isEnable: Boolean,
+    onSubmitRegister: () -> Unit,
+) {
     Button(
         modifier =
         Modifier
@@ -43,6 +47,7 @@ internal fun RegisterButton(onSubmitRegister: () -> Unit) {
             containerColor = Purple40,
         ),
         shape = RoundedCornerShape(corner = CornerSize(size = 3.dp)),
+        enabled = isEnable,
         onClick = { onSubmitRegister() },
     ) {
         Text(text = stringResource(R.string.auth_register), color = White, fontSize = 16.sp)
@@ -53,6 +58,7 @@ internal fun RegisterButton(onSubmitRegister: () -> Unit) {
 internal fun FullNameInput(
     fullName: String,
     onFullNameChange: (String) -> Unit,
+    onImeNext: () -> Unit = {},
 ) {
     OutlinedTextField(
         modifier = Modifier.fillMaxWidth(),
@@ -71,6 +77,10 @@ internal fun FullNameInput(
             keyboardType = KeyboardType.Text,
             imeAction = ImeAction.Next,
         ),
+        keyboardActions =
+        KeyboardActions {
+            onImeNext()
+        },
         value = fullName,
         onValueChange = { onFullNameChange(it) },
         label = { Text(text = stringResource(R.string.auth_full_name_hint)) },
@@ -91,7 +101,7 @@ internal fun RegisterHeader(onRegisterBack: () -> Unit) {
         IconButton(onClick = onRegisterBack) {
             Icon(
                 painter = painterResource(R.drawable.auth_ic_back_left),
-                contentDescription = null,
+                contentDescription = stringResource(R.string.auth_cd_navigate_back),
                 tint = Purple40,
             )
         }

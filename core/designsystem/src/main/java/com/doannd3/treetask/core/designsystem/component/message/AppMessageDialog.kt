@@ -1,6 +1,5 @@
-package com.doannd3.treetask.core.designsystem.component
+package com.doannd3.treetask.core.designsystem.component.message
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -14,6 +13,7 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -21,7 +21,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.tooling.preview.datasource.LoremIpsum
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
@@ -31,12 +30,21 @@ import com.doannd3.treetask.core.designsystem.theme.TextPrimary
 import com.doannd3.treetask.core.designsystem.theme.TextWarning
 
 @Composable
-fun AppErrorDialog(
-    errorMessage: String?,
+fun AppMessageDialog(
     modifier: Modifier = Modifier,
+    appDialogState: AppDialogState?,
     onDismiss: () -> Unit,
 ) {
-    if (errorMessage == null) return
+    if (appDialogState == null) return
+
+    if (appDialogState.message == null) return
+
+    val title =
+        appDialogState.title ?: when (appDialogState.type) {
+            AppDialogType.Error -> stringResource(R.string.designsystem_error_dialog_title)
+            AppDialogType.Success -> stringResource(R.string.designsystem_success_dialog_title)
+            AppDialogType.Info -> stringResource(R.string.designsystem_info_dialog_title)
+        }
 
     val scrollState = rememberScrollState()
 
@@ -60,7 +68,8 @@ fun AppErrorDialog(
                     horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
                     Text(
-                        text = stringResource(R.string.designsystem_error_dialog_title),
+                        text =
+                        title,
                         color = TextPrimary,
                         fontSize = 18.sp,
                         fontWeight = FontWeight.Medium,
@@ -70,7 +79,7 @@ fun AppErrorDialog(
                     Spacer(modifier = Modifier.height(8.dp))
 
                     Text(
-                        text = errorMessage,
+                        text = appDialogState.message,
                         color = TextPrimary,
                         fontSize = 14.sp,
                         textAlign = TextAlign.Center,
@@ -79,18 +88,18 @@ fun AppErrorDialog(
 
                 HorizontalDivider(thickness = 0.3.dp, color = DividerPrimary)
 
-                Text(
-                    modifier =
-                    Modifier
-                        .fillMaxWidth()
-                        .clickable(onClick = onDismiss)
-                        .padding(vertical = 12.dp),
-                    text = stringResource(R.string.designsystem_action_ok),
-                    fontSize = 16.sp,
-                    color = TextWarning,
-                    fontWeight = FontWeight.Medium,
-                    textAlign = TextAlign.Center,
-                )
+                TextButton(
+                    modifier = Modifier.fillMaxWidth(),
+                    onClick = { onDismiss() },
+                ) {
+                    Text(
+                        text = stringResource(R.string.designsystem_action_ok),
+                        fontSize = 16.sp,
+                        color = TextWarning,
+                        fontWeight = FontWeight.Medium,
+                        textAlign = TextAlign.Center,
+                    )
+                }
             }
         }
     }
@@ -99,5 +108,15 @@ fun AppErrorDialog(
 @Composable
 @Preview(showBackground = true)
 fun AppErrorDialogPreview() {
-    AppErrorDialog(errorMessage = LoremIpsum(40).values.joinToString(), onDismiss = {})
+    MaterialTheme {
+        AppMessageDialog(
+            appDialogState =
+            AppDialogState(
+                title = "Thông báo lỗi",
+                message = "Đăng nhập thất bại. Vui lòng kiểm tra lại email hoặc mật khẩu.",
+                type = AppDialogType.Error,
+            ),
+            onDismiss = {},
+        )
+    }
 }

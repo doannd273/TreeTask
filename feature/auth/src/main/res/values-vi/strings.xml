@@ -8,4 +8,8 @@
     <string name="auth_confirm">Xác nhận</string>
     <string name="auth_forgot_password">Quên mật khẩu</string>
     <string name="auth_prompt_no_account">Chưa có tài khoản? %1$s</string>
+    <string name="auth_forgot_password_success">Vui lòng kiểm tra email để đặt lại mật khẩu</string>
+    <string name="auth_cd_show_password">Hiện mật khẩu</string>
+    <string name="auth_cd_hide_password">Ẩn mật khẩu</string>
+    <string name="auth_cd_navigate_back">Quay lại</string>
 </resources>

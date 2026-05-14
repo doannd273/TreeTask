@@ -14,8 +14,11 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -25,6 +28,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.repeatOnLifecycle
 import com.doannd3.treetask.core.common.asString
 import com.doannd3.treetask.core.designsystem.component.LocalGlobalAppState
+import com.doannd3.treetask.core.designsystem.util.rememberDebouncedClick
 import com.doannd3.treetask.feature.auth.ui.login.EmailInput
 import com.doannd3.treetask.feature.auth.ui.login.PasswordInput
 
@@ -93,7 +97,6 @@ fun RegisterScreen(
         RegisterContent(
             modifier =
             Modifier.padding(
-                top = paddingValues.calculateTopPadding(),
                 bottom = paddingValues.calculateBottomPadding(),
             ),
             state = state,
@@ -110,6 +113,15 @@ fun RegisterContent(
     onEvent: (RegisterEvent) -> Unit,
     onRegisterBack: () -> Unit,
 ) {
+    val onSubmitRegisterDebounced =
+        rememberDebouncedClick {
+            onEvent(RegisterEvent.SubmitRegister)
+        }
+
+    val emailFocusRequester = remember { FocusRequester() }
+    val passwordFocusRequester = remember { FocusRequester() }
+    val focusManager = LocalFocusManager.current
+
     Column(
         modifier =
         modifier
@@ -125,6 +137,9 @@ fun RegisterContent(
             FullNameInput(
                 fullName = state.fullName,
                 onFullNameChange = { onEvent(RegisterEvent.FullNameChanged(it)) },
+                onImeNext = {
+                    emailFocusRequester.requestFocus()
+                },
             )
 
             Spacer(modifier = Modifier.height(16.dp))
@@ -132,6 +147,9 @@ fun RegisterContent(
             EmailInput(
                 email = state.email,
                 onEmailChange = { onEvent(RegisterEvent.EmailChanged(it)) },
+                onImeNext = {
+                    passwordFocusRequester.requestFocus()
+                },
             )
 
             Spacer(modifier = Modifier.height(8.dp))
@@ -141,12 +159,17 @@ fun RegisterContent(
                 passwordVisible = state.passwordVisible,
                 onPasswordChange = { onEvent(RegisterEvent.PasswordChanged(it)) },
                 onPasswordVisibleChange = { onEvent(RegisterEvent.PasswordVisibleChanged(it)) },
+                onImeDone = {
+                    focusManager.clearFocus()
+                    onSubmitRegisterDebounced()
+                },
             )
 
             Spacer(modifier = Modifier.height(16.dp))
 
             RegisterButton(
-                onSubmitRegister = { onEvent(RegisterEvent.SubmitRegister) },
+                isEnable = !state.isLoading,
+                onSubmitRegister = onSubmitRegisterDebounced,
             )
         }
     }

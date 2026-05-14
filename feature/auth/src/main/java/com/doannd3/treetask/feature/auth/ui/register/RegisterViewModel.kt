@@ -47,6 +47,10 @@ class RegisterViewModel @Inject constructor(
     private fun submitRegister() {
         val state = uiState.value
 
+        if (state.isLoading) {
+            return
+        }
+
         executeSafe {
             _uiState.update { it.copy(isLoading = true) }
 

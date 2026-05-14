@@ -22,13 +22,15 @@ fun AppLoadingDialog(
     if (!isLoading) return
     Dialog(
         onDismissRequest = { },
-        properties = DialogProperties(
+        properties =
+        DialogProperties(
             dismissOnBackPress = false,
             dismissOnClickOutside = false,
         ),
     ) {
         Box(
-            modifier = modifier
+            modifier =
+            modifier
                 .size(100.dp)
                 .background(
                     color = MaterialTheme.colorScheme.surface,

@@ -10,13 +10,25 @@ data class LoginState(
 )
 
 sealed class LoginEvent {
-    data class PasswordVisibleChanged(val isVisible: Boolean) : LoginEvent()
-    data class EmailChanged(val email: String) : LoginEvent()
-    data class PasswordChanged(val password: String) : LoginEvent()
+    data class PasswordVisibleChanged(
+        val isVisible: Boolean,
+    ) : LoginEvent()
+
+    data class EmailChanged(
+        val email: String,
+    ) : LoginEvent()
+
+    data class PasswordChanged(
+        val password: String,
+    ) : LoginEvent()
+
     data object SubmitLogin : LoginEvent()
 }
 
 sealed class LoginEffect {
-    data class ShowErrorMessage(val message: UiText) : LoginEffect()
+    data class ShowErrorMessage(
+        val message: UiText,
+    ) : LoginEffect()
+
     data object NavigateToHome : LoginEffect()
 }
