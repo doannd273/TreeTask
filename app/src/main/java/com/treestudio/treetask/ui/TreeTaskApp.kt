@@ -19,10 +19,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.doannd3.treetask.core.designsystem.component.AppErrorDialog
 import com.doannd3.treetask.core.designsystem.component.AppLoadingDialog
 import com.doannd3.treetask.core.designsystem.component.GlobalAppState
 import com.doannd3.treetask.core.designsystem.component.LocalGlobalAppState
+import com.doannd3.treetask.core.designsystem.component.message.AppMessageDialog
 import com.treestudio.treetask.R
 import com.treestudio.treetask.navigation.TopLevelDestination
 import com.treestudio.treetask.navigation.TreeTaskNavHost
@@ -50,10 +50,10 @@ fun TreeTaskApp(
                 ) {
                     Box(
                         modifier =
-                        Modifier
-                            .fillMaxWidth()
-                            .background(Color.Red.copy(alpha = 0.8f))
-                            .padding(vertical = 4.dp),
+                            Modifier
+                                .fillMaxWidth()
+                                .background(Color.Red.copy(alpha = 0.8f))
+                                .padding(vertical = 4.dp),
                         contentAlignment = Alignment.Center,
                     ) {
                         Text(
@@ -86,9 +86,12 @@ fun TreeTaskApp(
             )
 
             // dialog
-            AppErrorDialog(
-                errorMessage = globalAppState.errorMessage,
-                onDismiss = { globalAppState.clearError() },
+            AppMessageDialog(
+                appDialogState = globalAppState.appDialogState,
+                onDismiss = {
+                    globalAppState.clearError()
+                    globalAppState.appDialogState?.onDismiss
+                },
             )
 
             // loading

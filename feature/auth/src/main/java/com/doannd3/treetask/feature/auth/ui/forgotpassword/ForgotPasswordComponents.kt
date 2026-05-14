@@ -37,7 +37,7 @@ internal fun ForgotPasswordHeader(onForgotPasswordBack: () -> Unit) {
         IconButton(onClick = onForgotPasswordBack) {
             Icon(
                 painter = painterResource(R.drawable.auth_ic_back_left),
-                contentDescription = null,
+                contentDescription = stringResource(R.string.auth_cd_navigate_back),
                 tint = Purple40,
             )
         }

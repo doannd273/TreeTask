@@ -16,7 +16,9 @@ sealed class ForgotPasswordEvent {
 }
 
 sealed class ForgotPasswordEffect {
-    data object NavigateToLogin : ForgotPasswordEffect()
+    data class ShowSuccessMessage(
+        val message: UiText,
+    ) : ForgotPasswordEffect()
 
     data class ShowErrorMessage(
         val message: UiText,

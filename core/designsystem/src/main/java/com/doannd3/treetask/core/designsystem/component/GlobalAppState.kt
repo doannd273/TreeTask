@@ -5,19 +5,65 @@ import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import com.doannd3.treetask.core.designsystem.component.message.AppDialogState
+import com.doannd3.treetask.core.designsystem.component.message.AppDialogType
 
 @Stable
 class GlobalAppState {
     // lưu trũ string báo lỗi
-    var errorMessage by mutableStateOf<String?>(null)
+    var appDialogState by mutableStateOf<AppDialogState?>(null)
         private set
 
     fun showError(message: String?) {
-        errorMessage = message
+        val errorDialogState = AppDialogState(
+            type = AppDialogType.Error,
+            message = message
+        )
+
+        this@GlobalAppState.appDialogState = errorDialogState
+    }
+
+    fun showError(message: String?, title: String?) {
+        val errorDialogState = AppDialogState(
+            type = AppDialogType.Error,
+            message = message,
+            title = title
+        )
+
+        this@GlobalAppState.appDialogState = errorDialogState
+    }
+
+    fun showSuccess(message: String?) {
+        val errorDialogState = AppDialogState(
+            type = AppDialogType.Success,
+            message = message
+        )
+
+        this@GlobalAppState.appDialogState = errorDialogState
+    }
+
+    fun showSuccess(message: String?, onDismiss: () -> Unit) {
+        val errorDialogState = AppDialogState(
+            type = AppDialogType.Success,
+            message = message,
+            onDismiss = onDismiss
+        )
+
+        this@GlobalAppState.appDialogState = errorDialogState
+    }
+
+    fun showSuccess(message: String?, title: String?) {
+        val errorDialogState = AppDialogState(
+            type = AppDialogType.Success,
+            message = message,
+            title = title
+        )
+
+        this@GlobalAppState.appDialogState = errorDialogState
     }
 
     fun clearError() {
-        errorMessage = null
+        appDialogState = null
     }
 
     //

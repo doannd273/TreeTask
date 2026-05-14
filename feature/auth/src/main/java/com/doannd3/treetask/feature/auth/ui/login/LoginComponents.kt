@@ -85,6 +85,14 @@ internal fun PasswordInput(
         label = { Text(text = stringResource(R.string.auth_password_hint)) },
         trailingIcon = {
             IconButton(onClick = { onPasswordVisibleChange(!passwordVisible) }) {
+                val passwordVisibilityDescription =
+                    stringResource(
+                        if (passwordVisible) {
+                            R.string.auth_cd_hide_password
+                        } else {
+                            R.string.auth_cd_show_password
+                        },
+                    )
                 Icon(
                     painterResource(
                         if (passwordVisible) {
@@ -93,7 +101,7 @@ internal fun PasswordInput(
                             R.drawable.auth_ic_visibility_off
                         },
                     ),
-                    contentDescription = null,
+                    contentDescription = passwordVisibilityDescription,
                 )
             }
         },
