@@ -54,6 +54,7 @@ internal fun ForgotPasswordHeader(onForgotPasswordBack: () -> Unit) {
 
 @Composable
 internal fun ForgotPasswordButton(
+    isEnable: Boolean,
     onSubmitForgotPassword: () -> Unit,
 ) {
     Button(
@@ -64,6 +65,7 @@ internal fun ForgotPasswordButton(
             containerColor = Purple40,
         ),
         shape = RoundedCornerShape(corner = CornerSize(size = 3.dp)),
+        enabled = isEnable,
         onClick = { onSubmitForgotPassword() },
     ) {
         Text(text = stringResource(R.string.auth_confirm), color = White, fontSize = 16.sp)

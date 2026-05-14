@@ -9,10 +9,16 @@ data class ForgotPasswordState(
 
 sealed class ForgotPasswordEvent {
     data object SubmitForgotPassword : ForgotPasswordEvent()
-    data class EmailChanged(val email: String) : ForgotPasswordEvent()
+
+    data class EmailChanged(
+        val email: String,
+    ) : ForgotPasswordEvent()
 }
 
 sealed class ForgotPasswordEffect {
     data object NavigateToLogin : ForgotPasswordEffect()
-    data class ShowErrorMessage(val message: UiText) : ForgotPasswordEffect()
+
+    data class ShowErrorMessage(
+        val message: UiText,
+    ) : ForgotPasswordEffect()
 }

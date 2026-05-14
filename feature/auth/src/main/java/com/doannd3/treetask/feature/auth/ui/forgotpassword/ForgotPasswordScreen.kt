@@ -25,6 +25,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.repeatOnLifecycle
 import com.doannd3.treetask.core.common.asString
 import com.doannd3.treetask.core.designsystem.component.LocalGlobalAppState
+import com.doannd3.treetask.core.designsystem.util.rememberDebouncedClick
 import com.doannd3.treetask.feature.auth.ui.login.EmailInput
 
 @Composable
@@ -109,6 +110,11 @@ fun ForgotPasswordContent(
     onEvent: (ForgotPasswordEvent) -> Unit,
     onForgotPasswordBack: () -> Unit,
 ) {
+    val onSubmitForgotPasswordDebounced =
+        rememberDebouncedClick {
+            onEvent(ForgotPasswordEvent.SubmitForgotPassword)
+        }
+
     Column(
         modifier =
         modifier
@@ -129,7 +135,8 @@ fun ForgotPasswordContent(
             Spacer(modifier = Modifier.height(16.dp))
 
             ForgotPasswordButton(
-                onSubmitForgotPassword = { onEvent(ForgotPasswordEvent.SubmitForgotPassword) },
+                isEnable = state.isLoading,
+                onSubmitForgotPassword = onSubmitForgotPasswordDebounced,
             )
         }
     }

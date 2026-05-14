@@ -41,7 +41,6 @@ fun TreeTaskApp(
 
     CompositionLocalProvider(LocalGlobalAppState provides globalAppState) {
         Scaffold(
-
             // Top
             topBar = {
                 AnimatedVisibility(
@@ -66,7 +65,6 @@ fun TreeTaskApp(
                     }
                 }
             },
-
             // bottom
             bottomBar = {
                 if (appState.isTopLevelDestination) {
@@ -80,7 +78,6 @@ fun TreeTaskApp(
                     )
                 }
             },
-
         ) { paddingValues ->
             TreeTaskNavHost(
                 startDestination = startDestination,

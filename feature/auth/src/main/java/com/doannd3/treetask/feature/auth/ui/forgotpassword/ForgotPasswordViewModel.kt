@@ -16,10 +16,12 @@ import kotlinx.coroutines.flow.update
 import javax.inject.Inject
 
 @HiltViewModel
-class ForgotPasswordViewModel @Inject constructor(
+class ForgotPasswordViewModel
+@Inject
+constructor(
     private val forgotPasswordUseCase: ForgotPasswordUseCase,
-) : BaseViewModel(), MviViewModel<ForgotPasswordState, ForgotPasswordEvent, ForgotPasswordEffect> {
-
+) : BaseViewModel(),
+    MviViewModel<ForgotPasswordState, ForgotPasswordEvent, ForgotPasswordEffect> {
     override fun setLoading(isLoading: Boolean) {
         _uiState.update { it.copy(isLoading = isLoading) }
     }
@@ -36,12 +38,18 @@ class ForgotPasswordViewModel @Inject constructor(
                 _uiState.update { it.copy(email = event.email) }
             }
 
-            is ForgotPasswordEvent.SubmitForgotPassword -> submitForgotPassword()
+            is ForgotPasswordEvent.SubmitForgotPassword -> {
+                submitForgotPassword()
+            }
         }
     }
 
     private fun submitForgotPassword() {
         val state = uiState.value
+
+        if (state.isLoading) {
+            return
+        }
 
         executeSafe {
             _uiState.update { it.copy(isLoading = true) }
@@ -54,6 +62,7 @@ class ForgotPasswordViewModel @Inject constructor(
                 is ApiResult.Success -> {
                     _effect.emit(ForgotPasswordEffect.NavigateToLogin)
                 }
+
                 is ApiResult.Error -> {
                     val message = result.message ?: UiText.DynamicString("Lỗi không xác định")
                     _effect.emit(ForgotPasswordEffect.ShowErrorMessage(message))

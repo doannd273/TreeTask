@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -56,21 +57,29 @@ internal fun PasswordInput(
     passwordVisible: Boolean,
     onPasswordChange: (String) -> Unit,
     onPasswordVisibleChange: (Boolean) -> Unit,
+    onImeDone: () -> Unit = {},
 ) {
     OutlinedTextField(
         modifier = Modifier.fillMaxWidth(),
-        colors = OutlinedTextFieldDefaults.colors(
+        colors =
+        OutlinedTextFieldDefaults.colors(
             focusedTextColor = Black,
             unfocusedTextColor = Gray,
         ),
-        textStyle = TextStyle(
+        textStyle =
+        TextStyle(
             fontSize = 15.sp,
         ),
         singleLine = true,
-        keyboardOptions = KeyboardOptions(
+        keyboardOptions =
+        KeyboardOptions(
             keyboardType = KeyboardType.Password,
             imeAction = ImeAction.Done,
         ),
+        keyboardActions =
+        KeyboardActions {
+            onImeDone()
+        },
         value = password,
         onValueChange = { onPasswordChange(it) },
         label = { Text(text = stringResource(R.string.auth_password_hint)) },
@@ -88,7 +97,8 @@ internal fun PasswordInput(
                 )
             }
         },
-        visualTransformation = if (passwordVisible) {
+        visualTransformation =
+        if (passwordVisible) {
             VisualTransformation.None
         } else {
             PasswordVisualTransformation()
@@ -100,21 +110,29 @@ internal fun PasswordInput(
 internal fun EmailInput(
     email: String,
     onEmailChange: (String) -> Unit,
+    onImeNext: () -> Unit = {},
 ) {
     OutlinedTextField(
         modifier = Modifier.fillMaxWidth(),
-        colors = OutlinedTextFieldDefaults.colors(
+        colors =
+        OutlinedTextFieldDefaults.colors(
             focusedTextColor = Black,
             unfocusedTextColor = Gray,
         ),
-        textStyle = TextStyle(
+        textStyle =
+        TextStyle(
             fontSize = 15.sp,
         ),
         singleLine = true,
-        keyboardOptions = KeyboardOptions(
+        keyboardOptions =
+        KeyboardOptions(
             keyboardType = KeyboardType.Email,
             imeAction = ImeAction.Next,
         ),
+        keyboardActions =
+        KeyboardActions {
+            onImeNext()
+        },
         value = email,
         onValueChange = { onEmailChange(it) },
         label = { Text(text = stringResource(R.string.auth_email_hint)) },
@@ -123,16 +141,20 @@ internal fun EmailInput(
 
 @Composable
 internal fun LoginButton(
+    isEnable: Boolean,
     onSubmitLogin: () -> Unit,
 ) {
     Button(
-        modifier = Modifier
+        modifier =
+        Modifier
             .fillMaxWidth()
             .height(50.dp),
-        colors = ButtonDefaults.buttonColors(
+        colors =
+        ButtonDefaults.buttonColors(
             containerColor = Purple40,
         ),
         shape = RoundedCornerShape(corner = CornerSize(size = 3.dp)),
+        enabled = isEnable,
         onClick = { onSubmitLogin() },
     ) {
         Text(text = stringResource(R.string.auth_action_login), color = White, fontSize = 16.sp)
@@ -140,33 +162,35 @@ internal fun LoginButton(
 }
 
 @Composable
-internal fun RegisterTextButton(
-    onNavigateToRegister: () -> Unit,
-) {
+internal fun RegisterTextButton(onNavigateToRegister: () -> Unit) {
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.Center,
     ) {
         val registerText = stringResource(R.string.auth_register)
-        val text = stringResource(
-            R.string.auth_prompt_no_account,
-            registerText,
-        )
+        val text =
+            stringResource(
+                R.string.auth_prompt_no_account,
+                registerText,
+            )
 
         LinkText(
             text = text,
-            links = listOf(
+            links =
+            listOf(
                 LinkPart(
                     text = registerText,
                     tag = LinkTag.REGISTER.name,
                     onClick = onNavigateToRegister,
                 ),
             ),
-            parentStyle = TextStyle(
+            parentStyle =
+            TextStyle(
                 color = Purple40,
                 fontSize = 15.sp,
             ),
-            linkStyle = SpanStyle(
+            linkStyle =
+            SpanStyle(
                 color = Purple40,
                 fontSize = 15.sp,
                 textDecoration = TextDecoration.Underline,
@@ -176,9 +200,7 @@ internal fun RegisterTextButton(
 }
 
 @Composable
-internal fun ForgotPasswordTextButton(
-    onNavigateToForgotPassword: () -> Unit,
-) {
+internal fun ForgotPasswordTextButton(onNavigateToForgotPassword: () -> Unit) {
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.End,
@@ -187,18 +209,21 @@ internal fun ForgotPasswordTextButton(
 
         LinkText(
             text = forgotPassword,
-            links = listOf(
+            links =
+            listOf(
                 LinkPart(
                     text = forgotPassword,
                     tag = LinkTag.FORGOT_PASSWORD.name,
                     onClick = onNavigateToForgotPassword,
                 ),
             ),
-            parentStyle = TextStyle(
+            parentStyle =
+            TextStyle(
                 color = Purple40,
                 fontSize = 15.sp,
             ),
-            linkStyle = SpanStyle(
+            linkStyle =
+            SpanStyle(
                 color = Purple40,
                 fontSize = 15.sp,
                 textDecoration = TextDecoration.Underline,
