@@ -92,10 +92,10 @@ fun RegisterScreen(
     ) { paddingValues ->
         RegisterContent(
             modifier =
-                Modifier.padding(
-                    top = paddingValues.calculateTopPadding(),
-                    bottom = paddingValues.calculateBottomPadding(),
-                ),
+            Modifier.padding(
+                top = paddingValues.calculateTopPadding(),
+                bottom = paddingValues.calculateBottomPadding(),
+            ),
             state = state,
             onEvent = onEvent,
             onRegisterBack = onRegisterBack,
@@ -112,10 +112,10 @@ fun RegisterContent(
 ) {
     Column(
         modifier =
-            modifier
-                .fillMaxSize()
-                .verticalScroll(rememberScrollState())
-                .imePadding(),
+        modifier
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState())
+            .imePadding(),
     ) {
         RegisterHeader(onRegisterBack = onRegisterBack)
 
@@ -157,11 +157,11 @@ fun RegisterContent(
 fun RegisterScreenPreview() {
     RegisterScreen(
         state =
-            RegisterState(
-                fullName = "Nguyễn Demo",
-                email = "demo@gmail.com",
-                password = "123456",
-            ),
+        RegisterState(
+            fullName = "Nguyễn Demo",
+            email = "demo@gmail.com",
+            password = "123456",
+        ),
         onEvent = {},
         onRegisterBack = {},
     )

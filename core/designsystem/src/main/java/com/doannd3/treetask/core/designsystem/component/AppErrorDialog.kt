@@ -43,9 +43,9 @@ fun AppErrorDialog(
     Dialog(onDismissRequest = onDismiss) {
         Surface(
             modifier =
-                modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 24.dp, vertical = 8.dp),
+            modifier
+                .fillMaxWidth()
+                .padding(horizontal = 24.dp, vertical = 8.dp),
             shape = RoundedCornerShape(20.dp),
             color = MaterialTheme.colorScheme.surface,
             tonalElevation = 8.dp,
@@ -53,10 +53,10 @@ fun AppErrorDialog(
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 Column(
                     modifier =
-                        Modifier
-                            .padding(16.dp)
-                            .heightIn(max = 400.dp)
-                            .verticalScroll(scrollState),
+                    Modifier
+                        .padding(16.dp)
+                        .heightIn(max = 400.dp)
+                        .verticalScroll(scrollState),
                     horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
                     Text(
@@ -81,10 +81,10 @@ fun AppErrorDialog(
 
                 Text(
                     modifier =
-                        Modifier
-                            .fillMaxWidth()
-                            .clickable(onClick = onDismiss)
-                            .padding(vertical = 12.dp),
+                    Modifier
+                        .fillMaxWidth()
+                        .clickable(onClick = onDismiss)
+                        .padding(vertical = 12.dp),
                     text = stringResource(R.string.designsystem_action_ok),
                     fontSize = 16.sp,
                     color = TextWarning,

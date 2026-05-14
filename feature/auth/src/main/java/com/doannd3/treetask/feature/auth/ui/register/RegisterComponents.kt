@@ -35,13 +35,13 @@ import com.doannd3.treetask.feature.auth.R
 internal fun RegisterButton(onSubmitRegister: () -> Unit) {
     Button(
         modifier =
-            Modifier
-                .fillMaxWidth()
-                .height(50.dp),
+        Modifier
+            .fillMaxWidth()
+            .height(50.dp),
         colors =
-            ButtonDefaults.buttonColors(
-                containerColor = Purple40,
-            ),
+        ButtonDefaults.buttonColors(
+            containerColor = Purple40,
+        ),
         shape = RoundedCornerShape(corner = CornerSize(size = 3.dp)),
         onClick = { onSubmitRegister() },
     ) {
@@ -57,20 +57,20 @@ internal fun FullNameInput(
     OutlinedTextField(
         modifier = Modifier.fillMaxWidth(),
         colors =
-            OutlinedTextFieldDefaults.colors(
-                focusedTextColor = Black,
-                unfocusedTextColor = Gray,
-            ),
+        OutlinedTextFieldDefaults.colors(
+            focusedTextColor = Black,
+            unfocusedTextColor = Gray,
+        ),
         textStyle =
-            TextStyle(
-                fontSize = 15.sp,
-            ),
+        TextStyle(
+            fontSize = 15.sp,
+        ),
         singleLine = true,
         keyboardOptions =
-            KeyboardOptions(
-                keyboardType = KeyboardType.Text,
-                imeAction = ImeAction.Next,
-            ),
+        KeyboardOptions(
+            keyboardType = KeyboardType.Text,
+            imeAction = ImeAction.Next,
+        ),
         value = fullName,
         onValueChange = { onFullNameChange(it) },
         label = { Text(text = stringResource(R.string.auth_full_name_hint)) },
@@ -81,11 +81,11 @@ internal fun FullNameInput(
 internal fun RegisterHeader(onRegisterBack: () -> Unit) {
     Row(
         modifier =
-            Modifier
-                .fillMaxWidth()
-                .height(50.dp)
-                .background(color = White)
-                .padding(horizontal = 8.dp),
+        Modifier
+            .fillMaxWidth()
+            .height(50.dp)
+            .background(color = White)
+            .padding(horizontal = 8.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         IconButton(onClick = onRegisterBack) {
@@ -100,9 +100,9 @@ internal fun RegisterHeader(onRegisterBack: () -> Unit) {
             text = stringResource(R.string.auth_register),
             color = Purple40,
             style =
-                TextStyle(
-                    fontSize = 18.sp,
-                ),
+            TextStyle(
+                fontSize = 18.sp,
+            ),
         )
     }
 }
