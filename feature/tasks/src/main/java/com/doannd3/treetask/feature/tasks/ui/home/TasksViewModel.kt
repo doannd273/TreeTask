@@ -7,8 +7,8 @@ import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import com.doannd3.treetask.core.common.BaseViewModel
 import com.doannd3.treetask.core.common.MviViewModel
-import com.doannd3.treetask.core.datastore.user.UserStorage
 import com.doannd3.treetask.core.domain.usecase.task.GetTasksUseCase
+import com.doannd3.treetask.core.domain.usecase.user.ObserveCurrentUserIdUseCase
 import com.doannd3.treetask.core.model.task.Task
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -33,7 +33,7 @@ class TasksViewModel
 @Inject
 constructor(
     private val getTasksUseCase: GetTasksUseCase,
-    private val userStorage: UserStorage,
+    private val observeCurrentUserIdUseCase: ObserveCurrentUserIdUseCase,
 ) : BaseViewModel(),
     MviViewModel<TasksState, TasksEvent, TasksEffect> {
     override fun setLoading(isLoading: Boolean) {
@@ -62,8 +62,8 @@ constructor(
     init {
         // Giả sử bạn lấy userId từ storage khi init
         viewModelScope.launch {
-            userStorage.getUserProfile().collect { profile ->
-                _uiState.update { it.copy(userId = profile?.id ?: "") }
+            observeCurrentUserIdUseCase().collect { userId ->
+                _uiState.update { it.copy(userId = userId) }
             }
         }
         // Gán flow paging vào state
