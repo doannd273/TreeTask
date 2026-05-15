@@ -1,7 +1,7 @@
 plugins {
     alias(libs.plugins.treetask.android.library)
-    alias(libs.plugins.hilt)
-    alias(libs.plugins.ksp)
+    alias(libs.plugins.treetask.android.hilt)
+    alias(libs.plugins.treetask.android.desugar)
     // lint
     alias(libs.plugins.treetask.android.detekt)
     alias(libs.plugins.treetask.android.spotless)
@@ -11,9 +11,6 @@ android {
     resourcePrefix = "data_"
     defaultConfig {
         missingDimensionStrategy("environment", "dev")
-    }
-    compileOptions {
-        isCoreLibraryDesugaringEnabled = true
     }
 }
 dependencies {
@@ -32,12 +29,7 @@ dependencies {
     implementation(libs.timber)
 
     // hilt
-    implementation(libs.hilt.android)
-    ksp(libs.hilt.compiler)
     implementation(libs.androidx.hilt.work)
-
-    // java
-    coreLibraryDesugaring(libs.desugar.jdk.libs)
 
     // testing
     testImplementation(projects.core.testing)

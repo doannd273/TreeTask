@@ -2,9 +2,8 @@ import java.util.Properties
 
 plugins {
     alias(libs.plugins.treetask.android.library)
+    alias(libs.plugins.treetask.android.hilt)
     alias(libs.plugins.kotlin.serialization)
-    alias(libs.plugins.hilt)
-    alias(libs.plugins.ksp)
     // lint
     alias(libs.plugins.treetask.android.detekt)
     alias(libs.plugins.treetask.android.spotless)
@@ -52,10 +51,6 @@ dependencies {
     // chucker
     debugImplementation(libs.chucker.debug)
     releaseImplementation(libs.chucker.release)
-
-    // hilt
-    implementation(libs.hilt.android)
-    ksp(libs.hilt.compiler)
 
     // timber
     implementation(libs.timber)

@@ -10,45 +10,28 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 class AndroidApplicationConventionPlugin : Plugin<Project> {
-    override fun apply(target: Project) {
-        with(target) {
-            val libs = extensions.getByType<VersionCatalogsExtension>().named("libs")
+    override fun apply(target: Project) = with(target) {
+        val libs = extensions.getByType<VersionCatalogsExtension>().named("libs")
 
-            with(pluginManager) {
-                apply("com.android.application")
-                apply("org.jetbrains.kotlin.android")
+        with(pluginManager) {
+            apply("com.android.application")
+            apply("org.jetbrains.kotlin.android")
+        }
+        extensions.configure<ApplicationExtension> {
+            compileSdk = libs.findVersion("compileSdk").get().requiredVersion.toInt()
+            defaultConfig {
+                minSdk = libs.findVersion("minSdk").get().requiredVersion.toInt()
+                targetSdk = libs.findVersion("targetSdk").get().requiredVersion.toInt()
+                testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
             }
-            extensions.configure<ApplicationExtension> {
-                compileSdk =
-                    libs
-                        .findVersion("compileSdk")
-                        .get()
-                        .requiredVersion
-                        .toInt()
-                defaultConfig {
-                    minSdk =
-                        libs
-                            .findVersion("minSdk")
-                            .get()
-                            .requiredVersion
-                            .toInt()
-                    targetSdk =
-                        libs
-                            .findVersion("targetSdk")
-                            .get()
-                            .requiredVersion
-                            .toInt()
-                    testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-                }
-                compileOptions {
-                    sourceCompatibility = JavaVersion.VERSION_17
-                    targetCompatibility = JavaVersion.VERSION_17
-                }
+            compileOptions {
+                sourceCompatibility = JavaVersion.VERSION_17
+                targetCompatibility = JavaVersion.VERSION_17
             }
-            tasks.withType<KotlinCompile>().configureEach {
-                compilerOptions {
-                    jvmTarget.set(JvmTarget.JVM_17)
-                }
+        }
+        tasks.withType<KotlinCompile>().configureEach {
+            compilerOptions {
+                jvmTarget.set(JvmTarget.JVM_17)
             }
         }
     }
