@@ -28,8 +28,6 @@ interface AnalyticsModule {
 
         @Provides
         @Singleton
-        fun provideFirebaseCrashlytics(
-            @ApplicationContext context: Context,
-        ): FirebaseCrashlytics = FirebaseCrashlytics.getInstance()
+        fun provideFirebaseCrashlytics(): FirebaseCrashlytics = FirebaseCrashlytics.getInstance()
     }
 }

@@ -8,6 +8,7 @@ plugins {
 }
 android {
     namespace = "com.doannd3.treetask.core.domain"
+    resourcePrefix = "domain_"
 }
 dependencies {
     // core

@@ -8,6 +8,7 @@ plugins {
 }
 android {
     namespace = "com.doannd3.treetask.core.database"
+    resourcePrefix = "database_"
 }
 
 ksp {

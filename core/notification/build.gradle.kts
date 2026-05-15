@@ -8,6 +8,7 @@ plugins {
 }
 android {
     namespace = "com.doannd3.treetask.core.notification"
+    resourcePrefix = "notification_"
 }
 dependencies {
     implementation(projects.core.model)

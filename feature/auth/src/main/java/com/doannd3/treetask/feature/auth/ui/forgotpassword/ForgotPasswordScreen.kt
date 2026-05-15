@@ -3,10 +3,12 @@ package com.doannd3.treetask.feature.auth.ui.forgotpassword
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.rememberScrollState
@@ -94,16 +96,20 @@ fun ForgotPasswordScreen(
     onForgotPasswordBack: () -> Unit,
 ) {
     Scaffold(
-        contentWindowInsets = WindowInsets.safeDrawing,
+        contentWindowInsets = WindowInsets.safeDrawing.only(
+            WindowInsetsSides.Horizontal + WindowInsetsSides.Bottom
+        ),
+        topBar = {
+            ForgotPasswordHeader(onForgotPasswordBack = onForgotPasswordBack)
+        }
     ) { paddingValues ->
         ForgotPasswordContent(
             modifier =
             Modifier.padding(
-                bottom = paddingValues.calculateBottomPadding(),
+                paddingValues = paddingValues
             ),
             state = state,
             onEvent = onEvent,
-            onForgotPasswordBack = onForgotPasswordBack,
         )
     }
 }
@@ -113,7 +119,6 @@ fun ForgotPasswordContent(
     modifier: Modifier = Modifier,
     state: ForgotPasswordState,
     onEvent: (ForgotPasswordEvent) -> Unit,
-    onForgotPasswordBack: () -> Unit,
 ) {
     val onSubmitForgotPasswordDebounced =
         rememberDebouncedClick {
@@ -127,8 +132,6 @@ fun ForgotPasswordContent(
             .verticalScroll(rememberScrollState())
             .imePadding(),
     ) {
-        ForgotPasswordHeader(onForgotPasswordBack = onForgotPasswordBack)
-
         Column(
             modifier = Modifier.padding(16.dp),
         ) {

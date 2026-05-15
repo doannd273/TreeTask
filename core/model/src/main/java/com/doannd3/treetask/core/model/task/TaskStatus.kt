@@ -2,6 +2,7 @@ package com.doannd3.treetask.core.model.task
 
 enum class TaskStatus(
     val apiValue: String,
+    // TODO: Move UI label to presentation/resource mapper before localization support.
     val label: String,
 ) {
     TODO("todo", "Cần làm"),

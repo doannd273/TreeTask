@@ -11,6 +11,7 @@ plugins {
 }
 android {
     namespace = "com.doannd3.treetask.core.network"
+    resourcePrefix = "network_"
 
     buildFeatures {
         buildConfig = true
