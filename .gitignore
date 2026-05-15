@@ -4,6 +4,7 @@
 .idea/
 .vscode/
 .kotlin/
+bin/
 
 # Local Configuration (KHÔNG BAO GIỜ PUSH)
 local.properties

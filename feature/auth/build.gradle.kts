@@ -11,15 +11,11 @@ plugins {
 android {
     namespace = "com.doannd3.treetask.feature.auth"
     resourcePrefix = "auth_"
-    defaultConfig {
-        missingDimensionStrategy("environment", "dev")
-    }
     buildFeatures { compose = true }
 }
 dependencies {
     implementation(projects.core.model)
     implementation(projects.core.domain)
-    implementation(projects.core.data)
     implementation(projects.core.common)
     implementation(projects.core.designsystem)
     implementation(projects.core.analytics)

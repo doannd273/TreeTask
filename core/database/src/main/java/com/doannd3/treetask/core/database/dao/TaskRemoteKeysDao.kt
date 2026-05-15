@@ -12,7 +12,7 @@ interface TaskRemoteKeysDao {
     suspend fun insertAll(remoteKey: List<TaskRemoteKeysEntity>)
 
     @Query("SELECT * FROM task_remote_keys WHERE task_id = :taskId")
-    suspend fun remoteKeysTaskId(taskId: String): TaskRemoteKeysEntity
+    suspend fun remoteKeysTaskId(taskId: String): TaskRemoteKeysEntity?
 
     @Query("DELETE FROM task_remote_keys")
     suspend fun clearRemoteKeys()

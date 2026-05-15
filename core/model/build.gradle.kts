@@ -6,6 +6,8 @@ plugins {
 }
 android {
     namespace = "com.doannd3.treetask.core.model"
+    resourcePrefix = "model_"
+
     compileOptions {
         isCoreLibraryDesugaringEnabled = true
     }

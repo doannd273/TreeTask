@@ -8,6 +8,7 @@ plugins {
 }
 android {
     namespace = "com.doannd3.treetask.core.analytics"
+    resourcePrefix = "analytics_"
 }
 dependencies {
     // firebase
@@ -15,9 +16,7 @@ dependencies {
     implementation(libs.firebase.analytics)
     implementation(libs.firebase.crashlytics)
 
-    // timber
-    implementation(libs.timber)
-
+    // hilt
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)
 }

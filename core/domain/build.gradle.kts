@@ -8,12 +8,12 @@ plugins {
 }
 android {
     namespace = "com.doannd3.treetask.core.domain"
+    resourcePrefix = "domain_"
 }
 dependencies {
     // core
     implementation(projects.core.model)
     implementation(projects.core.common)
-    implementation(projects.core.datastore)
 
     // paging
     implementation(libs.paging.runtime)

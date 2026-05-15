@@ -8,6 +8,7 @@ plugins {
 }
 android {
     namespace = "com.doannd3.treetask.core.data"
+    resourcePrefix = "data_"
     defaultConfig {
         missingDimensionStrategy("environment", "dev")
     }

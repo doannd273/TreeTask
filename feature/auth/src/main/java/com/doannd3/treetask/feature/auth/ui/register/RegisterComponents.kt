@@ -88,8 +88,7 @@ internal fun FullNameInput(
 @Composable
 internal fun RegisterHeader(onRegisterBack: () -> Unit) {
     Row(
-        modifier =
-        Modifier
+        modifier = Modifier
             .fillMaxWidth()
             .height(50.dp)
             .background(color = White)
