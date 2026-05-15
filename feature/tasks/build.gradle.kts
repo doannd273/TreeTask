@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.treetask.android.library)
     alias(libs.plugins.treetask.android.compose)
+    alias(libs.plugins.treetask.android.hilt)
     alias(libs.plugins.treetask.android.desugar)
 
     alias(libs.plugins.kotlin.serialization)
@@ -22,7 +23,6 @@ dependencies {
     implementation(projects.core.common)
     implementation(projects.core.designsystem)
     implementation(projects.core.analytics)
-    implementation(projects.core.datastore)
 
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.lifecycle.viewmodel.compose)
