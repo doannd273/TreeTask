@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.treetask.android.library)
     alias(libs.plugins.treetask.android.compose)
     alias(libs.plugins.treetask.android.hilt)
+    alias(libs.plugins.treetask.android.desugar)
 
     alias(libs.plugins.kotlin.serialization)
     // lint
@@ -13,9 +14,6 @@ android {
     resourcePrefix = "profile_"
     defaultConfig {
         missingDimensionStrategy("environment", "dev")
-    }
-    compileOptions {
-        isCoreLibraryDesugaringEnabled = true
     }
 }
 dependencies {
@@ -34,5 +32,4 @@ dependencies {
     implementation(libs.coil.compose)
 
     implementation(libs.timber)
-    coreLibraryDesugaring(libs.desugar.jdk.libs)
 }

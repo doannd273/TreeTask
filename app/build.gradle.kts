@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.treetask.android.application)
     alias(libs.plugins.treetask.android.compose)
     alias(libs.plugins.treetask.android.hilt)
+    alias(libs.plugins.treetask.android.desugar)
 
     // google, firebase
     alias(libs.plugins.google.services)
@@ -103,9 +104,6 @@ android {
             }
         }
     }
-    compileOptions {
-        isCoreLibraryDesugaringEnabled = true
-    }
     buildFeatures {
         buildConfig = true
     }
@@ -181,7 +179,6 @@ dependencies {
     implementation(libs.androidx.hilt.work)
 
     // java
-    coreLibraryDesugaring(libs.desugar.jdk.libs)
     implementation(libs.androidx.core.splashscreen)
 
     // firebase

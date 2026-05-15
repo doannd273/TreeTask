@@ -180,4 +180,5 @@ treetask-android-library = { id = "treetask.android.library" }
 treetask-android-application = { id = "treetask.android.application" }
 treetask-android-compose = { id = "treetask.android.compose" }
 treetask-android-hilt = { id = "treetask.android.hilt" }
+treetask-android-desugar = { id = "treetask.android.desugar" }
 

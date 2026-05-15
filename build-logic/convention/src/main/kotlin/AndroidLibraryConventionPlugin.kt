@@ -10,43 +10,28 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 class AndroidLibraryConventionPlugin : Plugin<Project> {
-    override fun apply(target: Project) {
-        with(target) {
-            val libs = extensions.getByType<VersionCatalogsExtension>().named("libs")
+    override fun apply(target: Project) = with(target) {
+        pluginManager.apply("com.android.library")
+        pluginManager.apply("org.jetbrains.kotlin.android")
 
-            // Tự động Apply 2 plugin thư viện cốt lõi
-            with(pluginManager) {
-                apply("com.android.library")
-                apply("org.jetbrains.kotlin.android")
-            }
-            // Tự động cấu hình phiên bản Android và Java
-            extensions.configure<LibraryExtension> {
-                compileSdk =
-                    libs
-                        .findVersion("compileSdk")
-                        .get()
-                        .requiredVersion
-                        .toInt()
-                defaultConfig {
-                    minSdk =
-                        libs
-                            .findVersion("minSdk")
-                            .get()
-                            .requiredVersion
-                            .toInt()
-                    testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-                }
-                compileOptions {
-                    sourceCompatibility = JavaVersion.VERSION_17
-                    targetCompatibility = JavaVersion.VERSION_17
-                }
-            }
+        val libs = extensions.getByType<VersionCatalogsExtension>().named("libs")
 
-            // Cấu hình Kotlin JVM Target
-            tasks.withType<KotlinCompile>().configureEach {
-                compilerOptions {
-                    jvmTarget.set(JvmTarget.JVM_17)
-                }
+        extensions.configure<LibraryExtension> {
+            compileSdk = libs.findVersion("compileSdk").get().requiredVersion.toInt()
+            defaultConfig {
+                minSdk = libs.findVersion("minSdk").get().requiredVersion.toInt()
+                testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+            }
+            compileOptions {
+                sourceCompatibility = JavaVersion.VERSION_17
+                targetCompatibility = JavaVersion.VERSION_17
+            }
+        }
+
+        // Cấu hình Kotlin JVM Target
+        tasks.withType<KotlinCompile>().configureEach {
+            compilerOptions {
+                jvmTarget.set(JvmTarget.JVM_17)
             }
         }
     }

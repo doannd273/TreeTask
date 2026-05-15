@@ -4,6 +4,7 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.artifacts.VersionCatalogsExtension
 import org.gradle.kotlin.dsl.configure
+import org.gradle.kotlin.dsl.dependencies
 import org.gradle.kotlin.dsl.getByType
 
 class AndroidComposeConventionPlugin : Plugin<Project> {
@@ -22,12 +23,14 @@ class AndroidComposeConventionPlugin : Plugin<Project> {
             }
         }
 
-        dependencies.add("implementation", dependencies.platform(libs.findLibrary("androidx.compose.bom").get()))
-        dependencies.add("implementation", libs.findLibrary("androidx.compose.ui").get())
-        dependencies.add("implementation", libs.findLibrary("androidx.compose.ui.graphics").get())
-        dependencies.add("implementation", libs.findLibrary("androidx.compose.ui.tooling.preview").get())
-        dependencies.add("implementation", libs.findLibrary("androidx.compose.material3").get())
-        dependencies.add("implementation", libs.findLibrary("androidx.lifecycle.runtime.compose").get())
-        dependencies.add("debugImplementation", libs.findLibrary("androidx.compose.ui.tooling").get())
+        dependencies {
+            add("implementation", platform(libs.findLibrary("androidx.compose.bom").get()))
+            add("implementation", libs.findLibrary("androidx.compose.ui").get())
+            add("implementation", libs.findLibrary("androidx.compose.ui.graphics").get())
+            add("implementation", libs.findLibrary("androidx.compose.ui.tooling.preview").get())
+            add("implementation", libs.findLibrary("androidx.compose.material3").get())
+            add("implementation", libs.findLibrary("androidx.lifecycle.runtime.compose").get())
+            add("debugImplementation", libs.findLibrary("androidx.compose.ui.tooling").get())
+        }
     }
 }

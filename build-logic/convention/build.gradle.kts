@@ -39,5 +39,9 @@ gradlePlugin {
             id = "treetask.android.hilt"
             implementationClass = "AndroidHiltConventionPlugin"
         }
+        register("androidDesugar") {
+            id = "treetask.android.desugar"
+            implementationClass = "AndroidDesugarConventionPlugin"
+        }
     }
 }
