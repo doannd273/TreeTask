@@ -90,7 +90,7 @@ fun TreeTaskApp(
                 appDialogState = globalAppState.appDialogState,
                 onDismiss = {
                     val onDialogDismiss = globalAppState.appDialogState?.onDismiss
-                    globalAppState.clearError()
+                    globalAppState.clearDialog()
                     onDialogDismiss?.invoke()
                 },
             )

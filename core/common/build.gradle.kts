@@ -11,10 +11,17 @@ android {
     resourcePrefix = "common_"
 }
 dependencies {
-    implementation(libs.androidx.core.ktx)
+    // android
+    implementation(libs.androidx.annotation)
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
+
+    // timber
     implementation(libs.timber)
+
+    // hilt
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)
+
+    // desugar
     coreLibraryDesugaring(libs.desugar.jdk.libs)
 }

@@ -62,7 +62,7 @@ class GlobalAppState {
         this@GlobalAppState.appDialogState = errorDialogState
     }
 
-    fun clearError() {
+    fun clearDialog() {
         appDialogState = null
     }
 

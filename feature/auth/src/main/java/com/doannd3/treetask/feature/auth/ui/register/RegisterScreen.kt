@@ -3,10 +3,12 @@ package com.doannd3.treetask.feature.auth.ui.register
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.rememberScrollState
@@ -95,16 +97,20 @@ fun RegisterScreen(
     onRegisterBack: () -> Unit,
 ) {
     Scaffold(
-        contentWindowInsets = WindowInsets.safeDrawing,
+        contentWindowInsets = WindowInsets.safeDrawing.only(
+            WindowInsetsSides.Horizontal + WindowInsetsSides.Bottom,
+        ),
+        topBar = {
+            RegisterHeader(onRegisterBack = onRegisterBack)
+        },
     ) { paddingValues ->
         RegisterContent(
             modifier =
             Modifier.padding(
-                bottom = paddingValues.calculateBottomPadding(),
+                paddingValues = paddingValues,
             ),
             state = state,
             onEvent = onEvent,
-            onRegisterBack = onRegisterBack,
         )
     }
 }
@@ -114,7 +120,6 @@ fun RegisterContent(
     modifier: Modifier = Modifier,
     state: RegisterState,
     onEvent: (RegisterEvent) -> Unit,
-    onRegisterBack: () -> Unit,
 ) {
     val onSubmitRegisterDebounced =
         rememberDebouncedClick {
@@ -132,8 +137,6 @@ fun RegisterContent(
             .verticalScroll(rememberScrollState())
             .imePadding(),
     ) {
-        RegisterHeader(onRegisterBack = onRegisterBack)
-
         Column(
             modifier = Modifier.padding(16.dp),
         ) {

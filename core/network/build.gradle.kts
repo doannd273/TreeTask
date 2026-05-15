@@ -11,6 +11,7 @@ plugins {
 }
 android {
     namespace = "com.doannd3.treetask.core.network"
+    resourcePrefix = "network_"
 
     buildFeatures {
         buildConfig = true
@@ -39,7 +40,6 @@ android {
     }
 }
 dependencies {
-    implementation(projects.core.model)
     implementation(projects.core.common)
     implementation(projects.core.datastore)
 
