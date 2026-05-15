@@ -92,3 +92,33 @@ This file tracks architecture issues found during module-by-module audit. These 
 - **Target solution**: Keep the current implementation until performance issues appear, then consider cached synchronous token/device-id access, a dedicated blocking-safe token data source, or a tighter auth session component that avoids repeated Flow collection inside interceptors.
 - **Priority**: Medium
 - **Status**: Deferred until network performance/auth cleanup
+
+## `core:data` relies on transitive AndroidX Core dependency
+
+- **Location**: `core/data/build.gradle.kts`
+- **Location**: `core/data/src/main/java/com/doannd3/treetask/core/data/util/ConnectivityManagerNetworkMonitor.kt`
+- **Issue**: `ConnectivityManagerNetworkMonitor` imports `androidx.core.content.getSystemService`, but `core:data` does not declare `androidx.core:core-ktx` directly.
+- **Impact**: Compilation may currently pass because another dependency leaks AndroidX Core transitively, but future dependency cleanup/convention changes can break `core:data` unexpectedly.
+- **Target solution**: Either add a direct `implementation(libs.androidx.core.ktx)` dependency to `core:data`, or replace the extension usage with the framework API so the module no longer needs AndroidX Core KTX.
+- **Priority**: Low
+- **Status**: Candidate cleanup after module audit
+
+## `core:data` task paging cache is not query-scoped
+
+- **Location**: `core/data/src/main/java/com/doannd3/treetask/core/data/respository/TaskRepositoryImpl.kt`
+- **Location**: `core/data/src/main/java/com/doannd3/treetask/core/data/respository/TaskRemoteMediator.kt`
+- **Issue**: `TaskRepositoryImpl.getTasks()` receives `status` and `keyword`, but the local `PagingSource` reads only by `userId`; remote keys are also keyed by task id rather than by user/filter/query.
+- **Impact**: Search/filter state can become inconsistent with cached data, and remote mediator keys can collide when the same task list is loaded under different query/status combinations.
+- **Target solution**: Scope the local task query and remote keys by `userId`, `status`, and `keyword`, or introduce a query-scoped paging cache strategy before expanding task filters/search.
+- **Priority**: Medium
+- **Status**: Deferred until task module/data paging cleanup
+
+## `core:data` exposes `NetworkMonitor` contract to app layer
+
+- **Location**: `core/data/src/main/java/com/doannd3/treetask/core/data/util/NetworkMonitor.kt`
+- **Location**: `app/src/main/java/com/treestudio/treetask/MainViewModel.kt`
+- **Issue**: The `app` module depends on `core:data` to consume the `NetworkMonitor` contract even though the app only needs an online/offline signal.
+- **Impact**: App-level state becomes coupled to the data implementation module, making it harder to remove or refactor `core:data` dependencies independently.
+- **Target solution**: Move the `NetworkMonitor` interface to a smaller contract module such as `core:common`, `core:network-monitor`, or future `core:presentation`, while keeping `ConnectivityManagerNetworkMonitor` implementation and Hilt binding in an Android implementation module.
+- **Priority**: Medium
+- **Status**: Deferred until app/data dependency cleanup

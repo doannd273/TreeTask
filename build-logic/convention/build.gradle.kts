@@ -28,5 +28,9 @@ gradlePlugin {
             id = "treetask.android.application"
             implementationClass = "AndroidApplicationConventionPlugin"
         }
+        register("androidCompose") {
+            id = "treetask.android.compose"
+            implementationClass = "AndroidComposeConventionPlugin"
+        }
     }
 }

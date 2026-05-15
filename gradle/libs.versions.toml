@@ -176,4 +176,5 @@ treetask-android-detekt = { id = "treetask.android.detekt" }
 treetask-android-spotless = { id = "treetask.android.spotless" }
 treetask-android-library = { id = "treetask.android.library" }
 treetask-android-application = { id = "treetask.android.application" }
+treetask-android-compose = { id = "treetask.android.compose" }
 

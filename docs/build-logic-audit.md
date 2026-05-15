@@ -105,6 +105,33 @@ This file tracks repeated Gradle setup and cleanup candidates found during modul
     - Candidate plugin: none for now; possible future `treetask.android.network`.
     - Decision: Keep explicit in `core:network` until more network modules exist.
 
+### `core:data`
+
+- Hilt + KSP
+    - Reason: Module binds domain repositories, network monitor, and Hilt-injected repository implementations.
+    - Candidate plugin: `treetask.android.hilt`
+    - Decision: Move after auditing all Hilt modules.
+
+- Hilt WorkManager setup
+    - Reason: Module owns `SyncWorker` with `@HiltWorker` and depends on WorkManager integration.
+    - Candidate plugin: `treetask.android.hilt.work`
+    - Decision: Keep separate from the base Hilt convention because not every Hilt module owns workers.
+
+- `coreLibraryDesugaring(libs.desugar.jdk.libs)`
+    - Reason: Module maps task date/time values through `java.time` helpers from `core:common`.
+    - Candidate plugin: `treetask.android.desugar`
+    - Decision: Move after desugar usage is confirmed across all audited modules.
+
+- Environment variant strategy
+    - Reason: Module directly depends on flavored `core:network` and currently declares `missingDimensionStrategy("environment", "dev")`.
+    - Candidate plugin: `treetask.android.environment`
+    - Decision: Defer until app/data/network variant ownership is reviewed together.
+
+- AndroidX Core KTX usage
+    - Reason: Module imports `androidx.core.content.getSystemService` in the network monitor implementation.
+    - Candidate plugin: none for now.
+    - Decision: Prefer a direct module dependency or replace the extension usage; do not move AndroidX Core KTX into a broad convention unless many modules truly need it.
+
 ### Planned convention plugins
 
 - `treetask.android.compose`
@@ -117,8 +144,14 @@ This file tracks repeated Gradle setup and cleanup candidates found during modul
 - `treetask.android.hilt`
     - Apply plugins: `com.google.dagger.hilt.android`, `com.google.devtools.ksp`.
     - Add dependencies: `implementation(libs.hilt.android)`, `ksp(libs.hilt.compiler)`.
-    - Current candidates: `core:common`, `core:analytics`, `core:database`, `core:datastore`, `core:network`, `feature:auth`.
+    - Current candidates: `core:common`, `core:analytics`, `core:database`, `core:datastore`, `core:network`, `core:data`, `feature:auth`.
     - Do not apply to modules without Hilt annotations or generated Hilt code.
+
+- `treetask.android.hilt.work`
+    - Apply base Hilt convention if it is not already applied.
+    - Add dependencies: `implementation(libs.work.runtime.ktx)`, `implementation(libs.androidx.hilt.work)`, and the required AndroidX Hilt compiler when configured in the version catalog.
+    - Current candidates: `core:data`.
+    - Keep worker scheduling policies and app startup wiring explicit in the owning app/data module.
 
 - `treetask.android.room`
     - Apply plugins: `com.google.devtools.ksp` if not already applied by another convention.
@@ -136,13 +169,13 @@ This file tracks repeated Gradle setup and cleanup candidates found during modul
 - `treetask.android.environment`
     - Configure shared `environment` flavor dimension and `dev`/`prod` product flavors.
     - Optionally provide helpers for safe quoted `buildConfigField` string values.
-    - Current candidates: `core:network`, app module variant setup, and any module that directly consumes flavored dependencies.
+    - Current candidates: `core:network`, `core:data`, app module variant setup, and any module that directly consumes flavored dependencies.
     - Decision: Defer until variant ownership is clear.
 
 - `treetask.android.desugar`
     - Enable `android.compileOptions.isCoreLibraryDesugaringEnabled = true`.
     - Add dependency: `coreLibraryDesugaring(libs.desugar.jdk.libs)`.
-    - Current candidates: `core:model`, `core:common`.
+    - Current candidates: `core:model`, `core:common`, `core:data`.
     - Apply only to modules using `java.time` or APIs that require core library desugaring.
 
 - `treetask.android.unit.test`
