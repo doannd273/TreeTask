@@ -8,6 +8,9 @@ dependencies {
     // library plugin android
     compileOnly(libs.android.gradlePlugin)
     compileOnly(libs.kotlin.gradlePlugin)
+    // hilt
+    compileOnly(libs.hilt.gradlePlugin)
+    compileOnly(libs.ksp.gradlePlugin)
 }
 
 gradlePlugin {
@@ -31,6 +34,10 @@ gradlePlugin {
         register("androidCompose") {
             id = "treetask.android.compose"
             implementationClass = "AndroidComposeConventionPlugin"
+        }
+        register("androidHilt") {
+            id = "treetask.android.hilt"
+            implementationClass = "AndroidHiltConventionPlugin"
         }
     }
 }

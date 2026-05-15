@@ -1,10 +1,9 @@
 plugins {
     alias(libs.plugins.treetask.android.library)
     alias(libs.plugins.treetask.android.compose)
+    alias(libs.plugins.treetask.android.hilt)
 
     alias(libs.plugins.kotlin.serialization)
-    alias(libs.plugins.hilt)
-    alias(libs.plugins.ksp)
     // lint
     alias(libs.plugins.treetask.android.detekt)
     alias(libs.plugins.treetask.android.spotless)
@@ -25,9 +24,6 @@ dependencies {
     implementation(libs.androidx.lifecycle.runtime.compose)
     implementation(libs.androidx.navigation.compose)
     implementation(libs.androidx.hilt.navigation.compose)
-
-    implementation(libs.hilt.android)
-    ksp(libs.hilt.compiler)
 
     implementation(libs.timber)
 }

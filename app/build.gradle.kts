@@ -3,9 +3,8 @@ import java.util.Properties
 plugins {
     alias(libs.plugins.treetask.android.application)
     alias(libs.plugins.treetask.android.compose)
+    alias(libs.plugins.treetask.android.hilt)
 
-    alias(libs.plugins.hilt)
-    alias(libs.plugins.ksp)
     // google, firebase
     alias(libs.plugins.google.services)
     alias(libs.plugins.firebase.crashlytics)
@@ -179,8 +178,6 @@ dependencies {
     implementation(libs.timber)
 
     // hilt
-    implementation(libs.hilt.android)
-    ksp(libs.hilt.compiler)
     implementation(libs.androidx.hilt.work)
 
     // java
