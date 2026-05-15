@@ -10,5 +10,4 @@ android {
     resourcePrefix = "model_"
 }
 dependencies {
-
 }
