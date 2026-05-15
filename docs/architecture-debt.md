@@ -55,3 +55,40 @@ This file tracks architecture issues found during module-by-module audit. These 
 - **Target solution**: Keep `core:testing` focused on host unit test utilities. When shared instrumented test helpers are needed, create a dedicated `core:android-testing` module and/or a `treetask.android.instrumented.test` convention plugin.
 - **Priority**: Low
 - **Status**: Deferred until Android test scope grows
+
+## `core:domain` depends on datastore without source usage
+
+- **Location**: `core/domain/build.gradle.kts`
+- **Issue**: `core:domain` declares `implementation(projects.core.datastore)` but domain source does not import datastore contracts or implementation types.
+- **Impact**: Domain layer is coupled to local storage infrastructure in Gradle even though the code does not need it, weakening clean architecture boundaries.
+- **Target solution**: Remove the datastore dependency from `core:domain` if compilation/tests pass. If domain needs user/session state later, expose that through domain repository/use-case contracts rather than depending on datastore directly.
+- **Priority**: Medium
+- **Status**: Candidate cleanup after module audit
+
+## `feature:tasks` reads user storage directly
+
+- **Location**: `feature/tasks/src/main/java/com/doannd3/treetask/feature/tasks/ui/home/TasksViewModel.kt`
+- **Issue**: `TasksViewModel` injects `UserStorage` from `core:datastore` to read the current user profile.
+- **Impact**: Feature UI layer knows local storage implementation details, making it harder to test and to change storage/session strategy later.
+- **Target solution**: Introduce a domain-facing use case or repository method such as `ObserveCurrentUserUseCase`/`GetCurrentUserIdUseCase`, implemented in `core:data`, then remove `feature:tasks -> core:datastore`.
+- **Priority**: Medium
+- **Status**: Deferred until task/domain cleanup
+
+## `core:network` depends directly on datastore
+
+- **Location**: `core/network/src/main/java/com/doannd3/treetask/core/network`
+- **Issue**: Network interceptors/authenticator depend directly on `TokenStorage` and `DeviceStorage` from `core:datastore`.
+- **Impact**: Network transport becomes coupled to the current local storage implementation, making token/device-id strategy harder to change and increasing the dependency surface of `core:network`.
+- **Target solution**: Introduce narrow network-facing contracts such as `TokenProvider`, `TokenUpdater`, and `DeviceIdProvider`; bind datastore-backed implementations outside or at the DI boundary so `core:network` no longer needs to know datastore implementation details.
+- **Priority**: Medium
+- **Status**: Deferred until dependency cleanup after audit
+
+## `core:network` blocks OkHttp threads for token reads
+
+- **Location**: `core/network/src/main/java/com/doannd3/treetask/core/network/auth/AuthInterceptor.kt`
+- **Location**: `core/network/src/main/java/com/doannd3/treetask/core/network/auth/AuthAuthenticator.kt`
+- **Issue**: Token access and refresh logic use `runBlocking` inside OkHttp interceptor/authenticator paths.
+- **Impact**: This is acceptable short-term, but it can block OkHttp dispatcher threads during token/device-id reads or refresh operations, especially when many requests run in parallel.
+- **Target solution**: Keep the current implementation until performance issues appear, then consider cached synchronous token/device-id access, a dedicated blocking-safe token data source, or a tighter auth session component that avoids repeated Flow collection inside interceptors.
+- **Priority**: Medium
+- **Status**: Deferred until network performance/auth cleanup

@@ -59,6 +59,52 @@ This file tracks repeated Gradle setup and cleanup candidates found during modul
     - Candidate plugin: none yet; possible future navigation/feature convention.
     - Decision: Keep explicit until more feature navigation modules are audited.
 
+### `core:database`
+
+- Room database setup
+    - Reason: Module owns Room database, entities, DAO, schema export, and Room KSP compiler setup.
+    - Candidate plugin: `treetask.android.room`
+    - Decision: Move after auditing all Room/database consumers.
+
+- Hilt + KSP
+    - Reason: Module provides `TreeTaskDatabase`, `TaskDao`, and `TaskRemoteKeysDao` through Hilt.
+    - Candidate plugin: `treetask.android.hilt`
+    - Decision: Move after auditing all Hilt modules.
+
+### `core:datastore`
+
+- Hilt + KSP
+    - Reason: Module binds storage contracts and provides encrypted shared preferences through Hilt.
+    - Candidate plugin: `treetask.android.hilt`
+    - Decision: Move after auditing all Hilt modules.
+
+- DataStore + Security Crypto setup
+    - Reason: Module is the only current owner of preferences DataStore and encrypted token storage.
+    - Candidate plugin: none for now.
+    - Decision: Keep explicit in `core:datastore`; create a dedicated convention only if more modules use DataStore/security crypto.
+
+### `core:network`
+
+- Hilt + KSP
+    - Reason: Module provides Retrofit services, OkHttp clients, interceptors, and authenticator through Hilt.
+    - Candidate plugin: `treetask.android.hilt`
+    - Decision: Move after auditing all Hilt modules.
+
+- Kotlin Serialization
+    - Reason: Module owns serializable API envelope models and uses Retrofit Kotlin Serialization converter.
+    - Candidate plugin: `treetask.android.serialization`
+    - Decision: Create only if more modules need Kotlin Serialization plugin/runtime setup.
+
+- Network environment flavors + `BuildConfig.BASE_URL`
+    - Reason: Module defines `environment` flavors and reads base URLs from `local.properties`.
+    - Candidate plugin: `treetask.android.environment`
+    - Decision: Defer until app/data/network variant setup is reviewed together to avoid hiding flavor coupling.
+
+- Debug network tooling
+    - Reason: Module wires Chucker, OkHttp logging, and debug-only network inspection.
+    - Candidate plugin: none for now; possible future `treetask.android.network`.
+    - Decision: Keep explicit in `core:network` until more network modules exist.
+
 ### Planned convention plugins
 
 - `treetask.android.compose`
@@ -71,8 +117,27 @@ This file tracks repeated Gradle setup and cleanup candidates found during modul
 - `treetask.android.hilt`
     - Apply plugins: `com.google.dagger.hilt.android`, `com.google.devtools.ksp`.
     - Add dependencies: `implementation(libs.hilt.android)`, `ksp(libs.hilt.compiler)`.
-    - Current candidates: `core:common`, `core:analytics`, `feature:auth`.
+    - Current candidates: `core:common`, `core:analytics`, `core:database`, `core:datastore`, `core:network`, `feature:auth`.
     - Do not apply to modules without Hilt annotations or generated Hilt code.
+
+- `treetask.android.room`
+    - Apply plugins: `com.google.devtools.ksp` if not already applied by another convention.
+    - Add dependencies: `implementation(libs.room.runtime)`, `implementation(libs.room.ktx)`, optional `implementation(libs.room.paging)`, and `ksp(libs.room.compiler)`.
+    - Configure Room schema export: `ksp { arg("room.schemaLocation", "$projectDir/schemas") }`.
+    - Current candidates: `core:database`.
+    - Keep `room.paging` optional if future Room modules do not expose `PagingSource`.
+
+- `treetask.android.serialization`
+    - Apply plugin: `org.jetbrains.kotlin.plugin.serialization`.
+    - Add dependency: `implementation(libs.kotlinx.serialization.json)` only when the module uses serialization runtime directly.
+    - Current candidates: `core:network`, `feature:auth`.
+    - Keep Retrofit converter or Navigation-specific dependencies explicit unless repeated across multiple modules.
+
+- `treetask.android.environment`
+    - Configure shared `environment` flavor dimension and `dev`/`prod` product flavors.
+    - Optionally provide helpers for safe quoted `buildConfigField` string values.
+    - Current candidates: `core:network`, app module variant setup, and any module that directly consumes flavored dependencies.
+    - Decision: Defer until variant ownership is clear.
 
 - `treetask.android.desugar`
     - Enable `android.compileOptions.isCoreLibraryDesugaringEnabled = true`.

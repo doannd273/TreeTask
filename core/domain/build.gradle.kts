@@ -14,7 +14,6 @@ dependencies {
     // core
     implementation(projects.core.model)
     implementation(projects.core.common)
-    implementation(projects.core.datastore)
 
     // paging
     implementation(libs.paging.runtime)
