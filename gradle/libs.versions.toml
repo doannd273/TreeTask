@@ -155,6 +155,8 @@ spotless-gradle = { module = "com.diffplug.spotless:spotless-plugin-gradle", ver
 # library plugin android
 android-gradlePlugin = { group = "com.android.tools.build", name = "gradle", version.ref = "agp" }
 kotlin-gradlePlugin = { group = "org.jetbrains.kotlin", name = "kotlin-gradle-plugin", version.ref = "kotlin" }
+hilt-gradlePlugin = { group = "com.google.dagger", name = "hilt-android-gradle-plugin", version.ref = "hilt" }
+ksp-gradlePlugin = { group = "com.google.devtools.ksp", name = "symbol-processing-gradle-plugin", version.ref = "ksp" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
@@ -176,4 +178,7 @@ treetask-android-detekt = { id = "treetask.android.detekt" }
 treetask-android-spotless = { id = "treetask.android.spotless" }
 treetask-android-library = { id = "treetask.android.library" }
 treetask-android-application = { id = "treetask.android.application" }
+treetask-android-compose = { id = "treetask.android.compose" }
+treetask-android-hilt = { id = "treetask.android.hilt" }
+treetask-android-desugar = { id = "treetask.android.desugar" }
 
