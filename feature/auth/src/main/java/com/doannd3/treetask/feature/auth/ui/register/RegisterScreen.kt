@@ -98,16 +98,16 @@ fun RegisterScreen(
 ) {
     Scaffold(
         contentWindowInsets = WindowInsets.safeDrawing.only(
-            WindowInsetsSides.Horizontal + WindowInsetsSides.Bottom
+            WindowInsetsSides.Horizontal + WindowInsetsSides.Bottom,
         ),
         topBar = {
             RegisterHeader(onRegisterBack = onRegisterBack)
-        }
+        },
     ) { paddingValues ->
         RegisterContent(
             modifier =
             Modifier.padding(
-                paddingValues = paddingValues
+                paddingValues = paddingValues,
             ),
             state = state,
             onEvent = onEvent,
@@ -137,7 +137,6 @@ fun RegisterContent(
             .verticalScroll(rememberScrollState())
             .imePadding(),
     ) {
-
         Column(
             modifier = Modifier.padding(16.dp),
         ) {

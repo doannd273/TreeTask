@@ -97,16 +97,16 @@ fun ForgotPasswordScreen(
 ) {
     Scaffold(
         contentWindowInsets = WindowInsets.safeDrawing.only(
-            WindowInsetsSides.Horizontal + WindowInsetsSides.Bottom
+            WindowInsetsSides.Horizontal + WindowInsetsSides.Bottom,
         ),
         topBar = {
             ForgotPasswordHeader(onForgotPasswordBack = onForgotPasswordBack)
-        }
+        },
     ) { paddingValues ->
         ForgotPasswordContent(
             modifier =
             Modifier.padding(
-                paddingValues = paddingValues
+                paddingValues = paddingValues,
             ),
             state = state,
             onEvent = onEvent,
