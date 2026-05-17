@@ -31,18 +31,20 @@ class ApiResultCall<T>(
                             } else {
                                 ApiResult.Error(
                                     message = body?.message?.let { UiText.DynamicString(it) },
+                                    statusCode = response.code(),
+                                    errorCode = body?.code,
                                     exception = null,
                                 )
                             }
                         } else {
                             // 4xx / 5xx → parse errorBody lấy message từ BE
-                            val errorMessage =
+                            val errorBody =
                                 try {
                                     val errorJson = response.errorBody()?.string()
                                     json
                                         .decodeFromString<ApiResponse<Unit>>(
                                             errorJson ?: "",
-                                        ).message
+                                        )
                                 } catch (e: SerializationException) {
                                     e.printStackTrace()
                                     null
@@ -51,8 +53,9 @@ class ApiResultCall<T>(
                                     null
                                 }
                             ApiResult.Error(
-                                message = errorMessage?.let { UiText.DynamicString(it) },
-                                errorCode = response.code(),
+                                message = errorBody?.message?.let { UiText.DynamicString(it) },
+                                statusCode = response.code(),
+                                errorCode = errorBody?.code,
                                 exception = null,
                             )
                         }

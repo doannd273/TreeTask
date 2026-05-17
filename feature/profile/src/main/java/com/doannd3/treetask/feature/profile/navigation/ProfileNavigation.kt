@@ -22,12 +22,14 @@ fun NavController.navigateToProfile(navOptions: NavOptions? = null) {
     this.navigate(route = ProfileDestination, navOptions = navOptions)
 }
 
-fun NavGraphBuilder.profileGraph() {
+fun NavGraphBuilder.profileGraph(
+    onNavigateToLogin: () -> Unit,
+) {
     navigation<ProfileGraphDestination>(
         startDestination = ProfileDestination,
     ) {
         composable<ProfileDestination> {
-            ProfileRoute()
+            ProfileRoute(onNavigateToLogin = onNavigateToLogin)
         }
     }
 }

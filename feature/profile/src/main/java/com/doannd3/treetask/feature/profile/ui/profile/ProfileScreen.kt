@@ -17,9 +17,14 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.repeatOnLifecycle
 import com.doannd3.treetask.core.common.asString
 import com.doannd3.treetask.core.designsystem.component.LocalGlobalAppState
+import com.doannd3.treetask.core.designsystem.util.rememberDebouncedClick
+import com.doannd3.treetask.core.model.user.User
 
 @Composable
-fun ProfileRoute(viewModel: ProfileViewModel = hiltViewModel()) {
+fun ProfileRoute(
+    viewModel: ProfileViewModel = hiltViewModel(),
+    onNavigateToLogin: () -> Unit,
+) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
 
     val globalAppState = LocalGlobalAppState.current
@@ -28,13 +33,23 @@ fun ProfileRoute(viewModel: ProfileViewModel = hiltViewModel()) {
 
     ProfileScreen(
         state = state,
-        event = viewModel::onEvent,
-        {}
+        onEvent = viewModel::onEvent,
+        onUploadAvatarUser = {},
     )
 
     LaunchedEffect(viewModel.effect, lifecycleOwner) {
         lifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
             viewModel.effect.collect { effect ->
+                when (effect) {
+                    is ProfileEffect.NavigateToLogin -> {
+                        onNavigateToLogin()
+                    }
+
+                    is ProfileEffect.ShowErrorMessage -> {
+                        val errorStr = effect.message.asString(context)
+                        globalAppState.showError(errorStr)
+                    }
+                }
             }
         }
     }
@@ -59,7 +74,7 @@ fun ProfileRoute(viewModel: ProfileViewModel = hiltViewModel()) {
 @Composable
 fun ProfileScreen(
     state: ProfileState,
-    event: (ProfileEvent) -> Unit,
+    onEvent: (ProfileEvent) -> Unit,
     onUploadAvatarUser: () -> Unit,
 ) {
     Scaffold(
@@ -68,7 +83,7 @@ fun ProfileScreen(
         ProfileContent(
             modifier = Modifier.padding(paddingValues = paddingValues),
             state = state,
-            event = event,
+            onEvent = onEvent,
             onUploadAvatarUser = onUploadAvatarUser,
         )
     }
@@ -78,13 +93,37 @@ fun ProfileScreen(
 fun ProfileContent(
     modifier: Modifier = Modifier,
     state: ProfileState,
-    event: (ProfileEvent) -> Unit,
+    onEvent: (ProfileEvent) -> Unit,
     onUploadAvatarUser: () -> Unit,
 ) {
+    val onSubmitLogoutDebounced =
+        rememberDebouncedClick {
+            onEvent(ProfileEvent.SubmitLogout)
+        }
 
+    LogoutButton(
+        isEnable = !state.isLoading,
+        onSubmitLogout = onSubmitLogoutDebounced,
+    )
 }
 
 @Composable
 @Preview(showBackground = true)
 fun ProfileScreenPreview() {
+    ProfileScreen(
+        state =
+            ProfileState(
+                isLoading = false,
+                user =
+                    User(
+                        id = "user_preview",
+                        email = "doan@example.com",
+                        fullName = "Doan Nguyen",
+                        avatar = null,
+                        phone = "+84 900 000 000",
+                    ),
+            ),
+        onEvent = {},
+        onUploadAvatarUser = {},
+    )
 }

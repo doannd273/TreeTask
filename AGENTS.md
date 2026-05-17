@@ -1,17 +1,18 @@
 # AGENTS.md
 
-Hướng dẫn này dành cho Codex/AI agent và developer khi làm việc trong repo TreeTask.
-Mục tiêu là giữ thay đổi nhỏ, đúng kiến trúc, dễ review, và không phá các ranh giới module đã có.
+This guide is for Codex/AI agents and developers working in the TreeTask repository.
+The goal is to keep changes small, architecture-aligned, easy to review, and respectful of existing module boundaries.
 
-## Ngôn ngữ và phạm vi
+## Language and Scope
 
-- Trao đổi với người dùng bằng tiếng Việt khi người dùng dùng tiếng Việt.
-- Không revert hoặc ghi đè thay đổi có sẵn trong working tree nếu không được yêu cầu rõ.
-- Ưu tiên đọc code hiện tại trước khi sửa. Dùng `rg`/`rg --files` để tìm kiếm nhanh.
-- Khi sửa code, giữ đúng style hiện có; không refactor lan rộng nếu task không yêu cầu.
-- File docs có thể viết tiếng Việt. Code, package, class, method, Gradle id giữ theo tiếng Anh/Kotlin convention.
+- Reply to the user in Vietnamese when the user writes in Vietnamese.
+- Do not revert or overwrite existing working-tree changes unless explicitly asked.
+- Read existing code before editing. Use `rg`/`rg --files` for fast search.
+- Keep code changes consistent with the current style; avoid broad refactors unless the task requires them.
+- Technical docs should be written in English so coding agents can follow them reliably. `INTERVIEW_NOTES.md` may remain Vietnamese because it is user-facing interview prep.
+- Code, package names, classes, methods, and Gradle IDs follow English/Kotlin conventions.
 
-## Cấu trúc repo
+## Repository Structure
 
 ```text
 TreeTask/
@@ -37,14 +38,14 @@ TreeTask/
 │   └── tasks/           # Task list/add/edit UI and navigation graph
 ├── build-logic/         # Convention plugins: application, library, compose, hilt, detekt, spotless
 ├── config/detekt/       # Detekt rules
-├── docs/                # Architecture, convention, feature template, UI notes
+├── docs/                # Architecture, conventions, feature template, UI notes
 ├── gradle/              # Wrapper and version catalog
 └── scripts/             # Local CI/lint/format scripts
 ```
 
-## Build và test
+## Build and Test
 
-Luôn chạy từ repo root.
+Always run commands from the repository root.
 
 ```bash
 ./gradlew assembleDebug
@@ -53,22 +54,22 @@ Luôn chạy từ repo root.
 ./gradlew spotlessCheck
 ```
 
-Command tiện dụng:
+Useful scripts:
 
 ```bash
 ./scripts/run-ci.sh          # spotlessCheck + detekt + testDebugUnitTest + assembleDebug
 ./scripts/check-lint.sh      # spotlessCheck + detekt
-./scripts/apply-spotless.sh  # format Kotlin/KTS bằng Spotless
+./scripts/apply-spotless.sh  # format Kotlin/KTS with Spotless
 ```
 
-Variant quan trọng:
+Important variants:
 
-- App có flavor dimension `environment` với `dev` và `prod`.
-- Debug app id của dev là `com.treestudio.treetask.dev`.
-- Release cần signing config từ `local.properties` hoặc environment variables.
-- Firebase cần `app/google-services.json` khi build các phần phụ thuộc Google Services/Firebase.
+- The app has an `environment` flavor dimension with `dev` and `prod`.
+- The dev debug application id is `com.treestudio.treetask.dev`.
+- Release builds need signing config from `local.properties` or environment variables.
+- Firebase builds need `app/google-services.json` when Google Services/Firebase dependencies are active.
 
-Khi cần kiểm tra hẹp:
+For narrow checks:
 
 ```bash
 ./gradlew :feature:tasks:compileDebugKotlin
@@ -76,13 +77,13 @@ Khi cần kiểm tra hẹp:
 ./gradlew :core:data:testDebugUnitTest
 ```
 
-Nếu module phụ thuộc flavor của `core:network`, giữ hoặc thêm `missingDimensionStrategy("environment", "dev")` theo pattern hiện tại.
+If a module depends on a flavored `core:network` variant, keep or add `missingDimensionStrategy("environment", "dev")` following the current pattern.
 
-## Coding convention
+## Coding Conventions
 
-- Kotlin JVM target là 17; compile/min/target SDK lấy từ `gradle/libs.versions.toml`.
-- Dùng version catalog `libs.versions.toml`; không hardcode version dependency trong module.
-- Dùng convention plugins trong `build-logic`:
+- Kotlin JVM target is 17; compile/min/target SDK values come from `gradle/libs.versions.toml`.
+- Use the version catalog `libs.versions.toml`; do not hardcode dependency versions in modules.
+- Use convention plugins from `build-logic`:
   - `treetask.android.application`
   - `treetask.android.library`
   - `treetask.android.compose`
@@ -90,83 +91,83 @@ Nếu module phụ thuộc flavor của `core:network`, giữ hoặc thêm `miss
   - `treetask.android.desugar`
   - `treetask.android.detekt`
   - `treetask.android.spotless`
-- Resource của library/feature phải có `resourcePrefix` tương ứng: `auth_`, `tasks_`, `designsystem_`, v.v.
-- Không để feature module gọi thẳng implementation chi tiết nếu đã có domain use case/repository contract.
-- Không đưa text hiển thị người dùng vào `core:model`; ưu tiên string resources hoặc mapper ở UI layer.
-- Không hardcode user-facing string trong composable/ViewModel, trừ dữ liệu mock preview tạm thời.
-- Dùng `UiText` cho message đi từ ViewModel/use case lên UI.
-- Dùng `ApiResult` cho boundary network/repository/use case hiện tại.
+- Library/feature resources must use the corresponding `resourcePrefix`: `auth_`, `tasks_`, `designsystem_`, etc.
+- Do not let feature modules call implementation details directly when a domain use case/repository contract exists.
+- Do not put user-facing display text in `core:model`; prefer string resources or UI-layer mappers.
+- Do not hardcode user-facing strings in composables/ViewModels, except temporary preview/mock data.
+- Use `UiText` for messages flowing from ViewModel/use case to UI.
+- Use `ApiResult` for current network/repository/use case boundaries.
 
 ## Clean Architecture
 
-Luồng phụ thuộc mong muốn:
+Expected dependency flow:
 
 ```text
 feature:* -> core:domain -> core:model
-feature:* -> core:common/designsystem/analytics khi cần
+feature:* -> core:common/designsystem/analytics when needed
 app       -> feature:* + core:* composition/root wiring
 core:data -> core:domain + core:model + core:network + core:database + core:datastore
-core:network/database/datastore -> implementation detail, không bị feature gọi trực tiếp
+core:network/database/datastore -> implementation details, not called directly by features
 ```
 
-Vai trò từng layer:
+Layer roles:
 
-- `core:model`: model ổn định, không biết Android UI text/resource.
-- `core:domain`: repository interface và use case. Không chứa Retrofit, Room, DataStore implementation.
-- `core:data`: triển khai repository, mapping DTO/entity/domain, offline-first sync, Paging `RemoteMediator`.
-- `core:network`: API service, request/response DTO, OkHttp/Retrofit setup.
-- `core:database`: Room entity/DAO/database.
+- `core:model`: stable models that do not know Android UI text/resources.
+- `core:domain`: repository interfaces and use cases. No Retrofit, Room, or DataStore implementation.
+- `core:data`: repository implementations, DTO/entity/domain mapping, offline-first sync, Paging `RemoteMediator`.
+- `core:network`: API services, request/response DTOs, OkHttp/Retrofit setup.
+- `core:database`: Room entities/DAOs/database.
 - `core:datastore`: preference/token/user/device storage.
 - `feature:*`: route, screen, component, state/event/effect, ViewModel.
-- `app`: app shell, global navigation, application init, flavor/signing/build config.
+- `app`: app shell, global navigation, application initialization, flavor/signing/build config.
 
-Khi thêm use case mới:
+When adding a new use case:
 
-1. Đặt contract cần thiết ở `core:domain`.
-2. Đặt implementation ở `core:data`.
-3. Bind bằng Hilt trong module data/network/database/datastore phù hợp.
-4. Feature chỉ inject use case, không inject Retrofit/DAO/DataStore trực tiếp.
+1. Put the needed contract in `core:domain`.
+2. Put the implementation in `core:data`.
+3. Bind with Hilt in the appropriate data/network/database/datastore module.
+4. Feature modules should inject only use cases, not Retrofit/DAO/DataStore directly.
 
-## MVI convention
+## MVI Conventions
 
-Mỗi màn hình nên dùng bộ file theo pattern hiện có:
+Each screen should use the existing file pattern:
 
 ```text
 FeatureContract.kt     # State, Event, Effect
 FeatureViewModel.kt    # BaseViewModel + MviViewModel<State, Event, Effect>
 FeatureScreen.kt       # Route + Screen + Content
-FeatureComponents.kt   # composable nhỏ, reusable trong feature
+FeatureComponents.kt   # small composables, reusable within the feature
 FeatureNavigation.kt   # route object, graph, navigate helpers
 ```
 
-Quy tắc:
+Rules:
 
-- `State` là immutable `data class`, đại diện toàn bộ UI state cần render.
-- `Event` là sealed class/object, đại diện hành động từ UI vào ViewModel.
-- `Effect` là sealed class/object, dùng cho one-shot event: navigate, snackbar/dialog, toast, error message.
-- ViewModel expose `StateFlow<State>` và `SharedFlow<Effect>` thông qua `MviViewModel`.
-- UI gọi `onEvent(...)`; không gọi use case/repository trực tiếp trong composable.
-- Route collect `uiState` bằng `collectAsStateWithLifecycle()`.
-- Route collect `effect` trong `repeatOnLifecycle(Lifecycle.State.STARTED)`.
-- Loading/error global đi qua `LocalGlobalAppState` như pattern hiện tại.
-- Coroutine trong ViewModel nên đi qua `executeSafe { ... }` khi có rủi ro exception.
+- `State` is an immutable `data class` representing everything needed to render UI.
+- `Event` is a sealed class/object representing actions from UI to ViewModel.
+- `Effect` is a sealed class/object for one-shot events: navigate, snackbar/dialog, toast, error message.
+- ViewModels expose `StateFlow<State>` and `SharedFlow<Effect>` through `MviViewModel`.
+- UI calls `onEvent(...)`; composables must not call use cases/repositories directly.
+- Route collects `uiState` with `collectAsStateWithLifecycle()`.
+- Route collects `effect` inside `repeatOnLifecycle(Lifecycle.State.STARTED)`.
+- Global loading/error goes through `LocalGlobalAppState` following the current pattern.
+- ViewModel coroutines should use `executeSafe { ... }` when exceptions are possible.
 
-## UI convention
+## UI Conventions
 
-- UI dùng Jetpack Compose + Material 3.
-- Component dùng theme từ `core:designsystem/theme`.
-- Feature không tự định nghĩa palette/theme toàn cục.
-- Route giữ logic wiring; `Screen`/`Content` ưu tiên pure composable để preview/test dễ hơn.
-- Mỗi màn hình có preview khi tạo UI mới hoặc sửa layout đáng kể.
-- Dùng `stringResource`/resource string cho text thật.
-- Icon/vector trong feature phải có prefix resource đúng module.
-- Tránh đặt app-level state mới trong feature; app shell đang quản lý bottom bar, offline banner, global dialog/loading.
+- UI uses Jetpack Compose + Material 3.
+- Components use theme tokens from `core:designsystem/theme`.
+- Feature modules must not define their own global palette/theme.
+- Route keeps wiring logic; `Screen`/`Content` should be mostly pure composables for easier previews/tests.
+- Add a preview when creating new UI or changing layout significantly.
+- Use `stringResource`/string resources for real user-facing text.
+- Icons/vectors inside a feature must use the correct module resource prefix.
+- Avoid adding new app-level state inside features; the app shell currently owns the bottom bar, offline banner, global dialogs, and global loading.
 
-## Docs liên quan
+## Related Docs
 
-- `docs/ARCHITECTURE.md`: kiến trúc module, clean architecture, MVI.
+- `docs/ARCHITECTURE.md`: module architecture, Clean Architecture, MVI.
 - `docs/CODING_CONVENTIONS.md`: Kotlin/Gradle/Compose/testing conventions.
-- `docs/FEATURE_TEMPLATE.md`: checklist và skeleton khi thêm feature/screen.
-- `docs/UI_GUIDELINES.md`: guideline Compose/design system.
-- `docs/INTERVIEW_NOTES.md`: ghi chú giải thích project trong phỏng vấn.
-- `docs/ARCHITECTURE_DEBT.md`: debt kiến trúc đang được theo dõi.
+- `docs/FEATURE_TEMPLATE.md`: checklist and skeleton for adding features/screens.
+- `docs/UI_GUIDELINES.md`: Compose/design system guidelines.
+- `docs/INTERVIEW_NOTES.md`: Vietnamese interview notes for explaining the project.
+- `docs/ARCHITECTURE_DEBT.md`: tracked architecture debt.

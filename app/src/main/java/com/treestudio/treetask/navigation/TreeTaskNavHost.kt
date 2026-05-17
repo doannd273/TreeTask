@@ -6,9 +6,12 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.navOptions
 import com.doannd3.treetask.feature.auth.navigation.AuthGraphDestination
 import com.doannd3.treetask.feature.auth.navigation.authGraph
+import com.doannd3.treetask.feature.auth.navigation.navigateToAuthGraph
 import com.doannd3.treetask.feature.auth.navigation.navigateToForgotPassword
+import com.doannd3.treetask.feature.auth.navigation.navigateToLogin
 import com.doannd3.treetask.feature.auth.navigation.navigateToRegister
 import com.doannd3.treetask.feature.chat.navigation.chatGraph
+import com.doannd3.treetask.feature.profile.navigation.ProfileGraphDestination
 import com.doannd3.treetask.feature.profile.navigation.profileGraph
 import com.doannd3.treetask.feature.stats.navigation.statsGraph
 import com.doannd3.treetask.feature.tasks.navigation.navigateToAddTask
@@ -70,6 +73,17 @@ fun TreeTaskNavHost(
 
         statsGraph()
 
-        profileGraph()
+        profileGraph(
+            onNavigateToLogin = {
+                navController.navigateToAuthGraph(
+                    navOptions = navOptions {
+                        popUpTo(navController.graph.id) {
+                            inclusive = true
+                        }
+                        launchSingleTop = true
+                    }
+                )
+            }
+        )
     }
 }

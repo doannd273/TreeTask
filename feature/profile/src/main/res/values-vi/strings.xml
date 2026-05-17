@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="profile_cd_user_avatar">Ảnh đại diện</string>
+    <string name="profile_action_logout">Đăng xuất</string>
 </resources>

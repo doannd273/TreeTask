@@ -1,83 +1,51 @@
 package com.doannd3.treetask.feature.profile.ui.profile
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonColors
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import coil.compose.AsyncImage
+import androidx.compose.ui.unit.sp
+import com.doannd3.treetask.core.designsystem.theme.BackgroundPrimary
+import com.doannd3.treetask.core.designsystem.theme.Purple40
+import com.doannd3.treetask.core.designsystem.theme.TextPrimary
+import com.doannd3.treetask.core.designsystem.theme.TextSecondary
 import com.doannd3.treetask.feature.profile.R
 
-
 @Composable
-fun AvatarPicker(
-    avatarUrl: String?,
-    modifier: Modifier = Modifier,
-    size: Dp = 96.dp,
-    onClickUpload: () -> Unit,
+fun LogoutButton(
+    isEnable: Boolean,
+    onSubmitLogout: () -> Unit,
 ) {
-    Box(
-        modifier = modifier
-            .size(size)
-            .clip(CircleShape)
-            .clickable(onClick = onClickUpload)
-            .background(MaterialTheme.colorScheme.surfaceVariant),
-        contentAlignment = Alignment.Center,
+    Button(
+        modifier =
+            Modifier.fillMaxWidth()
+                .height(50.dp),
+        colors = ButtonDefaults.buttonColors(
+                containerColor = BackgroundPrimary,
+            ),
+        enabled = isEnable,
+        onClick = onSubmitLogout,
     ) {
-        if (!avatarUrl.isNullOrBlank()) {
-            AsyncImage(
-                model = avatarUrl,
-                contentDescription = stringResource(R.string.profile_cd_user_avatar),
-                contentScale = ContentScale.Crop,
-                modifier = Modifier.fillMaxSize(),
-            )
-        } else {
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center,
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Add,
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.primary,
-                )
-                Spacer(modifier = Modifier.height(4.dp))
-                Text(
-                    text = stringResource(R.string.profile_cd_user_avatar),
-                    style = MaterialTheme.typography.labelSmall,
-                    color = MaterialTheme.colorScheme.primary,
-                    textAlign = TextAlign.Center,
-                )
-            }
-        }
+        Text(
+            text = stringResource(R.string.profile_action_logout),
+            color = TextSecondary,
+            fontSize = 16.sp,
+        )
     }
 }
 
-@Preview(showBackground = true)
+@Preview
 @Composable
-private fun UserAvatarPreview() {
-    AvatarPicker(
-        avatarUrl = "",
-        onClickUpload = {}
+fun LogoutButtonPreview() {
+    LogoutButton(
+        isEnable = true,
+        {},
     )
 }

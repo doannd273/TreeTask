@@ -65,15 +65,6 @@ This file tracks architecture issues and tech debt found during module-by-module
 - **Priority**: Medium
 - **Status**: Candidate cleanup after module audit
 
-## `feature:tasks` Reads User Storage Directly
-
-- **Location**: `feature/tasks/src/main/java/com/doannd3/treetask/feature/tasks/ui/home/TasksViewModel.kt`
-- **Issue**: `TasksViewModel` injects `UserStorage` from `core:datastore` to read the current user profile.
-- **Impact**: The feature UI layer knows local storage implementation details, making it harder to test and harder to change the storage/session strategy later.
-- **Target solution**: Introduce a domain-facing use case or repository method such as `ObserveCurrentUserUseCase`/`GetCurrentUserIdUseCase`, implemented in `core:data`, then remove `feature:tasks -> core:datastore`.
-- **Priority**: Medium
-- **Status**: Deferred until task/domain cleanup
-
 ## `core:network` Depends Directly on Datastore
 
 - **Location**: `core/network/src/main/java/com/doannd3/treetask/core/network`

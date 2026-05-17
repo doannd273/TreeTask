@@ -7,3 +7,7 @@ data class User(
     val avatar: String?,
     val phone: String?,
 )
+
+data class ChangePassword(
+    val message: String
+)
