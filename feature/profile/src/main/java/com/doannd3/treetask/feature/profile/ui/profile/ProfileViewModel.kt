@@ -23,6 +23,6 @@ class ProfileViewModel @Inject constructor() :
     override val effect: SharedFlow<ProfileEffect> = _effect.asSharedFlow()
 
     override fun onEvent(event: ProfileEvent) {
-        // TODO
+
     }
 }

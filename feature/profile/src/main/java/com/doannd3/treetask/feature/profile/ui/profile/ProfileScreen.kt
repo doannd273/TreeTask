@@ -1,9 +1,15 @@
 package com.doannd3.treetask.feature.profile.ui.profile
 
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeDrawing
+import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
@@ -19,6 +25,12 @@ fun ProfileRoute(viewModel: ProfileViewModel = hiltViewModel()) {
     val globalAppState = LocalGlobalAppState.current
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
+
+    ProfileScreen(
+        state = state,
+        event = viewModel::onEvent,
+        {}
+    )
 
     LaunchedEffect(viewModel.effect, lifecycleOwner) {
         lifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -42,4 +54,37 @@ fun ProfileRoute(viewModel: ProfileViewModel = hiltViewModel()) {
             globalAppState.hideLoading()
         }
     }
+}
+
+@Composable
+fun ProfileScreen(
+    state: ProfileState,
+    event: (ProfileEvent) -> Unit,
+    onUploadAvatarUser: () -> Unit,
+) {
+    Scaffold(
+        contentWindowInsets = WindowInsets.safeDrawing,
+    ) { paddingValues ->
+        ProfileContent(
+            modifier = Modifier.padding(paddingValues = paddingValues),
+            state = state,
+            event = event,
+            onUploadAvatarUser = onUploadAvatarUser,
+        )
+    }
+}
+
+@Composable
+fun ProfileContent(
+    modifier: Modifier = Modifier,
+    state: ProfileState,
+    event: (ProfileEvent) -> Unit,
+    onUploadAvatarUser: () -> Unit,
+) {
+
+}
+
+@Composable
+@Preview(showBackground = true)
+fun ProfileScreenPreview() {
 }
