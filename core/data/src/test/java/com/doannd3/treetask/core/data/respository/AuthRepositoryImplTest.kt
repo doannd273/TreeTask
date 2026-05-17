@@ -84,7 +84,7 @@ class AuthRepositoryImplTest {
             // Dạy con bot API: Hễ có ai gọi login() với email và pass đó, thì trả về fakeResponse
             coEvery {
                 authService.login(any())
-            } returns ApiResult.Success(fakeResponse)
+            } returns ApiResult.Success(data = fakeResponse)
 
             // WHEN: Kịch bản bấm nút Login xảy ra
             val result = authRepository.login(fakeEmail, fakePassword)
@@ -121,7 +121,7 @@ class AuthRepositoryImplTest {
             // Dạy con bot API: Hễ có ai gọi register() với fullName, email và pass đó, thì trả về fakeResponse
             coEvery {
                 authService.register(any())
-            } returns ApiResult.Success(fakeResponse)
+            } returns ApiResult.Success(data = fakeResponse)
 
             // WHEN: Kịch bản bấm nút Register xảy ra
             val result = authRepository.register(fakeFullName, fakeEmail, fakePassword)
@@ -150,7 +150,7 @@ class AuthRepositoryImplTest {
             // Dạy con bot API: Hễ có ai gọi forgotPassword() với email đó, thì trả về Unit
             coEvery {
                 authService.forgotPassword(any())
-            } returns ApiResult.Success(Unit)
+            } returns ApiResult.Success(data = Unit)
 
             // WHEN: Kịch bản bấm nút forgotPassword xảy ra
             val result = authRepository.forgotPassword(fakeEmail)

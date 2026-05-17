@@ -4,7 +4,6 @@ import com.doannd3.treetask.core.common.ApiResult
 import com.doannd3.treetask.core.network.model.request.ChangePasswordRequest
 import com.doannd3.treetask.core.network.model.request.UserRequest
 import com.doannd3.treetask.core.network.model.response.AvatarUploadResponse
-import com.doannd3.treetask.core.network.model.response.ChangePasswordResponse
 import com.doannd3.treetask.core.network.model.response.UserResponse
 import com.doannd3.treetask.core.network.model.response.UsersListResponse
 import okhttp3.MultipartBody
@@ -40,7 +39,6 @@ interface UserService {
 
     @POST("/api/user/changePassword")
     suspend fun changePassword(
-        @Body body: ChangePasswordRequest
-    ): ApiResult<ChangePasswordResponse>
-
+        @Body body: ChangePasswordRequest,
+    ): ApiResult<Unit>
 }

@@ -112,17 +112,17 @@ fun ProfileContent(
 fun ProfileScreenPreview() {
     ProfileScreen(
         state =
-            ProfileState(
-                isLoading = false,
-                user =
-                    User(
-                        id = "user_preview",
-                        email = "doan@example.com",
-                        fullName = "Doan Nguyen",
-                        avatar = null,
-                        phone = "+84 900 000 000",
-                    ),
+        ProfileState(
+            isLoading = false,
+            user =
+            User(
+                id = "user_preview",
+                email = "doan@example.com",
+                fullName = "Doan Nguyen",
+                avatar = null,
+                phone = "+84 900 000 000",
             ),
+        ),
         onEvent = {},
         onUploadAvatarUser = {},
     )

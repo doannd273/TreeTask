@@ -15,7 +15,7 @@ constructor(
         fullName: String,
         email: String,
         password: String,
-    ): ApiResult<Unit> {
+    ): ApiResult<String> {
         val fullNameTrimmed = fullName.trim()
         if (fullNameTrimmed.isBlank()) {
             return ApiResult.Error(

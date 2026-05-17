@@ -59,8 +59,12 @@ fun RegisterRoute(
         lifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
             viewModel.effect.collect { effect ->
                 when (effect) {
-                    is RegisterEffect.NavigateToHome -> {
-                        onNavigateToHome()
+                    is RegisterEffect.ShowSuccessMessage -> {
+                        val successStr = effect.message.asString(context)
+                        globalAppState.showSuccess(
+                            message = successStr,
+                            onDismiss = onNavigateToHome,
+                        )
                     }
 
                     is RegisterEffect.ShowErrorMessage -> {
@@ -97,7 +101,8 @@ fun RegisterScreen(
     onRegisterBack: () -> Unit,
 ) {
     Scaffold(
-        contentWindowInsets = WindowInsets.safeDrawing.only(
+        contentWindowInsets =
+        WindowInsets.safeDrawing.only(
             WindowInsetsSides.Horizontal + WindowInsetsSides.Bottom,
         ),
         topBar = {
@@ -151,7 +156,8 @@ fun RegisterContent(
             Spacer(modifier = Modifier.height(16.dp))
 
             EmailInput(
-                modifier = Modifier
+                modifier =
+                Modifier
                     .fillMaxWidth()
                     .focusRequester(emailFocusRequester),
                 email = state.email,
@@ -165,7 +171,8 @@ fun RegisterContent(
             Spacer(modifier = Modifier.height(8.dp))
 
             PasswordInput(
-                modifier = Modifier
+                modifier =
+                Modifier
                     .fillMaxWidth()
                     .focusRequester(passwordFocusRequester),
                 password = state.password,

@@ -8,10 +8,8 @@ import com.doannd3.treetask.feature.auth.navigation.AuthGraphDestination
 import com.doannd3.treetask.feature.auth.navigation.authGraph
 import com.doannd3.treetask.feature.auth.navigation.navigateToAuthGraph
 import com.doannd3.treetask.feature.auth.navigation.navigateToForgotPassword
-import com.doannd3.treetask.feature.auth.navigation.navigateToLogin
 import com.doannd3.treetask.feature.auth.navigation.navigateToRegister
 import com.doannd3.treetask.feature.chat.navigation.chatGraph
-import com.doannd3.treetask.feature.profile.navigation.ProfileGraphDestination
 import com.doannd3.treetask.feature.profile.navigation.profileGraph
 import com.doannd3.treetask.feature.stats.navigation.statsGraph
 import com.doannd3.treetask.feature.tasks.navigation.navigateToAddTask
@@ -81,9 +79,9 @@ fun TreeTaskNavHost(
                             inclusive = true
                         }
                         launchSingleTop = true
-                    }
+                    },
                 )
-            }
+            },
         )
     }
 }

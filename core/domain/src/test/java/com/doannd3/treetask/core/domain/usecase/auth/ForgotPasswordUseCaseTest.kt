@@ -40,7 +40,7 @@ class ForgotPasswordUseCaseTest {
         runTest {
             // GIVEN
             val email = "test@treetask.com"
-            coEvery { authRepository.forgotPassword(email) } returns ApiResult.Success(Unit)
+            coEvery { authRepository.forgotPassword(email) } returns ApiResult.Success(data = Unit)
 
             // WHEN
             val result = forgotPasswordUseCase(email = email)

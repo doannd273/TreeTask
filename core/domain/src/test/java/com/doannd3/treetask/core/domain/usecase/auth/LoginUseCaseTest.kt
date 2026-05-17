@@ -53,7 +53,7 @@ class LoginUseCaseTest {
         // GIVEN
         val email = "test@treetask.com"
         val password = "password123"
-        coEvery { authRepository.login(email, password) } returns ApiResult.Success(Unit)
+        coEvery { authRepository.login(email, password) } returns ApiResult.Success(data = Unit)
 
         // WHEN
         val result = loginUseCase(email = email, password = password)
@@ -71,7 +71,7 @@ class LoginUseCaseTest {
         val trimmedEmail = "test@treetask.com"
         val trimmedPassword = "password123"
 
-        coEvery { authRepository.login(trimmedEmail, trimmedPassword) } returns ApiResult.Success(Unit)
+        coEvery { authRepository.login(trimmedEmail, trimmedPassword) } returns ApiResult.Success(data = Unit)
 
         // WHEN
         loginUseCase(email = email, password = password)

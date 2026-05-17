@@ -8,4 +8,5 @@
     <string name="common_error_network_timeout">Server connection timed out</string>
     <string name="common_error_unknown">An unknown error occurred</string>
     <string name="common_error_network_connection">Network connection error</string>
+    <string name="common_missing_response_data">Missing response data</string>
 </resources>

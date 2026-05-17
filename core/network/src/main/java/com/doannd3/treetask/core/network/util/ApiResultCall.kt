@@ -26,13 +26,15 @@ class ApiResultCall<T>(
                         if (response.isSuccessful) {
                             val body = response.body()
                             if (body != null && body.success == true) {
-                                @Suppress("UNCHECKED_CAST")
-                                ApiResult.Success((body.data ?: Unit) as T)
+                                ApiResult.Success(
+                                    message = body.message?.let { UiText.DynamicString(it) },
+                                    data = body.data,
+                                )
                             } else {
                                 ApiResult.Error(
                                     message = body?.message?.let { UiText.DynamicString(it) },
                                     statusCode = response.code(),
-                                    errorCode = body?.code,
+                                    backendErrorCode = body?.code,
                                     exception = null,
                                 )
                             }
@@ -55,7 +57,7 @@ class ApiResultCall<T>(
                             ApiResult.Error(
                                 message = errorBody?.message?.let { UiText.DynamicString(it) },
                                 statusCode = response.code(),
-                                errorCode = errorBody?.code,
+                                backendErrorCode = errorBody?.code,
                                 exception = null,
                             )
                         }

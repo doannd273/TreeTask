@@ -1,6 +1,8 @@
 package com.doannd3.treetask.core.data.respository
 
 import com.doannd3.treetask.core.common.ApiResult
+import com.doannd3.treetask.core.common.error.AppErrorCode
+import com.doannd3.treetask.core.common.error.MissingResponseDataException
 import com.doannd3.treetask.core.data.model.toUser
 import com.doannd3.treetask.core.datastore.token.TokenStorage
 import com.doannd3.treetask.core.datastore.user.UserStorage
@@ -30,16 +32,24 @@ constructor(
         val result = authService.login(LoginRequest(email = email, password = password))
         return when (result) {
             is ApiResult.Success -> {
+                val data = result.data
+                if (data == null) {
+                    return ApiResult.Error(
+                        appErrorCode = AppErrorCode.MISSING_RESPONSE_DATA,
+                        exception = MissingResponseDataException(),
+                    )
+                }
+
                 // save token
                 tokenStorage.saveToken(
-                    accessToken = result.data.accessToken,
-                    refreshToken = result.data.refreshToken,
+                    accessToken = data.accessToken,
+                    refreshToken = data.refreshToken,
                 )
                 // save profile user
-                val user = result.data.user.toUser()
+                val user = data.user.toUser()
                 userStorage.saveUserProfile(user)
 
-                ApiResult.Success(Unit)
+                ApiResult.Success(data = Unit)
             }
 
             is ApiResult.Error -> {
@@ -52,7 +62,7 @@ constructor(
         fullName: String,
         email: String,
         password: String,
-    ): ApiResult<Unit> {
+    ): ApiResult<String> {
         val result =
             authService.register(
                 RegisterRequest(
@@ -63,16 +73,24 @@ constructor(
             )
         return when (result) {
             is ApiResult.Success -> {
+                val data = result.data
+                if (data == null) {
+                    return ApiResult.Error(
+                        appErrorCode = AppErrorCode.MISSING_RESPONSE_DATA,
+                        exception = MissingResponseDataException(),
+                    )
+                }
+
                 // save token
                 tokenStorage.saveToken(
-                    result.data.accessToken,
-                    result.data.refreshToken,
+                    data.accessToken,
+                    data.refreshToken,
                 )
 
                 // save profile user
-                val user = result.data.user.toUser()
+                val user = data.user.toUser()
                 userStorage.saveUserProfile(user)
-                ApiResult.Success(Unit)
+                ApiResult.Success(message = result.message)
             }
 
             is ApiResult.Error -> {
@@ -81,11 +99,11 @@ constructor(
         }
     }
 
-    override suspend fun forgotPassword(email: String): ApiResult<Unit> {
+    override suspend fun forgotPassword(email: String): ApiResult<String> {
         val result = authService.forgotPassword(ForgotPasswordRequest(email = email))
         return when (result) {
             is ApiResult.Success -> {
-                ApiResult.Success(Unit)
+                ApiResult.Success(message = result.message)
             }
 
             is ApiResult.Error -> {
