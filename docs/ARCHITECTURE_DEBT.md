@@ -64,18 +64,19 @@ This file tracks architecture issues and tech debt found during module-by-module
 - **Location**: `feature/auth/src/main/java/com/doannd3/treetask/feature/auth/ui`
 - **Issue**: The new `ApiResult` contract has only narrow common-layer coverage for display-message priority. Network parsing, repository missing-data handling, and auth ViewModel state/effect regressions are still not fully covered by focused unit tests.
 - **Impact**: Regressions in backend `code` parsing, backend `message` priority, nullable success `data`, `MISSING_RESPONSE_DATA`, or forgot-password step transitions could slip through compile/build checks.
-- **Target solution**: After core/feature build verification is stable, add focused tests for `ApiResultCall`, repository missing required response data, and auth ViewModel forgot/reset-password transitions before broader refactors.
+- **Target solution**: Add focused tests for `ApiResultCall`, repository missing required response data, and auth ViewModel forgot/reset-password transitions before broader refactors.
 - **Priority**: Medium
-- **Status**: Deferred until core and feature build verification is complete
+- **Status**: Deferred for a dedicated testing pass
 
-## `core:domain` Depends on Datastore Without Source Usage
+## `core:domain` Depended on Datastore Without Source Usage
 
 - **Location**: `core/domain/build.gradle.kts`
-- **Issue**: `core:domain` declares `implementation(projects.core.datastore)` but domain source does not import datastore contracts or implementation types.
+- **Issue**: `core:domain` previously declared `implementation(projects.core.datastore)` but domain source did not import datastore contracts or implementation types.
 - **Impact**: Domain layer is coupled to local storage infrastructure in Gradle even though the code does not need it, weakening Clean Architecture boundaries.
 - **Target solution**: Remove the datastore dependency from `core:domain` if compilation/tests pass. If domain needs user/session state later, expose that through domain repository/use-case contracts rather than depending on datastore directly.
+- **Resolution**: Removed the unused `core:domain -> core:datastore` Gradle dependency. Domain now depends only on model/common/paging plus test dependencies.
 - **Priority**: Medium
-- **Status**: Candidate cleanup after module audit
+- **Status**: Resolved
 
 ## `core:network` Depends Directly on Datastore
 
@@ -96,24 +97,26 @@ This file tracks architecture issues and tech debt found during module-by-module
 - **Priority**: Medium
 - **Status**: Deferred until network performance/auth cleanup
 
-## `core:network` Accept-Language Is Not App-Language Backed
+## `core:network` Accept-Language Was Not App-Language Backed
 
 - **Location**: `core/network/src/main/java/com/doannd3/treetask/core/network/interceptor/CommonHeaderInterceptor.kt`
-- **Issue**: `CommonHeaderInterceptor` currently sets `Accept-Language` from `Locale.getDefault().language`, while the API contract should default to `en` and eventually use an app-controlled language source.
+- **Issue**: `CommonHeaderInterceptor` previously set `Accept-Language` from `Locale.getDefault().language`, while the API contract should default to `en` and eventually use an app-controlled language source.
 - **Impact**: Backend display messages can vary with the device locale instead of the app's selected/default language, making error/success copy harder to reason about, test, and keep consistent across environments.
 - **Target solution**: Introduce a narrow language provider for network headers with `en` as the default. Later, back that provider with DataStore or a cached app-language source without coupling the interceptor directly to UI settings.
+- **Resolution**: `AcceptLanguageProvider` and `DefaultAcceptLanguageProvider` now provide a stable default `en`, and `CommonHeaderInterceptor` reads `Accept-Language` from the provider instead of `Locale.getDefault()`.
 - **Priority**: Medium
-- **Status**: Deferred until i18n/network header cleanup
+- **Status**: Resolved
 
-## `core:data` Relies on a Transitive AndroidX Core Dependency
+## `core:data` Relied on a Transitive AndroidX Core Dependency
 
 - **Location**: `core/data/build.gradle.kts`
 - **Location**: `core/data/src/main/java/com/doannd3/treetask/core/data/util/ConnectivityManagerNetworkMonitor.kt`
-- **Issue**: `ConnectivityManagerNetworkMonitor` imports `androidx.core.content.getSystemService`, but `core:data` does not declare `androidx.core:core-ktx` directly.
+- **Issue**: `ConnectivityManagerNetworkMonitor` previously imported `androidx.core.content.getSystemService`, but `core:data` did not declare `androidx.core:core-ktx` directly.
 - **Impact**: Compilation may currently pass because another dependency leaks AndroidX Core transitively, but future dependency cleanup/convention changes can break `core:data` unexpectedly.
 - **Target solution**: Either add a direct `implementation(libs.androidx.core.ktx)` dependency to `core:data`, or replace the extension usage with the framework API so the module no longer needs AndroidX Core KTX.
+- **Resolution**: Replaced the AndroidX Core KTX `getSystemService` extension with the framework `Context.getSystemService(Context.CONNECTIVITY_SERVICE)` API, so `core:data` no longer relies on a transitive AndroidX Core KTX dependency for `ConnectivityManagerNetworkMonitor`.
 - **Priority**: Low
-- **Status**: Candidate cleanup after module audit
+- **Status**: Resolved
 
 ## `core:data` Task Paging Cache Is Not Query-Scoped
 
@@ -125,16 +128,17 @@ This file tracks architecture issues and tech debt found during module-by-module
 - **Priority**: Medium
 - **Status**: Deferred until task module/data paging cleanup
 
-## `core:data` User Mapping Hides Missing Required User Data
+## `core:data` User Mapping Hid Missing Required User Data
 
 - **Location**: `core/data/src/main/java/com/doannd3/treetask/core/data/model/UserMapper.kt`
 - **Location**: `core/data/src/main/java/com/doannd3/treetask/core/data/respository/AuthRepositoryImpl.kt`
 - **Location**: `core/data/src/main/java/com/doannd3/treetask/core/data/respository/UserRepositoryImpl.kt`
-- **Issue**: `UserResponse?.toUser()` accepts a nullable response and maps missing user fields to empty strings, so auth/profile flows can persist an invalid domain user instead of surfacing a contract error.
+- **Issue**: `UserResponse?.toUser()` previously accepted a nullable response and mapped missing user fields to empty strings, so auth/profile flows could persist an invalid domain user instead of surfacing a contract error.
 - **Impact**: Missing or malformed backend user payloads become silent data corruption, which makes downstream profile/session bugs harder to diagnose.
-- **Target solution**: Make `UserResponse.toUser()` non-null and validate required nested user payloads explicitly in repositories. When required user data is absent, return `ApiResult.Error(appErrorCode = AppErrorCode.MISSING_RESPONSE_DATA, exception = MissingResponseDataException())` instead of creating an empty domain user.
+- **Target solution**: Replace nullable user mapping with explicit required-field validation in repositories. When required user data is absent, return `ApiResult.Error(appErrorCode = AppErrorCode.MISSING_RESPONSE_DATA, exception = MissingResponseDataException())` instead of creating an empty domain user.
+- **Resolution**: `UserResponse.toUserOrNull()` now requires a non-null response and returns `null` when required `id`, `fullName`, or `email` fields are blank or missing. Auth/profile repositories convert invalid required user payloads into `MISSING_RESPONSE_DATA` errors before saving token/profile state.
 - **Priority**: Medium
-- **Status**: Deferred until user payload validation cleanup
+- **Status**: Resolved
 
 ## `core:data` Exposes the `NetworkMonitor` Contract to the App Layer
 

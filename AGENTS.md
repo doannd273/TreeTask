@@ -190,7 +190,7 @@ Completed:
 - A reusable `OtpInput` composable was added to `core:designsystem` for 6-digit OTP entry. It is controlled by the caller and emits `onOtpComplete` when all digits are filled.
 - Forgot-password/register/login components were reviewed and preview coverage was added where useful.
 - Detekt config now ignores `@Preview` functions for `UnusedPrivateMember` and `TooManyFunctions`, because Compose previews are IDE/tooling entry points.
-- Architecture debt was documented for:
+- Architecture debt was documented and then resolved for:
   - `Accept-Language` being device-locale backed instead of app-language backed.
   - nullable user response mapping hiding missing required user data.
 - A focused `core:common` unit test now covers `ApiResult.Error.toDisplayMessage(...)` priority:
@@ -198,6 +198,8 @@ Completed:
   - app-defined `appErrorCode` mapping;
   - caller-provided fallback.
 - Additional `ApiResult` regression coverage for network parsing, repository missing-data handling, and auth ViewModel transitions is tracked in `docs/ARCHITECTURE_DEBT.md` and intentionally deferred for a dedicated testing pass.
+- `Accept-Language` now defaults to `en` through a network header provider instead of `Locale.getDefault()`.
+- User response mapping now validates required user payload fields and returns `MISSING_RESPONSE_DATA` before saving token/profile state when required data is absent.
 
 Current status by area:
 
@@ -207,13 +209,16 @@ Current status by area:
   - Depends on `core:testing` for host unit test assertions.
 - `core:network`
   - Supports the auth API contract needed by the reset-password flow.
-  - `Accept-Language` work is still pending and tracked in `docs/ARCHITECTURE_DEBT.md`.
+  - `Accept-Language` is provided through `AcceptLanguageProvider`, with `DefaultAcceptLanguageProvider` returning `en`.
+  - Future app-language/DataStore-backed language support can replace the provider implementation without changing `CommonHeaderInterceptor`.
 - `core:data`
   - Repositories use `appErrorCode = AppErrorCode.MISSING_RESPONSE_DATA` plus `MissingResponseDataException()` for missing required response data.
-  - User-response validation cleanup is still pending and tracked in `docs/ARCHITECTURE_DEBT.md`.
+  - `UserResponse.toUserOrNull()` validates required `id`, `fullName`, and `email` fields before auth/profile repositories save user state.
+  - `ConnectivityManagerNetworkMonitor` now uses framework `Context.getSystemService(Context.CONNECTIVITY_SERVICE)` instead of AndroidX Core KTX's `getSystemService` extension.
 - `core:domain`
   - `ResetPasswordUseCase` validates email, OTP, and password, then delegates to the auth repository.
   - Unit tests were added/updated for auth use cases.
+  - No longer depends on `core:datastore`; domain remains limited to model/common/paging plus test dependencies.
 - `core:designsystem`
   - `OtpInput` is implemented with previews.
   - `:core:designsystem:compileDebugKotlin` passed.
@@ -225,7 +230,8 @@ Current status by area:
 - `config/detekt`
   - Preview-related false positives are ignored for private preview functions and preview count.
 - `docs/ARCHITECTURE_DEBT.md`
-  - Accept-Language, user-response mapping, and deferred `ApiResult` regression coverage debt items are recorded for later work.
+  - Accept-Language, user-response mapping, `core:domain` datastore dependency, and `core:data` transitive AndroidX Core dependency debt items are marked resolved.
+  - Deferred `ApiResult` regression coverage remains tracked for a dedicated testing pass.
 
 Verification status:
 
@@ -243,6 +249,12 @@ Verification status:
 - Passed during core/feature build verification:
   - all runtime `core:*` compile tasks, including `:core:network:compileDevDebugKotlin`;
   - all `feature:*` compile tasks from `:feature:auth` through `:feature:tasks`.
+- Passed after the Accept-Language and UserResponse validation cleanup:
+  - `./gradlew :core:network:compileDevDebugKotlin :core:data:compileDebugKotlin :feature:auth:compileDebugKotlin :core:network:spotlessCheck :core:data:spotlessCheck`
+- Passed after removing the unused `core:domain -> core:datastore` dependency:
+  - `./gradlew :core:domain:compileDebugKotlin :core:domain:testDebugUnitTest :app:compileDevDebugKotlin`
+- Passed after removing the transitive AndroidX Core KTX dependency risk from `core:data`:
+  - `./gradlew :core:data:compileDebugKotlin :core:data:spotlessCheck :app:compileDevDebugKotlin`
 - Developer reported the planned app verification steps completed after the planning pass:
   - `:app:compileDevDebugKotlin`
   - `assembleDebug`
@@ -258,14 +270,15 @@ Next steps:
   - backend `message` display priority
   - nullable success `data`
   - `MISSING_RESPONSE_DATA` app error path
+  - invalid login/register/getProfile user payloads do not save token/profile state
   - email submit moves to `ResetInput`
   - resend OTP calls forgot-password flow, not reset-password flow
   - reset success emits `ResetPasswordSuccess` even when backend success `message` is absent
   - `BackToEmailInput` clears OTP, new password, and password visibility
 - Before merge, rerun the exact app/static checks if the latest terminal output is not available in the handoff:
   `./gradlew :app:compileDevDebugKotlin assembleDebug detekt spotlessCheck`
-- Add an `Accept-Language` interceptor with default `en`, designed so a later language setting can be read from DataStore or a cached provider.
-- Consider making `UserResponse.toUser()` non-null and validating nested `user` payloads explicitly in repositories, instead of mapping null users to empty domain users.
+- Next cleanup candidates:
+  - move `NetworkMonitor` contract out of `core:data` if continuing core boundary cleanup.
 
 Important decisions:
 
@@ -279,6 +292,10 @@ Important decisions:
 - Forgot-password remains one route with internal `step` state instead of separate navigation destinations, because email/reset input are one workflow and should share local state without route arguments.
 - `ResetInput` back returns to `EmailInput` because it is a workflow step, not a separate app destination.
 - `OtpInput` lives in `core:designsystem` as a controlled reusable UI component; feature modules own validation, submission, resend, and navigation behavior.
+- `Accept-Language` belongs behind a synchronous provider because OkHttp interceptors are synchronous; future DataStore language support should update a cached provider value rather than blocking in the interceptor.
+- Invalid required user response data is a contract error and must be surfaced as `appErrorCode = MISSING_RESPONSE_DATA`; repositories should validate before saving token/profile state.
+- Domain must not depend on storage implementations such as DataStore. If domain needs session/user state later, expose it through domain repository/use-case contracts.
+- Prefer framework APIs over adding dependencies when the framework API is sufficient; for example, `ConnectivityManagerNetworkMonitor` uses `Context.getSystemService(Context.CONNECTIVITY_SERVICE)` directly.
 - `@Preview` functions may stay private because they are not runtime entry points. Detekt ignores them to avoid noisy false positives.
 
 ## Related Docs

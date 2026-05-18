@@ -6,7 +6,6 @@ import android.net.ConnectivityManager.NetworkCallback
 import android.net.Network
 import android.net.NetworkCapabilities
 import android.net.NetworkRequest
-import androidx.core.content.getSystemService
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
@@ -21,7 +20,9 @@ constructor(
 ) : NetworkMonitor {
     override val isOnline: Flow<Boolean> =
         callbackFlow {
-            val connectivityManager = context.getSystemService<ConnectivityManager>()
+            val connectivityManager =
+                context.getSystemService(Context.CONNECTIVITY_SERVICE) as? ConnectivityManager
+
             if (connectivityManager == null) {
                 channel.trySend(false)
                 channel.close()
