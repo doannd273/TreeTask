@@ -32,7 +32,6 @@ fun ProfileRoute(
     ProfileScreen(
         state = state,
         onEvent = viewModel::onEvent,
-        onUploadAvatarUser = {},
     )
 
     LaunchedEffect(viewModel.effect, lifecycleOwner) {
@@ -117,6 +116,5 @@ fun ProfileScreenPreview() {
             ),
         ),
         onEvent = {},
-        onUploadAvatarUser = {},
     )
 }
