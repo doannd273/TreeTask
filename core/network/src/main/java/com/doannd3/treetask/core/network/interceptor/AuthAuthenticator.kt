@@ -65,6 +65,12 @@ constructor(
                             return null
                         }
                     }
+                if (tokenData == null) {
+                    runBlocking { tokenStorage.clearToken() }
+                    Timber.tag(AppTag.NETWORK).w("Refresh token response missing token data")
+                    return null
+                }
+
                 val newAccessToken = tokenData.accessToken
                 val newRefreshToken = tokenData.refreshToken
 

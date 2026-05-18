@@ -4,6 +4,7 @@ import com.doannd3.treetask.core.common.ApiResult
 import com.doannd3.treetask.core.common.BaseViewModel
 import com.doannd3.treetask.core.common.MviViewModel
 import com.doannd3.treetask.core.common.UiText
+import com.doannd3.treetask.core.common.toDisplayMessage
 import com.doannd3.treetask.core.domain.usecase.auth.LoginUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -14,6 +15,7 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import javax.inject.Inject
+import com.doannd3.treetask.core.common.R as CommonR
 
 @HiltViewModel
 class LoginViewModel
@@ -68,7 +70,10 @@ constructor(
                 }
 
                 is ApiResult.Error -> {
-                    val message = result.message ?: UiText.DynamicString("Lỗi không xác định")
+                    val message =
+                        result.toDisplayMessage(
+                            UiText.StringResource(CommonR.string.common_error_unknown),
+                        )
                     _effect.emit(LoginEffect.ShowErrorMessage(message))
                 }
             }

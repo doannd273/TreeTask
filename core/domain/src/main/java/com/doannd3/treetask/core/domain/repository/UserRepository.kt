@@ -7,5 +7,10 @@ import kotlinx.coroutines.flow.Flow
 interface UserRepository {
     suspend fun getProfile(): ApiResult<User>
 
+    suspend fun changePassword(
+        currentPassword: String,
+        newPassword: String,
+    ): ApiResult<String>
+
     fun getCachedProfile(): Flow<User?>
 }

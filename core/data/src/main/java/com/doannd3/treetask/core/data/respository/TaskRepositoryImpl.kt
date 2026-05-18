@@ -7,6 +7,8 @@ import androidx.paging.PagingData
 import androidx.paging.map
 import androidx.room.withTransaction
 import com.doannd3.treetask.core.common.ApiResult
+import com.doannd3.treetask.core.common.error.AppErrorCode
+import com.doannd3.treetask.core.common.error.MissingResponseDataException
 import com.doannd3.treetask.core.data.model.toTaskDomain
 import com.doannd3.treetask.core.data.model.toTaskEntity
 import com.doannd3.treetask.core.database.TreeTaskDatabase
@@ -72,7 +74,11 @@ constructor(
 
             when (apiResponse) {
                 is ApiResult.Success -> {
-                    val tasks = apiResponse.data.tasks ?: emptyList()
+                    val data = apiResponse.data ?: return ApiResult.Error(
+                        appErrorCode = AppErrorCode.MISSING_RESPONSE_DATA,
+                        exception = MissingResponseDataException(),
+                    )
+                    val tasks = data.tasks ?: emptyList()
 
                     // Cập nhật lại db như logic REFRESH của RemoteMediator trong một transaction
                     database.withTransaction {
@@ -92,7 +98,7 @@ constructor(
                         taskDao.insertTasks(tasks.map { it.toTaskEntity() })
                     }
 
-                    ApiResult.Success(Unit)
+                    ApiResult.Success(data = Unit)
                 }
 
                 is ApiResult.Error -> {

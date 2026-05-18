@@ -26,23 +26,27 @@ class ApiResultCall<T>(
                         if (response.isSuccessful) {
                             val body = response.body()
                             if (body != null && body.success == true) {
-                                @Suppress("UNCHECKED_CAST")
-                                ApiResult.Success((body.data ?: Unit) as T)
+                                ApiResult.Success(
+                                    message = body.message?.let { UiText.DynamicString(it) },
+                                    data = body.data,
+                                )
                             } else {
                                 ApiResult.Error(
                                     message = body?.message?.let { UiText.DynamicString(it) },
+                                    statusCode = response.code(),
+                                    backendErrorCode = body?.code,
                                     exception = null,
                                 )
                             }
                         } else {
                             // 4xx / 5xx → parse errorBody lấy message từ BE
-                            val errorMessage =
+                            val errorBody =
                                 try {
                                     val errorJson = response.errorBody()?.string()
                                     json
                                         .decodeFromString<ApiResponse<Unit>>(
                                             errorJson ?: "",
-                                        ).message
+                                        )
                                 } catch (e: SerializationException) {
                                     e.printStackTrace()
                                     null
@@ -51,8 +55,9 @@ class ApiResultCall<T>(
                                     null
                                 }
                             ApiResult.Error(
-                                message = errorMessage?.let { UiText.DynamicString(it) },
-                                errorCode = response.code(),
+                                message = errorBody?.message?.let { UiText.DynamicString(it) },
+                                statusCode = response.code(),
+                                backendErrorCode = errorBody?.code,
                                 exception = null,
                             )
                         }

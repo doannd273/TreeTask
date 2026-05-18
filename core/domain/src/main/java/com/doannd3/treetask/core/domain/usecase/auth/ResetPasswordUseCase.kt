@@ -6,24 +6,14 @@ import com.doannd3.treetask.core.common.UiText
 import com.doannd3.treetask.core.domain.repository.AuthRepository
 import javax.inject.Inject
 
-class RegisterUseCase
-@Inject
-constructor(
+class ResetPasswordUseCase @Inject constructor(
     private val authRepository: AuthRepository,
 ) {
     suspend operator fun invoke(
-        fullName: String,
         email: String,
-        password: String,
+        otp: String,
+        newPassword: String,
     ): ApiResult<String> {
-        val fullNameTrimmed = fullName.trim()
-        if (fullNameTrimmed.isBlank()) {
-            return ApiResult.Error(
-                message = UiText.StringResource(R.string.common_error_fullName_empty),
-                exception = null,
-            )
-        }
-
         val mailTrimmed = email.trim()
         if (mailTrimmed.isBlank()) {
             return ApiResult.Error(
@@ -32,7 +22,15 @@ constructor(
             )
         }
 
-        val passwordTrimmed = password.trim()
+        val otpTrimmed = otp.trim()
+        if (otpTrimmed.isBlank()) {
+            return ApiResult.Error(
+                message = UiText.StringResource(R.string.common_error_otp_empty),
+                exception = null,
+            )
+        }
+
+        val passwordTrimmed = newPassword.trim()
         if (passwordTrimmed.isBlank()) {
             return ApiResult.Error(
                 message = UiText.StringResource(R.string.common_error_password_empty),
@@ -40,6 +38,10 @@ constructor(
             )
         }
 
-        return authRepository.register(fullNameTrimmed, mailTrimmed, passwordTrimmed)
+        return authRepository.resetPassword(
+            email = mailTrimmed,
+            otp = otpTrimmed,
+            newPassword = passwordTrimmed,
+        )
     }
 }

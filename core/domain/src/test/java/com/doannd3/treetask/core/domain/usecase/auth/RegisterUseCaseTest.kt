@@ -72,7 +72,8 @@ class RegisterUseCaseTest {
             val fullName = "Nguyen Van A"
             val email = "test@treetask.com"
             val password = "password123"
-            coEvery { authRepository.register(fullName, email, password) } returns ApiResult.Success(Unit)
+            coEvery { authRepository.register(fullName, email, password) } returns
+                ApiResult.Success<String>(message = UiText.DynamicString("Registered"))
 
             // WHEN
             val result = registerUseCase(fullName = fullName, email = email, password = password)
@@ -93,7 +94,9 @@ class RegisterUseCaseTest {
             val trimmedPassword = "password123"
             val trimmedFullName = "Nguyen Tuan"
 
-            coEvery { authRepository.register(trimmedFullName, trimmedEmail, trimmedPassword) } returns ApiResult.Success(Unit)
+            coEvery {
+                authRepository.register(trimmedFullName, trimmedEmail, trimmedPassword)
+            } returns ApiResult.Success<String>(message = UiText.DynamicString("Registered"))
 
             // WHEN
             registerUseCase(fullName = fullName, email = email, password = password)

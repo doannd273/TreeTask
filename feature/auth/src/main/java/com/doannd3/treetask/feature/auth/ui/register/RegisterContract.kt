@@ -31,9 +31,11 @@ sealed class RegisterEvent {
 }
 
 sealed class RegisterEffect {
-    data class ShowErrorMessage(
+    data class ShowSuccessMessage(
         val message: UiText,
     ) : RegisterEffect()
 
-    data object NavigateToHome : RegisterEffect()
+    data class ShowErrorMessage(
+        val message: UiText,
+    ) : RegisterEffect()
 }
