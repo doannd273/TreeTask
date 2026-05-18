@@ -17,6 +17,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
@@ -24,7 +25,9 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.repeatOnLifecycle
 import com.doannd3.treetask.core.common.asString
+import com.doannd3.treetask.core.designsystem.component.CommonHeader
 import com.doannd3.treetask.core.designsystem.component.LocalGlobalAppState
+import com.doannd3.treetask.feature.auth.R
 
 @Composable
 fun ForgotPasswordRoute(
@@ -64,9 +67,13 @@ fun ForgotPasswordRoute(
                         val successForgotPassword = effect.message.asString(context)
                         globalAppState.showSuccess(
                             message = successForgotPassword,
-                            onDismiss = onNavigateToLogin,
+                            onDismiss = {
+                                viewModel.onEvent(ForgotPasswordEvent.ResetPasswordAcknowledged)
+                            },
                         )
                     }
+
+                    is ForgotPasswordEffect.NavigateToLogin -> onNavigateToLogin()
                 }
             }
         }
@@ -90,7 +97,7 @@ fun ForgotPasswordRoute(
 }
 
 @Composable
-fun ForgotPasswordScreen(
+internal fun ForgotPasswordScreen(
     state: ForgotPasswordState,
     onEvent: (ForgotPasswordEvent) -> Unit,
     onForgotPasswordBack: () -> Unit,
@@ -105,8 +112,9 @@ fun ForgotPasswordScreen(
             WindowInsetsSides.Horizontal + WindowInsetsSides.Bottom,
         ),
         topBar = {
-            ForgotPasswordHeader(
-                onForgotPasswordBack = {
+            CommonHeader(
+                title = stringResource(R.string.auth_forgot_password),
+                onNavigateBack = {
                     if (state.step == ForgotPasswordStep.ResetInput) {
                         onEvent(ForgotPasswordEvent.BackToEmailInput)
                     } else {
@@ -128,7 +136,7 @@ fun ForgotPasswordScreen(
 }
 
 @Composable
-fun ForgotPasswordContent(
+internal fun ForgotPasswordContent(
     modifier: Modifier = Modifier,
     state: ForgotPasswordState,
     onEvent: (ForgotPasswordEvent) -> Unit,

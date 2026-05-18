@@ -28,6 +28,8 @@ sealed class RegisterEvent {
     ) : RegisterEvent()
 
     data object SubmitRegister : RegisterEvent()
+
+    data object SuccessAcknowledged : RegisterEvent()
 }
 
 sealed class RegisterEffect {
@@ -38,4 +40,6 @@ sealed class RegisterEffect {
     data class ShowErrorMessage(
         val message: UiText,
     ) : RegisterEffect()
+
+    data object NavigateToHome : RegisterEffect()
 }

@@ -34,11 +34,12 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.repeatOnLifecycle
 import com.doannd3.treetask.core.common.asString
 import com.doannd3.treetask.core.designsystem.component.CommonButton
+import com.doannd3.treetask.core.designsystem.component.CommonHeader
+import com.doannd3.treetask.core.designsystem.component.EmailInput
 import com.doannd3.treetask.core.designsystem.component.LocalGlobalAppState
+import com.doannd3.treetask.core.designsystem.component.PasswordInput
 import com.doannd3.treetask.core.designsystem.util.rememberDebouncedClick
 import com.doannd3.treetask.feature.auth.R
-import com.doannd3.treetask.feature.auth.ui.login.EmailInput
-import com.doannd3.treetask.feature.auth.ui.login.PasswordInput
 
 @Composable
 fun RegisterRoute(
@@ -66,7 +67,9 @@ fun RegisterRoute(
                         val successStr = effect.message.asString(context)
                         globalAppState.showSuccess(
                             message = successStr,
-                            onDismiss = onNavigateToHome,
+                            onDismiss = {
+                                viewModel.onEvent(RegisterEvent.SuccessAcknowledged)
+                            },
                         )
                     }
 
@@ -74,6 +77,8 @@ fun RegisterRoute(
                         val errorStr = effect.message.asString(context)
                         globalAppState.showError(errorStr)
                     }
+
+                    is RegisterEffect.NavigateToHome -> onNavigateToHome()
                 }
             }
         }
@@ -98,7 +103,7 @@ fun RegisterRoute(
 }
 
 @Composable
-fun RegisterScreen(
+internal fun RegisterScreen(
     state: RegisterState,
     onEvent: (RegisterEvent) -> Unit,
     onRegisterBack: () -> Unit,
@@ -109,7 +114,10 @@ fun RegisterScreen(
             WindowInsetsSides.Horizontal + WindowInsetsSides.Bottom,
         ),
         topBar = {
-            RegisterHeader(onRegisterBack = onRegisterBack)
+            CommonHeader(
+                title = stringResource(R.string.auth_register),
+                onNavigateBack = onRegisterBack,
+            )
         },
     ) { paddingValues ->
         RegisterContent(
@@ -124,7 +132,7 @@ fun RegisterScreen(
 }
 
 @Composable
-fun RegisterContent(
+internal fun RegisterContent(
     modifier: Modifier = Modifier,
     state: RegisterState,
     onEvent: (RegisterEvent) -> Unit,
@@ -163,6 +171,7 @@ fun RegisterContent(
                 Modifier
                     .fillMaxWidth()
                     .focusRequester(emailFocusRequester),
+                label = stringResource(R.string.auth_email_hint),
                 email = state.email,
                 onEmailChange = { onEvent(RegisterEvent.EmailChanged(it)) },
                 imeAction = ImeAction.Next,
@@ -178,6 +187,7 @@ fun RegisterContent(
                 Modifier
                     .fillMaxWidth()
                     .focusRequester(passwordFocusRequester),
+                label = stringResource(R.string.auth_password_hint),
                 password = state.password,
                 passwordVisible = state.passwordVisible,
                 onPasswordChange = { onEvent(RegisterEvent.PasswordChanged(it)) },
@@ -201,7 +211,7 @@ fun RegisterContent(
 
 @Composable
 @Preview(showBackground = true)
-fun RegisterScreenPreview() {
+private fun RegisterScreenPreview() {
     RegisterScreen(
         state =
         RegisterState(

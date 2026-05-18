@@ -1,41 +1,33 @@
 package com.doannd3.treetask.feature.auth.ui.forgotpassword
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.doannd3.treetask.core.designsystem.component.CommonButton
+import com.doannd3.treetask.core.designsystem.component.EmailInput
 import com.doannd3.treetask.core.designsystem.component.OtpInput
+import com.doannd3.treetask.core.designsystem.component.PasswordInput
 import com.doannd3.treetask.core.designsystem.theme.Purple40
 import com.doannd3.treetask.core.designsystem.theme.TreeTaskTheme
-import com.doannd3.treetask.core.designsystem.theme.White
 import com.doannd3.treetask.core.designsystem.util.rememberDebouncedClick
 import com.doannd3.treetask.feature.auth.R
-import com.doannd3.treetask.feature.auth.ui.login.EmailInput
-import com.doannd3.treetask.feature.auth.ui.login.PasswordInput
 
 @Composable
-fun EmailStep(
+internal fun EmailStep(
     modifier: Modifier = Modifier,
     isVisible: Boolean = true,
     state: ForgotPasswordState,
@@ -52,6 +44,7 @@ fun EmailStep(
         ) {
             EmailInput(
                 modifier = Modifier.fillMaxWidth(),
+                label = stringResource(R.string.auth_email_hint),
                 email = state.email,
                 isEnable = state.step == ForgotPasswordStep.EmailInput,
                 onEmailChange = { onEvent(ForgotPasswordEvent.EmailChanged(it)) },
@@ -73,7 +66,7 @@ fun EmailStep(
 }
 
 @Composable
-fun ResetPasswordStep(
+internal fun ResetPasswordStep(
     modifier: Modifier = Modifier,
     isVisible: Boolean = true,
     state: ForgotPasswordState,
@@ -120,6 +113,7 @@ fun ResetPasswordStep(
                 Modifier
                     .fillMaxWidth()
                     .focusRequester(passwordFocusRequester),
+                label = stringResource(R.string.auth_password_hint),
                 password = state.newPassword,
                 passwordVisible = state.passwordVisible,
                 onPasswordChange = { onEvent(ForgotPasswordEvent.NewPasswordChanged(it)) },
@@ -154,36 +148,6 @@ fun ResetPasswordStep(
     }
 }
 
-@Composable
-fun ForgotPasswordHeader(onForgotPasswordBack: () -> Unit) {
-    Row(
-        modifier =
-        Modifier
-            .fillMaxWidth()
-            .height(50.dp)
-            .background(color = White)
-            .padding(horizontal = 8.dp),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        IconButton(onClick = onForgotPasswordBack) {
-            Icon(
-                painter = painterResource(R.drawable.auth_ic_back_left),
-                contentDescription = stringResource(R.string.auth_cd_navigate_back),
-                tint = Purple40,
-            )
-        }
-
-        Text(
-            text = stringResource(R.string.auth_forgot_password),
-            color = Purple40,
-            style =
-            TextStyle(
-                fontSize = 18.sp,
-            ),
-        )
-    }
-}
-
 @Preview(showBackground = true)
 @Composable
 private fun EmailStepPreview() {
@@ -196,16 +160,6 @@ private fun EmailStepPreview() {
                 isLoading = false,
             ),
             onEvent = {},
-        )
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-private fun ForgotPasswordHeaderPreview() {
-    TreeTaskTheme {
-        ForgotPasswordHeader(
-            onForgotPasswordBack = {},
         )
     }
 }
