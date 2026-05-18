@@ -3,13 +3,8 @@ package com.doannd3.treetask.feature.auth.ui.login
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.shape.CornerSize
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
@@ -28,7 +23,7 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
-import androidx.compose.ui.unit.dp
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
 import com.doannd3.treetask.core.designsystem.component.LinkPart
 import com.doannd3.treetask.core.designsystem.component.LinkTag
@@ -36,11 +31,11 @@ import com.doannd3.treetask.core.designsystem.component.LinkText
 import com.doannd3.treetask.core.designsystem.theme.Black
 import com.doannd3.treetask.core.designsystem.theme.Gray
 import com.doannd3.treetask.core.designsystem.theme.Purple40
-import com.doannd3.treetask.core.designsystem.theme.White
+import com.doannd3.treetask.core.designsystem.theme.TreeTaskTheme
 import com.doannd3.treetask.feature.auth.R
 
 @Composable
-internal fun TreeTaskAppName() {
+fun TreeTaskAppName() {
     Text(
         modifier = Modifier.fillMaxWidth(),
         text = stringResource(com.doannd3.treetask.core.common.R.string.common_app_name),
@@ -52,16 +47,20 @@ internal fun TreeTaskAppName() {
 }
 
 @Composable
-internal fun PasswordInput(
-    modifier: Modifier,
+fun PasswordInput(
+    modifier: Modifier = Modifier,
     password: String,
     passwordVisible: Boolean,
     onPasswordChange: (String) -> Unit,
     onPasswordVisibleChange: (Boolean) -> Unit,
+    enabled: Boolean = true,
+    imeAction: ImeAction = ImeAction.Done,
+    onImeNext: () -> Unit = {},
     onImeDone: () -> Unit = {},
 ) {
     OutlinedTextField(
         modifier = modifier,
+        enabled = enabled,
         colors =
         OutlinedTextFieldDefaults.colors(
             focusedTextColor = Black,
@@ -75,15 +74,21 @@ internal fun PasswordInput(
         keyboardOptions =
         KeyboardOptions(
             keyboardType = KeyboardType.Password,
-            imeAction = ImeAction.Done,
+            imeAction = imeAction,
         ),
         keyboardActions =
-        KeyboardActions(onDone = { onImeDone() }),
+        KeyboardActions(
+            onNext = { onImeNext() },
+            onDone = { onImeDone() },
+        ),
         value = password,
         onValueChange = { onPasswordChange(it) },
         label = { Text(text = stringResource(R.string.auth_password_hint)) },
         trailingIcon = {
-            IconButton(onClick = { onPasswordVisibleChange(!passwordVisible) }) {
+            IconButton(
+                enabled = enabled,
+                onClick = { onPasswordVisibleChange(!passwordVisible) },
+            ) {
                 val passwordVisibilityDescription =
                     stringResource(
                         if (passwordVisible) {
@@ -114,9 +119,10 @@ internal fun PasswordInput(
 }
 
 @Composable
-internal fun EmailInput(
-    modifier: Modifier,
+fun EmailInput(
+    modifier: Modifier = Modifier,
     email: String,
+    isEnable: Boolean = true,
     onEmailChange: (String) -> Unit,
     imeAction: ImeAction = ImeAction.Next,
     onImeNext: () -> Unit = {},
@@ -124,6 +130,7 @@ internal fun EmailInput(
 ) {
     OutlinedTextField(
         modifier = modifier,
+        enabled = isEnable,
         colors =
         OutlinedTextFieldDefaults.colors(
             focusedTextColor = Black,
@@ -151,29 +158,7 @@ internal fun EmailInput(
 }
 
 @Composable
-internal fun LoginButton(
-    isEnable: Boolean,
-    onSubmitLogin: () -> Unit,
-) {
-    Button(
-        modifier =
-        Modifier
-            .fillMaxWidth()
-            .height(50.dp),
-        colors =
-        ButtonDefaults.buttonColors(
-            containerColor = Purple40,
-        ),
-        shape = RoundedCornerShape(corner = CornerSize(size = 3.dp)),
-        enabled = isEnable,
-        onClick = { onSubmitLogin() },
-    ) {
-        Text(text = stringResource(R.string.auth_action_login), color = White, fontSize = 16.sp)
-    }
-}
-
-@Composable
-internal fun RegisterTextButton(onNavigateToRegister: () -> Unit) {
+fun RegisterTextButton(onNavigateToRegister: () -> Unit) {
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.Center,
@@ -211,7 +196,7 @@ internal fun RegisterTextButton(onNavigateToRegister: () -> Unit) {
 }
 
 @Composable
-internal fun ForgotPasswordTextButton(onNavigateToForgotPassword: () -> Unit) {
+fun ForgotPasswordTextButton(onNavigateToForgotPassword: () -> Unit) {
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.End,
@@ -239,6 +224,111 @@ internal fun ForgotPasswordTextButton(onNavigateToForgotPassword: () -> Unit) {
                 fontSize = 15.sp,
                 textDecoration = TextDecoration.Underline,
             ),
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun TreeTaskAppNamePreview() {
+    TreeTaskTheme {
+        TreeTaskAppName()
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun EmailInputPreview() {
+    TreeTaskTheme {
+        EmailInput(
+            modifier = Modifier.fillMaxWidth(),
+            email = "doan@gmail.com",
+            onEmailChange = {},
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun EmailInputEmptyPreview() {
+    TreeTaskTheme {
+        EmailInput(
+            email = "",
+            onEmailChange = {},
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun EmailInputDisabledPreview() {
+    TreeTaskTheme {
+        EmailInput(
+            email = "doan@gmail.com",
+            isEnable = false,
+            onEmailChange = {},
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun PasswordInputHiddenPreview() {
+    TreeTaskTheme {
+        PasswordInput(
+            modifier = Modifier.fillMaxWidth(),
+            password = "123456",
+            passwordVisible = false,
+            onPasswordChange = {},
+            onPasswordVisibleChange = {},
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun PasswordInputVisiblePreview() {
+    TreeTaskTheme {
+        PasswordInput(
+            modifier = Modifier.fillMaxWidth(),
+            password = "123456",
+            passwordVisible = true,
+            onPasswordChange = {},
+            onPasswordVisibleChange = {},
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun PasswordInputDisabledPreview() {
+    TreeTaskTheme {
+        PasswordInput(
+            password = "123456",
+            passwordVisible = false,
+            enabled = false,
+            onPasswordChange = {},
+            onPasswordVisibleChange = {},
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun RegisterTextButtonPreview() {
+    TreeTaskTheme {
+        RegisterTextButton(
+            onNavigateToRegister = {},
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun ForgotPasswordTextButtonPreview() {
+    TreeTaskTheme {
+        ForgotPasswordTextButton(
+            onNavigateToForgotPassword = {},
         )
     }
 }

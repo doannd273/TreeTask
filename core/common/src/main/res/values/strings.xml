@@ -3,9 +3,10 @@
     <string name="common_app_name">Tree Task</string>
     <string name="common_error_email_empty">Email cannot be empty</string>
     <string name="common_error_fullName_empty">Full name cannot be empty</string>
+    <string name="common_error_otp_empty">OTP cannot be empty</string>
     <string name="common_error_password_empty">Password cannot be empty</string>
-    <string name="common_error_password_short">Password must be at least 6 characters</string>
     <string name="common_error_network_timeout">Server connection timed out</string>
     <string name="common_error_unknown">An unknown error occurred</string>
     <string name="common_error_network_connection">Network connection error</string>
+    <string name="common_missing_response_data">Missing response data</string>
 </resources>

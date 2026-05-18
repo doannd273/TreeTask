@@ -1,12 +1,10 @@
 package com.doannd3.treetask.feature.auth.ui.forgotpassword
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
@@ -19,9 +17,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
@@ -29,8 +25,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.repeatOnLifecycle
 import com.doannd3.treetask.core.common.asString
 import com.doannd3.treetask.core.designsystem.component.LocalGlobalAppState
-import com.doannd3.treetask.core.designsystem.util.rememberDebouncedClick
-import com.doannd3.treetask.feature.auth.ui.login.EmailInput
 
 @Composable
 fun ForgotPasswordRoute(
@@ -59,7 +53,14 @@ fun ForgotPasswordRoute(
                         globalAppState.showError(errorStr)
                     }
 
-                    is ForgotPasswordEffect.ShowSuccessMessage -> {
+                    is ForgotPasswordEffect.SendEmailSuccess -> {
+                        val successForgotPassword = effect.message.asString(context)
+                        globalAppState.showSuccess(
+                            message = successForgotPassword,
+                        )
+                    }
+
+                    is ForgotPasswordEffect.ResetPasswordSuccess -> {
                         val successForgotPassword = effect.message.asString(context)
                         globalAppState.showSuccess(
                             message = successForgotPassword,
@@ -71,7 +72,6 @@ fun ForgotPasswordRoute(
         }
     }
 
-    // Lỗi crash/unexpected từ BaseViewModel (CoroutineExceptionHandler)
     LaunchedEffect(viewModel.baseErrorEffect, lifecycleOwner) {
         lifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
             viewModel.baseErrorEffect.collect { message ->
@@ -95,12 +95,25 @@ fun ForgotPasswordScreen(
     onEvent: (ForgotPasswordEvent) -> Unit,
     onForgotPasswordBack: () -> Unit,
 ) {
+    BackHandler(enabled = state.step == ForgotPasswordStep.ResetInput) {
+        onEvent(ForgotPasswordEvent.BackToEmailInput)
+    }
+
     Scaffold(
-        contentWindowInsets = WindowInsets.safeDrawing.only(
+        contentWindowInsets =
+        WindowInsets.safeDrawing.only(
             WindowInsetsSides.Horizontal + WindowInsetsSides.Bottom,
         ),
         topBar = {
-            ForgotPasswordHeader(onForgotPasswordBack = onForgotPasswordBack)
+            ForgotPasswordHeader(
+                onForgotPasswordBack = {
+                    if (state.step == ForgotPasswordStep.ResetInput) {
+                        onEvent(ForgotPasswordEvent.BackToEmailInput)
+                    } else {
+                        onForgotPasswordBack()
+                    }
+                },
+            )
         },
     ) { paddingValues ->
         ForgotPasswordContent(
@@ -120,11 +133,6 @@ fun ForgotPasswordContent(
     state: ForgotPasswordState,
     onEvent: (ForgotPasswordEvent) -> Unit,
 ) {
-    val onSubmitForgotPasswordDebounced =
-        rememberDebouncedClick {
-            onEvent(ForgotPasswordEvent.SubmitForgotPassword)
-        }
-
     Column(
         modifier =
         modifier
@@ -132,26 +140,16 @@ fun ForgotPasswordContent(
             .verticalScroll(rememberScrollState())
             .imePadding(),
     ) {
-        Column(
-            modifier = Modifier.padding(16.dp),
-        ) {
-            EmailInput(
-                modifier = Modifier.fillMaxWidth(),
-                email = state.email,
-                onEmailChange = { onEvent(ForgotPasswordEvent.EmailChanged(it)) },
-                imeAction = ImeAction.Done,
-                onImeDone = {
-                    onSubmitForgotPasswordDebounced()
-                },
-            )
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            ForgotPasswordButton(
-                isEnable = !state.isLoading,
-                onSubmitForgotPassword = onSubmitForgotPasswordDebounced,
-            )
-        }
+        EmailStep(
+            isVisible = (state.step == ForgotPasswordStep.EmailInput),
+            state = state,
+            onEvent = onEvent,
+        )
+        ResetPasswordStep(
+            isVisible = (state.step == ForgotPasswordStep.ResetInput),
+            state = state,
+            onEvent = onEvent,
+        )
     }
 }
 
@@ -162,6 +160,22 @@ fun ForgotPasswordPreview() {
         state =
         ForgotPasswordState(
             email = "demo@gmail.com",
+        ),
+        onEvent = {},
+        onForgotPasswordBack = {},
+    )
+}
+
+@Composable
+@Preview(showBackground = true)
+fun ForgotPasswordResetPreview() {
+    ForgotPasswordScreen(
+        state =
+        ForgotPasswordState(
+            step = ForgotPasswordStep.ResetInput,
+            email = "demo@gmail.com",
+            otp = "123456",
+            newPassword = "password123",
         ),
         onEvent = {},
         onForgotPasswordBack = {},

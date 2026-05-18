@@ -5,12 +5,8 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.CornerSize
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
@@ -24,44 +20,25 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.doannd3.treetask.core.designsystem.theme.Black
 import com.doannd3.treetask.core.designsystem.theme.Gray
 import com.doannd3.treetask.core.designsystem.theme.Purple40
+import com.doannd3.treetask.core.designsystem.theme.TreeTaskTheme
 import com.doannd3.treetask.core.designsystem.theme.White
 import com.doannd3.treetask.feature.auth.R
 
 @Composable
-internal fun RegisterButton(
-    isEnable: Boolean,
-    onSubmitRegister: () -> Unit,
-) {
-    Button(
-        modifier =
-        Modifier
-            .fillMaxWidth()
-            .height(50.dp),
-        colors =
-        ButtonDefaults.buttonColors(
-            containerColor = Purple40,
-        ),
-        shape = RoundedCornerShape(corner = CornerSize(size = 3.dp)),
-        enabled = isEnable,
-        onClick = { onSubmitRegister() },
-    ) {
-        Text(text = stringResource(R.string.auth_register), color = White, fontSize = 16.sp)
-    }
-}
-
-@Composable
-internal fun FullNameInput(
+fun FullNameInput(
+    modifier: Modifier = Modifier,
     fullName: String,
     onFullNameChange: (String) -> Unit,
     onImeNext: () -> Unit = {},
 ) {
     OutlinedTextField(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = modifier.fillMaxWidth(),
         colors =
         OutlinedTextFieldDefaults.colors(
             focusedTextColor = Black,
@@ -86,9 +63,10 @@ internal fun FullNameInput(
 }
 
 @Composable
-internal fun RegisterHeader(onRegisterBack: () -> Unit) {
+fun RegisterHeader(onRegisterBack: () -> Unit) {
     Row(
-        modifier = Modifier
+        modifier =
+        Modifier
             .fillMaxWidth()
             .height(50.dp)
             .background(color = White)
@@ -110,6 +88,49 @@ internal fun RegisterHeader(onRegisterBack: () -> Unit) {
             TextStyle(
                 fontSize = 18.sp,
             ),
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun FullNameInputPreview() {
+    TreeTaskTheme {
+        FullNameInput(
+            fullName = "Đoàn Nguyễn",
+            onFullNameChange = {},
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun FullNameInputEmptyPreview() {
+    TreeTaskTheme {
+        FullNameInput(
+            fullName = "",
+            onFullNameChange = {},
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun FullNameInputLongPreview() {
+    TreeTaskTheme {
+        FullNameInput(
+            fullName = "Nguyễn Đoàn Minh Long",
+            onFullNameChange = {},
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun RegisterHeaderPreview() {
+    TreeTaskTheme {
+        RegisterHeader(
+            onRegisterBack = {},
         )
     }
 }

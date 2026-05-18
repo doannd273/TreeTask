@@ -22,6 +22,7 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -31,8 +32,10 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.repeatOnLifecycle
 import com.doannd3.treetask.core.common.asString
+import com.doannd3.treetask.core.designsystem.component.CommonButton
 import com.doannd3.treetask.core.designsystem.component.LocalGlobalAppState
 import com.doannd3.treetask.core.designsystem.util.rememberDebouncedClick
+import com.doannd3.treetask.feature.auth.R
 
 @Composable
 fun LoginRoute(
@@ -170,9 +173,10 @@ internal fun LoginContent(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        LoginButton(
+        CommonButton(
+            buttonText = stringResource(R.string.auth_action_login),
             isEnable = !state.isLoading,
-            onSubmitLogin = onSubmitLoginDebounced,
+            onSubmit = onSubmitLoginDebounced,
         )
 
         Spacer(modifier = Modifier.height(16.dp))

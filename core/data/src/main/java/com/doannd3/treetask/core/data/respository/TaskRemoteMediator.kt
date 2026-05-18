@@ -6,6 +6,7 @@ import androidx.paging.PagingState
 import androidx.paging.RemoteMediator
 import androidx.room.withTransaction
 import com.doannd3.treetask.core.common.ApiResult
+import com.doannd3.treetask.core.common.error.MissingResponseDataException
 import com.doannd3.treetask.core.data.model.toTaskEntity
 import com.doannd3.treetask.core.database.TreeTaskDatabase
 import com.doannd3.treetask.core.database.model.TaskEntity
@@ -39,7 +40,13 @@ class TaskRemoteMediator(
                 )
 
             when (apiResponse) {
-                is ApiResult.Success -> handleSuccessResponse(apiResponse.data.tasks, page, loadType)
+                is ApiResult.Success -> {
+                    val data =
+                        apiResponse.data
+                            ?: return MediatorResult.Error(MissingResponseDataException())
+                    handleSuccessResponse(data.tasks, page, loadType)
+                }
+
                 is ApiResult.Error -> MediatorResult.Error(apiResponse.exception ?: Exception("API Error"))
             }
         } catch (e: IOException) {

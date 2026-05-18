@@ -23,6 +23,7 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -32,8 +33,10 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.repeatOnLifecycle
 import com.doannd3.treetask.core.common.asString
+import com.doannd3.treetask.core.designsystem.component.CommonButton
 import com.doannd3.treetask.core.designsystem.component.LocalGlobalAppState
 import com.doannd3.treetask.core.designsystem.util.rememberDebouncedClick
+import com.doannd3.treetask.feature.auth.R
 import com.doannd3.treetask.feature.auth.ui.login.EmailInput
 import com.doannd3.treetask.feature.auth.ui.login.PasswordInput
 
@@ -59,8 +62,12 @@ fun RegisterRoute(
         lifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
             viewModel.effect.collect { effect ->
                 when (effect) {
-                    is RegisterEffect.NavigateToHome -> {
-                        onNavigateToHome()
+                    is RegisterEffect.ShowSuccessMessage -> {
+                        val successStr = effect.message.asString(context)
+                        globalAppState.showSuccess(
+                            message = successStr,
+                            onDismiss = onNavigateToHome,
+                        )
                     }
 
                     is RegisterEffect.ShowErrorMessage -> {
@@ -97,7 +104,8 @@ fun RegisterScreen(
     onRegisterBack: () -> Unit,
 ) {
     Scaffold(
-        contentWindowInsets = WindowInsets.safeDrawing.only(
+        contentWindowInsets =
+        WindowInsets.safeDrawing.only(
             WindowInsetsSides.Horizontal + WindowInsetsSides.Bottom,
         ),
         topBar = {
@@ -151,7 +159,8 @@ fun RegisterContent(
             Spacer(modifier = Modifier.height(16.dp))
 
             EmailInput(
-                modifier = Modifier
+                modifier =
+                Modifier
                     .fillMaxWidth()
                     .focusRequester(emailFocusRequester),
                 email = state.email,
@@ -165,7 +174,8 @@ fun RegisterContent(
             Spacer(modifier = Modifier.height(8.dp))
 
             PasswordInput(
-                modifier = Modifier
+                modifier =
+                Modifier
                     .fillMaxWidth()
                     .focusRequester(passwordFocusRequester),
                 password = state.password,
@@ -180,9 +190,10 @@ fun RegisterContent(
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            RegisterButton(
+            CommonButton(
+                buttonText = stringResource(R.string.auth_register),
                 isEnable = !state.isLoading,
-                onSubmitRegister = onSubmitRegisterDebounced,
+                onSubmit = onSubmitRegisterDebounced,
             )
         }
     }
