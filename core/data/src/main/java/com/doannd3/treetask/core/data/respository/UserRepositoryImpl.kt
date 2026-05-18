@@ -3,7 +3,7 @@ package com.doannd3.treetask.core.data.respository
 import com.doannd3.treetask.core.common.ApiResult
 import com.doannd3.treetask.core.common.error.AppErrorCode
 import com.doannd3.treetask.core.common.error.MissingResponseDataException
-import com.doannd3.treetask.core.data.model.toUser
+import com.doannd3.treetask.core.data.model.toUserOrNull
 import com.doannd3.treetask.core.datastore.user.UserStorage
 import com.doannd3.treetask.core.domain.repository.UserRepository
 import com.doannd3.treetask.core.model.user.User
@@ -30,7 +30,14 @@ constructor(
                     )
                 }
 
-                val user = data.toUser()
+                val user = data.toUserOrNull()
+                if (user == null) {
+                    return ApiResult.Error(
+                        appErrorCode = AppErrorCode.MISSING_RESPONSE_DATA,
+                        exception = MissingResponseDataException(),
+                    )
+                }
+
                 userStorage.saveUserProfile(user)
                 ApiResult.Success(data = user)
             }

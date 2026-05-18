@@ -56,6 +56,18 @@ This file tracks architecture issues and tech debt found during module-by-module
 - **Priority**: Low
 - **Status**: Deferred until Android test scope grows
 
+## ApiResult Contract Regression Coverage Is Incomplete
+
+- **Location**: `core/common/src/main/java/com/doannd3/treetask/core/common/ApiResult.kt`
+- **Location**: `core/network/src/main/java/com/doannd3/treetask/core/network/util/ApiResultCall.kt`
+- **Location**: `core/data/src/main/java/com/doannd3/treetask/core/data/respository`
+- **Location**: `feature/auth/src/main/java/com/doannd3/treetask/feature/auth/ui`
+- **Issue**: The new `ApiResult` contract has only narrow common-layer coverage for display-message priority. Network parsing, repository missing-data handling, and auth ViewModel state/effect regressions are still not fully covered by focused unit tests.
+- **Impact**: Regressions in backend `code` parsing, backend `message` priority, nullable success `data`, `MISSING_RESPONSE_DATA`, or forgot-password step transitions could slip through compile/build checks.
+- **Target solution**: After core/feature build verification is stable, add focused tests for `ApiResultCall`, repository missing required response data, and auth ViewModel forgot/reset-password transitions before broader refactors.
+- **Priority**: Medium
+- **Status**: Deferred until core and feature build verification is complete
+
 ## `core:domain` Depends on Datastore Without Source Usage
 
 - **Location**: `core/domain/build.gradle.kts`

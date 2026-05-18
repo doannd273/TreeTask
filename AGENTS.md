@@ -163,7 +163,7 @@ Rules:
 - Icons/vectors inside a feature must use the correct module resource prefix.
 - Avoid adding new app-level state inside features; the app shell currently owns the bottom bar, offline banner, global dialogs, and global loading.
 
-## Current Handoff - ApiResult Error Handling Refactor
+## Current Handoff - Auth Reset Password and ApiResult Follow-up
 
 Completed:
 
@@ -178,42 +178,108 @@ Completed:
 - Repositories now return `appErrorCode = AppErrorCode.MISSING_RESPONSE_DATA` plus `MissingResponseDataException()` when required response data is absent, instead of creating display copy in the data layer.
 - Auth ViewModels use `ApiResult.Error.toDisplayMessage(...)` so backend `message` is preferred, then `appErrorCode` mapping, then localized fallback resources.
 - Login/register/forgot-password unknown-error fallbacks use `common_error_unknown` resources instead of hardcoded Vietnamese text.
-- Register and forgot-password success flows now show backend success `message` when it exists; the client no longer invents success copy for those cases.
+- Register and forgot/reset-password success flows now show backend success `message` when it exists and fall back to localized client resources when the backend omits a success message.
 - `UserService.changePassword()` currently returns `ApiResult<Unit>` because the flow relies on backend `message`, not a response data model.
+- Reset-password domain flow now validates email, OTP, and new password before calling the repository.
+- Forgot-password UI now supports the two-step flow:
+  - `EmailInput`: user enters email and requests OTP.
+  - `ResetInput`: user enters OTP and new password, can resend OTP, and confirms reset.
+- Forgot-password back behavior is aligned across the top app bar and Android system back:
+  - from `ResetInput`, back returns to `EmailInput`;
+  - from `EmailInput`, back exits to login as before.
+- A reusable `OtpInput` composable was added to `core:designsystem` for 6-digit OTP entry. It is controlled by the caller and emits `onOtpComplete` when all digits are filled.
+- Forgot-password/register/login components were reviewed and preview coverage was added where useful.
+- Detekt config now ignores `@Preview` functions for `UnusedPrivateMember` and `TooManyFunctions`, because Compose previews are IDE/tooling entry points.
+- Architecture debt was documented for:
+  - `Accept-Language` being device-locale backed instead of app-language backed.
+  - nullable user response mapping hiding missing required user data.
+- A focused `core:common` unit test now covers `ApiResult.Error.toDisplayMessage(...)` priority:
+  - backend display `message`;
+  - app-defined `appErrorCode` mapping;
+  - caller-provided fallback.
+- Additional `ApiResult` regression coverage for network parsing, repository missing-data handling, and auth ViewModel transitions is tracked in `docs/ARCHITECTURE_DEBT.md` and intentionally deferred for a dedicated testing pass.
 
-Current status:
+Current status by area:
 
-- Narrow compile previously passed for:
+- `core:common`
+  - Contains `ApiResult` error/success model updates and `common_error_otp_empty` resources.
+  - Includes `ApiResultTest` coverage for display-message priority.
+  - Depends on `core:testing` for host unit test assertions.
+- `core:network`
+  - Supports the auth API contract needed by the reset-password flow.
+  - `Accept-Language` work is still pending and tracked in `docs/ARCHITECTURE_DEBT.md`.
+- `core:data`
+  - Repositories use `appErrorCode = AppErrorCode.MISSING_RESPONSE_DATA` plus `MissingResponseDataException()` for missing required response data.
+  - User-response validation cleanup is still pending and tracked in `docs/ARCHITECTURE_DEBT.md`.
+- `core:domain`
+  - `ResetPasswordUseCase` validates email, OTP, and password, then delegates to the auth repository.
+  - Unit tests were added/updated for auth use cases.
+- `core:designsystem`
+  - `OtpInput` is implemented with previews.
+  - `:core:designsystem:compileDebugKotlin` passed.
+- `feature:auth`
+  - Login/register/forgot-password use resource-based fallbacks for display messages.
+  - Register success no longer depends on a non-null backend success `message`.
+  - Forgot-password step state, resend OTP, reset success navigation, stale reset-field clearing, and Android system back handling are implemented.
+  - `feature:auth` depends on `androidx.activity.compose` for `BackHandler`.
+- `config/detekt`
+  - Preview-related false positives are ignored for private preview functions and preview count.
+- `docs/ARCHITECTURE_DEBT.md`
+  - Accept-Language, user-response mapping, and deferred `ApiResult` regression coverage debt items are recorded for later work.
+
+Verification status:
+
+- Passed earlier during the ApiResult refactor:
   - `:core:common:compileDebugKotlin`
   - `:core:network:compileDevDebugKotlin`
   - `:core:data:compileDebugKotlin`
+- Passed after the latest auth/reset-password UI changes:
+  - `:core:designsystem:compileDebugKotlin`
   - `:feature:auth:compileDebugKotlin`
-- After the latest auth success-message changes, re-run `:feature:auth:compileDebugKotlin` before handoff or merge.
-- No full `testDebugUnitTest`, `detekt`, `spotlessCheck`, or `assembleDebug` run has been completed for this refactor yet.
-- `Accept-Language` header work is still pending; default should be `en`, with a future DataStore-backed language source.
+  - `:feature:auth:detekt`
+  - `:feature:auth:spotlessCheck`
+- Passed during the focused `ApiResultTest` follow-up:
+  - `./gradlew :core:common:testDebugUnitTest --tests "*ApiResultTest"`
+- Passed during core/feature build verification:
+  - all runtime `core:*` compile tasks, including `:core:network:compileDevDebugKotlin`;
+  - all `feature:*` compile tasks from `:feature:auth` through `:feature:tasks`.
+- Developer reported the planned app verification steps completed after the planning pass:
+  - `:app:compileDevDebugKotlin`
+  - `assembleDebug`
+  - `detekt`
+  - `spotlessCheck`
+  - manual forgot-password smoke flow
+  - Because those commands were run outside this handoff update, rerun them before merge if exact terminal output is required.
 
 Next steps:
 
-- Re-run narrow auth compile:
-  `./gradlew :feature:auth:compileDebugKotlin`
-- Run broader checks when ready:
-  `./gradlew testDebugUnitTest detekt spotlessCheck`
-- Add tests for:
+- Keep the deferred testing pass scoped and tracked in `docs/ARCHITECTURE_DEBT.md`:
   - backend error body `code` -> `backendErrorCode`
   - backend `message` display priority
   - nullable success `data`
   - `MISSING_RESPONSE_DATA` app error path
+  - email submit moves to `ResetInput`
+  - resend OTP calls forgot-password flow, not reset-password flow
+  - reset success emits `ResetPasswordSuccess` even when backend success `message` is absent
+  - `BackToEmailInput` clears OTP, new password, and password visibility
+- Before merge, rerun the exact app/static checks if the latest terminal output is not available in the handoff:
+  `./gradlew :app:compileDevDebugKotlin assembleDebug detekt spotlessCheck`
 - Add an `Accept-Language` interceptor with default `en`, designed so a later language setting can be read from DataStore or a cached provider.
 - Consider making `UserResponse.toUser()` non-null and validating nested `user` payloads explicitly in repositories, instead of mapping null users to empty domain users.
 
 Important decisions:
 
 - Backend owns display copy for backend responses; mobile should display backend `message` when present.
+- Client fallback success strings are still required because a successful backend response may omit `message`; successful behavior such as navigation must not depend on display copy being present.
 - Mobile owns behavior decisions through `backendErrorCode`, `statusCode`, and `appErrorCode`; do not branch on display `message`.
 - Mobile-defined/internal errors must use `appErrorCode` and `exception`, not backend `message`.
 - `backendErrorCode` remains a `String?` so unknown backend codes do not break older app versions.
 - Localized client fallback copy must use string resources such as `common_error_unknown`, not `UiText.DynamicString` with hardcoded language text.
 - `ApiResultCall` must not replace missing success `data` with `Unit`; nullable data should remain visible to repository/use-case code.
+- Forgot-password remains one route with internal `step` state instead of separate navigation destinations, because email/reset input are one workflow and should share local state without route arguments.
+- `ResetInput` back returns to `EmailInput` because it is a workflow step, not a separate app destination.
+- `OtpInput` lives in `core:designsystem` as a controlled reusable UI component; feature modules own validation, submission, resend, and navigation behavior.
+- `@Preview` functions may stay private because they are not runtime entry points. Detekt ignores them to avoid noisy false positives.
 
 ## Related Docs
 
