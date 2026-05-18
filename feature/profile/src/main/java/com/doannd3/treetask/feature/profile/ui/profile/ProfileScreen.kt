@@ -1,13 +1,11 @@
 package com.doannd3.treetask.feature.profile.ui.profile
 
 import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -75,26 +73,21 @@ fun ProfileRoute(
 fun ProfileScreen(
     state: ProfileState,
     onEvent: (ProfileEvent) -> Unit,
-    onUploadAvatarUser: () -> Unit,
 ) {
     Scaffold(
         contentWindowInsets = WindowInsets.safeDrawing,
     ) { paddingValues ->
         ProfileContent(
-            modifier = Modifier.padding(paddingValues = paddingValues),
             state = state,
             onEvent = onEvent,
-            onUploadAvatarUser = onUploadAvatarUser,
         )
     }
 }
 
 @Composable
 fun ProfileContent(
-    modifier: Modifier = Modifier,
     state: ProfileState,
     onEvent: (ProfileEvent) -> Unit,
-    onUploadAvatarUser: () -> Unit,
 ) {
     val onSubmitLogoutDebounced =
         rememberDebouncedClick {

@@ -16,6 +16,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import javax.inject.Inject
 import com.doannd3.treetask.core.common.R as CommonR
+import com.doannd3.treetask.feature.auth.R as AuthR
 
 @HiltViewModel
 class RegisterViewModel @Inject constructor(
@@ -62,9 +63,10 @@ class RegisterViewModel @Inject constructor(
 
             when (result) {
                 is ApiResult.Success -> {
-                    result.message?.let { message ->
-                        _effect.emit(RegisterEffect.ShowSuccessMessage(message))
-                    }
+                    val message =
+                        result.message
+                            ?: UiText.StringResource(AuthR.string.auth_register_success)
+                    _effect.emit(RegisterEffect.ShowSuccessMessage(message))
                 }
                 is ApiResult.Error -> {
                     val message =

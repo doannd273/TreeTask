@@ -8,3 +8,10 @@ data class ChangePasswordRequest(
     @SerialName("currentPassword") val currentPassword: String,
     @SerialName("newPassword") val newPassword: String,
 )
+
+@Serializable
+data class ResetPasswordRequest(
+    @SerialName("email") val email: String,
+    @SerialName("otp") val otp: String,
+    @SerialName("newPassword") val newPassword: String,
+)

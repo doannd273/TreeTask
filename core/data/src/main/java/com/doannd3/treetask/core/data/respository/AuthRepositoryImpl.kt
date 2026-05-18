@@ -10,6 +10,7 @@ import com.doannd3.treetask.core.domain.repository.AuthRepository
 import com.doannd3.treetask.core.network.model.request.ForgotPasswordRequest
 import com.doannd3.treetask.core.network.model.request.LoginRequest
 import com.doannd3.treetask.core.network.model.request.RegisterRequest
+import com.doannd3.treetask.core.network.model.request.ResetPasswordRequest
 import com.doannd3.treetask.core.network.service.AuthService
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -109,6 +110,28 @@ constructor(
             is ApiResult.Error -> {
                 result
             } // propagate thẳng
+        }
+    }
+
+    override suspend fun resetPassword(
+        email: String,
+        otp: String,
+        newPassword: String,
+    ): ApiResult<String> {
+        val body = ResetPasswordRequest(
+            email = email,
+            otp = otp,
+            newPassword = newPassword,
+        )
+        val result = authService.resetPassword(body = body)
+        return when (result) {
+            is ApiResult.Success -> {
+                ApiResult.Success(message = result.message)
+            }
+
+            is ApiResult.Error -> {
+                result
+            }
         }
     }
 

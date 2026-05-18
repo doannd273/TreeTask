@@ -5,6 +5,7 @@ import com.doannd3.treetask.core.network.model.request.ForgotPasswordRequest
 import com.doannd3.treetask.core.network.model.request.LoginRequest
 import com.doannd3.treetask.core.network.model.request.RefreshTokenRequest
 import com.doannd3.treetask.core.network.model.request.RegisterRequest
+import com.doannd3.treetask.core.network.model.request.ResetPasswordRequest
 import com.doannd3.treetask.core.network.model.response.RegisterResponse
 import com.doannd3.treetask.core.network.model.response.TokenResponse
 import retrofit2.http.Body
@@ -29,5 +30,10 @@ interface AuthService {
     @POST("/api/auth/forgot-password")
     suspend fun forgotPassword(
         @Body request: ForgotPasswordRequest,
+    ): ApiResult<Unit>
+
+    @POST("/api/auth/reset-password")
+    suspend fun resetPassword(
+        @Body body: ResetPasswordRequest,
     ): ApiResult<Unit>
 }

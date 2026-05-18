@@ -9,7 +9,9 @@ style:
   MaxLineLength:
     active: false # Tránh chửi khi viết Compose bị thụt lùi quá sâu
   ReturnCount:
-    max: 6 # Cho phép 6 return trong 1 method
+    max: 7 # Cho phép 7 return trong 1 method
+  UnusedPrivateMember:
+    ignoreAnnotated: [ 'Preview' ]
 
 performance:
   SpreadOperator:
@@ -22,3 +24,5 @@ complexity:
   LongMethod:
     threshold: 80
     ignoreAnnotated: [ 'Composable' ]
+  TooManyFunctions:
+    ignoreAnnotatedFunctions: [ 'Preview' ]

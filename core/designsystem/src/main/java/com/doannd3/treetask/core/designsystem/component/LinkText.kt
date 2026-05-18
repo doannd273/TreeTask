@@ -1,5 +1,6 @@
 package com.doannd3.treetask.core.designsystem.component
 
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -11,6 +12,11 @@ import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import com.doannd3.treetask.core.designsystem.theme.Purple40
+import com.doannd3.treetask.core.designsystem.theme.TreeTaskTheme
 
 enum class LinkTag {
     REGISTER,
@@ -74,4 +80,34 @@ fun LinkText(
         text = annotatedText,
         style = parentStyle,
     )
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun LinkTextRegisterPreview() {
+    TreeTaskTheme {
+        LinkText(
+            modifier = Modifier.padding(16.dp),
+            text = "Don't have an account? Register",
+            links =
+            listOf(
+                LinkPart(
+                    text = "Register",
+                    tag = LinkTag.REGISTER.name,
+                    onClick = {},
+                ),
+            ),
+            parentStyle =
+            TextStyle(
+                color = Purple40,
+                fontSize = 15.sp,
+            ),
+            linkStyle =
+            SpanStyle(
+                color = Purple40,
+                fontSize = 15.sp,
+                textDecoration = TextDecoration.Underline,
+            ),
+        )
+    }
 }

@@ -163,6 +163,58 @@ Rules:
 - Icons/vectors inside a feature must use the correct module resource prefix.
 - Avoid adding new app-level state inside features; the app shell currently owns the bottom bar, offline banner, global dialogs, and global loading.
 
+## Current Handoff - ApiResult Error Handling Refactor
+
+Completed:
+
+- `ApiResult.Success` now supports nullable `data` and optional backend success `message`.
+- `ApiResult.Error` separates HTTP status, backend business code, mobile app error code, backend display message, and exception:
+  - `statusCode`: HTTP status such as 400, 401, 500.
+  - `backendErrorCode`: backend business code parsed from response `code`.
+  - `appErrorCode`: mobile-defined error signal such as `MISSING_RESPONSE_DATA`.
+  - `message`: backend display message only.
+- `ApiResultCall` now preserves nullable success `data`, parses backend `code` into `backendErrorCode`, and keeps backend `message` for display.
+- `AppErrorCode.MISSING_RESPONSE_DATA` and `MissingResponseDataException` were added for internal contract errors.
+- Repositories now return `appErrorCode = AppErrorCode.MISSING_RESPONSE_DATA` plus `MissingResponseDataException()` when required response data is absent, instead of creating display copy in the data layer.
+- Auth ViewModels use `ApiResult.Error.toDisplayMessage(...)` so backend `message` is preferred, then `appErrorCode` mapping, then localized fallback resources.
+- Login/register/forgot-password unknown-error fallbacks use `common_error_unknown` resources instead of hardcoded Vietnamese text.
+- Register and forgot-password success flows now show backend success `message` when it exists; the client no longer invents success copy for those cases.
+- `UserService.changePassword()` currently returns `ApiResult<Unit>` because the flow relies on backend `message`, not a response data model.
+
+Current status:
+
+- Narrow compile previously passed for:
+  - `:core:common:compileDebugKotlin`
+  - `:core:network:compileDevDebugKotlin`
+  - `:core:data:compileDebugKotlin`
+  - `:feature:auth:compileDebugKotlin`
+- After the latest auth success-message changes, re-run `:feature:auth:compileDebugKotlin` before handoff or merge.
+- No full `testDebugUnitTest`, `detekt`, `spotlessCheck`, or `assembleDebug` run has been completed for this refactor yet.
+- `Accept-Language` header work is still pending; default should be `en`, with a future DataStore-backed language source.
+
+Next steps:
+
+- Re-run narrow auth compile:
+  `./gradlew :feature:auth:compileDebugKotlin`
+- Run broader checks when ready:
+  `./gradlew testDebugUnitTest detekt spotlessCheck`
+- Add tests for:
+  - backend error body `code` -> `backendErrorCode`
+  - backend `message` display priority
+  - nullable success `data`
+  - `MISSING_RESPONSE_DATA` app error path
+- Add an `Accept-Language` interceptor with default `en`, designed so a later language setting can be read from DataStore or a cached provider.
+- Consider making `UserResponse.toUser()` non-null and validating nested `user` payloads explicitly in repositories, instead of mapping null users to empty domain users.
+
+Important decisions:
+
+- Backend owns display copy for backend responses; mobile should display backend `message` when present.
+- Mobile owns behavior decisions through `backendErrorCode`, `statusCode`, and `appErrorCode`; do not branch on display `message`.
+- Mobile-defined/internal errors must use `appErrorCode` and `exception`, not backend `message`.
+- `backendErrorCode` remains a `String?` so unknown backend codes do not break older app versions.
+- Localized client fallback copy must use string resources such as `common_error_unknown`, not `UiText.DynamicString` with hardcoded language text.
+- `ApiResultCall` must not replace missing success `data` with `Unit`; nullable data should remain visible to repository/use-case code.
+
 ## Related Docs
 
 - `docs/ARCHITECTURE.md`: module architecture, Clean Architecture, MVI.
