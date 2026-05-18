@@ -3,7 +3,7 @@ package com.doannd3.treetask.core.data.respository
 import com.doannd3.treetask.core.common.ApiResult
 import com.doannd3.treetask.core.common.error.AppErrorCode
 import com.doannd3.treetask.core.common.error.MissingResponseDataException
-import com.doannd3.treetask.core.data.model.toUser
+import com.doannd3.treetask.core.data.model.toUserOrNull
 import com.doannd3.treetask.core.datastore.token.TokenStorage
 import com.doannd3.treetask.core.datastore.user.UserStorage
 import com.doannd3.treetask.core.domain.repository.AuthRepository
@@ -41,13 +41,20 @@ constructor(
                     )
                 }
 
+                // save profile user
+                val user = data.user.toUserOrNull()
+                if (user == null) {
+                    return ApiResult.Error(
+                        appErrorCode = AppErrorCode.MISSING_RESPONSE_DATA,
+                        exception = MissingResponseDataException(),
+                    )
+                }
                 // save token
                 tokenStorage.saveToken(
                     accessToken = data.accessToken,
                     refreshToken = data.refreshToken,
                 )
-                // save profile user
-                val user = data.user.toUser()
+                // save profile
                 userStorage.saveUserProfile(user)
 
                 ApiResult.Success(data = Unit)
@@ -82,15 +89,24 @@ constructor(
                     )
                 }
 
+                // save profile user
+                val user = data.user.toUserOrNull()
+                if (user == null) {
+                    return ApiResult.Error(
+                        appErrorCode = AppErrorCode.MISSING_RESPONSE_DATA,
+                        exception = MissingResponseDataException(),
+                    )
+                }
+
                 // save token
                 tokenStorage.saveToken(
                     data.accessToken,
                     data.refreshToken,
                 )
 
-                // save profile user
-                val user = data.user.toUser()
+                // save profile
                 userStorage.saveUserProfile(user)
+
                 ApiResult.Success(message = result.message)
             }
 

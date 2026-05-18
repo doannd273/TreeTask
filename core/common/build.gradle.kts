@@ -17,4 +17,7 @@ dependencies {
 
     // timber
     implementation(libs.timber)
+
+    // testing
+    testImplementation(projects.core.testing)
 }
