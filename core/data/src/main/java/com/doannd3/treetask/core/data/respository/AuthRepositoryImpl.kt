@@ -89,12 +89,6 @@ constructor(
                     )
                 }
 
-                // save token
-                tokenStorage.saveToken(
-                    data.accessToken,
-                    data.refreshToken,
-                )
-
                 // save profile user
                 val user = data.user.toUserOrNull()
                 if (user == null) {
@@ -104,7 +98,15 @@ constructor(
                     )
                 }
 
+                // save token
+                tokenStorage.saveToken(
+                    data.accessToken,
+                    data.refreshToken,
+                )
+
+                // save profile
                 userStorage.saveUserProfile(user)
+
                 ApiResult.Success(message = result.message)
             }
 
