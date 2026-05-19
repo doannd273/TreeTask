@@ -5,4 +5,7 @@
     <string name="designsystem_action_ok">OK</string>
     <string name="designsystem_success_dialog_title">Thành công</string>
     <string name="designsystem_info_dialog_title">Thông báo</string>
+    <string name="designsystem_cd_show_password">Hiện mật khẩu</string>
+    <string name="designsystem_cd_hide_password">Ẩn mật khẩu</string>
+    <string name="designsystem_cd_navigate_back">Quay lại</string>
 </resources>

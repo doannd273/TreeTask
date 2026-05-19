@@ -11,9 +11,6 @@
     <string name="auth_prompt_no_account">Don\'t have an account? %1$s</string>
     <string name="auth_forgot_password_success">Check your email to reset your password</string>
     <string name="auth_reset_password_success">Your password has been reset</string>
-    <string name="auth_cd_show_password">Show password</string>
-    <string name="auth_cd_hide_password">Hide password</string>
-    <string name="auth_cd_navigate_back">Go back</string>
     <string name="auth_send_otp">Send OTP</string>
     <string name="auth_resend_otp">Resend OTP</string>
     <string name="auth_otp_sent_to_email">OTP sent to %1$s</string>

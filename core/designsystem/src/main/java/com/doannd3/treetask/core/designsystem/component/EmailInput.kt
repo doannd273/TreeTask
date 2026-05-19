@@ -1,4 +1,4 @@
-package com.doannd3.treetask.feature.auth.ui.register
+package com.doannd3.treetask.core.designsystem.component
 
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.text.KeyboardActions
@@ -8,7 +8,6 @@ import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -17,17 +16,21 @@ import androidx.compose.ui.unit.sp
 import com.doannd3.treetask.core.designsystem.theme.Black
 import com.doannd3.treetask.core.designsystem.theme.Gray
 import com.doannd3.treetask.core.designsystem.theme.TreeTaskTheme
-import com.doannd3.treetask.feature.auth.R
 
 @Composable
-fun FullNameInput(
+fun EmailInput(
     modifier: Modifier = Modifier,
-    fullName: String,
-    onFullNameChange: (String) -> Unit,
+    label: String,
+    email: String,
+    isEnable: Boolean = true,
+    onEmailChange: (String) -> Unit,
+    imeAction: ImeAction = ImeAction.Next,
     onImeNext: () -> Unit = {},
+    onImeDone: () -> Unit = {},
 ) {
     OutlinedTextField(
-        modifier = modifier.fillMaxWidth(),
+        modifier = modifier,
+        enabled = isEnable,
         colors =
         OutlinedTextFieldDefaults.colors(
             focusedTextColor = Black,
@@ -40,46 +43,56 @@ fun FullNameInput(
         singleLine = true,
         keyboardOptions =
         KeyboardOptions(
-            keyboardType = KeyboardType.Text,
-            imeAction = ImeAction.Next,
+            keyboardType = KeyboardType.Email,
+            imeAction = imeAction,
         ),
         keyboardActions =
-        KeyboardActions(onNext = { onImeNext() }),
-        value = fullName,
-        onValueChange = { onFullNameChange(it) },
-        label = { Text(text = stringResource(R.string.auth_full_name_hint)) },
+        KeyboardActions(
+            onNext = { onImeNext() },
+            onDone = { onImeDone() },
+        ),
+        value = email,
+        onValueChange = { onEmailChange(it) },
+        label = { Text(text = label) },
     )
 }
 
 @Preview(showBackground = true)
 @Composable
-private fun FullNameInputPreview() {
+private fun EmailInputEmptyPreview() {
     TreeTaskTheme {
-        FullNameInput(
-            fullName = "Đoàn Nguyễn",
-            onFullNameChange = {},
+        EmailInput(
+            modifier = Modifier.fillMaxWidth(),
+            label = "Email",
+            email = "",
+            onEmailChange = {},
         )
     }
 }
 
 @Preview(showBackground = true)
 @Composable
-private fun FullNameInputEmptyPreview() {
+private fun EmailInputFilledPreview() {
     TreeTaskTheme {
-        FullNameInput(
-            fullName = "",
-            onFullNameChange = {},
+        EmailInput(
+            modifier = Modifier.fillMaxWidth(),
+            label = "Email",
+            email = "demo@gmail.com",
+            onEmailChange = {},
         )
     }
 }
 
 @Preview(showBackground = true)
 @Composable
-private fun FullNameInputLongPreview() {
+private fun EmailInputDisabledPreview() {
     TreeTaskTheme {
-        FullNameInput(
-            fullName = "Nguyễn Đoàn Minh Long",
-            onFullNameChange = {},
+        EmailInput(
+            modifier = Modifier.fillMaxWidth(),
+            label = "Email",
+            email = "demo@gmail.com",
+            isEnable = false,
+            onEmailChange = {},
         )
     }
 }

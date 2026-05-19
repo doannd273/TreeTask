@@ -1,5 +1,6 @@
 package com.doannd3.treetask.feature.auth.ui.register
 
+import androidx.lifecycle.viewModelScope
 import com.doannd3.treetask.core.common.ApiResult
 import com.doannd3.treetask.core.common.BaseViewModel
 import com.doannd3.treetask.core.common.MviViewModel
@@ -14,6 +15,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 import com.doannd3.treetask.core.common.R as CommonR
 import com.doannd3.treetask.feature.auth.R as AuthR
@@ -43,6 +45,11 @@ class RegisterViewModel @Inject constructor(
             is RegisterEvent.SubmitRegister -> submitRegister()
             is RegisterEvent.PasswordVisibleChanged -> {
                 _uiState.update { it.copy(passwordVisible = event.passwordVisible) }
+            }
+            is RegisterEvent.SuccessAcknowledged -> {
+                viewModelScope.launch {
+                    _effect.emit(RegisterEffect.NavigateToHome)
+                }
             }
         }
     }
