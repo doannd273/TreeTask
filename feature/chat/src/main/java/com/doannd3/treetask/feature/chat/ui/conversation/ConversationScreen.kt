@@ -4,7 +4,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
@@ -12,6 +11,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.repeatOnLifecycle
 import com.doannd3.treetask.core.common.asString
 import com.doannd3.treetask.core.designsystem.component.LocalGlobalAppState
+import com.doannd3.treetask.core.designsystem.theme.AppPreviewLightDark
+import com.doannd3.treetask.core.designsystem.theme.TreeTaskTheme
 
 @Composable
 fun ConversationRoute(viewModel: ConversationViewModel = hiltViewModel()) {
@@ -51,8 +52,10 @@ fun ConversationRoute(viewModel: ConversationViewModel = hiltViewModel()) {
     }
 }
 
+@AppPreviewLightDark
 @Composable
-@Preview(showBackground = true)
-fun ConversationScreenPreview() {
-    // TODO
+private fun ConversationScreenPreview() {
+    TreeTaskTheme {
+        // TODO
+    }
 }

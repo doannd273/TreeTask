@@ -6,7 +6,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.viewModelScope
 import com.doannd3.treetask.core.common.ApiResult
 import com.doannd3.treetask.core.common.BaseViewModel
-import com.doannd3.treetask.core.data.util.NetworkMonitor
+import com.doannd3.treetask.core.common.network.NetworkMonitor
 import com.doannd3.treetask.core.datastore.token.TokenStorage
 import com.doannd3.treetask.core.domain.repository.AuthRepository
 import com.doannd3.treetask.core.domain.repository.UserRepository

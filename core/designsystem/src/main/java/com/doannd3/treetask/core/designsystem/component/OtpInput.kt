@@ -21,14 +21,9 @@ import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.doannd3.treetask.core.designsystem.theme.ErrorSecondary
-import com.doannd3.treetask.core.designsystem.theme.Gray
-import com.doannd3.treetask.core.designsystem.theme.Purple40
-import com.doannd3.treetask.core.designsystem.theme.TextHint
-import com.doannd3.treetask.core.designsystem.theme.TextPrimary
+import com.doannd3.treetask.core.designsystem.theme.AppPreviewLightDark
 import com.doannd3.treetask.core.designsystem.theme.TreeTaskTheme
 
 @Composable
@@ -62,7 +57,7 @@ fun OtpInput(
         enabled = enabled,
         singleLine = true,
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.NumberPassword),
-        cursorBrush = SolidColor(Purple40),
+        cursorBrush = SolidColor(MaterialTheme.colorScheme.primary),
         decorationBox = { innerTextField ->
             Box {
                 Row(
@@ -106,13 +101,13 @@ private fun OtpDigitBox(
 ) {
     val borderColor =
         when {
-            isError -> ErrorSecondary
-            isActive -> Purple40
-            enabled -> Gray
-            else -> TextHint
+            isError -> MaterialTheme.colorScheme.error
+            isActive -> MaterialTheme.colorScheme.primary
+            enabled -> MaterialTheme.colorScheme.outline
+            else -> MaterialTheme.colorScheme.onSurfaceVariant
         }
 
-    val textColor = if (enabled) TextPrimary else TextHint
+    val textColor = if (enabled) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.onSurfaceVariant
 
     Box(
         modifier =
@@ -135,7 +130,7 @@ private fun OtpDigitBox(
     }
 }
 
-@Preview(showBackground = true)
+@AppPreviewLightDark
 @Composable
 private fun OtpInputEmptyPreview() {
     TreeTaskTheme {
@@ -148,7 +143,7 @@ private fun OtpInputEmptyPreview() {
     }
 }
 
-@Preview(showBackground = true)
+@AppPreviewLightDark
 @Composable
 private fun OtpInputPartialPreview() {
     TreeTaskTheme {
@@ -161,7 +156,7 @@ private fun OtpInputPartialPreview() {
     }
 }
 
-@Preview(showBackground = true)
+@AppPreviewLightDark
 @Composable
 private fun OtpInputErrorPreview() {
     TreeTaskTheme {

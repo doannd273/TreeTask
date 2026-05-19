@@ -3,6 +3,7 @@ package com.doannd3.treetask.feature.auth.ui.login
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -12,12 +13,11 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
 import com.doannd3.treetask.core.designsystem.component.LinkPart
 import com.doannd3.treetask.core.designsystem.component.LinkTag
 import com.doannd3.treetask.core.designsystem.component.LinkText
-import com.doannd3.treetask.core.designsystem.theme.Purple40
+import com.doannd3.treetask.core.designsystem.theme.AppPreviewLightDark
 import com.doannd3.treetask.core.designsystem.theme.TreeTaskTheme
 import com.doannd3.treetask.feature.auth.R
 
@@ -26,7 +26,7 @@ fun TreeTaskAppName() {
     Text(
         modifier = Modifier.fillMaxWidth(),
         text = stringResource(com.doannd3.treetask.core.common.R.string.common_app_name),
-        color = Purple40,
+        color = MaterialTheme.colorScheme.primary,
         fontSize = 50.sp,
         fontWeight = FontWeight.Bold,
         textAlign = TextAlign.Center,
@@ -58,12 +58,12 @@ fun RegisterTextButton(onNavigateToRegister: () -> Unit) {
             ),
             parentStyle =
             TextStyle(
-                color = Purple40,
+                color = MaterialTheme.colorScheme.primary,
                 fontSize = 15.sp,
             ),
             linkStyle =
             SpanStyle(
-                color = Purple40,
+                color = MaterialTheme.colorScheme.primary,
                 fontSize = 15.sp,
                 textDecoration = TextDecoration.Underline,
             ),
@@ -91,12 +91,12 @@ fun ForgotPasswordTextButton(onNavigateToForgotPassword: () -> Unit) {
             ),
             parentStyle =
             TextStyle(
-                color = Purple40,
+                color = MaterialTheme.colorScheme.primary,
                 fontSize = 15.sp,
             ),
             linkStyle =
             SpanStyle(
-                color = Purple40,
+                color = MaterialTheme.colorScheme.primary,
                 fontSize = 15.sp,
                 textDecoration = TextDecoration.Underline,
             ),
@@ -104,17 +104,17 @@ fun ForgotPasswordTextButton(onNavigateToForgotPassword: () -> Unit) {
     }
 }
 
-@Preview(showBackground = true)
+@AppPreviewLightDark
 @Composable
-fun TreeTaskAppNamePreview() {
+private fun TreeTaskAppNamePreview() {
     TreeTaskTheme {
         TreeTaskAppName()
     }
 }
 
-@Preview(showBackground = true)
+@AppPreviewLightDark
 @Composable
-fun RegisterTextButtonPreview() {
+private fun RegisterTextButtonPreview() {
     TreeTaskTheme {
         RegisterTextButton(
             onNavigateToRegister = {},
@@ -122,9 +122,9 @@ fun RegisterTextButtonPreview() {
     }
 }
 
-@Preview(showBackground = true)
+@AppPreviewLightDark
 @Composable
-fun ForgotPasswordTextButtonPreview() {
+private fun ForgotPasswordTextButtonPreview() {
     TreeTaskTheme {
         ForgotPasswordTextButton(
             onNavigateToForgotPassword = {},

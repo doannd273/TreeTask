@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -14,14 +15,13 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.doannd3.treetask.core.designsystem.component.CommonButton
 import com.doannd3.treetask.core.designsystem.component.EmailInput
 import com.doannd3.treetask.core.designsystem.component.OtpInput
 import com.doannd3.treetask.core.designsystem.component.PasswordInput
-import com.doannd3.treetask.core.designsystem.theme.Purple40
+import com.doannd3.treetask.core.designsystem.theme.AppPreviewLightDark
 import com.doannd3.treetask.core.designsystem.theme.TreeTaskTheme
 import com.doannd3.treetask.core.designsystem.util.rememberDebouncedClick
 import com.doannd3.treetask.feature.auth.R
@@ -90,7 +90,7 @@ internal fun ResetPasswordStep(
             Text(
                 modifier = Modifier.fillMaxWidth(),
                 text = stringResource(R.string.auth_otp_sent_to_email, state.email),
-                color = Purple40,
+                color = MaterialTheme.colorScheme.primary,
                 fontSize = 14.sp,
             )
 
@@ -133,7 +133,7 @@ internal fun ResetPasswordStep(
             ) {
                 Text(
                     text = stringResource(R.string.auth_resend_otp),
-                    color = Purple40,
+                    color = MaterialTheme.colorScheme.primary,
                 )
             }
 
@@ -148,7 +148,7 @@ internal fun ResetPasswordStep(
     }
 }
 
-@Preview(showBackground = true)
+@AppPreviewLightDark
 @Composable
 private fun EmailStepPreview() {
     TreeTaskTheme {
@@ -164,7 +164,7 @@ private fun EmailStepPreview() {
     }
 }
 
-@Preview(showBackground = true)
+@AppPreviewLightDark
 @Composable
 private fun EmailStepLoadingPreview() {
     TreeTaskTheme {
@@ -180,7 +180,7 @@ private fun EmailStepLoadingPreview() {
     }
 }
 
-@Preview(showBackground = true)
+@AppPreviewLightDark
 @Composable
 private fun ResetPasswordStepPreview() {
     TreeTaskTheme {
@@ -198,7 +198,7 @@ private fun ResetPasswordStepPreview() {
     }
 }
 
-@Preview(showBackground = true)
+@AppPreviewLightDark
 @Composable
 private fun ResetPasswordStepFilledPreview() {
     TreeTaskTheme {
@@ -217,7 +217,7 @@ private fun ResetPasswordStepFilledPreview() {
     }
 }
 
-@Preview(showBackground = true)
+@AppPreviewLightDark
 @Composable
 private fun ResetPasswordStepLoadingPreview() {
     TreeTaskTheme {

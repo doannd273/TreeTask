@@ -3,6 +3,7 @@ package com.doannd3.treetask.feature.auth.ui.register
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
@@ -12,10 +13,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
-import com.doannd3.treetask.core.designsystem.theme.Black
-import com.doannd3.treetask.core.designsystem.theme.Gray
+import com.doannd3.treetask.core.designsystem.theme.AppPreviewLightDark
 import com.doannd3.treetask.core.designsystem.theme.TreeTaskTheme
 import com.doannd3.treetask.feature.auth.R
 
@@ -30,8 +29,8 @@ fun FullNameInput(
         modifier = modifier.fillMaxWidth(),
         colors =
         OutlinedTextFieldDefaults.colors(
-            focusedTextColor = Black,
-            unfocusedTextColor = Gray,
+            focusedTextColor = MaterialTheme.colorScheme.onSurface,
+            unfocusedTextColor = MaterialTheme.colorScheme.onSurfaceVariant,
         ),
         textStyle =
         TextStyle(
@@ -51,7 +50,7 @@ fun FullNameInput(
     )
 }
 
-@Preview(showBackground = true)
+@AppPreviewLightDark
 @Composable
 private fun FullNameInputPreview() {
     TreeTaskTheme {
@@ -62,7 +61,7 @@ private fun FullNameInputPreview() {
     }
 }
 
-@Preview(showBackground = true)
+@AppPreviewLightDark
 @Composable
 private fun FullNameInputEmptyPreview() {
     TreeTaskTheme {
@@ -73,7 +72,7 @@ private fun FullNameInputEmptyPreview() {
     }
 }
 
-@Preview(showBackground = true)
+@AppPreviewLightDark
 @Composable
 private fun FullNameInputLongPreview() {
     TreeTaskTheme {

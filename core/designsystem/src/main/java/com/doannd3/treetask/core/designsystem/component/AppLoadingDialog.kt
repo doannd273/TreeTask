@@ -9,10 +9,11 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import com.doannd3.treetask.core.designsystem.theme.AppPreviewLightDark
+import com.doannd3.treetask.core.designsystem.theme.TreeTaskTheme
 
 @Composable
 fun AppLoadingDialog(
@@ -43,8 +44,10 @@ fun AppLoadingDialog(
     }
 }
 
+@AppPreviewLightDark
 @Composable
-@Preview(showBackground = true)
-fun AppLoadingDialogPreview() {
-    AppLoadingDialog(isLoading = true)
+private fun AppLoadingDialogPreview() {
+    TreeTaskTheme {
+        AppLoadingDialog(isLoading = true)
+    }
 }
