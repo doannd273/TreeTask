@@ -46,3 +46,9 @@ Thumbs.db
 # Google Services (CI sẽ inject từ GitHub Secrets khi build)
 google-services.json
 **/google-services.json
+
+# AI / Claude Code local config (local only, không push lên repo)
+.codex/
+.claude/
+AGENTS.md
+CLAUDE.md
