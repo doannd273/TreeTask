@@ -11,6 +11,7 @@ The goal is to keep changes small, architecture-aligned, easy to review, and res
 - Keep code changes consistent with the current style; avoid broad refactors unless the task requires them.
 - Technical docs should be written in English so coding agents can follow them reliably. `INTERVIEW_NOTES.md` may remain Vietnamese because it is user-facing interview prep.
 - Code, package names, classes, methods, and Gradle IDs follow English/Kotlin conventions.
+- Treat `CLAUDE.md` and `.claude/` as read-only reference material for Codex work; never edit them unless the user explicitly asks to modify Claude-specific files.
 
 ## Repository Structure
 
@@ -145,12 +146,15 @@ Rules:
 - `State` is an immutable `data class` representing everything needed to render UI.
 - `Event` is a sealed class/object representing actions from UI to ViewModel.
 - `Effect` is a sealed class/object for one-shot events: navigate, snackbar/dialog, toast, error message.
+- Use `data object` for no-payload `Event`/`Effect` variants.
 - ViewModels expose `StateFlow<State>` and `SharedFlow<Effect>` through `MviViewModel`.
 - UI calls `onEvent(...)`; composables must not call use cases/repositories directly.
 - Route collects `uiState` with `collectAsStateWithLifecycle()`.
 - Route collects `effect` inside `repeatOnLifecycle(Lifecycle.State.STARTED)`.
 - Global loading/error goes through `LocalGlobalAppState` following the current pattern.
 - ViewModel coroutines should use `executeSafe { ... }` when exceptions are possible.
+- Fire-and-forget effect emissions that cannot throw may use `viewModelScope.launch { _effect.emit(...) }`.
+- Navigation after dialogs/success acknowledgement should stay ViewModel-driven: Route sends an acknowledgement event, ViewModel emits a navigation effect, and Route executes navigation.
 
 ## UI Conventions
 
@@ -158,8 +162,11 @@ Rules:
 - Components use theme tokens from `core:designsystem/theme`.
 - Feature modules must not define their own global palette/theme.
 - Route keeps wiring logic; `Screen`/`Content` should be mostly pure composables for easier previews/tests.
+- Feature `Route` composables are the public entry points; `Screen`, `Content`, and workflow step composables that are not exported outside the feature should be `internal`.
 - Add a preview when creating new UI or changing layout significantly.
 - Use `stringResource`/string resources for real user-facing text.
+- Generic reusable UI belongs in `core:designsystem`; avoid sharing components across feature subpackages when the component is not feature-specific.
+- Generic `core:designsystem` components should receive display text as `String` parameters and should not read feature string resources internally.
 - Icons/vectors inside a feature must use the correct module resource prefix.
 - Avoid adding new app-level state inside features; the app shell currently owns the bottom bar, offline banner, global dialogs, and global loading.
 
@@ -205,6 +212,7 @@ Current status by area:
 
 - `core:common`
   - Contains `ApiResult` error/success model updates and `common_error_otp_empty` resources.
+  - Owns the lightweight `NetworkMonitor` contract used by app-level online/offline state.
   - Includes `ApiResultTest` coverage for display-message priority.
   - Depends on `core:testing` for host unit test assertions.
 - `core:network`
@@ -215,11 +223,14 @@ Current status by area:
   - Repositories use `appErrorCode = AppErrorCode.MISSING_RESPONSE_DATA` plus `MissingResponseDataException()` for missing required response data.
   - `UserResponse.toUserOrNull()` validates required `id`, `fullName`, and `email` fields before auth/profile repositories save user state.
   - `ConnectivityManagerNetworkMonitor` now uses framework `Context.getSystemService(Context.CONNECTIVITY_SERVICE)` instead of AndroidX Core KTX's `getSystemService` extension.
+  - Keeps the Android `ConnectivityManagerNetworkMonitor` implementation and Hilt binding, while the `NetworkMonitor` contract lives in `core:common`.
 - `core:domain`
   - `ResetPasswordUseCase` validates email, OTP, and password, then delegates to the auth repository.
   - Unit tests were added/updated for auth use cases.
   - No longer depends on `core:datastore`; domain remains limited to model/common/paging plus test dependencies.
 - `core:designsystem`
+  - Shared auth-friendly primitives include `OtpInput`, `EmailInput`, `PasswordInput`, and `CommonHeader` when they are generic enough for reuse.
+  - Generic input/header components accept display text from callers instead of owning feature copy.
   - `OtpInput` is implemented with previews.
   - `:core:designsystem:compileDebugKotlin` passed.
 - `feature:auth`
@@ -255,6 +266,9 @@ Verification status:
   - `./gradlew :core:domain:compileDebugKotlin :core:domain:testDebugUnitTest :app:compileDevDebugKotlin`
 - Passed after removing the transitive AndroidX Core KTX dependency risk from `core:data`:
   - `./gradlew :core:data:compileDebugKotlin :core:data:spotlessCheck :app:compileDevDebugKotlin`
+- Passed after moving the `NetworkMonitor` contract from `core:data` to `core:common`:
+  - `./gradlew :core:common:compileDebugKotlin :core:data:compileDebugKotlin :app:compileDevDebugKotlin`
+  - `./gradlew :core:common:spotlessCheck :core:data:spotlessCheck`
 - Developer reported the planned app verification steps completed after the planning pass:
   - `:app:compileDevDebugKotlin`
   - `assembleDebug`
@@ -278,7 +292,8 @@ Next steps:
 - Before merge, rerun the exact app/static checks if the latest terminal output is not available in the handoff:
   `./gradlew :app:compileDevDebugKotlin assembleDebug detekt spotlessCheck`
 - Next cleanup candidates:
-  - move `NetworkMonitor` contract out of `core:data` if continuing core boundary cleanup.
+  - replace raw auth UI color constants with Material 3 semantic color tokens.
+  - add the deferred auth/domain/ViewModel regression tests tracked in `docs/ARCHITECTURE_DEBT.md`.
 
 Important decisions:
 
@@ -292,10 +307,13 @@ Important decisions:
 - Forgot-password remains one route with internal `step` state instead of separate navigation destinations, because email/reset input are one workflow and should share local state without route arguments.
 - `ResetInput` back returns to `EmailInput` because it is a workflow step, not a separate app destination.
 - `OtpInput` lives in `core:designsystem` as a controlled reusable UI component; feature modules own validation, submission, resend, and navigation behavior.
+- Shared generic inputs/headers live in `core:designsystem` when they are not auth-specific; feature modules pass labels/copy in from their own resources.
+- Navigation decisions after success dialogs live in the ViewModel through acknowledgement events and navigation effects; Route should not hide navigation behavior inside dialog `onDismiss` lambdas.
 - `Accept-Language` belongs behind a synchronous provider because OkHttp interceptors are synchronous; future DataStore language support should update a cached provider value rather than blocking in the interceptor.
 - Invalid required user response data is a contract error and must be surfaced as `appErrorCode = MISSING_RESPONSE_DATA`; repositories should validate before saving token/profile state.
 - Domain must not depend on storage implementations such as DataStore. If domain needs session/user state later, expose it through domain repository/use-case contracts.
 - Prefer framework APIs over adding dependencies when the framework API is sufficient; for example, `ConnectivityManagerNetworkMonitor` uses `Context.getSystemService(Context.CONNECTIVITY_SERVICE)` directly.
+- App-level online/offline state should depend on the lightweight `core:common` `NetworkMonitor` contract; Android connectivity implementation details stay in `core:data`.
 - `@Preview` functions may stay private because they are not runtime entry points. Detekt ignores them to avoid noisy false positives.
 
 ## Related Docs

@@ -50,15 +50,20 @@ MVI:
 - `State` is immutable and render-focused.
 - `Event` represents UI intents.
 - `Effect` is used for one-shot navigation/message behavior.
+- No-payload `Event`/`Effect` variants use `data object`.
 - ViewModel exposes read-only `StateFlow`/`SharedFlow`.
 - Coroutine work that can fail uses existing safe execution/error handling.
+- Navigation after dialog dismissal is explicit: Route sends an acknowledgement event, ViewModel emits the navigation effect, Route performs navigation.
 
 Compose:
 
 - Route handles ViewModel, lifecycle collection, and navigation callbacks.
 - Screen/content composables remain mostly pure and previewable.
+- Screen/content/workflow step composables that are not public feature entry points are `internal`.
 - Effects are collected with lifecycle awareness.
 - User-facing text uses string resources.
+- Generic reusable UI lives in `core:designsystem`, not in one feature subpackage imported by another.
+- Generic design-system components receive display copy as `String` parameters from callers.
 - Loading/error/empty states are handled.
 - Accessibility labels are present for actionable icons.
 

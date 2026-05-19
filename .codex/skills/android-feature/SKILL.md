@@ -74,6 +74,10 @@ Keep dependencies minimal. Add only modules/libraries used by source code.
 - Add repository contracts/use cases to `core:domain`; add implementations/mappers to `core:data`.
 - Put API DTO/service in `core:network`; Room entity/DAO in `core:database`; preference/token storage in `core:datastore`.
 - User-facing text goes in string resources, not ViewModel hardcoded strings.
+- Use `data object` for no-payload MVI events/effects.
+- Keep Route composables public as feature entry points; keep Screen/Content/workflow step composables `internal` when they are not called from outside the feature.
+- Move generic reusable UI to `core:designsystem`; feature-local components should stay feature-specific.
+- Generic design-system components receive labels/copy as `String` parameters from feature callers.
 
 ## Navigation
 

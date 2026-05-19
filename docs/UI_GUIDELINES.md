@@ -19,6 +19,7 @@ Route:
 - Collects state/effects in a lifecycle-aware way.
 - Calls navigation callbacks.
 - Bridges global loading/dialog state.
+- For success/error dialogs that navigate after dismissal, sends an acknowledgement event to the ViewModel; the ViewModel then emits the navigation effect.
 
 Screen/Content:
 
@@ -26,12 +27,14 @@ Screen/Content:
 - Does not inject dependencies.
 - Does not know about `NavController`.
 - Is easy to preview with fake state.
+- Is `internal` when it is not a feature entry point.
 
 Components:
 
 - Stateless, or with clear state hoisting.
 - Callback names describe actions: `onTaskClick`, `onSearchChange`, `onClearClick`.
 - Avoid calling ViewModel directly from small components when a callback can be passed instead.
+- Generic reusable components belong in `core:designsystem`; keep feature-local components only when they are truly feature-specific.
 
 ## Design System
 
@@ -40,13 +43,15 @@ Use from `core:designsystem`:
 - `TreeTaskTheme`
 - `Color.kt`, `Type.kt`, `Shape.kt`
 - Dialog/loading components used by app global state
-- Reusable components such as `LinkText`, `DebouncedClick`
+- Reusable components such as `LinkText`, `DebouncedClick`, `OtpInput`, `EmailInput`, `PasswordInput`, and `CommonHeader`
 - Debug overlay wrapper when needed
 
 Avoid:
 
 - Copying colors/typography between features.
 - Creating global components inside feature modules.
+- Sharing generic UI by importing components across feature subpackages.
+- Reading feature string resources from generic `core:designsystem` components; pass labels/copy as `String` parameters from the caller.
 - Adding new app-level composition locals inside features.
 
 ## Material 3 Usage
@@ -107,6 +112,7 @@ Paging:
 - Feature modules should not render their own bottom bar.
 - Auth/splash/start destination is decided by the app/root layer.
 - Features expose graph/navigation helpers; the app wires them together.
+- Dialog dismissal should not hide navigation decisions in Route lambdas; send an event and let the ViewModel emit an effect.
 
 ## Theming and Resources
 

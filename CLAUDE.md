@@ -11,6 +11,7 @@ Keep changes small, architecture-aligned, easy to review, and consistent with ex
 - Keep code changes consistent with the current style; avoid broad refactors unless the task requires them.
 - Technical docs in English. `INTERVIEW_NOTES.md` may remain Vietnamese (user-facing interview prep).
 - Code, package names, classes, methods, and Gradle IDs follow English/Kotlin conventions.
+- **Never auto-edit `.codex/`, `AGENTS.md`, or any file under `docs/` without explicit user instruction.** These are manually curated reference files.
 
 ## Repository Structure
 
@@ -179,22 +180,45 @@ Rules:
 
 ## Current State — Auth / ApiResult
 
+### Completed
+
 - `ApiResult.Success` supports nullable `data` and optional backend success `message`.
 - `ApiResult.Error` separates: `statusCode` (HTTP), `backendErrorCode` (backend business code), `appErrorCode` (mobile-defined signal), `message` (backend display only), `exception`.
 - `AppErrorCode.MISSING_RESPONSE_DATA` and `MissingResponseDataException` added for internal contract errors.
 - Auth ViewModels use `ApiResult.Error.toDisplayMessage(...)`: backend `message` → `appErrorCode` mapping → localized fallback.
-- Reusable composables in `core:designsystem`: `OtpInput` (6-digit OTP), `EmailInput` (email field, takes `label: String`), `PasswordInput` (password field with visibility toggle, takes `label: String`), `CommonHeader` (top bar with back button, takes `title: String`).
-- Forgot-password supports two-step flow: `EmailInput` step (request OTP) → `ResetInput` step (enter OTP + new password). Back from `ResetInput` returns to `EmailInput`; back from `EmailInput` exits to login.
-- Auth `Screen`/`Content`/step composables are `internal`; only the Route function is public.
 - `Accept-Language` defaults to `en` via `DefaultAcceptLanguageProvider`.
 - `UserResponse.toUserOrNull()` validates required `id`, `fullName`, `email` before saving token/profile state.
-- Deferred regression tests tracked in `docs/ARCHITECTURE_DEBT.md`.
+- **Designsystem refactor**: `EmailInput`, `PasswordInput`, `CommonHeader` extracted to `core:designsystem`. Removed cross-subpackage coupling within `feature:auth`. Obsolete `auth_ic_visibility*.xml` and auth-specific string keys removed.
+- **Visibility**: `Screen`, `Content`, step composables across `login`, `register`, `forgotpassword` are `internal`.
+- **Navigation ownership**: `Register` and `ForgotPassword` both apply `XxxAcknowledged → NavigateToX` pattern. Navigation decisions are ViewModel-owned.
+- **ResendOtp fix**: OTP field is cleared before re-submitting email.
+- Forgot-password two-step flow: `EmailInput` step → `ResetInput` step. Back from `ResetInput` returns to `EmailInput`; back from `EmailInput` exits to login.
+- Reusable composables in `core:designsystem`: `OtpInput` (6-digit OTP), `EmailInput` (takes `label: String`), `PasswordInput` (visibility toggle, takes `label: String`), `CommonHeader` (back button + title, takes `title: String`).
+- Auth `Screen`/`Content`/step composables are `internal`; only the Route function is public.
 
-Before merging auth/reset-password work, rerun:
+### Pending / Known Issues
+
+- [ ] **[Medium]** Delete dead resource `feature/auth/src/main/res/drawable/auth_ic_back_left.xml` — both headers that used it were removed.
+- [ ] **[Low]** Make `ForgotPasswordPreview` and `ForgotPasswordResetPreview` in `ForgotPasswordScreen.kt` `private`.
+- [ ] **[Low]** Add newline at EOF to `core/designsystem/src/main/res/values/strings.xml` (Spotless will flag).
+- [ ] **[Low]** Deferred regression tests tracked in `docs/ARCHITECTURE_DEBT.md`.
+
+### Verification before merging
 
 ```bash
+./gradlew :feature:auth:compileDebugKotlin
 ./gradlew :app:compileDevDebugKotlin assembleDebug detekt spotlessCheck
 ```
+
+### Key Decisions
+
+| Decision | Reasoning |
+|---|---|
+| `XxxAcknowledged → NavigateToX` pattern | Route không được own navigation decision; ViewModel phải emit explicit effect để dễ branching sau này (e.g., onboarding) |
+| `data object` cho no-payload Event/Effect | Better `toString()` debugging; Kotlin 1.9+ feature |
+| `viewModelScope.launch` cho effect emit | `executeSafe` chỉ dùng khi block có thể throw; `_effect.emit()` không throw |
+| Generic inputs vào `core:designsystem` | Cross-subpackage import trong feature là coupling smell; ownership rõ ràng hơn |
+| `label: String` param cho designsystem components | `core:designsystem` không sở hữu feature-specific string resources |
 
 ## Related Docs
 
