@@ -1,4 +1,4 @@
-package com.doannd3.treetask.core.data.util
+package com.doannd3.treetask.core.common.network
 
 import kotlinx.coroutines.flow.Flow
 

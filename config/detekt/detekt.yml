@@ -11,7 +11,7 @@ style:
   ReturnCount:
     max: 7 # Cho phép 7 return trong 1 method
   UnusedPrivateMember:
-    ignoreAnnotated: [ 'Preview' ]
+    ignoreAnnotated: [ 'Preview', 'AppPreviewLightDark' ]
 
 performance:
   SpreadOperator:
@@ -25,4 +25,4 @@ complexity:
     threshold: 80
     ignoreAnnotated: [ 'Composable' ]
   TooManyFunctions:
-    ignoreAnnotatedFunctions: [ 'Preview' ]
+    ignoreAnnotatedFunctions: [ 'Preview', 'AppPreviewLightDark' ]

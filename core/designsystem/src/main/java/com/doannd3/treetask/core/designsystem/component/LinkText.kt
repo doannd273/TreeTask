@@ -2,6 +2,7 @@ package com.doannd3.treetask.core.designsystem.component
 
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.BasicText
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -12,10 +13,9 @@ import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextDecoration
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.doannd3.treetask.core.designsystem.theme.Purple40
+import com.doannd3.treetask.core.designsystem.theme.AppPreviewLightDark
 import com.doannd3.treetask.core.designsystem.theme.TreeTaskTheme
 
 enum class LinkTag {
@@ -82,7 +82,7 @@ fun LinkText(
     )
 }
 
-@Preview(showBackground = true)
+@AppPreviewLightDark
 @Composable
 private fun LinkTextRegisterPreview() {
     TreeTaskTheme {
@@ -99,12 +99,12 @@ private fun LinkTextRegisterPreview() {
             ),
             parentStyle =
             TextStyle(
-                color = Purple40,
+                color = MaterialTheme.colorScheme.primary,
                 fontSize = 15.sp,
             ),
             linkStyle =
             SpanStyle(
-                color = Purple40,
+                color = MaterialTheme.colorScheme.primary,
                 fontSize = 15.sp,
                 textDecoration = TextDecoration.Underline,
             ),

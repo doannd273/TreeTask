@@ -1,10 +1,10 @@
 package com.doannd3.treetask.core.data.di
 
+import com.doannd3.treetask.core.common.network.NetworkMonitor
 import com.doannd3.treetask.core.data.respository.AuthRepositoryImpl
 import com.doannd3.treetask.core.data.respository.TaskRepositoryImpl
 import com.doannd3.treetask.core.data.respository.UserRepositoryImpl
 import com.doannd3.treetask.core.data.util.ConnectivityManagerNetworkMonitor
-import com.doannd3.treetask.core.data.util.NetworkMonitor
 import com.doannd3.treetask.core.domain.repository.AuthRepository
 import com.doannd3.treetask.core.domain.repository.TaskRepository
 import com.doannd3.treetask.core.domain.repository.UserRepository

@@ -22,7 +22,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
@@ -37,6 +36,8 @@ import androidx.paging.compose.itemContentType
 import androidx.paging.compose.itemKey
 import com.doannd3.treetask.core.common.asString
 import com.doannd3.treetask.core.designsystem.component.LocalGlobalAppState
+import com.doannd3.treetask.core.designsystem.theme.AppPreviewLightDark
+import com.doannd3.treetask.core.designsystem.theme.TreeTaskTheme
 import com.doannd3.treetask.core.model.task.Task
 import com.doannd3.treetask.core.model.task.TaskStatus
 import com.doannd3.treetask.feature.tasks.R
@@ -212,47 +213,49 @@ fun TasksContent(
     }
 }
 
+@AppPreviewLightDark
 @Composable
-@Preview(showBackground = true)
-fun TasksScreenPreview() {
-    val sampleTasks = listOf(
-        Task(
-            id = "1",
-            userId = "user_1",
-            title = "Fix login bug",
-            description = "Crash when login with Google",
-            status = TaskStatus.PENDING,
-            dueDate = Instant.parse("2026-04-20T10:00:00Z"),
-            createdAt = Instant.parse("2026-04-10T08:00:00Z"),
-            updatedAt = Instant.parse("2026-04-15T09:00:00Z"),
-        ),
-        Task(
-            id = "2",
-            userId = "user_1",
-            title = "Design home screen",
-            description = "Create UI with Compose",
-            status = TaskStatus.TODO,
-            dueDate = Instant.parse("2026-04-25T10:00:00Z"),
-            createdAt = Instant.parse("2026-04-11T08:00:00Z"),
-            updatedAt = Instant.parse("2026-04-12T09:00:00Z"),
-        ),
-    )
-
-    val sampleTasksState =
-        TasksState(
-            isLoading = false,
-            searchQuery = "",
-            taskStatusSelected = TaskStatus.IN_PROGRESS,
-            tasks = flowOf(PagingData.from(sampleTasks)),
+private fun TasksScreenPreview() {
+    TreeTaskTheme {
+        val sampleTasks = listOf(
+            Task(
+                id = "1",
+                userId = "user_1",
+                title = "Fix login bug",
+                description = "Crash when login with Google",
+                status = TaskStatus.PENDING,
+                dueDate = Instant.parse("2026-04-20T10:00:00Z"),
+                createdAt = Instant.parse("2026-04-10T08:00:00Z"),
+                updatedAt = Instant.parse("2026-04-15T09:00:00Z"),
+            ),
+            Task(
+                id = "2",
+                userId = "user_1",
+                title = "Design home screen",
+                description = "Create UI with Compose",
+                status = TaskStatus.TODO,
+                dueDate = Instant.parse("2026-04-25T10:00:00Z"),
+                createdAt = Instant.parse("2026-04-11T08:00:00Z"),
+                updatedAt = Instant.parse("2026-04-12T09:00:00Z"),
+            ),
         )
 
-    val pagingItems = sampleTasksState.tasks.collectAsLazyPagingItems()
+        val sampleTasksState =
+            TasksState(
+                isLoading = false,
+                searchQuery = "",
+                taskStatusSelected = TaskStatus.IN_PROGRESS,
+                tasks = flowOf(PagingData.from(sampleTasks)),
+            )
 
-    TasksScreen(
-        state = sampleTasksState,
-        pagingItems = pagingItems,
-        onEvent = {},
-        onTaskClick = {},
-        onAddTaskClick = {},
-    )
+        val pagingItems = sampleTasksState.tasks.collectAsLazyPagingItems()
+
+        TasksScreen(
+            state = sampleTasksState,
+            pagingItems = pagingItems,
+            onEvent = {},
+            onTaskClick = {},
+            onAddTaskClick = {},
+        )
+    }
 }
