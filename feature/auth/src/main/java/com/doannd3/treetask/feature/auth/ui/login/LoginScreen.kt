@@ -33,7 +33,9 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.repeatOnLifecycle
 import com.doannd3.treetask.core.common.asString
 import com.doannd3.treetask.core.designsystem.component.CommonButton
+import com.doannd3.treetask.core.designsystem.component.EmailInput
 import com.doannd3.treetask.core.designsystem.component.LocalGlobalAppState
+import com.doannd3.treetask.core.designsystem.component.PasswordInput
 import com.doannd3.treetask.core.designsystem.util.rememberDebouncedClick
 import com.doannd3.treetask.feature.auth.R
 
@@ -143,6 +145,7 @@ internal fun LoginContent(
 
         EmailInput(
             modifier = Modifier.fillMaxWidth(),
+            label = stringResource(R.string.auth_email_hint),
             email = state.email,
             onEmailChange = { onEvent(LoginEvent.EmailChanged(it)) },
             imeAction = ImeAction.Next,
@@ -157,6 +160,7 @@ internal fun LoginContent(
             modifier = Modifier
                 .fillMaxWidth()
                 .focusRequester(passwordFocusRequester),
+            label = stringResource(R.string.auth_password_hint),
             password = state.password,
             passwordVisible = state.passwordVisible,
             onPasswordChange = { onEvent(LoginEvent.PasswordChanged(it)) },
@@ -189,7 +193,7 @@ internal fun LoginContent(
 
 @Composable
 @Preview(showBackground = true)
-fun LoginScreenPreview() {
+private fun LoginScreenPreview() {
     LoginScreen(
         state =
         LoginState(

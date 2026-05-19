@@ -1,5 +1,6 @@
 package com.doannd3.treetask.feature.auth.ui.forgotpassword
 
+import androidx.lifecycle.viewModelScope
 import com.doannd3.treetask.core.common.ApiResult
 import com.doannd3.treetask.core.common.BaseViewModel
 import com.doannd3.treetask.core.common.MviViewModel
@@ -15,6 +16,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 import com.doannd3.treetask.core.common.R as CommonR
 import com.doannd3.treetask.feature.auth.R as AuthR
@@ -75,7 +77,14 @@ constructor(
             }
 
             ForgotPasswordEvent.ResendOtp -> {
-                submitResendOtp()
+                _uiState.update { it.copy(otp = "") }
+                submitEmail()
+            }
+
+            ForgotPasswordEvent.ResetPasswordAcknowledged -> {
+                viewModelScope.launch {
+                    _effect.emit(ForgotPasswordEffect.NavigateToLogin)
+                }
             }
         }
     }
@@ -116,10 +125,6 @@ constructor(
                 }
             }
         }
-    }
-
-    private fun submitResendOtp() {
-        submitEmail()
     }
 
     private fun submitEmail() {

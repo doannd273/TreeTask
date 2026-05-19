@@ -25,6 +25,8 @@ sealed class ForgotPasswordEvent {
 
     data object ResendOtp : ForgotPasswordEvent()
 
+    data object ResetPasswordAcknowledged : ForgotPasswordEvent()
+
     data class EmailChanged(
         val email: String,
     ) : ForgotPasswordEvent()
@@ -54,4 +56,6 @@ sealed class ForgotPasswordEffect {
     data class ResetPasswordSuccess(
         val message: UiText,
     ) : ForgotPasswordEffect()
+
+    data object NavigateToLogin : ForgotPasswordEffect()
 }
