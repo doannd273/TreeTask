@@ -30,6 +30,7 @@ Use:
 
 Guidelines:
 
+- Use `data object` for no-payload `Event`/`Effect` variants.
 - State should not hold `Context`, `NavController`, repositories, services, DAO, or storage implementation.
 - Event should carry data from UI; avoid putting callbacks in events unless necessary.
 - Effect should not be persisted in State.
@@ -76,6 +77,7 @@ class ExampleViewModel @Inject constructor(
 ## Coroutine and Error Handling
 
 - Use `executeSafe { ... }` for coroutine work that can throw.
+- Simple fire-and-forget effect emissions that cannot throw may use `viewModelScope.launch { _effect.emit(...) }`.
 - Update loading state before and after long-running work.
 - Let `BaseViewModel` handle unexpected coroutine exceptions through `baseErrorEffect`.
 - Convert expected domain/data errors into feature effects:
@@ -90,6 +92,8 @@ when (result) {
     }
 }
 ```
+
+For navigation after a success/error dialog, keep the decision explicit in the ViewModel: Route sends an acknowledgement event, ViewModel emits the navigation effect, and Route executes navigation.
 
 ## Dependency Rules
 

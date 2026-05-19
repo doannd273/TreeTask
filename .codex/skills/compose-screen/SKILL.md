@@ -31,6 +31,7 @@ Create:
 - `<Screen>Event`: sealed class/object for user intents.
 - `<Screen>Effect`: sealed class/object for one-shot behavior such as navigation or error message.
 
+Use `data object` for no-payload event/effect variants.
 Use `UiText` for user-facing messages emitted from ViewModel.
 
 ## ViewModel Pattern
@@ -44,6 +45,7 @@ Use:
 - private `MutableStateFlow`, public `StateFlow`
 - private `MutableSharedFlow`, public `SharedFlow`
 - `executeSafe { ... }` for coroutine work that can fail
+- fire-and-forget `viewModelScope.launch { _effect.emit(...) }` only for simple effect emissions that cannot throw
 
 ViewModel should inject use cases from `core:domain`, not services, DAO, or storage implementation.
 
@@ -58,6 +60,7 @@ Route composable should:
 - Collect `baseErrorEffect` and bridge to `LocalGlobalAppState`.
 - Reflect long-running loading through `LocalGlobalAppState` only when that matches existing screen behavior.
 - Call navigation callbacks passed from the feature graph or app graph.
+- For success/error dialogs that navigate after dismissal, send an acknowledgement event to the ViewModel; the ViewModel emits the navigation effect, and the Route performs navigation.
 
 ## Screen and Components
 
@@ -66,7 +69,10 @@ Screen/content composables should:
 - Accept state and callbacks as parameters.
 - Avoid `NavController`, repository, use case, or ViewModel dependency.
 - Use `MaterialTheme` and components from `core:designsystem`.
+- Stay `internal` unless the composable is a public feature entry point.
 - Put reusable feature-local UI in `<Screen>Components.kt`.
+- Move generic reusable UI to `core:designsystem` instead of importing it across feature subpackages.
+- Pass labels/copy into generic `core:designsystem` components as `String` parameters; feature callers resolve `stringResource`.
 - Use `stringResource` for real text.
 - Add EN and VI strings when adding user-facing copy.
 - Add previews for new or meaningfully changed layouts.

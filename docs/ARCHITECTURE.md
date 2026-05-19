@@ -52,7 +52,7 @@ core:data
 | Network | `core:network` | Retrofit services, request/response DTOs, OkHttp interceptors/authenticator |
 | Local DB | `core:database` | Room database, DAO, entities, schema export |
 | Local prefs | `core:datastore` | Preferences DataStore, token/user/device storage |
-| Shared presentation/common | `core:common` | `ApiResult`, `UiText`, `BaseViewModel`, `MviViewModel`, dispatcher DI |
+| Shared presentation/common | `core:common` | `ApiResult`, `UiText`, `BaseViewModel`, `MviViewModel`, dispatcher DI, lightweight app-facing contracts such as `NetworkMonitor` |
 | Design system | `core:designsystem` | Theme, reusable Compose components, global dialog/loading primitives |
 | Testing | `core:testing` | Shared host unit test rules/helpers |
 
@@ -120,6 +120,8 @@ Each screen uses three concepts:
 - `Event`: user intents/actions sent from UI to ViewModel.
 - `Effect`: one-shot side effects such as navigation, dialog/snackbar, or error messages.
 
+Use `data object` for no-payload `Event` and `Effect` variants. Route composables should be the public UI entry points; `Screen`, `Content`, and workflow step composables should stay `internal` unless another module must call them.
+
 File pattern:
 
 ```text
@@ -158,6 +160,7 @@ Route composable:
 - Collect state with `collectAsStateWithLifecycle()`.
 - Collect effects with `repeatOnLifecycle(Lifecycle.State.STARTED)`.
 - Bridge global loading/error through `LocalGlobalAppState`.
+- For dialog dismissal that should navigate, send an acknowledgement event to the ViewModel, let the ViewModel emit a navigation effect, then execute navigation in the Route.
 
 ## Navigation
 
@@ -165,6 +168,14 @@ Route composable:
 - Each feature exposes its graph and navigation helpers from `feature/<name>/navigation`.
 - Top-level destinations are managed by `app/navigation/TopLevelDestination.kt`.
 - The auth graph clears its back stack after successful login/register so users cannot navigate back to auth screens.
+- Success/error acknowledgement behavior belongs in the ViewModel as events/effects; Route lambdas should not own hidden business navigation decisions.
+
+## Shared UI Components
+
+- Generic reusable Compose components belong in `core:designsystem`.
+- Feature-specific components stay inside the owning feature.
+- Avoid importing generic UI from one feature subpackage into another; move it to `core:designsystem` once reuse is real.
+- Generic design-system components receive display copy as `String` parameters. Feature callers resolve `stringResource` so design system components do not depend on feature resources.
 
 ## Offline-First
 
