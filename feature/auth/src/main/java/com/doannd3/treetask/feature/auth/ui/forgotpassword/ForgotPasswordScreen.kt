@@ -18,7 +18,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
@@ -27,6 +26,8 @@ import androidx.lifecycle.repeatOnLifecycle
 import com.doannd3.treetask.core.common.asString
 import com.doannd3.treetask.core.designsystem.component.CommonHeader
 import com.doannd3.treetask.core.designsystem.component.LocalGlobalAppState
+import com.doannd3.treetask.core.designsystem.theme.AppPreviewLightDark
+import com.doannd3.treetask.core.designsystem.theme.TreeTaskTheme
 import com.doannd3.treetask.feature.auth.R
 
 @Composable
@@ -161,31 +162,35 @@ internal fun ForgotPasswordContent(
     }
 }
 
+@AppPreviewLightDark
 @Composable
-@Preview(showBackground = true)
-fun ForgotPasswordPreview() {
-    ForgotPasswordScreen(
-        state =
-        ForgotPasswordState(
-            email = "demo@gmail.com",
-        ),
-        onEvent = {},
-        onForgotPasswordBack = {},
-    )
+private fun ForgotPasswordPreview() {
+    TreeTaskTheme {
+        ForgotPasswordScreen(
+            state =
+            ForgotPasswordState(
+                email = "demo@gmail.com",
+            ),
+            onEvent = {},
+            onForgotPasswordBack = {},
+        )
+    }
 }
 
+@AppPreviewLightDark
 @Composable
-@Preview(showBackground = true)
-fun ForgotPasswordResetPreview() {
-    ForgotPasswordScreen(
-        state =
-        ForgotPasswordState(
-            step = ForgotPasswordStep.ResetInput,
-            email = "demo@gmail.com",
-            otp = "123456",
-            newPassword = "password123",
-        ),
-        onEvent = {},
-        onForgotPasswordBack = {},
-    )
+private fun ForgotPasswordResetPreview() {
+    TreeTaskTheme {
+        ForgotPasswordScreen(
+            state =
+            ForgotPasswordState(
+                step = ForgotPasswordStep.ResetInput,
+                email = "demo@gmail.com",
+                otp = "123456",
+                newPassword = "password123",
+            ),
+            onEvent = {},
+            onForgotPasswordBack = {},
+        )
+    }
 }

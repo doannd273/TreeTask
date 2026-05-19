@@ -5,6 +5,7 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
@@ -17,11 +18,9 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
 import com.doannd3.treetask.core.designsystem.R
-import com.doannd3.treetask.core.designsystem.theme.Black
-import com.doannd3.treetask.core.designsystem.theme.Gray
+import com.doannd3.treetask.core.designsystem.theme.AppPreviewLightDark
 import com.doannd3.treetask.core.designsystem.theme.TreeTaskTheme
 
 @Composable
@@ -42,8 +41,8 @@ fun PasswordInput(
         enabled = enabled,
         colors =
         OutlinedTextFieldDefaults.colors(
-            focusedTextColor = Black,
-            unfocusedTextColor = Gray,
+            focusedTextColor = MaterialTheme.colorScheme.onSurface,
+            unfocusedTextColor = MaterialTheme.colorScheme.onSurfaceVariant,
         ),
         textStyle =
         TextStyle(
@@ -97,7 +96,7 @@ fun PasswordInput(
     )
 }
 
-@Preview(showBackground = true)
+@AppPreviewLightDark
 @Composable
 private fun PasswordInputEmptyPreview() {
     TreeTaskTheme {
@@ -112,7 +111,7 @@ private fun PasswordInputEmptyPreview() {
     }
 }
 
-@Preview(showBackground = true)
+@AppPreviewLightDark
 @Composable
 private fun PasswordInputFilledHiddenPreview() {
     TreeTaskTheme {
@@ -127,7 +126,7 @@ private fun PasswordInputFilledHiddenPreview() {
     }
 }
 
-@Preview(showBackground = true)
+@AppPreviewLightDark
 @Composable
 private fun PasswordInputFilledVisiblePreview() {
     TreeTaskTheme {
@@ -142,7 +141,7 @@ private fun PasswordInputFilledVisiblePreview() {
     }
 }
 
-@Preview(showBackground = true)
+@AppPreviewLightDark
 @Composable
 private fun PasswordInputDisabledPreview() {
     TreeTaskTheme {

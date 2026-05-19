@@ -19,6 +19,7 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
@@ -36,16 +37,12 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.doannd3.treetask.core.common.extension.toDayMonth
-import com.doannd3.treetask.core.designsystem.theme.Black
-import com.doannd3.treetask.core.designsystem.theme.ErrorPrimary
-import com.doannd3.treetask.core.designsystem.theme.Gray
-import com.doannd3.treetask.core.designsystem.theme.Purple40
-import com.doannd3.treetask.core.designsystem.theme.Success
-import com.doannd3.treetask.core.designsystem.theme.White
+import com.doannd3.treetask.core.designsystem.theme.AppPreviewLightDark
+import com.doannd3.treetask.core.designsystem.theme.TreeTaskTheme
+import com.doannd3.treetask.core.designsystem.theme.treeTaskColors
 import com.doannd3.treetask.core.model.task.Task
 import com.doannd3.treetask.core.model.task.TaskStatus
 import com.doannd3.treetask.feature.tasks.R
@@ -92,16 +89,16 @@ fun SearchTaskInput(
             .fillMaxWidth()
             .border(
                 width = 1.dp,
-                color = Purple40,
+                color = MaterialTheme.colorScheme.primary,
                 shape = RoundedCornerShape(6.dp),
             ).background(
-                color = White,
+                color = MaterialTheme.colorScheme.surface,
                 shape = RoundedCornerShape(6.dp),
             ),
         colors =
         TextFieldDefaults.colors(
-            focusedTextColor = Black,
-            unfocusedTextColor = Gray,
+            focusedTextColor = MaterialTheme.colorScheme.onSurface,
+            unfocusedTextColor = MaterialTheme.colorScheme.onSurfaceVariant,
             focusedIndicatorColor = Color.Transparent,
             unfocusedIndicatorColor = Color.Transparent,
             disabledIndicatorColor = Color.Transparent,
@@ -134,7 +131,7 @@ fun SearchTaskInput(
                     CircularProgressIndicator(
                         modifier = Modifier.size(18.dp),
                         strokeWidth = 2.dp,
-                        color = Purple40,
+                        color = MaterialTheme.colorScheme.primary,
                     )
                 }
 
@@ -166,7 +163,7 @@ fun TaskItem(
             .fillMaxWidth()
             .padding(vertical = 6.dp),
         shape = RoundedCornerShape(3.dp),
-        colors = CardDefaults.cardColors(containerColor = White),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
     ) {
         Column(
@@ -180,7 +177,7 @@ fun TaskItem(
             ) {
                 Text(
                     text = task.title,
-                    color = Purple40,
+                    color = MaterialTheme.colorScheme.primary,
                     fontSize = 16.sp,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
@@ -193,7 +190,7 @@ fun TaskItem(
             if (task.description?.isNotBlank() == true) {
                 Text(
                     text = task.description ?: "",
-                    color = Black,
+                    color = MaterialTheme.colorScheme.onSurface,
                     fontSize = 13.sp,
                     maxLines = 2,
                     overflow = TextOverflow.Ellipsis,
@@ -201,7 +198,7 @@ fun TaskItem(
             }
             Text(
                 text = "Hạn chót: ${task.dueDate.toDayMonth()}",
-                color = Black,
+                color = MaterialTheme.colorScheme.onSurface,
                 fontSize = 13.sp,
             )
         }
@@ -210,18 +207,13 @@ fun TaskItem(
 
 @Composable
 fun StatusBadge(status: TaskStatus) {
+    val colorScheme = MaterialTheme.colorScheme
     val backgroundColor =
         when (status) {
-            TaskStatus.TODO -> Gray
-
-            // Xám xanh
-            TaskStatus.IN_PROGRESS -> Purple40
-
-            // Xanh dương
-            TaskStatus.PENDING -> ErrorPrimary
-
-            // Đỏ
-            TaskStatus.DONE -> Success // Xanh lá
+            TaskStatus.TODO -> colorScheme.outline
+            TaskStatus.IN_PROGRESS -> colorScheme.primary
+            TaskStatus.PENDING -> colorScheme.error
+            TaskStatus.DONE -> MaterialTheme.treeTaskColors.success
         }
     Row(
         modifier =
@@ -231,47 +223,53 @@ fun StatusBadge(status: TaskStatus) {
                 color = backgroundColor,
             ).padding(vertical = 4.dp, horizontal = 8.dp),
     ) {
-        Text(text = status.label, color = White, fontSize = 13.sp)
+        Text(text = status.label, color = Color.White, fontSize = 13.sp)
     }
 }
 
+@AppPreviewLightDark
 @Composable
-@Preview(showBackground = true)
-fun TaskItemPreview() {
-    TaskItem(
-        task =
-        Task(
-            id = "1",
-            userId = "user_1",
-            title = "Fix login bug",
-            description = "Crash when login with Google",
-            status = TaskStatus.IN_PROGRESS,
-            dueDate = Instant.parse("2026-04-20T10:00:00Z"),
-            createdAt = Instant.parse("2026-04-10T08:00:00Z"),
-            updatedAt = Instant.parse("2026-04-15T09:00:00Z"),
-        ),
-        onClick = {},
-    )
+private fun TaskItemPreview() {
+    TreeTaskTheme {
+        TaskItem(
+            task =
+            Task(
+                id = "1",
+                userId = "user_1",
+                title = "Fix login bug",
+                description = "Crash when login with Google",
+                status = TaskStatus.IN_PROGRESS,
+                dueDate = Instant.parse("2026-04-20T10:00:00Z"),
+                createdAt = Instant.parse("2026-04-10T08:00:00Z"),
+                updatedAt = Instant.parse("2026-04-15T09:00:00Z"),
+            ),
+            onClick = {},
+        )
+    }
 }
 
+@AppPreviewLightDark
 @Composable
-@Preview(showBackground = true)
-fun SearchTaskInputPreview() {
-    SearchTaskInput(
-        searchQuery = "",
-        isLoadingSearch = true,
-        onSearchChange = {},
-        onClearClick = {},
-    )
+private fun SearchTaskInputPreview() {
+    TreeTaskTheme {
+        SearchTaskInput(
+            searchQuery = "",
+            isLoadingSearch = true,
+            onSearchChange = {},
+            onClearClick = {},
+        )
+    }
 }
 
-@Preview(showBackground = true)
+@AppPreviewLightDark
 @Composable
-fun PreviewTaskStatusChips() {
-    var selected by remember { mutableStateOf(TaskStatus.TODO) }
+private fun TaskStatusChipsPreview() {
+    TreeTaskTheme {
+        var selected by remember { mutableStateOf(TaskStatus.TODO) }
 
-    TaskStatusChips(
-        taskStatusSelected = selected,
-        onFilterSelect = { },
-    )
+        TaskStatusChips(
+            taskStatusSelected = selected,
+            onFilterSelect = { },
+        )
+    }
 }

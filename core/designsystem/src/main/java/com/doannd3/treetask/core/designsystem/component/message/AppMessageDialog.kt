@@ -20,14 +20,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import com.doannd3.treetask.core.designsystem.R
-import com.doannd3.treetask.core.designsystem.theme.DividerPrimary
-import com.doannd3.treetask.core.designsystem.theme.TextPrimary
-import com.doannd3.treetask.core.designsystem.theme.TextWarning
+import com.doannd3.treetask.core.designsystem.theme.AppPreviewLightDark
+import com.doannd3.treetask.core.designsystem.theme.TreeTaskTheme
 
 @Composable
 fun AppMessageDialog(
@@ -70,7 +68,7 @@ fun AppMessageDialog(
                     Text(
                         text =
                         title,
-                        color = TextPrimary,
+                        color = MaterialTheme.colorScheme.onSurface,
                         fontSize = 18.sp,
                         fontWeight = FontWeight.Medium,
                         textAlign = TextAlign.Center,
@@ -80,13 +78,13 @@ fun AppMessageDialog(
 
                     Text(
                         text = appDialogState.message,
-                        color = TextPrimary,
+                        color = MaterialTheme.colorScheme.onSurface,
                         fontSize = 14.sp,
                         textAlign = TextAlign.Center,
                     )
                 }
 
-                HorizontalDivider(thickness = 0.3.dp, color = DividerPrimary)
+                HorizontalDivider(thickness = 0.3.dp, color = MaterialTheme.colorScheme.outlineVariant)
 
                 TextButton(
                     modifier = Modifier.fillMaxWidth(),
@@ -95,7 +93,7 @@ fun AppMessageDialog(
                     Text(
                         text = stringResource(R.string.designsystem_action_ok),
                         fontSize = 16.sp,
-                        color = TextWarning,
+                        color = MaterialTheme.colorScheme.primary,
                         fontWeight = FontWeight.Medium,
                         textAlign = TextAlign.Center,
                     )
@@ -105,10 +103,10 @@ fun AppMessageDialog(
     }
 }
 
+@AppPreviewLightDark
 @Composable
-@Preview(showBackground = true)
-fun AppErrorDialogPreview() {
-    MaterialTheme {
+private fun AppErrorDialogPreview() {
+    TreeTaskTheme {
         AppMessageDialog(
             appDialogState =
             AppDialogState(
