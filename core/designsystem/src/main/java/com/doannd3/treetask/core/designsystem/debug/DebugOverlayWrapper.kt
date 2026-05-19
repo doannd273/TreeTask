@@ -13,11 +13,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.doannd3.treetask.core.designsystem.theme.AppPreviewLightDark
 import com.doannd3.treetask.core.designsystem.theme.DevBackground
 import com.doannd3.treetask.core.designsystem.theme.DevText
+import com.doannd3.treetask.core.designsystem.theme.TreeTaskTheme
 
 @SuppressLint("UnusedBoxWithConstraintsScope")
 @Composable
@@ -47,21 +48,23 @@ fun DebugOverlayWrapper(
     }
 }
 
-@Preview(showBackground = true)
+@AppPreviewLightDark
 @Composable
-fun DebugOverlayWrapperPreview() {
-    DebugOverlayWrapper(
-        isVisible = true,
-        label = "PROD • DEBUG",
-    ) {
-        Box(
-            modifier =
-            Modifier
-                .fillMaxSize()
-                .background(Color.LightGray),
-            contentAlignment = Alignment.Center,
+private fun DebugOverlayWrapperPreview() {
+    TreeTaskTheme {
+        DebugOverlayWrapper(
+            isVisible = true,
+            label = "PROD • DEBUG",
         ) {
-            Text(text = "Main Content")
+            Box(
+                modifier =
+                Modifier
+                    .fillMaxSize()
+                    .background(Color.LightGray),
+                contentAlignment = Alignment.Center,
+            ) {
+                Text(text = "Main Content")
+            }
         }
     }
 }

@@ -91,6 +91,8 @@ sealed class ExampleEffect {
 }
 ```
 
+Use `data object` for no-payload events/effects.
+
 ## 4. ViewModel
 
 ```kotlin
@@ -122,7 +124,7 @@ class ExampleViewModel @Inject constructor(
     }
 
     private fun submit() {
-        executeSafe {
+        viewModelScope.launch {
             _effect.emit(ExampleEffect.NavigateBack)
         }
     }
@@ -178,7 +180,7 @@ fun ExampleRoute(
 }
 
 @Composable
-fun ExampleScreen(
+internal fun ExampleScreen(
     state: ExampleState,
     onEvent: (ExampleEvent) -> Unit,
 ) {
@@ -229,6 +231,8 @@ If the feature needs new data:
 - Add repository implementation/mapper to `core:data`.
 - Bind the implementation in the appropriate Hilt module.
 - Feature modules should inject use cases only.
+- Put generic reusable UI in `core:designsystem`; keep feature-local components specific to that feature.
+- Generic design-system components receive labels/copy as `String` parameters from feature callers.
 
 ## 8. Test Checklist
 
@@ -248,4 +252,6 @@ If the feature needs new data:
 - Resource prefix matches the module.
 - No unused dependencies are added.
 - Clean Architecture dependency direction is preserved.
+- Route is public; screen/content/workflow step composables are `internal` unless another module needs them.
+- Dialog dismissal navigation is explicit: Route sends acknowledgement event, ViewModel emits navigation effect, Route performs navigation.
 - Docs are updated if the feature adds a new convention.

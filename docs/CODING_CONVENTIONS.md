@@ -6,9 +6,11 @@ This document describes the conventions currently used in TreeTask. If this docu
 
 - Use Kotlin 2.0.x with JVM target 17.
 - Prefer immutable data: `val`, `data class`, and sealed class/object for state/event/effect.
+- Use `data object` for sealed `Event`/`Effect` variants that carry no payload.
 - Use Hilt constructor injection when a class needs dependencies.
 - Do not catch exceptions in UI with broad `catch (Exception)` if repository/use case boundaries already normalize errors with `ApiResult`.
 - ViewModel coroutines that can fail should use `executeSafe { ... }` from `BaseViewModel`.
+- Fire-and-forget effect emissions that cannot throw may use `viewModelScope.launch { _effect.emit(...) }`.
 - Expose public flows as read-only types: `StateFlow`, `SharedFlow`, or `Flow`.
 - Keep mutable flows private: `_uiState`, `_effect`.
 - Package names follow module ownership:
@@ -78,11 +80,14 @@ For docs-only changes, Gradle is not required. `git diff --check` is enough to c
 ## Compose
 
 - Route composables wire ViewModel/navigation/effects.
+- Route composables are the feature's public entry points; `Screen`, `Content`, and workflow step composables should be `internal` unless another module must call them.
 - Screen/Content composables receive `state` and callbacks and should not inject dependencies.
 - Use `collectAsStateWithLifecycle()` for state from ViewModel.
 - Use `repeatOnLifecycle(Lifecycle.State.STARTED)` for effect collection.
 - Do not call use cases or repositories from composables.
 - Do not create feature-local global themes/palettes; use `core:designsystem`.
+- Put generic reusable UI in `core:designsystem`, not in one feature subpackage and imported by another.
+- Generic `core:designsystem` components receive display text as `String` parameters; feature callers resolve `stringResource`.
 - Real user-facing text must live in `strings.xml` and `values-vi/strings.xml` when i18n is needed.
 - Previews should use simple fake state and should not need network or DI.
 - `contentDescription = null` is only for decorative icons. Action icons need meaningful descriptions.
@@ -110,6 +115,7 @@ Rules:
 - State must not contain Android `Context`, `NavController`, repository, DAO, or service instances.
 - Event should carry data, not UI callbacks, unless there is a strong reason.
 - Effect is for one-shot behavior and should not be stored in State.
+- Navigation after a success/error dialog should be explicit: Route sends an acknowledgement event, ViewModel emits the navigation effect, and Route performs navigation.
 - Long-running loading can be rendered through State or global loading, following the existing screen pattern.
 - Error messages from domain/data should be normalized into `UiText`.
 
