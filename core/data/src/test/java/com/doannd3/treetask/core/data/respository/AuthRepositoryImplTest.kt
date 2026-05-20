@@ -2,6 +2,8 @@ package com.doannd3.treetask.core.data.respository
 
 import app.cash.turbine.test
 import com.doannd3.treetask.core.common.ApiResult
+import com.doannd3.treetask.core.common.error.AppErrorCode
+import com.doannd3.treetask.core.common.error.MissingResponseDataException
 import com.doannd3.treetask.core.datastore.token.TokenStorage
 import com.doannd3.treetask.core.datastore.user.UserStorage
 import com.doannd3.treetask.core.network.model.response.RegisterResponse
@@ -142,6 +144,75 @@ class AuthRepositoryImplTest {
         }
 
     @Test
+    fun `login returns missing response data and does not save token or profile when payload is missing`() =
+        runTest {
+            coEvery {
+                authService.login(any())
+            } returns ApiResult.Success<TokenResponse>(data = null)
+
+            val result = authRepository.login("test@treetask.com", "password123")
+
+            assertMissingResponseDataError(result)
+            coVerify(exactly = 0) {
+                tokenManager.saveToken(any(), any())
+            }
+            coVerify(exactly = 0) {
+                userPrefsManager.saveUserProfile(any())
+            }
+        }
+
+    @Test
+    fun `login returns missing response data and does not save token or profile when user payload is invalid`() =
+        runTest {
+            val invalidResponse =
+                TokenResponse(
+                    accessToken = "fake_access_token",
+                    refreshToken = "fake_refresh_token",
+                    user = fakeUserResponse.copy(email = null),
+                )
+
+            coEvery {
+                authService.login(any())
+            } returns ApiResult.Success(data = invalidResponse)
+
+            val result = authRepository.login("test@treetask.com", "password123")
+
+            assertMissingResponseDataError(result)
+            coVerify(exactly = 0) {
+                tokenManager.saveToken(any(), any())
+            }
+            coVerify(exactly = 0) {
+                userPrefsManager.saveUserProfile(any())
+            }
+        }
+
+    @Test
+    fun `register returns missing response data and does not save token or profile when user payload is invalid`() =
+        runTest {
+            val invalidResponse =
+                RegisterResponse(
+                    userId = "fake_user_id",
+                    accessToken = "fake_access_token",
+                    refreshToken = "fake_refresh_token",
+                    user = fakeUserResponse.copy(fullName = " "),
+                )
+
+            coEvery {
+                authService.register(any())
+            } returns ApiResult.Success(data = invalidResponse)
+
+            val result = authRepository.register("Doan ND", "test@treetask.com", "password123")
+
+            assertMissingResponseDataError(result)
+            coVerify(exactly = 0) {
+                tokenManager.saveToken(any(), any())
+            }
+            coVerify(exactly = 0) {
+                userPrefsManager.saveUserProfile(any())
+            }
+        }
+
+    @Test
     fun `forgotPassword returns success`() =
         runTest {
             // GIVE
@@ -179,4 +250,11 @@ class AuthRepositoryImplTest {
                 userPrefsManager.clearUserProfile()
             }
         }
+
+    private fun assertMissingResponseDataError(result: ApiResult<*>) {
+        assertThat(result).isInstanceOf(ApiResult.Error::class.java)
+        val error = result as ApiResult.Error
+        assertThat(error.appErrorCode).isEqualTo(AppErrorCode.MISSING_RESPONSE_DATA)
+        assertThat(error.exception).isInstanceOf(MissingResponseDataException::class.java)
+    }
 }

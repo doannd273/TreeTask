@@ -19,5 +19,4 @@ dependencies {
 
     // testing
     testImplementation(projects.core.testing)
-    testImplementation(kotlin("test"))
 }

@@ -13,18 +13,25 @@ android {
     resourcePrefix = "auth_"
 }
 dependencies {
+    // core
     implementation(projects.core.model)
     implementation(projects.core.domain)
     implementation(projects.core.common)
     implementation(projects.core.designsystem)
     implementation(projects.core.analytics)
 
+    // androidx
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.lifecycle.viewmodel.compose)
-    implementation(libs.androidx.lifecycle.runtime.compose)
+
+    // compose
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.navigation.compose)
     implementation(libs.androidx.hilt.navigation.compose)
 
+    // logging
     implementation(libs.timber)
+
+    // testing
+    testImplementation(projects.core.testing)
 }

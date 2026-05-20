@@ -78,6 +78,7 @@ Prefer:
 
 - Feature modules injecting use cases from `core:domain`.
 - Data layer mapping DTO/entity types into domain models.
+- App-level online/offline state depending on the lightweight `core:common.network.NetworkMonitor` contract, while Android connectivity implementation remains in `core:data`.
 - UI messages flowing through `UiText` and string resources.
 - Hilt bindings living in the module that owns the implementation.
 
