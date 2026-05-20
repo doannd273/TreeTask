@@ -33,6 +33,7 @@ class ForgotPasswordUseCaseTest {
             assertThat(errorResult.message).isInstanceOf(UiText.StringResource::class.java)
             val stringResource = errorResult.message as UiText.StringResource
             assertThat(stringResource.resId).isEqualTo(R.string.common_error_email_empty)
+            coVerify(exactly = 0) { authRepository.forgotPassword(any()) }
         }
 
     @Test

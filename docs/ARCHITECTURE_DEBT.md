@@ -44,11 +44,12 @@ This file tracks architecture issues and tech debt found during module-by-module
 - **Location**: `feature/auth/src/main/java/com/doannd3/treetask/feature/auth/ui/register/RegisterComponents.kt`
 - **Location**: `feature/auth/src/main/java/com/doannd3/treetask/feature/auth/ui/forgotpassword/ForgotPasswordComponents.kt`
 - **Location**: `core/designsystem/src/main/java/com/doannd3/treetask/core/designsystem/component/OtpInput.kt`
-- **Issue**: Auth UI components still use raw color constants such as `Purple40`, `Black`, `Gray`, and `White` for text, backgrounds, and cursor color instead of `MaterialTheme.colorScheme` semantic tokens.
-- **Impact**: Auth UI is effectively locked to a light-mode palette. Dark theme, dynamic color, and future theme adjustments can render incorrect contrast or visually inconsistent surfaces.
+- **Issue**: Auth UI components previously used raw color constants such as `Purple40`, `Black`, `Gray`, and `White` for text, backgrounds, and cursor color instead of `MaterialTheme.colorScheme` semantic tokens.
+- **Impact**: Auth UI was effectively locked to a light-mode palette. Dark theme, dynamic color, and future theme adjustments could render incorrect contrast or visually inconsistent surfaces.
 - **Target solution**: Replace raw constants with semantic tokens such as `MaterialTheme.colorScheme.primary`, `onBackground`, `onSurfaceVariant`, `surface`, and matching cursor/error colors. Verify the login, register, forgot-password, and OTP states in light and dark theme.
+- **Resolution**: Login/register/forgot-password components and `OtpInput` now use `MaterialTheme.colorScheme` semantic tokens for text, links, borders, cursor, error, and disabled states.
 - **Priority**: Medium
-- **Status**: Deferred until auth/design-system theming cleanup
+- **Status**: Resolved
 
 ## `feature:auth` Contains Hardcoded Fallback Error Text
 
@@ -74,9 +75,9 @@ This file tracks architecture issues and tech debt found during module-by-module
 - **Location**: `core/network/src/main/java/com/doannd3/treetask/core/network/util/ApiResultCall.kt`
 - **Location**: `core/data/src/main/java/com/doannd3/treetask/core/data/respository`
 - **Location**: `feature/auth/src/main/java/com/doannd3/treetask/feature/auth/ui`
-- **Issue**: The new `ApiResult` contract has only narrow common-layer coverage for display-message priority. Network parsing, repository missing-data handling, and auth ViewModel state/effect regressions are still not fully covered by focused unit tests.
-- **Impact**: Regressions in backend `code` parsing, backend `message` priority, nullable success `data`, `MISSING_RESPONSE_DATA`, or forgot-password step transitions could slip through compile/build checks.
-- **Target solution**: Add focused tests for `ApiResultCall`, repository missing required response data, and auth ViewModel forgot/reset-password transitions before broader refactors.
+- **Issue**: The new `ApiResult` contract has common-layer coverage for display-message priority and forgot-password ViewModel behavior coverage, but network parsing and repository missing-data handling are still not fully covered by focused unit tests.
+- **Impact**: Regressions in backend `code` parsing, nullable success `data`, `MISSING_RESPONSE_DATA`, or invalid user payload side effects could slip through compile/build checks.
+- **Target solution**: Add focused tests for `ApiResultCall` backend `code` -> `backendErrorCode`, nullable success `data`, repository missing required response data, and invalid login/register/getProfile user payloads not saving token/profile state.
 - **Priority**: Medium
 - **Status**: Deferred for a dedicated testing pass
 
@@ -84,20 +85,23 @@ This file tracks architecture issues and tech debt found during module-by-module
 
 - **Location**: `core/domain/src/test/java/com/doannd3/treetask/core/domain/usecase/auth/LoginUseCaseTest.kt`
 - **Location**: `core/domain/src/test/java/com/doannd3/treetask/core/domain/usecase/auth/RegisterUseCaseTest.kt`
-- **Issue**: Login/register validation-fail tests assert the validation error but do not verify that `AuthRepository` was not called. `ResetPasswordUseCaseTest` already uses the stronger `coVerify(exactly = 0)` pattern.
-- **Impact**: A future regression could still call the repository after local validation fails, while these tests continue to pass if they only assert the returned validation error.
+- **Location**: `core/domain/src/test/java/com/doannd3/treetask/core/domain/usecase/auth/ForgotPasswordUseCaseTest.kt`
+- **Issue**: Login/register validation-fail tests previously asserted the validation error but did not verify that `AuthRepository` was not called. `ResetPasswordUseCaseTest` already used the stronger `coVerify(exactly = 0)` pattern.
+- **Impact**: A future regression could have called the repository after local validation failed, while these tests continued to pass if they only asserted the returned validation error.
 - **Target solution**: Add `coVerify(exactly = 0)` assertions for the relevant repository calls in validation-fail tests, matching the reset-password use-case test pattern.
+- **Resolution**: Added `coVerify(exactly = 0)` assertions to login empty-email/password, register empty-email/full-name/password, and forgot-password empty-email validation-fail tests.
 - **Priority**: Low
-- **Status**: Deferred for the dedicated auth/domain testing pass
+- **Status**: Resolved
 
 ## Auth ViewModel State and Effect Coverage Is Missing
 
 - **Location**: `feature/auth/src/main/java/com/doannd3/treetask/feature/auth/ui`
-- **Issue**: Auth ViewModels do not yet have focused tests for important state transitions and one-shot effects, including forgot-password email submit moving to `ResetInput`, loading guards blocking double-submit, and success/error effect emissions.
-- **Impact**: Compile checks can miss regressions in UI workflow behavior, especially around multi-step forgot-password flow, loading state, and navigation/dialog effects.
-- **Target solution**: Add ViewModel tests using coroutine test utilities/Turbine for state transitions, loading guards, and effect emissions. Keep these tests focused on behavior, not Compose rendering.
+- **Issue**: Forgot-password ViewModel now has focused tests for the critical multi-step flow, but login/register ViewModel behavior tests are still minimal/skeleton-only.
+- **Impact**: Compile checks can still miss regressions in login/register loading, success navigation/dialog effects, and error message emission.
+- **Target solution**: Keep the forgot-password ViewModel tests focused on state/effect behavior. Add login/register ViewModel tests when those flows are refactored or when their loading/effect behavior changes.
+- **Resolution**: Added `ForgotPasswordViewModelTest` coverage for email submit moving to `ResetInput`, resend OTP calling forgot-password flow, reset success emitting `ResetPasswordSuccess`, `BackToEmailInput` clearing reset fields, and double-submit being blocked while loading.
 - **Priority**: Low
-- **Status**: Deferred for the dedicated auth ViewModel testing pass
+- **Status**: Partially resolved - forgot-password covered; login/register behavior tests deferred
 
 ## `core:domain` Depended on Datastore Without Source Usage
 
@@ -171,9 +175,10 @@ This file tracks architecture issues and tech debt found during module-by-module
 - **Priority**: Medium
 - **Status**: Resolved
 
-## `core:data` Exposes the `NetworkMonitor` Contract to the App Layer
+## `NetworkMonitor` Contract Was Exposed From `core:data`
 
 - **Location**: `core/common/src/main/java/com/doannd3/treetask/core/common/network/NetworkMonitor.kt`
+- **Location**: `core/data/src/main/java/com/doannd3/treetask/core/data/util/ConnectivityManagerNetworkMonitor.kt`
 - **Location**: `app/src/main/java/com/treestudio/treetask/MainViewModel.kt`
 - **Issue**: The `app` module previously depended on `core:data` to consume the `NetworkMonitor` contract even though the app only needed an online/offline signal.
 - **Impact**: App-level state was coupled to the data implementation module, making it harder to remove or refactor `core:data` dependencies independently.
