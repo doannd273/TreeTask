@@ -33,6 +33,7 @@ class RegisterUseCaseTest {
             assertThat(errorResult.message).isInstanceOf(UiText.StringResource::class.java)
             val stringResource = errorResult.message as UiText.StringResource
             assertThat(stringResource.resId).isEqualTo(R.string.common_error_email_empty)
+            coVerify(exactly = 0) { authRepository.register(any(), any(), any()) }
         }
 
     @Test
@@ -48,6 +49,7 @@ class RegisterUseCaseTest {
             assertThat(errorResult.message).isInstanceOf(UiText.StringResource::class.java)
             val stringResource = errorResult.message as UiText.StringResource
             assertThat(stringResource.resId).isEqualTo(R.string.common_error_fullName_empty)
+            coVerify(exactly = 0) { authRepository.register(any(), any(), any()) }
         }
 
     @Test
@@ -63,6 +65,7 @@ class RegisterUseCaseTest {
             assertThat(errorResult.message).isInstanceOf(UiText.StringResource::class.java)
             val stringResource = errorResult.message as UiText.StringResource
             assertThat(stringResource.resId).isEqualTo(R.string.common_error_password_empty)
+            coVerify(exactly = 0) { authRepository.register(any(), any(), any()) }
         }
 
     @Test
