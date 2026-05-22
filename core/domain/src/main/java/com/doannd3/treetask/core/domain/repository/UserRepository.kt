@@ -5,6 +5,12 @@ import com.doannd3.treetask.core.model.user.User
 import kotlinx.coroutines.flow.Flow
 
 interface UserRepository {
+    suspend fun updateProfile(
+        fullName: String,
+        phone: String,
+        avatar: String,
+    ): ApiResult<User>
+
     suspend fun getProfile(): ApiResult<User>
 
     suspend fun changePassword(

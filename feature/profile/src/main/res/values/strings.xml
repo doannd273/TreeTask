@@ -45,4 +45,5 @@
     <string name="profile_edit_email_label">Email</string>
     <string name="profile_edit_phone_label">Phone</string>
     <string name="profile_edit_save_action">Save</string>
+    <string name="profile_update_profile_success">Profile changed successfully</string>
 </resources>

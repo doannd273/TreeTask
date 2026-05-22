@@ -8,6 +8,7 @@ import com.doannd3.treetask.core.datastore.user.UserStorage
 import com.doannd3.treetask.core.domain.repository.UserRepository
 import com.doannd3.treetask.core.model.user.User
 import com.doannd3.treetask.core.network.model.request.ChangePasswordRequest
+import com.doannd3.treetask.core.network.model.request.UpdateProfileRequest
 import com.doannd3.treetask.core.network.service.UserService
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
@@ -18,6 +19,47 @@ constructor(
     private val userService: UserService,
     private val userStorage: UserStorage,
 ) : UserRepository {
+    override suspend fun updateProfile(
+        fullName: String,
+        phone: String,
+        avatar: String,
+    ): ApiResult<User> {
+        val result =
+            userService.updateProfile(
+                UpdateProfileRequest(
+                    fullName = fullName,
+                    phone = phone,
+                    avatar = avatar,
+                ),
+            )
+        return when (result) {
+            is ApiResult.Success -> {
+                val data = result.data
+                if (data == null) {
+                    return ApiResult.Error(
+                        appErrorCode = AppErrorCode.MISSING_RESPONSE_DATA,
+                        exception = MissingResponseDataException(),
+                    )
+                }
+
+                val user = data.toUserOrNull()
+                if (user == null) {
+                    return ApiResult.Error(
+                        appErrorCode = AppErrorCode.MISSING_RESPONSE_DATA,
+                        exception = MissingResponseDataException(),
+                    )
+                }
+
+                userStorage.saveUserProfile(user)
+                ApiResult.Success(message = result.message, data = user)
+            }
+
+            is ApiResult.Error -> {
+                result
+            }
+        }
+    }
+
     override suspend fun getProfile(): ApiResult<User> {
         val result = userService.getProfile()
         return when (result) {
