@@ -69,17 +69,18 @@ This file tracks architecture issues and tech debt found during module-by-module
 - **Priority**: Low
 - **Status**: Deferred until Android test scope grows
 
-## ApiResult Contract Regression Coverage Is Incomplete
+## ApiResult Contract Regression Coverage Was Incomplete
 
 - **Location**: `core/common/src/main/java/com/doannd3/treetask/core/common/ApiResult.kt`
 - **Location**: `core/network/src/main/java/com/doannd3/treetask/core/network/util/ApiResultCall.kt`
 - **Location**: `core/data/src/main/java/com/doannd3/treetask/core/data/respository`
 - **Location**: `feature/auth/src/main/java/com/doannd3/treetask/feature/auth/ui`
-- **Issue**: The new `ApiResult` contract has common-layer coverage for display-message priority and forgot-password ViewModel behavior coverage, but network parsing and repository missing-data handling are still not fully covered by focused unit tests.
+- **Issue**: The new `ApiResult` contract initially had common-layer coverage for display-message priority and forgot-password ViewModel behavior coverage, but network parsing and repository missing-data handling were not fully covered by focused unit tests.
 - **Impact**: Regressions in backend `code` parsing, nullable success `data`, `MISSING_RESPONSE_DATA`, or invalid user payload side effects could slip through compile/build checks.
 - **Target solution**: Add focused tests for `ApiResultCall` backend `code` -> `backendErrorCode`, nullable success `data`, repository missing required response data, and invalid login/register/getProfile user payloads not saving token/profile state.
+- **Resolution**: Added `ApiResultCallTest` coverage for backend error-body `code` -> `backendErrorCode`, nullable success `data`, and backend message/code mapping on unsuccessful API bodies. Added repository tests for missing auth/profile response data and invalid login/register/getProfile user payloads, verifying `MISSING_RESPONSE_DATA` plus no token/profile save side effects.
 - **Priority**: Medium
-- **Status**: Deferred for a dedicated testing pass
+- **Status**: Resolved
 
 ## Auth Validation-Fail Tests Do Not Verify Repository Is Not Called
 

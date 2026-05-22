@@ -1,26 +1,28 @@
 package com.doannd3.treetask.feature.profile.ui.profile
 
-import androidx.compose.foundation.layout.Arrangement
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.core.os.LocaleListCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
@@ -32,11 +34,14 @@ import com.doannd3.treetask.core.designsystem.theme.AppPreviewLightDark
 import com.doannd3.treetask.core.designsystem.theme.TreeTaskTheme
 import com.doannd3.treetask.core.designsystem.util.rememberDebouncedClick
 import com.doannd3.treetask.core.model.user.User
+import com.doannd3.treetask.feature.profile.R
 
 @Composable
 fun ProfileRoute(
     viewModel: ProfileViewModel = hiltViewModel(),
     onNavigateToLogin: () -> Unit,
+    onNavigateToChangePassword: () -> Unit,
+    onNavigateToEditProfile: () -> Unit,
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
 
@@ -60,6 +65,20 @@ fun ProfileRoute(
                     is ProfileEffect.ShowErrorMessage -> {
                         val errorStr = effect.message.asString(context)
                         globalAppState.showError(errorStr)
+                    }
+
+                    is ProfileEffect.ApplyLanguage -> {
+                        AppCompatDelegate.setApplicationLocales(
+                            LocaleListCompat.forLanguageTags(effect.language.localeTag),
+                        )
+                    }
+
+                    ProfileEffect.NavigateToChangePassword -> {
+                        onNavigateToChangePassword()
+                    }
+
+                    ProfileEffect.NavigateToEditProfile -> {
+                        onNavigateToEditProfile()
                     }
                 }
             }
@@ -88,16 +107,12 @@ fun ProfileScreen(
     state: ProfileState,
     onEvent: (ProfileEvent) -> Unit,
 ) {
-    var isDarkTheme by remember { mutableStateOf(false) }
-
-    TreeTaskTheme(darkTheme = isDarkTheme) {
+    TreeTaskTheme(darkTheme = state.isDarkMode) {
         Scaffold(
             contentWindowInsets = WindowInsets.safeDrawing,
         ) { paddingValues ->
             ProfileContent(
                 modifier = Modifier.padding(paddingValues),
-                isDarkTheme = isDarkTheme,
-                onToggleDarkTheme = { isDarkTheme = it },
                 state = state,
                 onEvent = onEvent,
             )
@@ -106,34 +121,87 @@ fun ProfileScreen(
 }
 
 @Composable
-fun ProfileContent(
+internal fun ProfileContent(
     modifier: Modifier = Modifier,
-    isDarkTheme: Boolean = false,
-    onToggleDarkTheme: (Boolean) -> Unit = {},
     state: ProfileState,
     onEvent: (ProfileEvent) -> Unit,
 ) {
-    val onSubmitLogoutDebounced =
-        rememberDebouncedClick {
-            onEvent(ProfileEvent.SubmitLogout)
+    val onSubmitLogoutDebounced = rememberDebouncedClick {
+        onEvent(ProfileEvent.SubmitLogout)
+    }
+
+    if (state.showLanguagePicker) {
+        LanguagePickerDialog(
+            modifier = Modifier,
+            currentLanguage = state.selectedLanguage,
+            onConfirm = { onEvent(ProfileEvent.ConfirmLanguage(it)) },
+            onDismiss = { onEvent(ProfileEvent.DismissLanguagePicker) },
+        )
+    }
+
+    Column(
+        modifier =
+        modifier
+            .fillMaxSize()
+            .padding(horizontal = 16.dp, vertical = 24.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+        Column(
+            modifier =
+            Modifier
+                .fillMaxWidth()
+                .weight(1f)
+                .verticalScroll(rememberScrollState()),
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+            state.user?.let { user ->
+                ProfileHeader(
+                    avatarUrl = user.avatar,
+                    fullName = user.fullName,
+                    email = user.email,
+                    phone = user.phone,
+                )
+                Spacer(Modifier.height(32.dp))
+            }
+
+            ProfileSection(title = stringResource(R.string.profile_section_account)) {
+                ProfileItem(
+                    icon = stringResource(R.string.profile_icon_edit_profile),
+                    title = stringResource(R.string.profile_menu_edit_profile),
+                    onClick = { onEvent(ProfileEvent.NavigateEditProfile) },
+                )
+                ProfileItem(
+                    icon = stringResource(R.string.profile_icon_change_password),
+                    title = stringResource(R.string.profile_menu_change_password),
+                    onClick = { onEvent(ProfileEvent.NavigateChangePassword) },
+                )
+            }
+
+            Spacer(Modifier.height(16.dp))
+
+            ProfileSection(title = stringResource(R.string.profile_section_settings)) {
+                ProfileSwitchItem(
+                    icon = stringResource(R.string.profile_icon_dark_mode),
+                    title = stringResource(R.string.profile_menu_dark_mode),
+                    checked = state.isDarkMode,
+                    onCheckedChange = { onEvent(ProfileEvent.ToggleDarkMode(it)) },
+                )
+                ProfileItem(
+                    icon = stringResource(R.string.profile_icon_language),
+                    title = stringResource(R.string.profile_menu_language),
+                    trailing = {
+                        Text(
+                            text = stringResource(state.selectedLanguage.displayNameResId()),
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        )
+                    },
+                    onClick = { onEvent(ProfileEvent.OpenLanguagePicker) },
+                )
+            }
         }
 
-    Column(modifier = modifier.padding(16.dp)) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            Text(
-                text = if (isDarkTheme) "Dark mode" else "Light mode",
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurface,
-            )
-            Switch(
-                checked = isDarkTheme,
-                onCheckedChange = onToggleDarkTheme,
-            )
-        }
+        Spacer(Modifier.height(16.dp))
 
         LogoutButton(
             isEnable = !state.isLoading,
@@ -145,21 +213,20 @@ fun ProfileContent(
 @AppPreviewLightDark
 @Composable
 private fun ProfileScreenPreview() {
-    TreeTaskTheme {
-        ProfileScreen(
-            state =
-            ProfileState(
-                isLoading = false,
-                user =
-                User(
-                    id = "user_preview",
-                    email = "doan@example.com",
-                    fullName = "Doan Nguyen",
-                    avatar = null,
-                    phone = "+84 900 000 000",
-                ),
+    ProfileScreen(
+        state =
+        ProfileState(
+            isLoading = false,
+            isDarkMode = false,
+            user =
+            User(
+                id = stringResource(R.string.profile_preview_user_id),
+                email = stringResource(R.string.profile_preview_email),
+                fullName = stringResource(R.string.profile_preview_full_name),
+                avatar = null,
+                phone = stringResource(R.string.profile_preview_phone),
             ),
-            onEvent = {},
-        )
-    }
+        ),
+        onEvent = {},
+    )
 }

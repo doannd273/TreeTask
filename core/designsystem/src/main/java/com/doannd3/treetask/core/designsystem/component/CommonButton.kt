@@ -20,10 +20,11 @@ fun CommonButton(
     buttonText: String,
     isEnable: Boolean,
     onSubmit: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     Button(
         modifier =
-        Modifier
+        modifier
             .fillMaxWidth()
             .height(50.dp),
         colors =

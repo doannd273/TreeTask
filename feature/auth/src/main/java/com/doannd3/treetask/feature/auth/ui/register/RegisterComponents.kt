@@ -6,6 +6,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -18,6 +19,8 @@ import com.doannd3.treetask.core.designsystem.theme.AppPreviewLightDark
 import com.doannd3.treetask.core.designsystem.theme.TreeTaskTheme
 import com.doannd3.treetask.feature.auth.R
 
+// region FullNameInput
+
 @Composable
 fun FullNameInput(
     modifier: Modifier = Modifier,
@@ -27,23 +30,17 @@ fun FullNameInput(
 ) {
     OutlinedTextField(
         modifier = modifier.fillMaxWidth(),
-        colors =
-        OutlinedTextFieldDefaults.colors(
+        colors = OutlinedTextFieldDefaults.colors(
             focusedTextColor = MaterialTheme.colorScheme.onSurface,
             unfocusedTextColor = MaterialTheme.colorScheme.onSurfaceVariant,
         ),
-        textStyle =
-        TextStyle(
-            fontSize = 15.sp,
-        ),
+        textStyle = TextStyle(fontSize = 15.sp),
         singleLine = true,
-        keyboardOptions =
-        KeyboardOptions(
+        keyboardOptions = KeyboardOptions(
             keyboardType = KeyboardType.Text,
             imeAction = ImeAction.Next,
         ),
-        keyboardActions =
-        KeyboardActions(onNext = { onImeNext() }),
+        keyboardActions = KeyboardActions(onNext = { onImeNext() }),
         value = fullName,
         onValueChange = { onFullNameChange(it) },
         label = { Text(text = stringResource(R.string.auth_full_name_hint)) },
@@ -54,10 +51,12 @@ fun FullNameInput(
 @Composable
 private fun FullNameInputPreview() {
     TreeTaskTheme {
-        FullNameInput(
-            fullName = "Đoàn Nguyễn",
-            onFullNameChange = {},
-        )
+        Surface(color = MaterialTheme.colorScheme.background) {
+            FullNameInput(
+                fullName = "Đoàn Nguyễn",
+                onFullNameChange = {},
+            )
+        }
     }
 }
 
@@ -65,10 +64,12 @@ private fun FullNameInputPreview() {
 @Composable
 private fun FullNameInputEmptyPreview() {
     TreeTaskTheme {
-        FullNameInput(
-            fullName = "",
-            onFullNameChange = {},
-        )
+        Surface(color = MaterialTheme.colorScheme.background) {
+            FullNameInput(
+                fullName = "",
+                onFullNameChange = {},
+            )
+        }
     }
 }
 
@@ -76,9 +77,13 @@ private fun FullNameInputEmptyPreview() {
 @Composable
 private fun FullNameInputLongPreview() {
     TreeTaskTheme {
-        FullNameInput(
-            fullName = "Nguyễn Đoàn Minh Long",
-            onFullNameChange = {},
-        )
+        Surface(color = MaterialTheme.colorScheme.background) {
+            FullNameInput(
+                fullName = "Nguyễn Đoàn Minh Long",
+                onFullNameChange = {},
+            )
+        }
     }
 }
+
+// endregion

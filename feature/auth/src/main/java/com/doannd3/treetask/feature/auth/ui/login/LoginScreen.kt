@@ -132,8 +132,7 @@ internal fun LoginContent(
     val focusManager = LocalFocusManager.current
 
     Column(
-        modifier =
-        modifier
+        modifier = modifier
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
             .padding(16.dp)

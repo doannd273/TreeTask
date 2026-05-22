@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -21,6 +22,8 @@ import com.doannd3.treetask.core.designsystem.theme.AppPreviewLightDark
 import com.doannd3.treetask.core.designsystem.theme.TreeTaskTheme
 import com.doannd3.treetask.feature.auth.R
 
+// region TreeTaskAppName
+
 @Composable
 fun TreeTaskAppName() {
     Text(
@@ -33,6 +36,20 @@ fun TreeTaskAppName() {
     )
 }
 
+@AppPreviewLightDark
+@Composable
+private fun TreeTaskAppNamePreview() {
+    TreeTaskTheme {
+        Surface(color = MaterialTheme.colorScheme.background) {
+            TreeTaskAppName()
+        }
+    }
+}
+
+// endregion
+
+// region RegisterTextButton
+
 @Composable
 fun RegisterTextButton(onNavigateToRegister: () -> Unit) {
     Row(
@@ -40,29 +57,22 @@ fun RegisterTextButton(onNavigateToRegister: () -> Unit) {
         horizontalArrangement = Arrangement.Center,
     ) {
         val registerText = stringResource(R.string.auth_register)
-        val text =
-            stringResource(
-                R.string.auth_prompt_no_account,
-                registerText,
-            )
+        val text = stringResource(R.string.auth_prompt_no_account, registerText)
 
         LinkText(
             text = text,
-            links =
-            listOf(
+            links = listOf(
                 LinkPart(
                     text = registerText,
                     tag = LinkTag.REGISTER.name,
                     onClick = onNavigateToRegister,
                 ),
             ),
-            parentStyle =
-            TextStyle(
+            parentStyle = TextStyle(
                 color = MaterialTheme.colorScheme.primary,
                 fontSize = 15.sp,
             ),
-            linkStyle =
-            SpanStyle(
+            linkStyle = SpanStyle(
                 color = MaterialTheme.colorScheme.primary,
                 fontSize = 15.sp,
                 textDecoration = TextDecoration.Underline,
@@ -70,6 +80,20 @@ fun RegisterTextButton(onNavigateToRegister: () -> Unit) {
         )
     }
 }
+
+@AppPreviewLightDark
+@Composable
+private fun RegisterTextButtonPreview() {
+    TreeTaskTheme {
+        Surface(color = MaterialTheme.colorScheme.background) {
+            RegisterTextButton(onNavigateToRegister = {})
+        }
+    }
+}
+
+// endregion
+
+// region ForgotPasswordTextButton
 
 @Composable
 fun ForgotPasswordTextButton(onNavigateToForgotPassword: () -> Unit) {
@@ -81,21 +105,18 @@ fun ForgotPasswordTextButton(onNavigateToForgotPassword: () -> Unit) {
 
         LinkText(
             text = forgotPassword,
-            links =
-            listOf(
+            links = listOf(
                 LinkPart(
                     text = forgotPassword,
                     tag = LinkTag.FORGOT_PASSWORD.name,
                     onClick = onNavigateToForgotPassword,
                 ),
             ),
-            parentStyle =
-            TextStyle(
+            parentStyle = TextStyle(
                 color = MaterialTheme.colorScheme.primary,
                 fontSize = 15.sp,
             ),
-            linkStyle =
-            SpanStyle(
+            linkStyle = SpanStyle(
                 color = MaterialTheme.colorScheme.primary,
                 fontSize = 15.sp,
                 textDecoration = TextDecoration.Underline,
@@ -106,28 +127,12 @@ fun ForgotPasswordTextButton(onNavigateToForgotPassword: () -> Unit) {
 
 @AppPreviewLightDark
 @Composable
-private fun TreeTaskAppNamePreview() {
-    TreeTaskTheme {
-        TreeTaskAppName()
-    }
-}
-
-@AppPreviewLightDark
-@Composable
-private fun RegisterTextButtonPreview() {
-    TreeTaskTheme {
-        RegisterTextButton(
-            onNavigateToRegister = {},
-        )
-    }
-}
-
-@AppPreviewLightDark
-@Composable
 private fun ForgotPasswordTextButtonPreview() {
     TreeTaskTheme {
-        ForgotPasswordTextButton(
-            onNavigateToForgotPassword = {},
-        )
+        Surface(color = MaterialTheme.colorScheme.background) {
+            ForgotPasswordTextButton(onNavigateToForgotPassword = {})
+        }
     }
 }
+
+// endregion
