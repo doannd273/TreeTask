@@ -23,7 +23,6 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.doannd3.treetask.core.designsystem.component.CommonButton
-import com.doannd3.treetask.core.designsystem.component.EmailInput
 import com.doannd3.treetask.core.designsystem.theme.AppPreviewLightDark
 import com.doannd3.treetask.core.designsystem.theme.TreeTaskTheme
 import com.doannd3.treetask.core.designsystem.util.rememberDebouncedClick
@@ -36,11 +35,10 @@ fun EditProfileForm(
     state: EditProfileState,
     onEvent: (EditProfileEvent) -> Unit,
 ) {
-    val emailFocusRequester = remember { FocusRequester() }
     val phoneFocusRequester = remember { FocusRequester() }
     val focusManager = LocalFocusManager.current
     val onSaveDebounced = rememberDebouncedClick {
-        onEvent(EditProfileEvent.SaveClicked)
+        onEvent(EditProfileEvent.SubmitEditProfile)
     }
 
     Column(
@@ -50,6 +48,9 @@ fun EditProfileForm(
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
+        // avatar
+
+        // fullname
         OutlinedTextField(
             modifier = Modifier.fillMaxWidth(),
             value = state.fullName,
@@ -63,23 +64,11 @@ fun EditProfileForm(
             ),
             keyboardActions =
             KeyboardActions(
-                onNext = { emailFocusRequester.requestFocus() },
+                onNext = { phoneFocusRequester.requestFocus() },
             ),
         )
 
-        EmailInput(
-            modifier =
-            Modifier
-                .fillMaxWidth()
-                .focusRequester(emailFocusRequester),
-            label = stringResource(R.string.profile_edit_email_label),
-            email = state.email,
-            isEnable = !state.isLoading,
-            onEmailChange = { onEvent(EditProfileEvent.EmailChanged(it)) },
-            imeAction = ImeAction.Next,
-            onImeNext = { phoneFocusRequester.requestFocus() },
-        )
-
+        // phone
         OutlinedTextField(
             modifier =
             Modifier
@@ -123,7 +112,6 @@ private fun EditProfileFormPreview() {
                 state =
                 EditProfileState(
                     fullName = stringResource(R.string.profile_preview_full_name),
-                    email = stringResource(R.string.profile_preview_email),
                     phone = stringResource(R.string.profile_preview_phone),
                 ),
                 onEvent = {},

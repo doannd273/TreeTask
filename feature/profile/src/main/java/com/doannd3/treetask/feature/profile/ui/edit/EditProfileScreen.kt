@@ -15,13 +15,16 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.repeatOnLifecycle
+import com.doannd3.treetask.core.common.asString
 import com.doannd3.treetask.core.designsystem.component.CommonHeader
+import com.doannd3.treetask.core.designsystem.component.LocalGlobalAppState
 import com.doannd3.treetask.core.designsystem.theme.AppPreviewLightDark
 import com.doannd3.treetask.core.designsystem.theme.TreeTaskTheme
 import com.doannd3.treetask.feature.profile.R
@@ -31,6 +34,8 @@ fun EditProfileRoute(
     viewModel: EditProfileViewModel = hiltViewModel(),
     onNavigateBack: () -> Unit,
 ) {
+    val globalAppState = LocalGlobalAppState.current
+    val context = LocalContext.current
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     val lifecycleOwner = LocalLifecycleOwner.current
 
@@ -45,6 +50,16 @@ fun EditProfileRoute(
                 when (effect) {
                     EditProfileEffect.NavigateBack -> {
                         onNavigateBack()
+                    }
+
+                    is EditProfileEffect.ShowErrorMessage -> {
+                        globalAppState.showError(effect.message.asString(context))
+                    }
+
+                    is EditProfileEffect.ShowSuccessMessage -> {
+                        globalAppState.showSuccess(effect.message.asString(context)) {
+                            viewModel.onEvent(EditProfileEvent.SuccessAcknowledged)
+                        }
                     }
                 }
             }

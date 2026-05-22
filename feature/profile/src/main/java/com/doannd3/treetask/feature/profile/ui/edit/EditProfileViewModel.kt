@@ -1,8 +1,12 @@
 package com.doannd3.treetask.feature.profile.ui.edit
 
 import androidx.lifecycle.viewModelScope
+import com.doannd3.treetask.core.common.ApiResult
 import com.doannd3.treetask.core.common.BaseViewModel
 import com.doannd3.treetask.core.common.MviViewModel
+import com.doannd3.treetask.core.common.UiText
+import com.doannd3.treetask.core.common.toDisplayMessage
+import com.doannd3.treetask.core.domain.usecase.user.UpdateProfileUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -13,11 +17,15 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import com.doannd3.treetask.core.common.R as CommonR
+import com.doannd3.treetask.feature.profile.R as ProfileR
 
 @HiltViewModel
 class EditProfileViewModel
 @Inject
-constructor() :
+constructor(
+    private val updateProfileUseCase: UpdateProfileUseCase,
+) :
     BaseViewModel(),
     MviViewModel<EditProfileState, EditProfileEvent, EditProfileEffect> {
     private val _uiState = MutableStateFlow(EditProfileState())
@@ -32,30 +40,57 @@ constructor() :
                 _uiState.update { it.copy(fullName = event.fullName) }
             }
 
-            is EditProfileEvent.EmailChanged -> {
-                _uiState.update { it.copy(email = event.email) }
-            }
-
             is EditProfileEvent.PhoneChanged -> {
                 _uiState.update { it.copy(phone = event.phone) }
             }
 
-            EditProfileEvent.SaveClicked -> {
+            EditProfileEvent.SubmitEditProfile -> {
                 submitEditProfile()
             }
 
             EditProfileEvent.BackClicked -> {
                 navigateBack()
             }
+
+            EditProfileEvent.SuccessAcknowledged -> {
+                navigateBack()
+            }
         }
     }
 
     private fun submitEditProfile() {
-        if (_uiState.value.isLoading) {
+        val state = _uiState.value
+        if (state.isLoading) {
             return
         }
 
-        navigateBack()
+        executeSafe {
+            _uiState.update { it.copy(isLoading = true) }
+            val result =
+                updateProfileUseCase(
+                    fullName = state.fullName,
+                    phone = state.phone,
+                    avatar = state.avatarUrl,
+                )
+            _uiState.update { it.copy(isLoading = false) }
+
+            when (result) {
+                is ApiResult.Success -> {
+                    val message =
+                        result.message
+                            ?: UiText.StringResource(ProfileR.string.profile_update_profile_success)
+                    _effect.emit(EditProfileEffect.ShowSuccessMessage(message))
+                }
+
+                is ApiResult.Error -> {
+                    val message =
+                        result.toDisplayMessage(
+                            UiText.StringResource(CommonR.string.common_error_unknown),
+                        )
+                    _effect.emit(EditProfileEffect.ShowErrorMessage(message))
+                }
+            }
+        }
     }
 
     private fun navigateBack() {
