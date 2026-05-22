@@ -2,7 +2,7 @@ package com.doannd3.treetask.core.network.service
 
 import com.doannd3.treetask.core.common.ApiResult
 import com.doannd3.treetask.core.network.model.request.ChangePasswordRequest
-import com.doannd3.treetask.core.network.model.request.UserRequest
+import com.doannd3.treetask.core.network.model.request.UpdateProfileRequest
 import com.doannd3.treetask.core.network.model.response.AvatarUploadResponse
 import com.doannd3.treetask.core.network.model.response.UserResponse
 import com.doannd3.treetask.core.network.model.response.UsersListResponse
@@ -21,7 +21,7 @@ interface UserService {
 
     @PUT("/api/user/updateProfile")
     suspend fun updateProfile(
-        @Body request: UserRequest,
+        @Body request: UpdateProfileRequest,
     ): ApiResult<UserResponse>
 
     @Multipart
