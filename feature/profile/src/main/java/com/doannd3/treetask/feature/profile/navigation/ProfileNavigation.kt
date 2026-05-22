@@ -6,6 +6,7 @@ import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
 import com.doannd3.treetask.feature.profile.ui.changepassword.ChangePasswordRoute
+import com.doannd3.treetask.feature.profile.ui.edit.EditProfileRoute
 import com.doannd3.treetask.feature.profile.ui.profile.ProfileRoute
 import kotlinx.serialization.Serializable
 
@@ -56,6 +57,12 @@ fun NavGraphBuilder.profileGraph(
 
         composable<ChangePasswordDestination> {
             ChangePasswordRoute(onNavigateBack = onNavigateBack)
+        }
+
+        composable<EditProfileDestination> {
+            EditProfileRoute(
+                onNavigateBack = onNavigateBack,
+            )
         }
     }
 }
