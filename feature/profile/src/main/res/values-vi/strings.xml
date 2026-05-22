@@ -2,4 +2,36 @@
 <resources>
     <string name="profile_cd_user_avatar">Ảnh đại diện</string>
     <string name="profile_action_logout">Đăng xuất</string>
+
+    <!--language-->
+    <string name="profile_dialog_language_title">Chọn ngôn ngữ</string>
+    <string name="profile_language_en">English</string>
+    <string name="profile_language_vi">Tiếng Việt</string>
+    <string name="profile_action_cancel">Hủy</string>
+    <string name="profile_action_confirm">Xác nhận</string>
+
+    <!-- Profile screen -->
+    <string name="profile_section_account">Tài khoản</string>
+    <string name="profile_section_settings">Cài đặt</string>
+    <string name="profile_menu_edit_profile">Chỉnh sửa hồ sơ</string>
+    <string name="profile_menu_change_password">Đổi mật khẩu</string>
+    <string name="profile_menu_dark_mode">Giao diện tối</string>
+    <string name="profile_menu_language">Ngôn ngữ</string>
+    <string name="profile_label_coming_soon">Sắp có</string>
+
+    <!-- Change password screen -->
+    <string name="profile_change_password_title">Đổi mật khẩu</string>
+    <string name="profile_change_password_current_label">Mật khẩu hiện tại</string>
+    <string name="profile_change_password_new_label">Mật khẩu mới</string>
+    <string name="profile_change_password_confirm_label">Xác nhận mật khẩu mới</string>
+    <string name="profile_change_password_update_action">Cập nhật</string>
+    <string name="profile_change_password_success">Đổi mật khẩu thành công</string>
+    <string name="profile_change_password_mismatch_error">Mật khẩu xác nhận không khớp</string>
+
+    <!-- Edit profile screen -->
+    <string name="profile_edit_title">Chỉnh sửa hồ sơ</string>
+    <string name="profile_edit_full_name_label">Họ và tên</string>
+    <string name="profile_edit_email_label">Email</string>
+    <string name="profile_edit_phone_label">Số điện thoại</string>
+    <string name="profile_edit_save_action">Lưu</string>
 </resources>

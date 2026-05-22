@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -26,6 +27,8 @@ import com.doannd3.treetask.core.designsystem.theme.TreeTaskTheme
 import com.doannd3.treetask.core.designsystem.util.rememberDebouncedClick
 import com.doannd3.treetask.feature.auth.R
 
+// region EmailStep
+
 @Composable
 internal fun EmailStep(
     modifier: Modifier = Modifier,
@@ -34,10 +37,9 @@ internal fun EmailStep(
     onEvent: (ForgotPasswordEvent) -> Unit,
 ) {
     if (isVisible) {
-        val onSubmitSendEmailDebounced =
-            rememberDebouncedClick {
-                onEvent(ForgotPasswordEvent.SubmitEmail)
-            }
+        val onSubmitSendEmailDebounced = rememberDebouncedClick {
+            onEvent(ForgotPasswordEvent.SubmitEmail)
+        }
 
         Column(
             modifier = modifier.padding(16.dp),
@@ -49,9 +51,7 @@ internal fun EmailStep(
                 isEnable = state.step == ForgotPasswordStep.EmailInput,
                 onEmailChange = { onEvent(ForgotPasswordEvent.EmailChanged(it)) },
                 imeAction = ImeAction.Done,
-                onImeDone = {
-                    onSubmitSendEmailDebounced()
-                },
+                onImeDone = { onSubmitSendEmailDebounced() },
             )
 
             Spacer(modifier = Modifier.height(16.dp))
@@ -65,6 +65,44 @@ internal fun EmailStep(
     }
 }
 
+@AppPreviewLightDark
+@Composable
+private fun EmailStepPreview() {
+    TreeTaskTheme {
+        Surface(color = MaterialTheme.colorScheme.background) {
+            EmailStep(
+                state = ForgotPasswordState(
+                    email = "doan@gmail.com",
+                    step = ForgotPasswordStep.EmailInput,
+                    isLoading = false,
+                ),
+                onEvent = {},
+            )
+        }
+    }
+}
+
+@AppPreviewLightDark
+@Composable
+private fun EmailStepLoadingPreview() {
+    TreeTaskTheme {
+        Surface(color = MaterialTheme.colorScheme.background) {
+            EmailStep(
+                state = ForgotPasswordState(
+                    email = "doan@gmail.com",
+                    step = ForgotPasswordStep.EmailInput,
+                    isLoading = true,
+                ),
+                onEvent = {},
+            )
+        }
+    }
+}
+
+// endregion
+
+// region ResetPasswordStep
+
 @Composable
 internal fun ResetPasswordStep(
     modifier: Modifier = Modifier,
@@ -73,15 +111,12 @@ internal fun ResetPasswordStep(
     onEvent: (ForgotPasswordEvent) -> Unit,
 ) {
     if (isVisible) {
-        val onSubmitResetPasswordDebounced =
-            rememberDebouncedClick {
-                onEvent(ForgotPasswordEvent.SubmitResetPassword)
-            }
-        val onResendOtpDebounced =
-            rememberDebouncedClick {
-                onEvent(ForgotPasswordEvent.ResendOtp)
-            }
-
+        val onSubmitResetPasswordDebounced = rememberDebouncedClick {
+            onEvent(ForgotPasswordEvent.SubmitResetPassword)
+        }
+        val onResendOtpDebounced = rememberDebouncedClick {
+            onEvent(ForgotPasswordEvent.ResendOtp)
+        }
         val passwordFocusRequester = remember { FocusRequester() }
 
         Column(
@@ -99,9 +134,7 @@ internal fun ResetPasswordStep(
             OtpInput(
                 value = state.otp,
                 onValueChange = { onEvent(ForgotPasswordEvent.OtpChanged(it)) },
-                onOtpComplete = {
-                    passwordFocusRequester.requestFocus()
-                },
+                onOtpComplete = { passwordFocusRequester.requestFocus() },
                 modifier = Modifier.fillMaxWidth(),
                 enabled = !state.isLoading,
             )
@@ -109,8 +142,7 @@ internal fun ResetPasswordStep(
             Spacer(modifier = Modifier.height(16.dp))
 
             PasswordInput(
-                modifier =
-                Modifier
+                modifier = Modifier
                     .fillMaxWidth()
                     .focusRequester(passwordFocusRequester),
                 label = stringResource(R.string.auth_password_hint),
@@ -119,9 +151,7 @@ internal fun ResetPasswordStep(
                 onPasswordChange = { onEvent(ForgotPasswordEvent.NewPasswordChanged(it)) },
                 onPasswordVisibleChange = { onEvent(ForgotPasswordEvent.PasswordVisibleChanged(it)) },
                 imeAction = ImeAction.Done,
-                onImeDone = {
-                    onSubmitResetPasswordDebounced()
-                },
+                onImeDone = { onSubmitResetPasswordDebounced() },
             )
 
             Spacer(modifier = Modifier.height(16.dp))
@@ -150,51 +180,20 @@ internal fun ResetPasswordStep(
 
 @AppPreviewLightDark
 @Composable
-private fun EmailStepPreview() {
-    TreeTaskTheme {
-        EmailStep(
-            state =
-            ForgotPasswordState(
-                email = "doan@gmail.com",
-                step = ForgotPasswordStep.EmailInput,
-                isLoading = false,
-            ),
-            onEvent = {},
-        )
-    }
-}
-
-@AppPreviewLightDark
-@Composable
-private fun EmailStepLoadingPreview() {
-    TreeTaskTheme {
-        EmailStep(
-            state =
-            ForgotPasswordState(
-                email = "doan@gmail.com",
-                step = ForgotPasswordStep.EmailInput,
-                isLoading = true,
-            ),
-            onEvent = {},
-        )
-    }
-}
-
-@AppPreviewLightDark
-@Composable
 private fun ResetPasswordStepPreview() {
     TreeTaskTheme {
-        ResetPasswordStep(
-            state =
-            ForgotPasswordState(
-                step = ForgotPasswordStep.ResetInput,
-                email = "doan@gmail.com",
-                otp = "123",
-                newPassword = "",
-                isLoading = false,
-            ),
-            onEvent = {},
-        )
+        Surface(color = MaterialTheme.colorScheme.background) {
+            ResetPasswordStep(
+                state = ForgotPasswordState(
+                    step = ForgotPasswordStep.ResetInput,
+                    email = "doan@gmail.com",
+                    otp = "123",
+                    newPassword = "",
+                    isLoading = false,
+                ),
+                onEvent = {},
+            )
+        }
     }
 }
 
@@ -202,18 +201,19 @@ private fun ResetPasswordStepPreview() {
 @Composable
 private fun ResetPasswordStepFilledPreview() {
     TreeTaskTheme {
-        ResetPasswordStep(
-            state =
-            ForgotPasswordState(
-                step = ForgotPasswordStep.ResetInput,
-                email = "doan@gmail.com",
-                otp = "123456",
-                newPassword = "password123",
-                passwordVisible = false,
-                isLoading = false,
-            ),
-            onEvent = {},
-        )
+        Surface(color = MaterialTheme.colorScheme.background) {
+            ResetPasswordStep(
+                state = ForgotPasswordState(
+                    step = ForgotPasswordStep.ResetInput,
+                    email = "doan@gmail.com",
+                    otp = "123456",
+                    newPassword = "password123",
+                    passwordVisible = false,
+                    isLoading = false,
+                ),
+                onEvent = {},
+            )
+        }
     }
 }
 
@@ -221,16 +221,19 @@ private fun ResetPasswordStepFilledPreview() {
 @Composable
 private fun ResetPasswordStepLoadingPreview() {
     TreeTaskTheme {
-        ResetPasswordStep(
-            state =
-            ForgotPasswordState(
-                step = ForgotPasswordStep.ResetInput,
-                email = "doan@gmail.com",
-                otp = "123456",
-                newPassword = "password123",
-                isLoading = true,
-            ),
-            onEvent = {},
-        )
+        Surface(color = MaterialTheme.colorScheme.background) {
+            ResetPasswordStep(
+                state = ForgotPasswordState(
+                    step = ForgotPasswordStep.ResetInput,
+                    email = "doan@gmail.com",
+                    otp = "123456",
+                    newPassword = "password123",
+                    isLoading = true,
+                ),
+                onEvent = {},
+            )
+        }
     }
 }
+
+// endregion
