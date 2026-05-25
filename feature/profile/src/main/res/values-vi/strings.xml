@@ -34,5 +34,5 @@
     <string name="profile_edit_email_label">Email</string>
     <string name="profile_edit_phone_label">Số điện thoại</string>
     <string name="profile_edit_save_action">Lưu</string>
-    <string name="profile_update_profile_success">Cập nhật hồ sơ thành công</string>
+    <string name="profile_edit_update_successfully">Cập nhật hồ sơ thành công</string>
 </resources>
