@@ -74,6 +74,10 @@ constructor(
             EditProfileEvent.SuccessAcknowledged -> {
                 navigateBack()
             }
+
+            is EditProfileEvent.AvatarChanged -> {
+                _uiState.update { it.copy(avatarUri = event.avatarUri) }
+            }
         }
     }
 

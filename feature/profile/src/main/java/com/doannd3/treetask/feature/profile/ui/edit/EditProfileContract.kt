@@ -1,16 +1,23 @@
 package com.doannd3.treetask.feature.profile.ui.edit
 
+import android.net.Uri
 import com.doannd3.treetask.core.common.UiText
 
 data class EditProfileState(
     val email: String = "",
     val fullName: String = "",
     val avatarUrl: String = "",
+    val avatarUri: Uri? = null,
     val phone: String = "",
     val isLoading: Boolean = false,
 )
 
 sealed class EditProfileEvent {
+
+    data class AvatarChanged(
+        val avatarUri: Uri?,
+    ) : EditProfileEvent()
+
     data class FullNameChanged(
         val fullName: String,
     ) : EditProfileEvent()
