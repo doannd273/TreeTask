@@ -8,6 +8,7 @@ import com.doannd3.treetask.core.common.UiText
 import com.doannd3.treetask.core.common.toDisplayMessage
 import com.doannd3.treetask.core.domain.usecase.user.ObserveCurrentUserUseCase
 import com.doannd3.treetask.core.domain.usecase.user.UpdateProfileUseCase
+import com.doannd3.treetask.core.domain.usecase.user.UploadAvatarUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -28,8 +29,8 @@ class EditProfileViewModel
 constructor(
     private val updateProfileUseCase: UpdateProfileUseCase,
     private val userUseCase: ObserveCurrentUserUseCase,
-) :
-    BaseViewModel(),
+    private val uploadAvatarUseCase: UploadAvatarUseCase,
+) : BaseViewModel(),
     MviViewModel<EditProfileState, EditProfileEvent, EditProfileEffect> {
     private val _uiState = MutableStateFlow(EditProfileState())
     override val uiState: StateFlow<EditProfileState> = _uiState.asStateFlow()
@@ -83,34 +84,55 @@ constructor(
 
     private fun submitEditProfile() {
         val state = _uiState.value
-        if (state.isLoading) {
-            return
-        }
+        if (state.isLoading) return
 
         executeSafe {
             _uiState.update { it.copy(isLoading = true) }
-            val result =
-                updateProfileUseCase(
-                    fullName = state.fullName,
-                    phone = state.phone,
-                    avatar = state.avatarUrl,
-                )
+
+            // Bước 1: upload avatar nếu có
+            val avatarUrl = if (state.avatarUri != null) {
+                when (val upload = uploadAvatarUseCase(uri = state.avatarUri)) {
+                    is ApiResult.Success -> {
+                        val url = upload.data
+                        if (url.isNullOrBlank()) {
+                            _uiState.update { it.copy(isLoading = false) }
+                            _effect.emit(EditProfileEffect.ShowErrorMessage(
+                                UiText.StringResource(CommonR.string.common_error_unknown)
+                            ))
+                            return@executeSafe
+                        }
+                        url
+                    }
+                    is ApiResult.Error -> {
+                        _uiState.update { it.copy(isLoading = false) }
+                        _effect.emit(EditProfileEffect.ShowErrorMessage(
+                            upload.toDisplayMessage(UiText.StringResource(CommonR.string.common_error_unknown))
+                        ))
+                        return@executeSafe
+                    }
+                }
+            } else {
+                state.avatarUrl  // giữ nguyên URL cũ
+            }
+
+            // Bước 2: update profile
+            val result = updateProfileUseCase(
+                fullName = state.fullName,
+                phone = state.phone,
+                avatar = avatarUrl,
+            )
             _uiState.update { it.copy(isLoading = false) }
 
             when (result) {
                 is ApiResult.Success -> {
-                    val message =
-                        result.message
-                            ?: UiText.StringResource(ProfileR.string.profile_edit_update_successfully)
+                    val message = result.message
+                        ?: UiText.StringResource(ProfileR.string.profile_edit_update_successfully)
                     _effect.emit(EditProfileEffect.ShowSuccessMessage(message))
                 }
-
                 is ApiResult.Error -> {
-                    val message =
-                        result.toDisplayMessage(
-                            UiText.StringResource(CommonR.string.common_error_unknown),
-                        )
-                    _effect.emit(EditProfileEffect.ShowErrorMessage(message))
+                    _effect.emit(EditProfileEffect.ShowErrorMessage(
+                        result.toDisplayMessage(UiText.StringResource(CommonR.string.common_error_unknown))
+                    ))
                 }
             }
         }
