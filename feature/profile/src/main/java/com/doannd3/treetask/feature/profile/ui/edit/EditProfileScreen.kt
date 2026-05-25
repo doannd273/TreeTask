@@ -1,5 +1,8 @@
 package com.doannd3.treetask.feature.profile.ui.edit
 
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.WindowInsetsSides
@@ -125,6 +128,14 @@ internal fun EditProfileContent(
     state: EditProfileState,
     onEvent: (EditProfileEvent) -> Unit,
 ) {
+    val launcher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.PickVisualMedia(),
+    ) { uri ->
+        if (uri != null) {
+            onEvent(EditProfileEvent.AvatarChanged(avatarUri = uri))
+        }
+    }
+
     Column(
         modifier =
         modifier
@@ -132,6 +143,19 @@ internal fun EditProfileContent(
             .verticalScroll(rememberScrollState())
             .imePadding(),
     ) {
+        AvatarPicker(
+            isEnable = !state.isLoading,
+            avatarUri = state.avatarUri,
+            avatarUrl = state.avatarUrl,
+            avatarClick = {
+                launcher.launch(
+                    PickVisualMediaRequest(
+                        ActivityResultContracts.PickVisualMedia.ImageOnly,
+                    ),
+                )
+            },
+        )
+
         EditProfileForm(
             state = state,
             onEvent = onEvent,

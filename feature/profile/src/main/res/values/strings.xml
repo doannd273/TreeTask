@@ -46,4 +46,5 @@
     <string name="profile_edit_phone_label">Phone</string>
     <string name="profile_edit_save_action">Save</string>
     <string name="profile_edit_update_successfully">Profile changed successfully</string>
+    <string name="profile_change_avatar_title">Change photo</string>
 </resources>
