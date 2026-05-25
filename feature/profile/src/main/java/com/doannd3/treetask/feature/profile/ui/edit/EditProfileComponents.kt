@@ -48,9 +48,17 @@ fun EditProfileForm(
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
-        // avatar
+        // Email
+        OutlinedTextField(
+            modifier = Modifier.fillMaxWidth(),
+            value = state.email,
+            onValueChange = {},
+            label = { Text(text = stringResource(R.string.profile_edit_email_label)) },
+            enabled = false,
+            singleLine = true,
+        )
 
-        // fullname
+        // Full Name
         OutlinedTextField(
             modifier = Modifier.fillMaxWidth(),
             value = state.fullName,
@@ -111,6 +119,7 @@ private fun EditProfileFormPreview() {
             EditProfileForm(
                 state =
                 EditProfileState(
+                    email = stringResource(R.string.profile_preview_email),
                     fullName = stringResource(R.string.profile_preview_full_name),
                     phone = stringResource(R.string.profile_preview_phone),
                 ),
