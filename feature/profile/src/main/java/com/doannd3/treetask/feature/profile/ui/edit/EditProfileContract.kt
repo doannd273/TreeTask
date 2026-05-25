@@ -3,6 +3,7 @@ package com.doannd3.treetask.feature.profile.ui.edit
 import com.doannd3.treetask.core.common.UiText
 
 data class EditProfileState(
+    val email: String = "",
     val fullName: String = "",
     val avatarUrl: String = "",
     val phone: String = "",
