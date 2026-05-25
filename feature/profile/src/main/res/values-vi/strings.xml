@@ -35,4 +35,5 @@
     <string name="profile_edit_phone_label">Số điện thoại</string>
     <string name="profile_edit_save_action">Lưu</string>
     <string name="profile_edit_update_successfully">Cập nhật hồ sơ thành công</string>
+    <string name="profile_change_avatar_title">Đổi ảnh</string>
 </resources>
