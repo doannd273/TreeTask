@@ -1,5 +1,6 @@
 package com.doannd3.treetask.core.data.respository
 
+import android.content.Context
 import com.doannd3.treetask.core.common.ApiResult
 import com.doannd3.treetask.core.common.error.AppErrorCode
 import com.doannd3.treetask.core.common.error.MissingResponseDataException
@@ -15,6 +16,7 @@ import org.junit.Before
 import org.junit.Test
 
 class UserRepositoryImplTest {
+    private val context: Context = mockk()
     private val userService: UserService = mockk()
     private val userStorage: UserStorage = mockk(relaxed = true)
 
@@ -24,6 +26,7 @@ class UserRepositoryImplTest {
     fun setUp() {
         userRepository =
             UserRepositoryImpl(
+                context = context,
                 userService = userService,
                 userStorage = userStorage,
             )
