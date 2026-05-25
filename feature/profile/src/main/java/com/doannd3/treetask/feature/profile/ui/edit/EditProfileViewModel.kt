@@ -6,6 +6,7 @@ import com.doannd3.treetask.core.common.BaseViewModel
 import com.doannd3.treetask.core.common.MviViewModel
 import com.doannd3.treetask.core.common.UiText
 import com.doannd3.treetask.core.common.toDisplayMessage
+import com.doannd3.treetask.core.domain.usecase.user.ObserveCurrentUserUseCase
 import com.doannd3.treetask.core.domain.usecase.user.UpdateProfileUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -14,6 +15,7 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -25,6 +27,7 @@ class EditProfileViewModel
 @Inject
 constructor(
     private val updateProfileUseCase: UpdateProfileUseCase,
+    private val userUseCase: ObserveCurrentUserUseCase,
 ) :
     BaseViewModel(),
     MviViewModel<EditProfileState, EditProfileEvent, EditProfileEffect> {
@@ -33,6 +36,22 @@ constructor(
 
     private val _effect = MutableSharedFlow<EditProfileEffect>()
     override val effect: SharedFlow<EditProfileEffect> = _effect.asSharedFlow()
+
+    init {
+        executeSafe {
+            val user = userUseCase.invoke().firstOrNull()
+            if (user != null) {
+                _uiState.update {
+                    it.copy(
+                        email = user.email,
+                        fullName = user.fullName,
+                        avatarUrl = user.avatar ?: "",
+                        phone = user.phone ?: "",
+                    )
+                }
+            }
+        }
+    }
 
     override fun onEvent(event: EditProfileEvent) {
         when (event) {
@@ -78,7 +97,7 @@ constructor(
                 is ApiResult.Success -> {
                     val message =
                         result.message
-                            ?: UiText.StringResource(ProfileR.string.profile_update_profile_success)
+                            ?: UiText.StringResource(ProfileR.string.profile_edit_update_successfully)
                     _effect.emit(EditProfileEffect.ShowSuccessMessage(message))
                 }
 
