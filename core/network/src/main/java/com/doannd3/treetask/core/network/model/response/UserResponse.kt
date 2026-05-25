@@ -18,6 +18,7 @@ data class UserResponse(
 @Serializable
 data class AvatarUploadResponse(
     @SerialName("avatar") val avatar: String? = null,
+    @SerialName("avatarPath") val avatarPath: String? = null,
     @SerialName("message") val message: String? = null,
 )
 

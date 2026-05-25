@@ -9,4 +9,5 @@
     <string name="common_error_unknown">Đã xảy ra lỗi không xác định</string>
     <string name="common_error_network_connection">Lỗi kết nối mạng</string>
     <string name="common_missing_response_data">Không tìm thấy dữ liệu</string>
+    <string name="common_error_unsupported_media_type">Định dạng ảnh không được hỗ trợ</string>
 </resources>
