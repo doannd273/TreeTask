@@ -25,7 +25,7 @@ import com.doannd3.treetask.feature.auth.R
 // region TreeTaskAppName
 
 @Composable
-fun TreeTaskAppName() {
+internal fun TreeTaskAppName() {
     Text(
         modifier = Modifier.fillMaxWidth(),
         text = stringResource(com.doannd3.treetask.core.common.R.string.common_app_name),
@@ -51,7 +51,7 @@ private fun TreeTaskAppNamePreview() {
 // region RegisterTextButton
 
 @Composable
-fun RegisterTextButton(onNavigateToRegister: () -> Unit) {
+internal fun RegisterTextButton(onNavigateToRegister: () -> Unit) {
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.Center,
@@ -96,7 +96,7 @@ private fun RegisterTextButtonPreview() {
 // region ForgotPasswordTextButton
 
 @Composable
-fun ForgotPasswordTextButton(onNavigateToForgotPassword: () -> Unit) {
+internal fun ForgotPasswordTextButton(onNavigateToForgotPassword: () -> Unit) {
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.End,
