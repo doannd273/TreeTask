@@ -27,7 +27,7 @@ import com.doannd3.treetask.feature.profile.R
 // region ChangePasswordForm
 
 @Composable
-fun ChangePasswordForm(
+internal fun ChangePasswordForm(
     state: ChangePasswordState,
     onEvent: (ChangePasswordEvent) -> Unit,
 ) {

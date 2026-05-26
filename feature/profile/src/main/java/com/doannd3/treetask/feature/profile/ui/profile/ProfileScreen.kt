@@ -95,7 +95,7 @@ fun ProfileRoute(
 }
 
 @Composable
-fun ProfileScreen(
+internal fun ProfileScreen(
     state: ProfileState,
     onEvent: (ProfileEvent) -> Unit,
 ) {
