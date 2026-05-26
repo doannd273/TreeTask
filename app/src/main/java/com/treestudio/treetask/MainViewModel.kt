@@ -10,6 +10,7 @@ import com.doannd3.treetask.core.common.network.NetworkMonitor
 import com.doannd3.treetask.core.datastore.token.TokenStorage
 import com.doannd3.treetask.core.domain.repository.AuthRepository
 import com.doannd3.treetask.core.domain.repository.UserRepository
+import com.doannd3.treetask.core.domain.usecase.setting.ObserveAppLanguageUseCase
 import com.doannd3.treetask.feature.auth.navigation.AuthGraphDestination
 import com.doannd3.treetask.feature.tasks.navigation.TasksGraphDestination
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -18,7 +19,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -28,9 +28,13 @@ constructor(
     private val tokenStorage: TokenStorage,
     private val userRepository: UserRepository,
     private val authRepository: AuthRepository,
+    private val observeAppLanguageUseCase: ObserveAppLanguageUseCase,
     networkMonitor: NetworkMonitor,
 ) : BaseViewModel() {
     var isLoadingMain by mutableStateOf(true)
+        private set
+
+    var appLanguageTag by mutableStateOf<String?>(null)
         private set
 
     var startDestination by mutableStateOf<Any?>(null)
@@ -44,12 +48,18 @@ constructor(
         )
 
     init {
-        viewModelScope.launch {
+        executeSafe {
+            observeAppLanguageUseCase().collect { appLanguage ->
+                appLanguageTag = appLanguage.localeTag
+            }
+        }
+
+        executeSafe {
             val token = tokenStorage.getAccessToken().first()
             if (token.isNullOrEmpty()) {
                 startDestination = AuthGraphDestination
                 isLoadingMain = false
-                return@launch
+                return@executeSafe
             }
 
             val result = userRepository.getProfile()
