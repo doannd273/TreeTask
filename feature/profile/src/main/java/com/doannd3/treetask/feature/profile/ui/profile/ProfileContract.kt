@@ -5,7 +5,7 @@ import com.doannd3.treetask.core.model.profile.AppLanguage
 import com.doannd3.treetask.core.model.user.User
 
 data class ProfileState(
-    val selectedLanguage: AppLanguage = AppLanguage.VIETNAMESE,
+    val selectedLanguage: AppLanguage = AppLanguage.ENGLISH,
     val showLanguagePicker: Boolean = false,
     val isLoading: Boolean = false,
     val user: User? = null,

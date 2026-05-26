@@ -4,6 +4,7 @@ import androidx.lifecycle.viewModelScope
 import com.doannd3.treetask.core.common.BaseViewModel
 import com.doannd3.treetask.core.common.MviViewModel
 import com.doannd3.treetask.core.domain.usecase.auth.LogoutUseCase
+import com.doannd3.treetask.core.domain.usecase.setting.ObserveAppLanguageUseCase
 import com.doannd3.treetask.core.domain.usecase.user.ObserveCurrentUserUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -22,6 +23,7 @@ class ProfileViewModel
 constructor(
     private val logoutUseCase: LogoutUseCase,
     private val observeCurrentUserUseCase: ObserveCurrentUserUseCase,
+    private val observeAppLanguageUseCase: ObserveAppLanguageUseCase,
 ) : BaseViewModel(),
     MviViewModel<ProfileState, ProfileEvent, ProfileEffect> {
     private val _uiState = MutableStateFlow(ProfileState())
@@ -34,6 +36,12 @@ constructor(
         executeSafe {
             observeCurrentUserUseCase().collect { user ->
                 _uiState.update { it.copy(user = user) }
+            }
+        }
+
+        executeSafe {
+            observeAppLanguageUseCase().collect { appLanguage ->
+                _uiState.update { it.copy(selectedLanguage = appLanguage) }
             }
         }
     }
