@@ -4,6 +4,8 @@ import android.content.Context
 import android.content.SharedPreferences
 import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKey
+import com.doannd3.treetask.core.datastore.darkmode.DarkModeManager
+import com.doannd3.treetask.core.datastore.darkmode.DarkModeStorage
 import com.doannd3.treetask.core.datastore.device.DevicePrefsManager
 import com.doannd3.treetask.core.datastore.device.DeviceStorage
 import com.doannd3.treetask.core.datastore.language.AppLanguageManager
@@ -35,6 +37,10 @@ interface DataStoreModule {
     @Binds
     @Singleton
     fun bindAppLanguageStorage(impl: AppLanguageManager): AppLanguageStorage
+
+    @Binds
+    @Singleton
+    fun bindDarkModeStorage(impl: DarkModeManager): DarkModeStorage
 
     @Binds
     @Singleton

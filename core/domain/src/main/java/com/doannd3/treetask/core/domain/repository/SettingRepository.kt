@@ -7,4 +7,8 @@ interface SettingRepository {
     fun getCachedAppLanguage(): Flow<AppLanguage>
 
     suspend fun saveAppLanguage(appLanguage: AppLanguage)
+
+    fun getCachedDarkMode(): Flow<Boolean>
+
+    suspend fun saveDarkMode(isDarkMode: Boolean)
 }
