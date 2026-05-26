@@ -154,9 +154,12 @@ dependencies {
     implementation(projects.core.analytics)
     implementation(projects.core.data)
     implementation(projects.core.permission)
+    implementation(projects.core.network)
 
+    // androidx
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.appcompat)
 
     // testing
     testImplementation(projects.core.testing)

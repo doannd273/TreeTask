@@ -12,5 +12,10 @@ enum class AppLanguage(
         fun fromLocaleTag(localeTag: String): AppLanguage {
             return AppLanguage.entries.firstOrNull { it.localeTag == localeTag } ?: ENGLISH
         }
+
+        fun normalizeLocaleTag(localeTag: String?): String {
+            return localeTag?.takeIf { tag -> entries.any { it.localeTag == tag } }
+                ?: ENGLISH.localeTag
+        }
     }
 }
