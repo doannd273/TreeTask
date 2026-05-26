@@ -8,3 +8,5 @@ import androidx.datastore.preferences.preferencesDataStore
 internal val Context.userDataStore by preferencesDataStore("user_prefs")
 
 internal val Context.deviceDataStore by preferencesDataStore("device_prefs")
+
+internal val Context.appLanguageDataStore by preferencesDataStore("app_language_prefs")
