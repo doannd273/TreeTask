@@ -22,7 +22,7 @@ import com.doannd3.treetask.feature.auth.R
 // region FullNameInput
 
 @Composable
-fun FullNameInput(
+internal fun FullNameInput(
     modifier: Modifier = Modifier,
     fullName: String,
     onFullNameChange: (String) -> Unit,
