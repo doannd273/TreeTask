@@ -96,23 +96,27 @@ constructor(
                         val url = upload.data
                         if (url.isNullOrBlank()) {
                             _uiState.update { it.copy(isLoading = false) }
-                            _effect.emit(EditProfileEffect.ShowErrorMessage(
-                                UiText.StringResource(CommonR.string.common_error_unknown)
-                            ))
+                            _effect.emit(
+                                EditProfileEffect.ShowErrorMessage(
+                                    UiText.StringResource(CommonR.string.common_error_unknown),
+                                ),
+                            )
                             return@executeSafe
                         }
                         url
                     }
                     is ApiResult.Error -> {
                         _uiState.update { it.copy(isLoading = false) }
-                        _effect.emit(EditProfileEffect.ShowErrorMessage(
-                            upload.toDisplayMessage(UiText.StringResource(CommonR.string.common_error_unknown))
-                        ))
+                        _effect.emit(
+                            EditProfileEffect.ShowErrorMessage(
+                                upload.toDisplayMessage(UiText.StringResource(CommonR.string.common_error_unknown)),
+                            ),
+                        )
                         return@executeSafe
                     }
                 }
             } else {
-                state.avatarUrl  // giữ nguyên URL cũ
+                state.avatarUrl // giữ nguyên URL cũ
             }
 
             // Bước 2: update profile
@@ -130,9 +134,11 @@ constructor(
                     _effect.emit(EditProfileEffect.ShowSuccessMessage(message))
                 }
                 is ApiResult.Error -> {
-                    _effect.emit(EditProfileEffect.ShowErrorMessage(
-                        result.toDisplayMessage(UiText.StringResource(CommonR.string.common_error_unknown))
-                    ))
+                    _effect.emit(
+                        EditProfileEffect.ShowErrorMessage(
+                            result.toDisplayMessage(UiText.StringResource(CommonR.string.common_error_unknown)),
+                        ),
+                    )
                 }
             }
         }
