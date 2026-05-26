@@ -5,6 +5,7 @@ import com.doannd3.treetask.core.common.BaseViewModel
 import com.doannd3.treetask.core.common.MviViewModel
 import com.doannd3.treetask.core.domain.usecase.auth.LogoutUseCase
 import com.doannd3.treetask.core.domain.usecase.setting.ObserveAppLanguageUseCase
+import com.doannd3.treetask.core.domain.usecase.setting.SetAppLanguageUseCase
 import com.doannd3.treetask.core.domain.usecase.user.ObserveCurrentUserUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -24,6 +25,7 @@ constructor(
     private val logoutUseCase: LogoutUseCase,
     private val observeCurrentUserUseCase: ObserveCurrentUserUseCase,
     private val observeAppLanguageUseCase: ObserveAppLanguageUseCase,
+    private val setAppLanguageUseCase: SetAppLanguageUseCase,
 ) : BaseViewModel(),
     MviViewModel<ProfileState, ProfileEvent, ProfileEffect> {
     private val _uiState = MutableStateFlow(ProfileState())
@@ -61,15 +63,11 @@ constructor(
             }
 
             is ProfileEvent.ConfirmLanguage -> {
-                _uiState.update {
-                    it.copy(
-                        showLanguagePicker = false,
-                        selectedLanguage = event.language,
-                    )
-                }
-
-                viewModelScope.launch {
-                    _effect.emit(ProfileEffect.ApplyLanguage(event.language))
+                executeSafe {
+                    setAppLanguageUseCase(event.language)
+                    _uiState.update {
+                        it.copy(showLanguagePicker = false)
+                    }
                 }
             }
 
