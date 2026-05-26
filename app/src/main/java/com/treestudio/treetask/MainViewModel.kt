@@ -11,6 +11,7 @@ import com.doannd3.treetask.core.datastore.token.TokenStorage
 import com.doannd3.treetask.core.domain.repository.AuthRepository
 import com.doannd3.treetask.core.domain.repository.UserRepository
 import com.doannd3.treetask.core.domain.usecase.setting.ObserveAppLanguageUseCase
+import com.doannd3.treetask.core.domain.usecase.setting.ObserveDarkModeUseCase
 import com.doannd3.treetask.feature.auth.navigation.AuthGraphDestination
 import com.doannd3.treetask.feature.tasks.navigation.TasksGraphDestination
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -29,12 +30,16 @@ constructor(
     private val userRepository: UserRepository,
     private val authRepository: AuthRepository,
     private val observeAppLanguageUseCase: ObserveAppLanguageUseCase,
+    private val observeDarkModeUseCase: ObserveDarkModeUseCase,
     networkMonitor: NetworkMonitor,
 ) : BaseViewModel() {
     var isLoadingMain by mutableStateOf(true)
         private set
 
     var appLanguageTag by mutableStateOf<String?>(null)
+        private set
+
+    var isDarkMode by mutableStateOf(false)
         private set
 
     var startDestination by mutableStateOf<Any?>(null)
@@ -51,6 +56,12 @@ constructor(
         executeSafe {
             observeAppLanguageUseCase().collect { appLanguage ->
                 appLanguageTag = appLanguage.localeTag
+            }
+        }
+
+        executeSafe {
+            observeDarkModeUseCase().collect { enabled ->
+                this@MainViewModel.isDarkMode = enabled
             }
         }
 

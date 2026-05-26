@@ -50,7 +50,6 @@ class MainActivity : AppCompatActivity() {
 
         setContent {
             val languageTag = viewModel.appLanguageTag
-
             LaunchedEffect(languageTag) {
                 if (!languageTag.isNullOrEmpty()) {
                     val current = AppCompatDelegate.getApplicationLocales().get(0)?.language
@@ -62,7 +61,7 @@ class MainActivity : AppCompatActivity() {
                 }
             }
 
-            TreeTaskTheme {
+            TreeTaskTheme(darkTheme = viewModel.isDarkMode) {
                 viewModel.startDestination?.let { dest ->
                     key(dest) {
                         val overlayState =
