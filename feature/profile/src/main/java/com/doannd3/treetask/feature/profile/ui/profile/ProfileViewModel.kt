@@ -4,6 +4,10 @@ import androidx.lifecycle.viewModelScope
 import com.doannd3.treetask.core.common.BaseViewModel
 import com.doannd3.treetask.core.common.MviViewModel
 import com.doannd3.treetask.core.domain.usecase.auth.LogoutUseCase
+import com.doannd3.treetask.core.domain.usecase.setting.ObserveAppLanguageUseCase
+import com.doannd3.treetask.core.domain.usecase.setting.ObserveDarkModeUseCase
+import com.doannd3.treetask.core.domain.usecase.setting.SaveDarkModeUseCase
+import com.doannd3.treetask.core.domain.usecase.setting.SetAppLanguageUseCase
 import com.doannd3.treetask.core.domain.usecase.user.ObserveCurrentUserUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -22,6 +26,10 @@ class ProfileViewModel
 constructor(
     private val logoutUseCase: LogoutUseCase,
     private val observeCurrentUserUseCase: ObserveCurrentUserUseCase,
+    private val observeAppLanguageUseCase: ObserveAppLanguageUseCase,
+    private val setAppLanguageUseCase: SetAppLanguageUseCase,
+    private val saveDarkModeUseCase: SaveDarkModeUseCase,
+    private val observeDarkModeUseCase: ObserveDarkModeUseCase,
 ) : BaseViewModel(),
     MviViewModel<ProfileState, ProfileEvent, ProfileEffect> {
     private val _uiState = MutableStateFlow(ProfileState())
@@ -34,6 +42,18 @@ constructor(
         executeSafe {
             observeCurrentUserUseCase().collect { user ->
                 _uiState.update { it.copy(user = user) }
+            }
+        }
+
+        executeSafe {
+            observeAppLanguageUseCase().collect { appLanguage ->
+                _uiState.update { it.copy(selectedLanguage = appLanguage) }
+            }
+        }
+
+        executeSafe {
+            observeDarkModeUseCase().collect { isDarkMode ->
+                _uiState.update { it.copy(isDarkMode = isDarkMode) }
             }
         }
     }
@@ -53,15 +73,11 @@ constructor(
             }
 
             is ProfileEvent.ConfirmLanguage -> {
-                _uiState.update {
-                    it.copy(
-                        showLanguagePicker = false,
-                        selectedLanguage = event.language,
-                    )
-                }
-
-                viewModelScope.launch {
-                    _effect.emit(ProfileEffect.ApplyLanguage(event.language))
+                executeSafe {
+                    setAppLanguageUseCase(appLanguage = event.language)
+                    _uiState.update {
+                        it.copy(showLanguagePicker = false)
+                    }
                 }
             }
 
@@ -76,7 +92,9 @@ constructor(
                 }
             }
             is ProfileEvent.ToggleDarkMode -> {
-                _uiState.update { it.copy(isDarkMode = event.isDarkMode) }
+                executeSafe {
+                    saveDarkModeUseCase(isDarkMode = event.isDarkMode)
+                }
             }
         }
     }

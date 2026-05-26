@@ -1,7 +1,7 @@
-package com.doannd3.treetask.core.network.di
+package com.treestudio.treetask.di
 
 import com.doannd3.treetask.core.network.header.AcceptLanguageProvider
-import com.doannd3.treetask.core.network.header.DefaultAcceptLanguageProvider
+import com.treestudio.treetask.locale.AppLocaleAcceptLanguageProvider
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -10,10 +10,8 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-interface NetworkHeaderModule {
-    @Binds
+interface AppNetworkHeaderModule {
     @Singleton
-    fun bindAcceptLanguageProvider(
-        impl: DefaultAcceptLanguageProvider,
-    ): AcceptLanguageProvider
+    @Binds
+    fun bindAcceptLanguageProvider(impl: AppLocaleAcceptLanguageProvider): AcceptLanguageProvider
 }

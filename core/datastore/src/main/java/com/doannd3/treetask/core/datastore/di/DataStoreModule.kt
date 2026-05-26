@@ -4,8 +4,12 @@ import android.content.Context
 import android.content.SharedPreferences
 import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKey
+import com.doannd3.treetask.core.datastore.darkmode.DarkModeManager
+import com.doannd3.treetask.core.datastore.darkmode.DarkModeStorage
 import com.doannd3.treetask.core.datastore.device.DevicePrefsManager
 import com.doannd3.treetask.core.datastore.device.DeviceStorage
+import com.doannd3.treetask.core.datastore.language.AppLanguageManager
+import com.doannd3.treetask.core.datastore.language.AppLanguageStorage
 import com.doannd3.treetask.core.datastore.token.TokenManager
 import com.doannd3.treetask.core.datastore.token.TokenStorage
 import com.doannd3.treetask.core.datastore.user.UserPrefsManager
@@ -30,6 +34,14 @@ annotation class EncryptedPrefs
 @Module
 @InstallIn(SingletonComponent::class)
 interface DataStoreModule {
+    @Binds
+    @Singleton
+    fun bindAppLanguageStorage(impl: AppLanguageManager): AppLanguageStorage
+
+    @Binds
+    @Singleton
+    fun bindDarkModeStorage(impl: DarkModeManager): DarkModeStorage
+
     @Binds
     @Singleton
     fun bindTokenStorage(impl: TokenManager): TokenStorage
