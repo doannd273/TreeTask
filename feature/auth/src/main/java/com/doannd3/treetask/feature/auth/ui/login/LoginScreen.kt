@@ -96,7 +96,7 @@ fun LoginRoute(
 }
 
 @Composable
-fun LoginScreen(
+internal fun LoginScreen(
     state: LoginState,
     onEvent: (LoginEvent) -> Unit,
     onNavigateToRegister: () -> Unit,
