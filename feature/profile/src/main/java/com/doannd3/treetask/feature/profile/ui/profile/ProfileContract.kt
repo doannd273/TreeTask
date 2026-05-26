@@ -39,10 +39,6 @@ sealed class ProfileEffect {
         val message: UiText,
     ) : ProfileEffect()
 
-    data class ApplyLanguage(
-        val language: AppLanguage,
-    ) : ProfileEffect()
-
     data object NavigateToChangePassword : ProfileEffect()
 
     data object NavigateToEditProfile : ProfileEffect()
