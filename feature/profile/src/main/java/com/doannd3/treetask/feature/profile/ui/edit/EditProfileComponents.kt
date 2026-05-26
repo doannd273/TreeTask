@@ -3,12 +3,14 @@ package com.doannd3.treetask.feature.profile.ui.edit
 import android.net.Uri
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -47,30 +49,35 @@ fun AvatarPicker(
     avatarUrl: String,
     avatarClick: (() -> Unit),
 ) {
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable(onClick = avatarClick, enabled = isEnable),
-        horizontalAlignment = Alignment.CenterHorizontally,
+    Box(
+        modifier = Modifier.fillMaxWidth(),
+        contentAlignment = Alignment.Center,
     ) {
-        AsyncImage(
-            model = avatarUri ?: avatarUrl,
-            contentDescription = stringResource(R.string.profile_cd_user_avatar),
-            contentScale = ContentScale.Crop,
+        Column(
             modifier = Modifier
-                .size(72.dp)
-                .clip(CircleShape),
-            placeholder = painterResource(R.drawable.profile_ic_avatar),
-            error = painterResource(R.drawable.profile_ic_avatar),
-        )
+                .wrapContentWidth()
+                .clickable(onClick = avatarClick, enabled = isEnable),
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+            AsyncImage(
+                model = avatarUri ?: avatarUrl,
+                contentDescription = stringResource(R.string.profile_cd_user_avatar),
+                contentScale = ContentScale.Crop,
+                modifier = Modifier
+                    .size(72.dp)
+                    .clip(CircleShape),
+                placeholder = painterResource(R.drawable.profile_ic_avatar),
+                error = painterResource(R.drawable.profile_ic_avatar),
+            )
 
-        Spacer(Modifier.height(8.dp))
+            Spacer(Modifier.height(8.dp))
 
-        Text(
-            text = stringResource(R.string.profile_change_avatar_title),
-            style = MaterialTheme.typography.bodyMedium,
-            fontWeight = FontWeight.Medium,
-        )
+            Text(
+                text = stringResource(R.string.profile_change_avatar_title),
+                style = MaterialTheme.typography.bodyMedium,
+                fontWeight = FontWeight.Medium,
+            )
+        }
     }
 }
 

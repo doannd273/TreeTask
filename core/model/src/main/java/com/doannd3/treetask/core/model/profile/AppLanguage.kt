@@ -1,17 +1,21 @@
 package com.doannd3.treetask.core.model.profile
 
 enum class AppLanguage(
-    val code: String,
     val displayName: String,
     val localeTag: String,
 ) {
-    VIETNAMESE("vn", "Tiếng việt", "vi"),
-    ENGLISH("en", "English", "en"),
+    VIETNAMESE("Tiếng việt", "vi"),
+    ENGLISH("English", "en"),
     ;
 
     companion object {
-        fun fromCode(code: String): AppLanguage {
-            return AppLanguage.entries.firstOrNull { it.code == code } ?: VIETNAMESE
+        fun fromLocaleTag(localeTag: String): AppLanguage {
+            return AppLanguage.entries.firstOrNull { it.localeTag == localeTag } ?: ENGLISH
+        }
+
+        fun normalizeLocaleTag(localeTag: String?): String {
+            return localeTag?.takeIf { tag -> entries.any { it.localeTag == tag } }
+                ?: ENGLISH.localeTag
         }
     }
 }
