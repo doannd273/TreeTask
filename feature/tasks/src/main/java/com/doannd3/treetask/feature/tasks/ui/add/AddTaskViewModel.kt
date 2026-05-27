@@ -7,6 +7,7 @@ import com.doannd3.treetask.core.common.MviViewModel
 import com.doannd3.treetask.core.common.UiText
 import com.doannd3.treetask.core.common.toDisplayMessage
 import com.doannd3.treetask.core.domain.usecase.task.CreateTaskUseCase
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -19,6 +20,7 @@ import javax.inject.Inject
 import com.doannd3.treetask.core.common.R as CommonR
 import com.doannd3.treetask.feature.tasks.R as TasksR
 
+@HiltViewModel
 class AddTaskViewModel
 @Inject
 constructor(
