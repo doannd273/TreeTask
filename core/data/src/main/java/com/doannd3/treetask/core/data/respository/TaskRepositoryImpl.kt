@@ -17,6 +17,7 @@ import com.doannd3.treetask.core.database.dao.TaskRemoteKeysDao
 import com.doannd3.treetask.core.database.model.TaskRemoteKeysEntity
 import com.doannd3.treetask.core.domain.repository.TaskRepository
 import com.doannd3.treetask.core.model.task.Task
+import com.doannd3.treetask.core.network.model.request.TaskRequest
 import com.doannd3.treetask.core.network.service.TaskService
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -115,9 +116,28 @@ constructor(
         title: String,
         description: String,
         status: String,
-        dueDate: String
-    ): ApiResult<Task> {
-        TODO("Not yet implemented")
+        dueDate: String,
+    ): ApiResult<Task> = try {
+        val response = taskService.createTask(
+            TaskRequest(title = title, description = description, status = status, dueDate = dueDate),
+        )
+        when (response) {
+            is ApiResult.Success -> {
+                val taskResponse = response.data ?: return ApiResult.Error(
+                    appErrorCode = AppErrorCode.MISSING_RESPONSE_DATA,
+                    exception = MissingResponseDataException(),
+                )
+
+                val taskEntity = taskResponse.toTaskEntity()
+                taskDao.insertTasks(listOf(taskEntity))
+                ApiResult.Success(data = taskEntity.toTaskDomain())
+            }
+            is ApiResult.Error -> response
+        }
+    } catch (e: IOException) {
+        ApiResult.Error(exception = e)
+    } catch (e: HttpException) {
+        ApiResult.Error(exception = e)
     }
 
     companion object {
