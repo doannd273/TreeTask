@@ -6,7 +6,9 @@ data class RegisterState(
     val fullName: String = "",
     val email: String = "",
     val password: String = "",
+    val confirmPassword: String = "",
     val passwordVisible: Boolean = false,
+    val confirmPasswordVisible: Boolean = false,
     val isLoading: Boolean = false,
 )
 
@@ -23,8 +25,16 @@ sealed class RegisterEvent {
         val password: String,
     ) : RegisterEvent()
 
+    data class ConfirmPasswordChanged(
+        val confirmPassword: String,
+    ) : RegisterEvent()
+
     data class PasswordVisibleChanged(
         val passwordVisible: Boolean,
+    ) : RegisterEvent()
+
+    data class ConfirmPasswordVisibleChanged(
+        val confirmPasswordVisible: Boolean,
     ) : RegisterEvent()
 
     data object SubmitRegister : RegisterEvent()
