@@ -6,6 +6,7 @@ import com.doannd3.treetask.core.domain.repository.TaskRepository
 import com.doannd3.treetask.core.domain.validation.validationError
 import com.doannd3.treetask.core.model.task.Task
 import com.doannd3.treetask.core.model.task.TaskStatus
+import java.time.LocalDate
 import javax.inject.Inject
 
 class CreateTaskUseCase
@@ -41,6 +42,9 @@ constructor(
         if (dueDateTrimmed.isBlank()) {
             return validationError(R.string.common_error_task_due_date_empty)
         }
+        if (!dueDateTrimmed.isValidYmdDate()) {
+            return validationError(R.string.common_error_task_due_date_invalid)
+        }
 
         return taskRepository.createTask(
             title = titleTrimmed,
@@ -49,4 +53,7 @@ constructor(
             dueDate = dueDateTrimmed,
         )
     }
+
+    private fun String.isValidYmdDate(): Boolean =
+        runCatching { LocalDate.parse(this) }.isSuccess
 }
