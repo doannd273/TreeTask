@@ -2,11 +2,10 @@ package com.doannd3.treetask.core.domain.usecase.task
 
 import com.doannd3.treetask.core.common.ApiResult
 import com.doannd3.treetask.core.common.R
-import com.doannd3.treetask.core.common.UiText
 import com.doannd3.treetask.core.domain.repository.TaskRepository
+import com.doannd3.treetask.core.domain.validation.validationError
 import com.doannd3.treetask.core.model.task.Task
 import com.doannd3.treetask.core.model.task.TaskStatus
-import java.time.LocalDate
 import javax.inject.Inject
 
 class CreateTaskUseCase
@@ -50,10 +49,4 @@ constructor(
             dueDate = dueDateTrimmed,
         )
     }
-
-    private fun validationError(resId: Int): ApiResult.Error =
-        ApiResult.Error(
-            message = UiText.StringResource(resId),
-            exception = null,
-        )
 }
