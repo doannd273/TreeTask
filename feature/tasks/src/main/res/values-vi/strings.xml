@@ -4,4 +4,8 @@
     <string name="tasks_search_hint">Nhập nội dung tìm kiếm…</string>
     <string name="tasks_error_title_empty">Tiêu đề không thể trống</string>
     <string name="tasks_add_task_success">Thêm nhiệm vụ thành công</string>
+    <string name="tasks_status_todo">Cần làm</string>
+    <string name="tasks_status_in_progress">Đang thực hiện</string>
+    <string name="tasks_status_pending">Đang chờ</string>
+    <string name="tasks_status_done">Hoàn thành</string>
 </resources>
