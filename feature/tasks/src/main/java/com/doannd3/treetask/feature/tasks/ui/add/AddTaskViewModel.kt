@@ -43,10 +43,6 @@ constructor(
                 _uiState.update { it.copy(description = event.description) }
             }
 
-            is AddTaskEvent.DueDateChanged -> {
-                _uiState.update { it.copy(dueDate = event.dueDate) }
-            }
-
             is AddTaskEvent.StatusChanged -> {
                 _uiState.update { it.copy(status = event.status) }
             }
@@ -61,6 +57,14 @@ constructor(
 
             AddTaskEvent.BackClicked -> {
                 navigateBack()
+            }
+
+            is AddTaskEvent.DueDateChanged -> {
+                _uiState.update {
+                    it.copy(
+                        dueDate = event.dueDate,
+                    )
+                }
             }
         }
     }
@@ -78,17 +82,6 @@ constructor(
         }
 
         executeSafe {
-            if (state.title.trim().isEmpty()) {
-                _effect.emit(
-                    AddTaskEffect.ShowErrorMessage(
-                        UiText.StringResource(
-                            TasksR.string.tasks_error_title_empty,
-                        ),
-                    ),
-                )
-                return@executeSafe
-            }
-
             _uiState.update { it.copy(isLoading = true) }
             val result =
                 createTaskUseCase(

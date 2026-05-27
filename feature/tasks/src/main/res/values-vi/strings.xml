@@ -12,6 +12,8 @@
     <string name="tasks_add_task_status_label">Trạng thái</string>
     <string name="tasks_add_task_due_date_label">Ngày đến hạn</string>
     <string name="tasks_add_task_due_date_placeholder">YYYY-MM-DD</string>
+    <string name="tasks_date_picker_confirm">OK</string>
+    <string name="tasks_date_picker_cancel">Hủy</string>
     <string name="tasks_add_task_submit">Tạo nhiệm vụ</string>
     <string name="tasks_add_task_submit_loading">Đang tạo…</string>
     <string name="tasks_status_todo">Cần làm</string>

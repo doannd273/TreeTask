@@ -12,6 +12,8 @@
     <string name="tasks_add_task_status_label">Status</string>
     <string name="tasks_add_task_due_date_label">Due date</string>
     <string name="tasks_add_task_due_date_placeholder">YYYY-MM-DD</string>
+    <string name="tasks_date_picker_confirm">OK</string>
+    <string name="tasks_date_picker_cancel">Cancel</string>
     <string name="tasks_add_task_submit">Create task</string>
     <string name="tasks_add_task_submit_loading">Creating…</string>
     <string name="tasks_status_todo">Todo</string>

@@ -15,7 +15,9 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
@@ -29,6 +31,9 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.repeatOnLifecycle
 import com.doannd3.treetask.core.common.asString
+import com.doannd3.treetask.core.common.extension.toYmdDate
+import com.doannd3.treetask.core.common.extension.ymdToDmy
+import com.doannd3.treetask.core.common.extension.ymdToEpochMillis
 import com.doannd3.treetask.core.designsystem.component.CommonHeader
 import com.doannd3.treetask.core.designsystem.component.LocalGlobalAppState
 import com.doannd3.treetask.core.designsystem.theme.AppPreviewLightDark
@@ -135,13 +140,30 @@ internal fun AddTaskContent(
     onEvent: (AddTaskEvent) -> Unit,
 ) {
     val descriptionFocusRequester = remember { FocusRequester() }
-    val dueDateFocusRequester = remember { FocusRequester() }
     val focusManager = LocalFocusManager.current
     val onSubmitAddTaskDebounced =
         rememberDebouncedClick {
             onEvent(AddTaskEvent.SubmitAddTask)
         }
     val isInputEnabled = !state.isLoading
+
+    var showDatePicker by remember { mutableStateOf(false) }
+    val displayText =
+        remember(state.dueDate) {
+            state.dueDate.ymdToDmy()
+        }
+    val initialMillis =
+        remember(state.dueDate) {
+            state.dueDate.ymdToEpochMillis()
+        }
+
+    if (showDatePicker) {
+        AppDatePickerDialog(
+            selectedDateMillis = initialMillis,
+            onDismiss = { showDatePicker = false },
+            onDateSelected = { onEvent(AddTaskEvent.DueDateChanged(it.toYmdDate())) },
+        )
+    }
 
     Column(
         modifier =
@@ -167,7 +189,9 @@ internal fun AddTaskContent(
                 description = state.description,
                 enabled = isInputEnabled,
                 onDescriptionChange = { onEvent(AddTaskEvent.DescriptionChanged(it)) },
-                onImeNext = { dueDateFocusRequester.requestFocus() },
+                onImeNext = {
+                    focusManager.clearFocus()
+                },
             )
 
             AddTaskStatusSelector(
@@ -177,15 +201,9 @@ internal fun AddTaskContent(
             )
 
             AddTaskDueDateInput(
-                modifier =
-                Modifier.focusRequester(dueDateFocusRequester),
-                dueDate = state.dueDate,
+                dueDate = displayText,
                 enabled = isInputEnabled,
-                onDueDateChange = { onEvent(AddTaskEvent.DueDateChanged(it)) },
-                onImeDone = {
-                    focusManager.clearFocus()
-                    onSubmitAddTaskDebounced()
-                },
+                onDueDateClick = { showDatePicker = true },
             )
 
             AddTaskSubmitButton(
