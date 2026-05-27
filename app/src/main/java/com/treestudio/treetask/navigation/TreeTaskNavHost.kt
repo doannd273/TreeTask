@@ -69,7 +69,7 @@ fun TreeTaskNavHost(
             },
             onNavigateBack = {
                 navController.popBackStack()
-            }
+            },
         )
 
         chatGraph()
