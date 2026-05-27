@@ -103,6 +103,7 @@ class ForgotPasswordViewModelTest {
         viewModel.onEvent(ForgotPasswordEvent.EmailChanged(email))
         viewModel.onEvent(ForgotPasswordEvent.OtpChanged(otp))
         viewModel.onEvent(ForgotPasswordEvent.NewPasswordChanged(password))
+        viewModel.onEvent(ForgotPasswordEvent.ConfirmPasswordChanged(password))
 
         viewModel.effect.test {
             viewModel.onEvent(ForgotPasswordEvent.SubmitResetPassword)
