@@ -71,9 +71,11 @@ class RegisterViewModel @Inject constructor(
 
         if (state.password != state.confirmPassword) {
             viewModelScope.launch {
-                _effect.emit(RegisterEffect.ShowErrorMessage(
-                    UiText.StringResource(AuthR.string.auth_error_password_mismatch)
-                ))
+                _effect.emit(
+                    RegisterEffect.ShowErrorMessage(
+                        UiText.StringResource(AuthR.string.auth_error_password_mismatch),
+                    ),
+                )
             }
             return
         }
