@@ -46,6 +46,7 @@ import com.doannd3.treetask.core.designsystem.theme.treeTaskColors
 import com.doannd3.treetask.core.model.task.Task
 import com.doannd3.treetask.core.model.task.TaskStatus
 import com.doannd3.treetask.feature.tasks.R
+import com.doannd3.treetask.feature.tasks.ui.model.labelRes
 import java.time.Instant
 
 @Composable
@@ -68,7 +69,7 @@ fun TaskStatusChips(
                     )
                 },
                 label = {
-                    Text(text = taskStatus.label)
+                    Text(text = stringResource(taskStatus.labelRes()))
                 },
                 modifier = Modifier.padding(end = 8.dp),
             )
@@ -223,7 +224,7 @@ fun StatusBadge(status: TaskStatus) {
                 color = backgroundColor,
             ).padding(vertical = 4.dp, horizontal = 8.dp),
     ) {
-        Text(text = status.label, color = Color.White, fontSize = 13.sp)
+        Text(text = stringResource(status.labelRes()), color = Color.White, fontSize = 13.sp)
     }
 }
 
