@@ -62,7 +62,7 @@ fun NavGraphBuilder.tasksGraph(
 
         composable<AddTasksDestination> {
             AddTaskRoute(
-                onNavigateBack = onNavigateBack
+                onNavigateBack = onNavigateBack,
             )
         }
     }
