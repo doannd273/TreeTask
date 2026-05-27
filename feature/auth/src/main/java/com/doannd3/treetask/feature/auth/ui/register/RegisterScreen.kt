@@ -206,9 +206,9 @@ internal fun RegisterContent(
 
             PasswordInput(
                 modifier =
-                    Modifier
-                        .fillMaxWidth()
-                        .focusRequester(confirmPasswordFocusRequester),
+                Modifier
+                    .fillMaxWidth()
+                    .focusRequester(confirmPasswordFocusRequester),
                 label = stringResource(R.string.auth_confirm_password_hint),
                 password = state.confirmPassword,
                 passwordVisible = state.confirmPasswordVisible,
@@ -246,7 +246,7 @@ private fun RegisterScreenPreview() {
                 fullName = "Nguyễn Demo",
                 email = "demo@gmail.com",
                 password = "123456",
-                confirmPassword = "12321"
+                confirmPassword = "12321",
             ),
             onEvent = {},
             onRegisterBack = {},
