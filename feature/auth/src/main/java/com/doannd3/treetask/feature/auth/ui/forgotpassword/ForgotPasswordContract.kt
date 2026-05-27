@@ -12,8 +12,10 @@ data class ForgotPasswordState(
     val email: String = "",
     val otp: String = "",
     val newPassword: String = "",
+    val confirmPassword: String = "",
     val isLoading: Boolean = false,
     val passwordVisible: Boolean = false,
+    val confirmPasswordVisible: Boolean = false,
 )
 
 sealed class ForgotPasswordEvent {
@@ -39,8 +41,16 @@ sealed class ForgotPasswordEvent {
         val newPassword: String,
     ) : ForgotPasswordEvent()
 
+    data class ConfirmPasswordChanged(
+        val confirmPassword: String,
+    ) : ForgotPasswordEvent()
+
     data class PasswordVisibleChanged(
         val passwordVisible: Boolean,
+    ) : ForgotPasswordEvent()
+
+    data class ConfirmPasswordVisibleChanged(
+        val confirmPasswordVisible: Boolean,
     ) : ForgotPasswordEvent()
 }
 

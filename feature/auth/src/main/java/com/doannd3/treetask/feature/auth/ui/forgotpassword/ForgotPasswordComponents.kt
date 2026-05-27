@@ -118,6 +118,7 @@ internal fun ResetPasswordStep(
             onEvent(ForgotPasswordEvent.ResendOtp)
         }
         val passwordFocusRequester = remember { FocusRequester() }
+        val confirmPasswordFocusRequester = remember { FocusRequester() }
 
         Column(
             modifier = modifier.padding(16.dp),
@@ -145,11 +146,26 @@ internal fun ResetPasswordStep(
                 modifier = Modifier
                     .fillMaxWidth()
                     .focusRequester(passwordFocusRequester),
-                label = stringResource(R.string.auth_password_hint),
+                label = stringResource(R.string.auth_new_password_hint),
                 password = state.newPassword,
                 passwordVisible = state.passwordVisible,
                 onPasswordChange = { onEvent(ForgotPasswordEvent.NewPasswordChanged(it)) },
                 onPasswordVisibleChange = { onEvent(ForgotPasswordEvent.PasswordVisibleChanged(it)) },
+                imeAction = ImeAction.Next,
+                onImeNext = { confirmPasswordFocusRequester.requestFocus() },
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            PasswordInput(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .focusRequester(confirmPasswordFocusRequester),
+                label = stringResource(R.string.auth_confirm_password_hint),
+                password = state.confirmPassword,
+                passwordVisible = state.confirmPasswordVisible,
+                onPasswordChange = { onEvent(ForgotPasswordEvent.ConfirmPasswordChanged(it)) },
+                onPasswordVisibleChange = { onEvent(ForgotPasswordEvent.ConfirmPasswordVisibleChanged(it)) },
                 imeAction = ImeAction.Done,
                 onImeDone = { onSubmitResetPasswordDebounced() },
             )
@@ -190,6 +206,7 @@ private fun ResetPasswordStepPreview() {
                     otp = "123",
                     newPassword = "",
                     isLoading = false,
+                    confirmPassword = "",
                 ),
                 onEvent = {},
             )
@@ -210,6 +227,8 @@ private fun ResetPasswordStepFilledPreview() {
                     newPassword = "password123",
                     passwordVisible = false,
                     isLoading = false,
+                    confirmPassword = "password124",
+                    confirmPasswordVisible = false,
                 ),
                 onEvent = {},
             )

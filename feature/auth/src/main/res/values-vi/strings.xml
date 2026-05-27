@@ -18,4 +18,5 @@
     <string name="auth_prompt_already_have_account">Đã có tài khoản? %1$s</string>
     <string name="auth_error_password_mismatch">Mật khẩu không khớp</string>
     <string name="auth_confirm_password_hint">Xác nhận mật khẩu</string>
+    <string name="auth_new_password_hint">Mật khẩu mới</string>
 </resources>
