@@ -128,6 +128,7 @@ internal fun RegisterScreen(
             ),
             state = state,
             onEvent = onEvent,
+            onRegisterBack = onRegisterBack,
         )
     }
 }
@@ -137,6 +138,7 @@ internal fun RegisterContent(
     modifier: Modifier = Modifier,
     state: RegisterState,
     onEvent: (RegisterEvent) -> Unit,
+    onRegisterBack: () -> Unit,
 ) {
     val onSubmitRegisterDebounced =
         rememberDebouncedClick {
@@ -206,6 +208,10 @@ internal fun RegisterContent(
                 isEnable = !state.isLoading,
                 onSubmit = onSubmitRegisterDebounced,
             )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            AlreadyHaveAccountTextButton(onRegisterBack = onRegisterBack)
         }
     }
 }

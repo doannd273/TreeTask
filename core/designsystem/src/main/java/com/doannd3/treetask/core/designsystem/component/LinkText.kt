@@ -19,6 +19,7 @@ import com.doannd3.treetask.core.designsystem.theme.AppPreviewLightDark
 import com.doannd3.treetask.core.designsystem.theme.TreeTaskTheme
 
 enum class LinkTag {
+    LOGIN,
     REGISTER,
     FORGOT_PASSWORD,
 }
@@ -35,45 +36,48 @@ fun LinkText(
     links: List<LinkPart>,
     modifier: Modifier = Modifier,
     parentStyle: TextStyle = TextStyle.Default,
-    linkStyle: SpanStyle = SpanStyle(
-        textDecoration = TextDecoration.Underline,
-    ),
+    linkStyle: SpanStyle =
+        SpanStyle(
+            textDecoration = TextDecoration.Underline,
+        ),
 ) {
-    val updatedLinks = links.map {
-        val updatedOnClick by rememberUpdatedState(it.onClick)
-        it.copy(onClick = { updatedOnClick() })
-    }
+    val updatedLinks =
+        links.map {
+            val updatedOnClick by rememberUpdatedState(it.onClick)
+            it.copy(onClick = { updatedOnClick() })
+        }
 
-    val annotatedText = remember(text, updatedLinks, linkStyle) {
-        buildAnnotatedString {
-            append(text)
+    val annotatedText =
+        remember(text, updatedLinks, linkStyle) {
+            buildAnnotatedString {
+                append(text)
 
-            var currentIndex = 0
+                var currentIndex = 0
 
-            updatedLinks.forEach { link ->
-                val start = text.indexOf(link.text, currentIndex)
-                if (start == -1) return@forEach
+                updatedLinks.forEach { link ->
+                    val start = text.indexOf(link.text, currentIndex)
+                    if (start == -1) return@forEach
 
-                val end = start + link.text.length
-                currentIndex = end
+                    val end = start + link.text.length
+                    currentIndex = end
 
-                addLink(
-                    LinkAnnotation.Clickable(
-                        tag = link.tag,
-                        linkInteractionListener = { link.onClick() },
-                    ),
-                    start = start,
-                    end = end,
-                )
+                    addLink(
+                        LinkAnnotation.Clickable(
+                            tag = link.tag,
+                            linkInteractionListener = { link.onClick() },
+                        ),
+                        start = start,
+                        end = end,
+                    )
 
-                addStyle(
-                    style = linkStyle,
-                    start = start,
-                    end = end,
-                )
+                    addStyle(
+                        style = linkStyle,
+                        start = start,
+                        end = end,
+                    )
+                }
             }
         }
-    }
 
     BasicText(
         modifier = modifier,
