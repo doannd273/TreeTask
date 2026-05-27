@@ -95,11 +95,11 @@ fun ProfileRoute(
 }
 
 @Composable
-fun ProfileScreen(
+internal fun ProfileScreen(
     state: ProfileState,
     onEvent: (ProfileEvent) -> Unit,
 ) {
-    TreeTaskTheme(darkTheme = state.isDarkMode) {
+    TreeTaskTheme {
         Scaffold(
             contentWindowInsets = WindowInsets.safeDrawing,
         ) { paddingValues ->

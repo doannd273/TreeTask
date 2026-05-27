@@ -15,4 +15,6 @@
     <string name="auth_resend_otp">Resend OTP</string>
     <string name="auth_otp_sent_to_email">OTP sent to %1$s</string>
     <string name="auth_reset_password">Confirm</string>
+    <string name="auth_error_password_mismatch">Passwords do not match</string>
+    <string name="auth_confirm_password_hint">Confirm Password</string>
 </resources>
