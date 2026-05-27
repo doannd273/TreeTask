@@ -54,21 +54,21 @@ internal fun AddTaskTitleInput(
         modifier = modifier.fillMaxWidth(),
         enabled = enabled,
         colors =
-            OutlinedTextFieldDefaults.colors(
-                focusedTextColor = MaterialTheme.colorScheme.onSurface,
-                unfocusedTextColor = MaterialTheme.colorScheme.onSurfaceVariant,
-            ),
+        OutlinedTextFieldDefaults.colors(
+            focusedTextColor = MaterialTheme.colorScheme.onSurface,
+            unfocusedTextColor = MaterialTheme.colorScheme.onSurfaceVariant,
+        ),
         textStyle = TextStyle(fontSize = 15.sp),
         singleLine = true,
         keyboardOptions =
-            KeyboardOptions(
-                keyboardType = KeyboardType.Text,
-                imeAction = ImeAction.Next,
-            ),
+        KeyboardOptions(
+            keyboardType = KeyboardType.Text,
+            imeAction = ImeAction.Next,
+        ),
         keyboardActions =
-            KeyboardActions(
-                onNext = { onImeNext() },
-            ),
+        KeyboardActions(
+            onNext = { onImeNext() },
+        ),
         value = title,
         onValueChange = onTitleChange,
         label = { Text(text = stringResource(R.string.tasks_add_task_title_label)) },
@@ -105,26 +105,26 @@ internal fun AddTaskDescriptionInput(
 ) {
     OutlinedTextField(
         modifier =
-            modifier
-                .fillMaxWidth()
-                .heightIn(min = 120.dp),
+        modifier
+            .fillMaxWidth()
+            .heightIn(min = 120.dp),
         enabled = enabled,
         colors =
-            OutlinedTextFieldDefaults.colors(
-                focusedTextColor = MaterialTheme.colorScheme.onSurface,
-                unfocusedTextColor = MaterialTheme.colorScheme.onSurfaceVariant,
-            ),
+        OutlinedTextFieldDefaults.colors(
+            focusedTextColor = MaterialTheme.colorScheme.onSurface,
+            unfocusedTextColor = MaterialTheme.colorScheme.onSurfaceVariant,
+        ),
         textStyle = TextStyle(fontSize = 15.sp),
         minLines = 4,
         keyboardOptions =
-            KeyboardOptions(
-                keyboardType = KeyboardType.Text,
-                imeAction = ImeAction.Next,
-            ),
+        KeyboardOptions(
+            keyboardType = KeyboardType.Text,
+            imeAction = ImeAction.Next,
+        ),
         keyboardActions =
-            KeyboardActions(
-                onNext = { onImeNext() },
-            ),
+        KeyboardActions(
+            onNext = { onImeNext() },
+        ),
         value = description,
         onValueChange = onDescriptionChange,
         label = { Text(text = stringResource(R.string.tasks_add_task_description_label)) },
@@ -275,24 +275,25 @@ internal fun AddTaskDueDateInput(
 ) {
     Box(
         modifier =
-            Modifier.clickable(enabled = enabled) {
-                onDueDateClick()
-            },
+        Modifier.clickable(enabled = enabled) {
+            onDueDateClick()
+        },
     ) {
         OutlinedTextField(
             modifier = modifier.fillMaxWidth(),
-            enabled = false, // always disabled to prevent touch/focus interception; Box.clickable handles tap
+            // Always disabled to prevent touch/focus interception; Box.clickable handles tap.
+            enabled = false,
             colors =
-                if (enabled) {
-                    OutlinedTextFieldDefaults.colors(
-                        disabledTextColor = MaterialTheme.colorScheme.onSurface,
-                        disabledBorderColor = MaterialTheme.colorScheme.outline,
-                        disabledLabelColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                        disabledPlaceholderColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                    )
-                } else {
-                    OutlinedTextFieldDefaults.colors()
-                },
+            if (enabled) {
+                OutlinedTextFieldDefaults.colors(
+                    disabledTextColor = MaterialTheme.colorScheme.onSurface,
+                    disabledBorderColor = MaterialTheme.colorScheme.outline,
+                    disabledLabelColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                    disabledPlaceholderColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            } else {
+                OutlinedTextFieldDefaults.colors()
+            },
             textStyle = TextStyle(fontSize = 15.sp),
             singleLine = true,
             value = dueDate,
@@ -330,13 +331,13 @@ internal fun AddTaskSubmitButton(
     CommonButton(
         modifier = modifier,
         buttonText =
-            stringResource(
-                if (isLoading) {
-                    R.string.tasks_add_task_submit_loading
-                } else {
-                    R.string.tasks_add_task_submit
-                },
-            ),
+        stringResource(
+            if (isLoading) {
+                R.string.tasks_add_task_submit_loading
+            } else {
+                R.string.tasks_add_task_submit
+            },
+        ),
         isEnable = !isLoading,
         onSubmit = onSubmit,
     )

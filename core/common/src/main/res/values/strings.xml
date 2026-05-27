@@ -10,4 +10,10 @@
     <string name="common_error_network_connection">Network connection error</string>
     <string name="common_missing_response_data">Missing response data</string>
     <string name="common_error_unsupported_media_type">Unsupported image format</string>
+    <string name="common_error_task_title_empty">Task title cannot be empty</string>
+    <string name="common_error_task_description_empty">Task description cannot be empty</string>
+    <string name="common_error_task_status_empty">Task status is required</string>
+    <string name="common_error_task_status_invalid">Task status is invalid</string>
+    <string name="common_error_task_due_date_empty">Task due date is required</string>
+    <string name="common_error_task_due_date_invalid">Task due date is invalid</string>
 </resources>

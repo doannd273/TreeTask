@@ -10,4 +10,10 @@
     <string name="common_error_network_connection">Lỗi kết nối mạng</string>
     <string name="common_missing_response_data">Không tìm thấy dữ liệu</string>
     <string name="common_error_unsupported_media_type">Định dạng ảnh không được hỗ trợ</string>
+    <string name="common_error_task_title_empty">Tiêu đề công việc không thể để trống</string>
+    <string name="common_error_task_description_empty">Mô tả công việc không thể để trống</string>
+    <string name="common_error_task_status_empty">Trạng thái công việc là bắt buộc</string>
+    <string name="common_error_task_status_invalid">Trạng thái công việc không hợp lệ</string>
+    <string name="common_error_task_due_date_empty">Ngày đến hạn là bắt buộc</string>
+    <string name="common_error_task_due_date_invalid">Ngày đến hạn không hợp lệ</string>
 </resources>
