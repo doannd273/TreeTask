@@ -145,6 +145,7 @@ internal fun RegisterContent(
 
     val emailFocusRequester = remember { FocusRequester() }
     val passwordFocusRequester = remember { FocusRequester() }
+    val confirmPasswordFocusRequester = remember { FocusRequester() }
     val focusManager = LocalFocusManager.current
 
     Column(
@@ -193,6 +194,25 @@ internal fun RegisterContent(
                 passwordVisible = state.passwordVisible,
                 onPasswordChange = { onEvent(RegisterEvent.PasswordChanged(it)) },
                 onPasswordVisibleChange = { onEvent(RegisterEvent.PasswordVisibleChanged(it)) },
+                imeAction = ImeAction.Next,
+                onImeNext = {
+                    confirmPasswordFocusRequester.requestFocus()
+                },
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            PasswordInput(
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .focusRequester(confirmPasswordFocusRequester),
+                label = stringResource(R.string.auth_confirm_password_hint),
+                password = state.confirmPassword,
+                passwordVisible = state.confirmPasswordVisible,
+                onPasswordChange = { onEvent(RegisterEvent.ConfirmPasswordChanged(it)) },
+                onPasswordVisibleChange = { onEvent(RegisterEvent.ConfirmPasswordVisibleChanged(it)) },
+                imeAction = ImeAction.Done,
                 onImeDone = {
                     focusManager.clearFocus()
                     onSubmitRegisterDebounced()
@@ -220,6 +240,7 @@ private fun RegisterScreenPreview() {
                 fullName = "Nguyễn Demo",
                 email = "demo@gmail.com",
                 password = "123456",
+                confirmPassword = "12321"
             ),
             onEvent = {},
             onRegisterBack = {},
