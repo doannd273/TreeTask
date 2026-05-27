@@ -128,6 +128,7 @@ internal fun RegisterScreen(
             ),
             state = state,
             onEvent = onEvent,
+            onRegisterBack = onRegisterBack,
         )
     }
 }
@@ -137,6 +138,7 @@ internal fun RegisterContent(
     modifier: Modifier = Modifier,
     state: RegisterState,
     onEvent: (RegisterEvent) -> Unit,
+    onRegisterBack: () -> Unit,
 ) {
     val onSubmitRegisterDebounced =
         rememberDebouncedClick {
@@ -204,9 +206,9 @@ internal fun RegisterContent(
 
             PasswordInput(
                 modifier =
-                    Modifier
-                        .fillMaxWidth()
-                        .focusRequester(confirmPasswordFocusRequester),
+                Modifier
+                    .fillMaxWidth()
+                    .focusRequester(confirmPasswordFocusRequester),
                 label = stringResource(R.string.auth_confirm_password_hint),
                 password = state.confirmPassword,
                 passwordVisible = state.confirmPasswordVisible,
@@ -226,6 +228,10 @@ internal fun RegisterContent(
                 isEnable = !state.isLoading,
                 onSubmit = onSubmitRegisterDebounced,
             )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            AlreadyHaveAccountTextButton(onRegisterBack = onRegisterBack)
         }
     }
 }
@@ -240,7 +246,7 @@ private fun RegisterScreenPreview() {
                 fullName = "Nguyễn Demo",
                 email = "demo@gmail.com",
                 password = "123456",
-                confirmPassword = "12321"
+                confirmPassword = "12321",
             ),
             onEvent = {},
             onRegisterBack = {},

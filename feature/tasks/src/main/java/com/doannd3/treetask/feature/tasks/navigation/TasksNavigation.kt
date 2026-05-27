@@ -6,6 +6,7 @@ import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
 import androidx.navigation.toRoute
+import com.doannd3.treetask.feature.tasks.ui.add.AddTaskRoute
 import com.doannd3.treetask.feature.tasks.ui.edit.EditTasksRoute
 import com.doannd3.treetask.feature.tasks.ui.home.TasksRoute
 import kotlinx.serialization.Serializable
@@ -42,6 +43,7 @@ fun NavController.navigateToAddTask(navOptions: NavOptions? = null) {
 fun NavGraphBuilder.tasksGraph(
     onTaskClick: (String) -> Unit,
     onAddTaskClick: () -> Unit,
+    onNavigateBack: () -> Unit,
 ) {
     navigation<TasksGraphDestination>(startDestination = TasksDestination) {
         composable<TasksDestination> {
@@ -59,6 +61,9 @@ fun NavGraphBuilder.tasksGraph(
         }
 
         composable<AddTasksDestination> {
+            AddTaskRoute(
+                onNavigateBack = onNavigateBack,
+            )
         }
     }
 }

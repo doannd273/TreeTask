@@ -2,12 +2,12 @@ package com.doannd3.treetask.core.model.task
 
 enum class TaskStatus(
     val apiValue: String,
-    val label: String,
 ) {
-    TODO("todo", "Cần làm"),
-    IN_PROGRESS("in_progress", "Đang thực hiện"),
-    PENDING("pending", "Đang chờ"),
-    DONE("done", "Hoàn thành"), ;
+    TODO("todo"),
+    IN_PROGRESS("in_progress"),
+    PENDING("pending"),
+    DONE("done"),
+    ;
 
     companion object {
         fun fromStatus(status: String?): TaskStatus =

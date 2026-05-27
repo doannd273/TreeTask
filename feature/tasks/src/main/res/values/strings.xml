@@ -2,4 +2,20 @@
 <resources>
     <string name="tasks_title">Task Management</string>
     <string name="tasks_search_hint">Search tasks…</string>
+    <string name="tasks_error_title_empty">Title cannot be empty</string>
+    <string name="tasks_add_task_success">Add task successfully</string>
+    <string name="tasks_add_task_title">Add Task</string>
+    <string name="tasks_add_task_title_label">Title</string>
+    <string name="tasks_add_task_title_placeholder">Enter task title</string>
+    <string name="tasks_add_task_description_label">Description</string>
+    <string name="tasks_add_task_description_placeholder">Enter task description</string>
+    <string name="tasks_add_task_status_label">Status</string>
+    <string name="tasks_add_task_due_date_label">Due date</string>
+    <string name="tasks_add_task_due_date_placeholder">YYYY-MM-DD</string>
+    <string name="tasks_add_task_submit">Create task</string>
+    <string name="tasks_add_task_submit_loading">Creating…</string>
+    <string name="tasks_status_todo">Todo</string>
+    <string name="tasks_status_in_progress">In progress</string>
+    <string name="tasks_status_pending">Pending</string>
+    <string name="tasks_status_done">Done</string>
 </resources>

@@ -67,6 +67,9 @@ fun TreeTaskNavHost(
             onAddTaskClick = {
                 navController.navigateToAddTask()
             },
+            onNavigateBack = {
+                navController.popBackStack()
+            },
         )
 
         chatGraph()

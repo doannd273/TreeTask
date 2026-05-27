@@ -2,4 +2,20 @@
 <resources>
     <string name="tasks_title">Quản lý công việc</string>
     <string name="tasks_search_hint">Nhập nội dung tìm kiếm…</string>
+    <string name="tasks_error_title_empty">Tiêu đề không thể trống</string>
+    <string name="tasks_add_task_success">Thêm nhiệm vụ thành công</string>
+    <string name="tasks_add_task_title">Thêm nhiệm vụ</string>
+    <string name="tasks_add_task_title_label">Tiêu đề</string>
+    <string name="tasks_add_task_title_placeholder">Nhập tiêu đề nhiệm vụ</string>
+    <string name="tasks_add_task_description_label">Mô tả</string>
+    <string name="tasks_add_task_description_placeholder">Nhập mô tả nhiệm vụ</string>
+    <string name="tasks_add_task_status_label">Trạng thái</string>
+    <string name="tasks_add_task_due_date_label">Ngày đến hạn</string>
+    <string name="tasks_add_task_due_date_placeholder">YYYY-MM-DD</string>
+    <string name="tasks_add_task_submit">Tạo nhiệm vụ</string>
+    <string name="tasks_add_task_submit_loading">Đang tạo…</string>
+    <string name="tasks_status_todo">Cần làm</string>
+    <string name="tasks_status_in_progress">Đang thực hiện</string>
+    <string name="tasks_status_pending">Đang chờ</string>
+    <string name="tasks_status_done">Hoàn thành</string>
 </resources>
