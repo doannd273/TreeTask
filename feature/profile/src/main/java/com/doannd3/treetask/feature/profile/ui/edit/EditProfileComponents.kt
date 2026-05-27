@@ -43,7 +43,7 @@ import com.doannd3.treetask.feature.profile.R
 // region AvatarPickerView
 
 @Composable
-fun AvatarPicker(
+internal fun AvatarPicker(
     isEnable: Boolean,
     avatarUri: Uri?,
     avatarUrl: String,
@@ -101,7 +101,7 @@ private fun AvatarPickerPreview() {
 // region EditProfileForm
 
 @Composable
-fun EditProfileForm(
+internal fun EditProfileForm(
     state: EditProfileState,
     onEvent: (EditProfileEvent) -> Unit,
 ) {

@@ -42,7 +42,9 @@ class RegisterViewModel @Inject constructor(
             is RegisterEvent.PasswordChanged -> {
                 _uiState.update { it.copy(password = event.password) }
             }
-            is RegisterEvent.SubmitRegister -> submitRegister()
+            is RegisterEvent.SubmitRegister -> {
+                submitRegister()
+            }
             is RegisterEvent.PasswordVisibleChanged -> {
                 _uiState.update { it.copy(passwordVisible = event.passwordVisible) }
             }
@@ -51,6 +53,12 @@ class RegisterViewModel @Inject constructor(
                     _effect.emit(RegisterEffect.NavigateToHome)
                 }
             }
+            is RegisterEvent.ConfirmPasswordChanged -> {
+                _uiState.update { it.copy(confirmPassword = event.confirmPassword) }
+            }
+            is RegisterEvent.ConfirmPasswordVisibleChanged -> {
+                _uiState.update { it.copy(confirmPasswordVisible = event.confirmPasswordVisible) }
+            }
         }
     }
 
@@ -58,6 +66,15 @@ class RegisterViewModel @Inject constructor(
         val state = uiState.value
 
         if (state.isLoading) {
+            return
+        }
+
+        if (state.password != state.confirmPassword) {
+            viewModelScope.launch {
+                _effect.emit(RegisterEffect.ShowErrorMessage(
+                    UiText.StringResource(AuthR.string.auth_error_password_mismatch)
+                ))
+            }
             return
         }
 

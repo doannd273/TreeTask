@@ -60,7 +60,7 @@ import com.doannd3.treetask.feature.profile.R
 // region ProfileHeader
 
 @Composable
-fun ProfileHeader(
+internal fun ProfileHeader(
     modifier: Modifier = Modifier,
     avatarUrl: String?,
     fullName: String,
@@ -125,7 +125,7 @@ private fun ProfileHeaderPreview() {
 // region ProfileSwitchItem
 
 @Composable
-fun ProfileSwitchItem(
+internal fun ProfileSwitchItem(
     icon: String,
     title: String,
     checked: Boolean,
@@ -185,7 +185,7 @@ private fun ProfileSwitchItemPreview() {
 // region ProfileItem
 
 @Composable
-fun ProfileItem(
+internal fun ProfileItem(
     icon: String,
     title: String,
     onClick: (() -> Unit)? = null,
@@ -263,7 +263,7 @@ private fun ProfileItemPreview() {
 // region ProfileSection
 
 @Composable
-fun ProfileSection(
+internal fun ProfileSection(
     title: String,
     content: @Composable ColumnScope.() -> Unit,
 ) {
@@ -326,7 +326,7 @@ private fun ProfileSectionPreview() {
 // region LogoutButton
 
 @Composable
-fun LogoutButton(
+internal fun LogoutButton(
     isEnable: Boolean,
     onSubmitLogout: () -> Unit,
 ) {
@@ -371,7 +371,7 @@ private fun LogoutButtonPreview() {
 // region LanguagePickerDialog
 
 @Composable
-fun LanguagePickerDialog(
+internal fun LanguagePickerDialog(
     modifier: Modifier,
     currentLanguage: AppLanguage,
     onConfirm: (AppLanguage) -> Unit,
