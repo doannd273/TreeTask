@@ -79,7 +79,7 @@ class AddTaskViewModel @Inject constructor(
                 createTaskUseCase(
                     title = state.title,
                     description = state.description,
-                    status = state.status?.apiValue ?: "",
+                    status = state.status.apiValue,
                     dueDate = state.dueDate,
                 )
             _uiState.update { it.copy(isLoading = false) }
