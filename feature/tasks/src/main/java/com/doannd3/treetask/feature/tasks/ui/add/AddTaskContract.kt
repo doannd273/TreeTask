@@ -23,6 +23,8 @@ sealed class AddTaskEvent {
     data object SubmitAddTask : AddTaskEvent()
 
     data object SuccessAcknowledged : AddTaskEvent()
+
+    data object BackClicked : AddTaskEvent()
 }
 
 sealed class AddTaskEffect {
