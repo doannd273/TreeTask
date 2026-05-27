@@ -11,7 +11,7 @@ style:
   ReturnCount:
     max: 7 # Cho phép 7 return trong 1 method
   UnusedPrivateMember:
-    ignoreAnnotated: [ 'Preview', 'AppPreviewLightDark' ]
+    ignoreAnnotated: [ 'Preview', 'AppPreviewLightDark', 'AppPreviewLocalesLightDark' ]
 
 performance:
   SpreadOperator:

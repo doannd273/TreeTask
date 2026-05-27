@@ -12,13 +12,13 @@ data class AddTaskState(
 )
 
 sealed class AddTaskEvent {
+    data class DueDateChanged(val dueDate: String) : AddTaskEvent()
+
     data class TitleChanged(val title: String) : AddTaskEvent()
 
     data class DescriptionChanged(val description: String) : AddTaskEvent()
 
     data class StatusChanged(val status: TaskStatus) : AddTaskEvent()
-
-    data class DueDateChanged(val dueDate: String) : AddTaskEvent()
 
     data object SubmitAddTask : AddTaskEvent()
 

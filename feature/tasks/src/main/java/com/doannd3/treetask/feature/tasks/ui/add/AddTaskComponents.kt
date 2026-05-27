@@ -1,6 +1,8 @@
 package com.doannd3.treetask.feature.tasks.ui.add
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -9,12 +11,19 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.DatePicker
+import androidx.compose.material3.DatePickerDialog
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
+import androidx.compose.material3.SelectableDates
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
@@ -28,6 +37,8 @@ import com.doannd3.treetask.core.designsystem.theme.TreeTaskTheme
 import com.doannd3.treetask.core.model.task.TaskStatus
 import com.doannd3.treetask.feature.tasks.R
 import com.doannd3.treetask.feature.tasks.ui.model.labelRes
+import java.time.LocalDate
+import java.time.ZoneOffset
 
 // region AddTaskTitleInput
 
@@ -42,19 +53,22 @@ internal fun AddTaskTitleInput(
     OutlinedTextField(
         modifier = modifier.fillMaxWidth(),
         enabled = enabled,
-        colors = OutlinedTextFieldDefaults.colors(
-            focusedTextColor = MaterialTheme.colorScheme.onSurface,
-            unfocusedTextColor = MaterialTheme.colorScheme.onSurfaceVariant,
-        ),
+        colors =
+            OutlinedTextFieldDefaults.colors(
+                focusedTextColor = MaterialTheme.colorScheme.onSurface,
+                unfocusedTextColor = MaterialTheme.colorScheme.onSurfaceVariant,
+            ),
         textStyle = TextStyle(fontSize = 15.sp),
         singleLine = true,
-        keyboardOptions = KeyboardOptions(
-            keyboardType = KeyboardType.Text,
-            imeAction = ImeAction.Next,
-        ),
-        keyboardActions = KeyboardActions(
-            onNext = { onImeNext() },
-        ),
+        keyboardOptions =
+            KeyboardOptions(
+                keyboardType = KeyboardType.Text,
+                imeAction = ImeAction.Next,
+            ),
+        keyboardActions =
+            KeyboardActions(
+                onNext = { onImeNext() },
+            ),
         value = title,
         onValueChange = onTitleChange,
         label = { Text(text = stringResource(R.string.tasks_add_task_title_label)) },
@@ -91,23 +105,26 @@ internal fun AddTaskDescriptionInput(
 ) {
     OutlinedTextField(
         modifier =
-        modifier
-            .fillMaxWidth()
-            .heightIn(min = 120.dp),
+            modifier
+                .fillMaxWidth()
+                .heightIn(min = 120.dp),
         enabled = enabled,
-        colors = OutlinedTextFieldDefaults.colors(
-            focusedTextColor = MaterialTheme.colorScheme.onSurface,
-            unfocusedTextColor = MaterialTheme.colorScheme.onSurfaceVariant,
-        ),
+        colors =
+            OutlinedTextFieldDefaults.colors(
+                focusedTextColor = MaterialTheme.colorScheme.onSurface,
+                unfocusedTextColor = MaterialTheme.colorScheme.onSurfaceVariant,
+            ),
         textStyle = TextStyle(fontSize = 15.sp),
         minLines = 4,
-        keyboardOptions = KeyboardOptions(
-            keyboardType = KeyboardType.Text,
-            imeAction = ImeAction.Next,
-        ),
-        keyboardActions = KeyboardActions(
-            onNext = { onImeNext() },
-        ),
+        keyboardOptions =
+            KeyboardOptions(
+                keyboardType = KeyboardType.Text,
+                imeAction = ImeAction.Next,
+            ),
+        keyboardActions =
+            KeyboardActions(
+                onNext = { onImeNext() },
+            ),
         value = description,
         onValueChange = onDescriptionChange,
         label = { Text(text = stringResource(R.string.tasks_add_task_description_label)) },
@@ -188,39 +205,104 @@ private fun AddTaskStatusSelectorPreview() {
 
 // endregion
 
+// region DatePickerDialog
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+internal fun AppDatePickerDialog(
+    selectedDateMillis: Long?,
+    onDismiss: () -> Unit,
+    onDateSelected: (Long?) -> Unit,
+) {
+    val today = remember {
+        LocalDate.now(ZoneOffset.UTC)
+            .atStartOfDay(ZoneOffset.UTC)
+            .toInstant()
+            .toEpochMilli()
+    }
+    val datePickerState =
+        rememberDatePickerState(
+            initialSelectedDateMillis = selectedDateMillis,
+            selectableDates = object : SelectableDates {
+                override fun isSelectableDate(utcTimeMillis: Long): Boolean =
+                    utcTimeMillis >= today
+            },
+        )
+    DatePickerDialog(
+        onDismissRequest = onDismiss,
+        confirmButton = {
+            TextButton(
+                onClick = {
+                    onDateSelected(datePickerState.selectedDateMillis)
+                    onDismiss()
+                },
+            ) {
+                Text(text = stringResource(R.string.tasks_date_picker_confirm))
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) {
+                Text(text = stringResource(R.string.tasks_date_picker_cancel))
+            }
+        },
+    ) {
+        DatePicker(state = datePickerState)
+    }
+}
+
+@AppPreviewLightDark
+@Composable
+private fun AppDatePickerDialogPreview() {
+    TreeTaskTheme {
+        AppDatePickerDialog(
+            selectedDateMillis = 1_779_667_200_000,
+            onDismiss = {},
+            onDateSelected = {},
+        )
+    }
+}
+
+// endregion
+
 // region AddTaskDueDateInput
 
 @Composable
 internal fun AddTaskDueDateInput(
+    modifier: Modifier = Modifier,
     dueDate: String,
     enabled: Boolean,
-    onDueDateChange: (String) -> Unit,
-    onImeDone: () -> Unit,
-    modifier: Modifier = Modifier,
+    onDueDateClick: () -> Unit,
 ) {
-    OutlinedTextField(
-        modifier = modifier.fillMaxWidth(),
-        enabled = enabled,
-        colors = OutlinedTextFieldDefaults.colors(
-            focusedTextColor = MaterialTheme.colorScheme.onSurface,
-            unfocusedTextColor = MaterialTheme.colorScheme.onSurfaceVariant,
-        ),
-        textStyle = TextStyle(fontSize = 15.sp),
-        singleLine = true,
-        keyboardOptions = KeyboardOptions(
-            keyboardType = KeyboardType.Text,
-            imeAction = ImeAction.Done,
-        ),
-        keyboardActions = KeyboardActions(
-            onDone = { onImeDone() },
-        ),
-        value = dueDate,
-        onValueChange = onDueDateChange,
-        label = { Text(text = stringResource(R.string.tasks_add_task_due_date_label)) },
-        placeholder = {
-            Text(text = stringResource(R.string.tasks_add_task_due_date_placeholder))
-        },
-    )
+    Box(
+        modifier =
+            Modifier.clickable(enabled = enabled) {
+                onDueDateClick()
+            },
+    ) {
+        OutlinedTextField(
+            modifier = modifier.fillMaxWidth(),
+            enabled = false, // always disabled to prevent touch/focus interception; Box.clickable handles tap
+            colors =
+                if (enabled) {
+                    OutlinedTextFieldDefaults.colors(
+                        disabledTextColor = MaterialTheme.colorScheme.onSurface,
+                        disabledBorderColor = MaterialTheme.colorScheme.outline,
+                        disabledLabelColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                        disabledPlaceholderColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                } else {
+                    OutlinedTextFieldDefaults.colors()
+                },
+            textStyle = TextStyle(fontSize = 15.sp),
+            singleLine = true,
+            value = dueDate,
+            onValueChange = {},
+            label = { Text(text = stringResource(R.string.tasks_add_task_due_date_label)) },
+            placeholder = {
+                Text(text = stringResource(R.string.tasks_add_task_due_date_placeholder))
+            },
+        )
+    }
 }
 
 @AppPreviewLightDark
@@ -230,8 +312,7 @@ private fun AddTaskDueDateInputPreview() {
         AddTaskDueDateInput(
             dueDate = "2026-05-31",
             enabled = true,
-            onDueDateChange = {},
-            onImeDone = {},
+            onDueDateClick = {},
         )
     }
 }
@@ -249,13 +330,13 @@ internal fun AddTaskSubmitButton(
     CommonButton(
         modifier = modifier,
         buttonText =
-        stringResource(
-            if (isLoading) {
-                R.string.tasks_add_task_submit_loading
-            } else {
-                R.string.tasks_add_task_submit
-            },
-        ),
+            stringResource(
+                if (isLoading) {
+                    R.string.tasks_add_task_submit_loading
+                } else {
+                    R.string.tasks_add_task_submit
+                },
+            ),
         isEnable = !isLoading,
         onSubmit = onSubmit,
     )
