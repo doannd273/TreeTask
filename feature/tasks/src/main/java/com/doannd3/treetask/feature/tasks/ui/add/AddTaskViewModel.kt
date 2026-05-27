@@ -19,11 +19,12 @@ import javax.inject.Inject
 import com.doannd3.treetask.core.common.R as CommonR
 import com.doannd3.treetask.feature.tasks.R as TasksR
 
-class AddTaskViewModel @Inject constructor(
+class AddTaskViewModel
+@Inject
+constructor(
     private val createTaskUseCase: CreateTaskUseCase,
 ) : BaseViewModel(),
     MviViewModel<AddTaskState, AddTaskEvent, AddTaskEffect> {
-
     private val _uiState = MutableStateFlow(AddTaskState())
     override val uiState: StateFlow<AddTaskState> = _uiState.asStateFlow()
 
@@ -35,24 +36,36 @@ class AddTaskViewModel @Inject constructor(
             is AddTaskEvent.TitleChanged -> {
                 _uiState.update { it.copy(title = event.title) }
             }
+
             is AddTaskEvent.DescriptionChanged -> {
                 _uiState.update { it.copy(description = event.description) }
             }
+
             is AddTaskEvent.DueDateChanged -> {
                 _uiState.update { it.copy(dueDate = event.dueDate) }
             }
+
             is AddTaskEvent.StatusChanged -> {
                 _uiState.update { it.copy(status = event.status) }
             }
+
             AddTaskEvent.SubmitAddTask -> {
                 submitAddTask()
             }
 
             AddTaskEvent.SuccessAcknowledged -> {
-                viewModelScope.launch {
-                    _effect.emit(AddTaskEffect.NavigateBack)
-                }
+                navigateBack()
             }
+
+            AddTaskEvent.BackClicked -> {
+                navigateBack()
+            }
+        }
+    }
+
+    private fun navigateBack() {
+        viewModelScope.launch {
+            _effect.emit(AddTaskEffect.NavigateBack)
         }
     }
 
