@@ -29,7 +29,6 @@ import androidx.lifecycle.repeatOnLifecycle
 import com.doannd3.treetask.core.common.asString
 import com.doannd3.treetask.core.designsystem.component.LocalGlobalAppState
 import com.doannd3.treetask.core.designsystem.theme.AppPreviewLightDark
-import com.doannd3.treetask.core.designsystem.theme.TreeTaskTheme
 import com.doannd3.treetask.core.designsystem.util.rememberDebouncedClick
 import com.doannd3.treetask.core.model.user.User
 import com.doannd3.treetask.feature.profile.R
@@ -99,16 +98,14 @@ internal fun ProfileScreen(
     state: ProfileState,
     onEvent: (ProfileEvent) -> Unit,
 ) {
-    TreeTaskTheme {
-        Scaffold(
-            contentWindowInsets = WindowInsets.safeDrawing,
-        ) { paddingValues ->
-            ProfileContent(
-                modifier = Modifier.padding(paddingValues),
-                state = state,
-                onEvent = onEvent,
-            )
-        }
+    Scaffold(
+        contentWindowInsets = WindowInsets.safeDrawing,
+    ) { paddingValues ->
+        ProfileContent(
+            modifier = Modifier.padding(paddingValues),
+            state = state,
+            onEvent = onEvent,
+        )
     }
 }
 

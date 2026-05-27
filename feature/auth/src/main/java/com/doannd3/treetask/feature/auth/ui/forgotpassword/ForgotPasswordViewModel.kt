@@ -108,9 +108,11 @@ constructor(
 
         if (state.newPassword != state.confirmPassword) {
             viewModelScope.launch {
-                _effect.emit(ForgotPasswordEffect.ShowErrorMessage(
-                    UiText.StringResource(AuthR.string.auth_error_password_mismatch)
-                ))
+                _effect.emit(
+                    ForgotPasswordEffect.ShowErrorMessage(
+                        UiText.StringResource(AuthR.string.auth_error_password_mismatch),
+                    ),
+                )
             }
             return
         }
