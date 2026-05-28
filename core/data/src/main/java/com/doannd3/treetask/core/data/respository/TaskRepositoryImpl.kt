@@ -75,10 +75,11 @@ constructor(
 
             when (apiResponse) {
                 is ApiResult.Success -> {
-                    val data = apiResponse.data ?: return ApiResult.Error(
-                        appErrorCode = AppErrorCode.MISSING_RESPONSE_DATA,
-                        exception = MissingResponseDataException(),
-                    )
+                    val data =
+                        apiResponse.data ?: return ApiResult.Error(
+                            appErrorCode = AppErrorCode.MISSING_RESPONSE_DATA,
+                            exception = MissingResponseDataException(),
+                        )
                     val tasks = data.tasks ?: emptyList()
 
                     // Cập nhật lại db như logic REFRESH của RemoteMediator trong một transaction
@@ -117,9 +118,50 @@ constructor(
         description: String,
         status: String,
         dueDate: String,
+    ): ApiResult<Task> =
+        try {
+            val response =
+                taskService.createTask(
+                    TaskRequest(
+                        title = title,
+                        description = description,
+                        status = status,
+                        dueDate = dueDate,
+                    ),
+                )
+            when (response) {
+                is ApiResult.Success -> {
+                    val taskResponse =
+                        response.data ?: return ApiResult.Error(
+                            appErrorCode = AppErrorCode.MISSING_RESPONSE_DATA,
+                            exception = MissingResponseDataException(),
+                        )
+
+                    val taskEntity = taskResponse.toTaskEntity()
+                    taskDao.insertTasks(listOf(taskEntity))
+                    ApiResult.Success(data = taskEntity.toTaskDomain())
+                }
+
+                is ApiResult.Error -> {
+                    response
+                }
+            }
+        } catch (e: IOException) {
+            ApiResult.Error(exception = e)
+        } catch (e: HttpException) {
+            ApiResult.Error(exception = e)
+        }
+
+    override suspend fun updateTask(
+        taskId: String,
+        title: String,
+        description: String,
+        status: String,
+        dueDate: String,
     ): ApiResult<Task> = try {
-        val response = taskService.createTask(
-            TaskRequest(title = title, description = description, status = status, dueDate = dueDate),
+        val response = taskService.updateTask(
+            taskId = taskId,
+            request = TaskRequest(title = title, description = description, status = status, dueDate = dueDate),
         )
         when (response) {
             is ApiResult.Success -> {
@@ -127,7 +169,6 @@ constructor(
                     appErrorCode = AppErrorCode.MISSING_RESPONSE_DATA,
                     exception = MissingResponseDataException(),
                 )
-
                 val taskEntity = taskResponse.toTaskEntity()
                 taskDao.insertTasks(listOf(taskEntity))
                 ApiResult.Success(data = taskEntity.toTaskDomain())
@@ -138,6 +179,15 @@ constructor(
         ApiResult.Error(exception = e)
     } catch (e: HttpException) {
         ApiResult.Error(exception = e)
+    }
+
+    override suspend fun getTaskById(taskId: String): ApiResult<Task> {
+        val entity = taskDao.getTaskById(taskId = taskId) ?: return ApiResult.Error(
+            appErrorCode = AppErrorCode.MISSING_RESPONSE_DATA,
+            exception = MissingResponseDataException(),
+        )
+
+        return ApiResult.Success(data = entity.toTaskDomain())
     }
 
     companion object {
