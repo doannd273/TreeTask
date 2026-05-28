@@ -2,6 +2,11 @@
 <resources>
     <string name="tasks_title">Quản lý công việc</string>
     <string name="tasks_search_hint">Nhập nội dung tìm kiếm…</string>
+    <string name="tasks_cd_search">Tìm kiếm nhiệm vụ</string>
+    <string name="tasks_cd_clear_search">Xóa tìm kiếm</string>
+    <string name="tasks_cd_add_task">Thêm nhiệm vụ</string>
+    <string name="tasks_due_date_label">Hạn chót: %s</string>
+    <string name="tasks_error_retry">Lỗi kết nối. Thử lại</string>
     <string name="tasks_error_title_empty">Tiêu đề không thể trống</string>
     <string name="tasks_add_task_success">Thêm nhiệm vụ thành công</string>
     <string name="tasks_update_task_success">Sửa nhiệm vụ thành công</string>
