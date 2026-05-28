@@ -7,6 +7,8 @@
     <string name="tasks_cd_add_task">Add task</string>
     <string name="tasks_due_date_label">Due: %s</string>
     <string name="tasks_error_retry">Connection error. Retry</string>
+    <string name="tasks_empty_state_message">No tasks yet</string>
+    <string name="tasks_refresh_error_message">Unable to refresh tasks. Please try again.</string>
     <string name="tasks_error_title_empty">Title cannot be empty</string>
     <string name="tasks_add_task_success">Add task successfully</string>
     <string name="tasks_update_task_success">Update task successfully</string>
