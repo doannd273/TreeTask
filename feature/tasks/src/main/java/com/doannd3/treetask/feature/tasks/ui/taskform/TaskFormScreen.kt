@@ -86,8 +86,8 @@ fun TaskFormRoute(
         }
     }
 
-    LaunchedEffect(state.isLoading) {
-        if (state.isLoading) {
+    LaunchedEffect(state.isLoading, state.isLoadingTask) {
+        if (state.isLoading || state.isLoadingTask) {
             globalAppState.showLoading()
         } else {
             globalAppState.hideLoading()
