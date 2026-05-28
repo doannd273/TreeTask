@@ -1,5 +1,6 @@
 package com.doannd3.treetask.feature.profile.ui.profile
 
+import androidx.annotation.DrawableRes
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
@@ -126,7 +127,7 @@ private fun ProfileHeaderPreview() {
 
 @Composable
 internal fun ProfileSwitchItem(
-    icon: String,
+    @DrawableRes iconRes: Int,
     title: String,
     checked: Boolean,
     onCheckedChange: (Boolean) -> Unit,
@@ -142,7 +143,12 @@ internal fun ProfileSwitchItem(
             .padding(horizontal = 16.dp, vertical = 24.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        Text(text = icon, fontSize = 20.sp)
+        Icon(
+            painter = painterResource(iconRes),
+            contentDescription = null,
+            modifier = Modifier.size(24.dp),
+            tint = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
         Spacer(Modifier.width(16.dp))
         Text(
             text = title,
@@ -163,14 +169,14 @@ private fun ProfileSwitchItemPreview() {
         Surface(color = MaterialTheme.colorScheme.background) {
             Column(modifier = Modifier.fillMaxWidth()) {
                 ProfileSwitchItem(
-                    icon = stringResource(R.string.profile_icon_dark_mode),
+                    iconRes = R.drawable.profile_ic_dark_mode,
                     title = stringResource(R.string.profile_menu_dark_mode),
                     checked = true,
                     onCheckedChange = {},
                 )
                 HorizontalDivider()
                 ProfileSwitchItem(
-                    icon = stringResource(R.string.profile_icon_dark_mode),
+                    iconRes = R.drawable.profile_ic_dark_mode,
                     title = stringResource(R.string.profile_menu_dark_mode),
                     checked = false,
                     onCheckedChange = {},
@@ -186,7 +192,7 @@ private fun ProfileSwitchItemPreview() {
 
 @Composable
 internal fun ProfileItem(
-    icon: String,
+    @DrawableRes iconRes: Int,
     title: String,
     onClick: (() -> Unit)? = null,
     enabled: Boolean = true,
@@ -207,7 +213,12 @@ internal fun ProfileItem(
             .padding(horizontal = 16.dp, vertical = 14.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        Text(text = icon, fontSize = 20.sp)
+        Icon(
+            painter = painterResource(iconRes),
+            contentDescription = null,
+            modifier = Modifier.size(24.dp),
+            tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = contentAlpha),
+        )
 
         Spacer(Modifier.width(16.dp))
 
@@ -237,13 +248,13 @@ private fun ProfileItemPreview() {
         Surface(color = MaterialTheme.colorScheme.background) {
             Column(modifier = Modifier.fillMaxWidth()) {
                 ProfileItem(
-                    icon = stringResource(R.string.profile_icon_edit_profile),
+                    iconRes = R.drawable.profile_ic_edit_profile,
                     title = stringResource(R.string.profile_menu_edit_profile),
                     onClick = {},
                 )
                 HorizontalDivider()
                 ProfileItem(
-                    icon = stringResource(R.string.profile_icon_language),
+                    iconRes = R.drawable.profile_ic_language,
                     title = stringResource(R.string.profile_menu_language),
                     trailing = {
                         Text(
@@ -306,13 +317,13 @@ private fun ProfileSectionPreview() {
         Surface(color = MaterialTheme.colorScheme.background) {
             ProfileSection(title = stringResource(R.string.profile_section_account)) {
                 ProfileItem(
-                    icon = stringResource(R.string.profile_icon_edit_profile),
+                    iconRes = R.drawable.profile_ic_edit_profile,
                     title = stringResource(R.string.profile_menu_edit_profile),
                     onClick = {},
                 )
                 HorizontalDivider()
                 ProfileItem(
-                    icon = stringResource(R.string.profile_icon_change_password),
+                    iconRes = R.drawable.profile_ic_change_password,
                     title = stringResource(R.string.profile_menu_change_password),
                     onClick = {},
                 )
