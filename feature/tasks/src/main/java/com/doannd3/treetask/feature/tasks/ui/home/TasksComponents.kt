@@ -50,7 +50,7 @@ import com.doannd3.treetask.feature.tasks.ui.model.labelRes
 import java.time.Instant
 
 @Composable
-fun TaskStatusChips(
+internal fun TaskStatusChips(
     taskStatusSelected: TaskStatus?,
     onFilterSelect: (TaskStatus?) -> Unit,
 ) {
@@ -78,7 +78,7 @@ fun TaskStatusChips(
 }
 
 @Composable
-fun SearchTaskInput(
+internal fun SearchTaskInput(
     isLoadingSearch: Boolean,
     searchQuery: String,
     onSearchChange: (String) -> Unit,
@@ -123,7 +123,7 @@ fun SearchTaskInput(
         leadingIcon = {
             Icon(
                 painterResource(R.drawable.tasks_ic_search),
-                contentDescription = null,
+                contentDescription = stringResource(R.string.tasks_cd_search),
             )
         },
         trailingIcon = {
@@ -140,7 +140,7 @@ fun SearchTaskInput(
                     IconButton(onClick = onClearClick) {
                         Icon(
                             painterResource(R.drawable.tasks_ic_clear),
-                            contentDescription = null,
+                            contentDescription = stringResource(R.string.tasks_cd_clear_search),
                         )
                     }
                 }
@@ -152,7 +152,7 @@ fun SearchTaskInput(
 }
 
 @Composable
-fun TaskItem(
+internal fun TaskItem(
     modifier: Modifier = Modifier,
     task: Task,
     onClick: () -> Unit,
@@ -198,7 +198,7 @@ fun TaskItem(
                 )
             }
             Text(
-                text = "Hạn chót: ${task.dueDate.toDayMonth()}",
+                text = stringResource(R.string.tasks_due_date_label, task.dueDate.toDayMonth()),
                 color = MaterialTheme.colorScheme.onSurface,
                 fontSize = 13.sp,
             )
@@ -207,7 +207,7 @@ fun TaskItem(
 }
 
 @Composable
-fun StatusBadge(status: TaskStatus) {
+internal fun StatusBadge(status: TaskStatus) {
     val colorScheme = MaterialTheme.colorScheme
     val backgroundColor =
         when (status) {
