@@ -17,10 +17,6 @@
     <string name="profile_menu_change_password">Change password</string>
     <string name="profile_menu_dark_mode">Dark mode</string>
     <string name="profile_label_coming_soon">Coming soon</string>
-    <string name="profile_icon_edit_profile" translatable="false">✏️</string>
-    <string name="profile_icon_change_password" translatable="false">🔑</string>
-    <string name="profile_icon_dark_mode" translatable="false">🌙</string>
-    <string name="profile_icon_language" translatable="false">🌐</string>
 
     <!-- Preview data -->
     <string name="profile_preview_user_id" translatable="false">preview_user</string>

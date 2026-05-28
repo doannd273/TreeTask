@@ -155,12 +155,12 @@ internal fun ProfileContent(
 
             ProfileSection(title = stringResource(R.string.profile_section_account)) {
                 ProfileItem(
-                    icon = stringResource(R.string.profile_icon_edit_profile),
+                    iconRes = R.drawable.profile_ic_edit_profile,
                     title = stringResource(R.string.profile_menu_edit_profile),
                     onClick = { onEvent(ProfileEvent.NavigateEditProfile) },
                 )
                 ProfileItem(
-                    icon = stringResource(R.string.profile_icon_change_password),
+                    iconRes = R.drawable.profile_ic_change_password,
                     title = stringResource(R.string.profile_menu_change_password),
                     onClick = { onEvent(ProfileEvent.NavigateChangePassword) },
                 )
@@ -170,13 +170,13 @@ internal fun ProfileContent(
 
             ProfileSection(title = stringResource(R.string.profile_section_settings)) {
                 ProfileSwitchItem(
-                    icon = stringResource(R.string.profile_icon_dark_mode),
+                    iconRes = R.drawable.profile_ic_dark_mode,
                     title = stringResource(R.string.profile_menu_dark_mode),
                     checked = state.isDarkMode,
                     onCheckedChange = { onEvent(ProfileEvent.ToggleDarkMode(it)) },
                 )
                 ProfileItem(
-                    icon = stringResource(R.string.profile_icon_language),
+                    iconRes = R.drawable.profile_ic_language,
                     title = stringResource(R.string.profile_menu_language),
                     trailing = {
                         Text(
