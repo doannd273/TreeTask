@@ -5,7 +5,6 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
-import androidx.navigation.toRoute
 import com.doannd3.treetask.feature.tasks.ui.home.TasksRoute
 import com.doannd3.treetask.feature.tasks.ui.taskform.TaskFormRoute
 import kotlinx.serialization.Serializable
@@ -52,9 +51,8 @@ fun NavGraphBuilder.tasksGraph(
             )
         }
 
-        composable<EditTaskDestination> { backStackEntry ->
-            val args = backStackEntry.toRoute<EditTaskDestination>()
-            val taskId = args.taskId
+        composable<EditTaskDestination> {
+            TaskFormRoute(onNavigateBack = onNavigateBack)
         }
 
         composable<AddTasksDestination> {
