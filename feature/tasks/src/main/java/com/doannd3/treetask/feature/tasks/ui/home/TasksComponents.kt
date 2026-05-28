@@ -159,7 +159,7 @@ internal fun TaskItem(
         modifier
             .fillMaxWidth()
             .padding(vertical = 6.dp),
-        shape = RoundedCornerShape(3.dp),
+        shape = RoundedCornerShape(12.dp),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
     ) {
@@ -205,13 +205,13 @@ internal fun TaskItem(
 @Composable
 internal fun StatusBadge(status: TaskStatus) {
     val colorScheme = MaterialTheme.colorScheme
-    val backgroundColor =
-        when (status) {
-            TaskStatus.TODO -> colorScheme.outline
-            TaskStatus.IN_PROGRESS -> colorScheme.primary
-            TaskStatus.PENDING -> colorScheme.error
-            TaskStatus.DONE -> MaterialTheme.treeTaskColors.success
-        }
+    val (backgroundColor, textColor) = when (status) {
+        TaskStatus.TODO -> colorScheme.surfaceVariant to colorScheme.onSurfaceVariant
+        TaskStatus.IN_PROGRESS -> colorScheme.primary to colorScheme.onPrimary
+        TaskStatus.PENDING -> colorScheme.error to colorScheme.onError
+        TaskStatus.DONE -> MaterialTheme.treeTaskColors.success to MaterialTheme.treeTaskColors.onSuccess
+    }
+
     Row(
         modifier =
         Modifier
@@ -222,9 +222,17 @@ internal fun StatusBadge(status: TaskStatus) {
     ) {
         Text(
             text = stringResource(status.labelRes()),
-            color = Color.White,
+            color = textColor,
             style = MaterialTheme.typography.labelSmall,
         )
+    }
+}
+
+@AppPreviewLightDark
+@Composable
+private fun StatusBadgeTodoPreview() {
+    TreeTaskTheme {
+        StatusBadge(status = TaskStatus.TODO)
     }
 }
 
