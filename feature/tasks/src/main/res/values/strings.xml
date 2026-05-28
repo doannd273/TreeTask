@@ -6,6 +6,7 @@
     <string name="tasks_add_task_success">Add task successfully</string>
     <string name="tasks_update_task_success">Update task successfully</string>
     <string name="tasks_add_task_title">Add Task</string>
+    <string name="tasks_edit_task_title">Edit Task</string>
     <string name="tasks_add_task_title_label">Title</string>
     <string name="tasks_add_task_title_placeholder">Enter task title</string>
     <string name="tasks_add_task_description_label">Description</string>
