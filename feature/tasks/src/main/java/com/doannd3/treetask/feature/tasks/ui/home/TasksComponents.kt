@@ -33,12 +33,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.doannd3.treetask.core.common.extension.toDayMonth
 import com.doannd3.treetask.core.designsystem.theme.AppPreviewLightDark
 import com.doannd3.treetask.core.designsystem.theme.TreeTaskTheme
@@ -108,9 +106,7 @@ internal fun SearchTaskInput(
             disabledContainerColor = Color.Transparent,
         ),
         textStyle =
-        TextStyle(
-            fontSize = 15.sp,
-        ),
+        MaterialTheme.typography.bodyMedium,
         singleLine = true,
         keyboardOptions =
         KeyboardOptions(
@@ -179,7 +175,7 @@ internal fun TaskItem(
                 Text(
                     text = task.title,
                     color = MaterialTheme.colorScheme.primary,
-                    fontSize = 16.sp,
+                    style = MaterialTheme.typography.bodyLarge,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                     modifier = Modifier.weight(1f),
@@ -192,7 +188,7 @@ internal fun TaskItem(
                 Text(
                     text = task.description ?: "",
                     color = MaterialTheme.colorScheme.onSurface,
-                    fontSize = 13.sp,
+                    style = MaterialTheme.typography.bodySmall,
                     maxLines = 2,
                     overflow = TextOverflow.Ellipsis,
                 )
@@ -200,7 +196,7 @@ internal fun TaskItem(
             Text(
                 text = stringResource(R.string.tasks_due_date_label, task.dueDate.toDayMonth()),
                 color = MaterialTheme.colorScheme.onSurface,
-                fontSize = 13.sp,
+                style = MaterialTheme.typography.bodySmall,
             )
         }
     }
@@ -224,7 +220,11 @@ internal fun StatusBadge(status: TaskStatus) {
                 color = backgroundColor,
             ).padding(vertical = 4.dp, horizontal = 8.dp),
     ) {
-        Text(text = stringResource(status.labelRes()), color = Color.White, fontSize = 13.sp)
+        Text(
+            text = stringResource(status.labelRes()),
+            color = Color.White,
+            style = MaterialTheme.typography.labelSmall,
+        )
     }
 }
 
