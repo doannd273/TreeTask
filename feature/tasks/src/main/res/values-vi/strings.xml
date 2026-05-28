@@ -23,8 +23,15 @@
     <string name="tasks_date_picker_cancel">Hủy</string>
     <string name="tasks_add_task_submit">Tạo nhiệm vụ</string>
     <string name="tasks_add_task_submit_loading">Đang tạo…</string>
+    <string name="tasks_edit_task_submit">Lưu thay đổi</string>
+    <string name="tasks_edit_task_submit_loading">Đang lưu…</string>
     <string name="tasks_status_todo">Cần làm</string>
     <string name="tasks_status_in_progress">Đang thực hiện</string>
     <string name="tasks_status_pending">Đang chờ</string>
     <string name="tasks_status_done">Hoàn thành</string>
+    <string name="tasks_delete_task_icon_description">Xóa nhiệm vụ</string>
+    <string name="tasks_delete_task_confirm_title">Xóa nhiệm vụ</string>
+    <string name="tasks_delete_task_confirm_message">Bạn có chắc muốn xóa nhiệm vụ này? Hành động này không thể hoàn tác.</string>
+    <string name="tasks_delete_task_confirm_button">Xóa</string>
+    <string name="tasks_delete_task_cancel_button">Hủy</string>
 </resources>
