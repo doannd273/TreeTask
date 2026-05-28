@@ -190,6 +190,22 @@ constructor(
         return ApiResult.Success(data = entity.toTaskDomain())
     }
 
+    override suspend fun deleteTask(taskId: String) =
+        try {
+            val response = taskService.deleteTask(taskId = taskId)
+            when (response) {
+                is ApiResult.Success -> {
+                    taskDao.deleteTaskById(taskId = taskId)
+                    ApiResult.Success(data = Unit)
+                }
+                is ApiResult.Error -> response
+            }
+        } catch (e: IOException) {
+            ApiResult.Error(exception = e)
+        } catch (e: HttpException) {
+            ApiResult.Error(exception = e)
+        }
+
     companion object {
         const val LIMIT = 20
     }
