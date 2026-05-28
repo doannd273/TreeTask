@@ -44,6 +44,13 @@ constructor(
     private val isEditMode = taskId != null
 
     init {
+        val screenTitle = if (isEditMode) {
+            UiText.StringResource(TasksR.string.tasks_edit_task_title)
+        } else {
+            UiText.StringResource(TasksR.string.tasks_add_task_title)
+        }
+        _uiState.update { it.copy(screenTitle = screenTitle) }
+
         if (isEditMode) {
             loadTask(taskId = taskId!!)
         }
