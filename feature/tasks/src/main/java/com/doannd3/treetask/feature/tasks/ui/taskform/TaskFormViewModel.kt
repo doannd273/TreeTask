@@ -49,7 +49,12 @@ constructor(
         } else {
             UiText.StringResource(TasksR.string.tasks_add_task_title)
         }
-        _uiState.update { it.copy(screenTitle = screenTitle) }
+        _uiState.update {
+            it.copy(
+                screenTitle = screenTitle,
+                isEditMode = isEditMode,
+            )
+        }
 
         if (isEditMode) {
             loadTask(taskId = taskId!!)
