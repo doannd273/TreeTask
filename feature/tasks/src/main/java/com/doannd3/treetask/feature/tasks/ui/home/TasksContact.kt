@@ -29,6 +29,8 @@ sealed class TasksEvent {
     data class FilterSelected(
         val taskStatusSelected: TaskStatus?,
     ) : TasksEvent()
+
+    data class DeleteTask(val taskId: String) : TasksEvent()
 }
 
 sealed class TasksEffect {

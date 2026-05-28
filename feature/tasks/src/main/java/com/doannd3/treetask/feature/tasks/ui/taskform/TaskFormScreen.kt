@@ -207,6 +207,7 @@ internal fun TaskFormContent(
             TaskSubmitButton(
                 modifier = Modifier.padding(top = 8.dp),
                 isLoading = state.isLoading,
+                isEditMode = state.isEditMode,
                 onSubmit = {
                     focusManager.clearFocus()
                     onSubmitTaskFormDebounced()

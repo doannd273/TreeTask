@@ -325,6 +325,7 @@ private fun TaskDueDateInputPreview() {
 @Composable
 internal fun TaskSubmitButton(
     isLoading: Boolean,
+    isEditMode: Boolean,
     onSubmit: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -332,10 +333,11 @@ internal fun TaskSubmitButton(
         modifier = modifier,
         buttonText =
         stringResource(
-            if (isLoading) {
-                R.string.tasks_add_task_submit_loading
-            } else {
-                R.string.tasks_add_task_submit
+            when {
+                isLoading && isEditMode -> R.string.tasks_edit_task_submit_loading
+                isLoading -> R.string.tasks_add_task_submit_loading
+                isEditMode -> R.string.tasks_edit_task_submit
+                else -> R.string.tasks_add_task_submit
             },
         ),
         isEnable = !isLoading,
@@ -347,10 +349,21 @@ internal fun TaskSubmitButton(
 @Composable
 private fun TaskSubmitButtonPreview() {
     TreeTaskTheme {
-        TaskSubmitButton(
-            isLoading = false,
-            onSubmit = {},
-        )
+        Column(
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+        ) {
+            TaskSubmitButton(
+                isLoading = false,
+                isEditMode = false,
+                onSubmit = {},
+            )
+
+            TaskSubmitButton(
+                isLoading = false,
+                isEditMode = true,
+                onSubmit = {},
+            )
+        }
     }
 }
 
