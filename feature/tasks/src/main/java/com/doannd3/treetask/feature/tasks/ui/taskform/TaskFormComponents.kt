@@ -26,11 +26,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.doannd3.treetask.core.designsystem.component.CommonButton
 import com.doannd3.treetask.core.designsystem.theme.AppPreviewLightDark
 import com.doannd3.treetask.core.designsystem.theme.TreeTaskTheme
@@ -58,7 +56,7 @@ internal fun TaskTitleInput(
             focusedTextColor = MaterialTheme.colorScheme.onSurface,
             unfocusedTextColor = MaterialTheme.colorScheme.onSurfaceVariant,
         ),
-        textStyle = TextStyle(fontSize = 15.sp),
+        textStyle = MaterialTheme.typography.bodyMedium,
         singleLine = true,
         keyboardOptions =
         KeyboardOptions(
@@ -114,7 +112,7 @@ internal fun TaskDescriptionInput(
             focusedTextColor = MaterialTheme.colorScheme.onSurface,
             unfocusedTextColor = MaterialTheme.colorScheme.onSurfaceVariant,
         ),
-        textStyle = TextStyle(fontSize = 15.sp),
+        textStyle = MaterialTheme.typography.bodyMedium,
         minLines = 4,
         keyboardOptions =
         KeyboardOptions(
@@ -166,7 +164,7 @@ internal fun TaskStatusSelector(
         Text(
             text = stringResource(R.string.tasks_add_task_status_label),
             color = MaterialTheme.colorScheme.onSurface,
-            fontSize = 15.sp,
+            style = MaterialTheme.typography.bodyMedium,
         )
 
         LazyRow(
@@ -294,7 +292,7 @@ internal fun TaskDueDateInput(
             } else {
                 OutlinedTextFieldDefaults.colors()
             },
-            textStyle = TextStyle(fontSize = 15.sp),
+            textStyle = MaterialTheme.typography.bodyMedium,
             singleLine = true,
             value = dueDate,
             onValueChange = {},
