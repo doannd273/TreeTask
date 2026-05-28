@@ -28,6 +28,13 @@ fun Long.toInstant(): Instant = Instant.ofEpochMilli(this)
 
 fun Instant.toLong() = toEpochMilli()
 
+fun Instant?.toYmd(): String {
+    if (this == null) return ""
+    return this.atOffset(ZoneOffset.UTC)
+        .toLocalDate()
+        .toString() // "yyyy-MM-dd"
+}
+
 fun Long?.toYmdDate(): String {
     if (this == null) return ""
     return Instant.ofEpochMilli(this).atOffset(ZoneOffset.UTC).toLocalDate().toString()
