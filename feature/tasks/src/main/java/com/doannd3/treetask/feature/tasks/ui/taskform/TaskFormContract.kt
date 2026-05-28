@@ -9,6 +9,7 @@ data class TaskFormState(
     val status: TaskStatus = TaskStatus.TODO,
     val dueDate: String = "",
     val isLoading: Boolean = false,
+    val isLoadingTask: Boolean = false,
 )
 
 sealed class TaskFormEvent {
