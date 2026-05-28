@@ -1,4 +1,4 @@
-package com.doannd3.treetask.feature.tasks.ui.add
+package com.doannd3.treetask.feature.tasks.ui.taskform
 
 import androidx.lifecycle.viewModelScope
 import com.doannd3.treetask.core.common.ApiResult
@@ -21,45 +21,45 @@ import com.doannd3.treetask.core.common.R as CommonR
 import com.doannd3.treetask.feature.tasks.R as TasksR
 
 @HiltViewModel
-class AddTaskViewModel
+class TaskFormViewModel
 @Inject
 constructor(
     private val createTaskUseCase: CreateTaskUseCase,
 ) : BaseViewModel(),
-    MviViewModel<AddTaskState, AddTaskEvent, AddTaskEffect> {
-    private val _uiState = MutableStateFlow(AddTaskState())
-    override val uiState: StateFlow<AddTaskState> = _uiState.asStateFlow()
+    MviViewModel<TaskFormState, TaskFormEvent, TaskFormEffect> {
+    private val _uiState = MutableStateFlow(TaskFormState())
+    override val uiState: StateFlow<TaskFormState> = _uiState.asStateFlow()
 
-    private val _effect = MutableSharedFlow<AddTaskEffect>()
-    override val effect: SharedFlow<AddTaskEffect> = _effect.asSharedFlow()
+    private val _effect = MutableSharedFlow<TaskFormEffect>()
+    override val effect: SharedFlow<TaskFormEffect> = _effect.asSharedFlow()
 
-    override fun onEvent(event: AddTaskEvent) {
+    override fun onEvent(event: TaskFormEvent) {
         when (event) {
-            is AddTaskEvent.TitleChanged -> {
+            is TaskFormEvent.TitleChanged -> {
                 _uiState.update { it.copy(title = event.title) }
             }
 
-            is AddTaskEvent.DescriptionChanged -> {
+            is TaskFormEvent.DescriptionChanged -> {
                 _uiState.update { it.copy(description = event.description) }
             }
 
-            is AddTaskEvent.StatusChanged -> {
+            is TaskFormEvent.StatusChanged -> {
                 _uiState.update { it.copy(status = event.status) }
             }
 
-            AddTaskEvent.SubmitAddTask -> {
-                submitAddTask()
+            TaskFormEvent.SubmitTaskForm -> {
+                submitTaskForm()
             }
 
-            AddTaskEvent.SuccessAcknowledged -> {
+            TaskFormEvent.SuccessAcknowledged -> {
                 navigateBack()
             }
 
-            AddTaskEvent.BackClicked -> {
+            TaskFormEvent.BackClicked -> {
                 navigateBack()
             }
 
-            is AddTaskEvent.DueDateChanged -> {
+            is TaskFormEvent.DueDateChanged -> {
                 _uiState.update {
                     it.copy(
                         dueDate = event.dueDate,
@@ -71,11 +71,11 @@ constructor(
 
     private fun navigateBack() {
         viewModelScope.launch {
-            _effect.emit(AddTaskEffect.NavigateBack)
+            _effect.emit(TaskFormEffect.NavigateBack)
         }
     }
 
-    private fun submitAddTask() {
+    private fun submitTaskForm() {
         val state = _uiState.value
         if (state.isLoading) {
             return
@@ -97,7 +97,7 @@ constructor(
                     val message =
                         result.message
                             ?: UiText.StringResource(TasksR.string.tasks_add_task_success)
-                    _effect.emit(AddTaskEffect.ShowSuccessMessage(message))
+                    _effect.emit(TaskFormEffect.ShowSuccessMessage(message))
                 }
 
                 is ApiResult.Error -> {
@@ -105,7 +105,7 @@ constructor(
                         result.toDisplayMessage(
                             UiText.StringResource(CommonR.string.common_error_unknown),
                         )
-                    _effect.emit(AddTaskEffect.ShowErrorMessage(message))
+                    _effect.emit(TaskFormEffect.ShowErrorMessage(message))
                 }
             }
         }

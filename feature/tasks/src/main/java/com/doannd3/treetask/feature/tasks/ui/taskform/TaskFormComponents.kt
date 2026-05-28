@@ -1,4 +1,4 @@
-package com.doannd3.treetask.feature.tasks.ui.add
+package com.doannd3.treetask.feature.tasks.ui.taskform
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -40,10 +40,10 @@ import com.doannd3.treetask.feature.tasks.ui.model.labelRes
 import java.time.LocalDate
 import java.time.ZoneOffset
 
-// region AddTaskTitleInput
+// region TaskTitleInput
 
 @Composable
-internal fun AddTaskTitleInput(
+internal fun TaskTitleInput(
     title: String,
     enabled: Boolean,
     onTitleChange: (String) -> Unit,
@@ -80,9 +80,9 @@ internal fun AddTaskTitleInput(
 
 @AppPreviewLightDark
 @Composable
-private fun AddTaskTitleInputPreview() {
+private fun TaskTitleInputPreview() {
     TreeTaskTheme {
-        AddTaskTitleInput(
+        TaskTitleInput(
             title = "Prepare sprint planning",
             enabled = true,
             onTitleChange = {},
@@ -93,10 +93,10 @@ private fun AddTaskTitleInputPreview() {
 
 // endregion
 
-// region AddTaskDescriptionInput
+// region TaskDescriptionInput
 
 @Composable
-internal fun AddTaskDescriptionInput(
+internal fun TaskDescriptionInput(
     description: String,
     enabled: Boolean,
     onDescriptionChange: (String) -> Unit,
@@ -136,9 +136,9 @@ internal fun AddTaskDescriptionInput(
 
 @AppPreviewLightDark
 @Composable
-private fun AddTaskDescriptionInputPreview() {
+private fun TaskDescriptionInputPreview() {
     TreeTaskTheme {
-        AddTaskDescriptionInput(
+        TaskDescriptionInput(
             description = "Review backlog and define priorities for the next sprint.",
             enabled = true,
             onDescriptionChange = {},
@@ -149,10 +149,10 @@ private fun AddTaskDescriptionInputPreview() {
 
 // endregion
 
-// region AddTaskStatusSelector
+// region TaskStatusSelector
 
 @Composable
-internal fun AddTaskStatusSelector(
+internal fun TaskStatusSelector(
     selectedStatus: TaskStatus,
     enabled: Boolean,
     onStatusChange: (TaskStatus) -> Unit,
@@ -193,9 +193,9 @@ internal fun AddTaskStatusSelector(
 
 @AppPreviewLightDark
 @Composable
-private fun AddTaskStatusSelectorPreview() {
+private fun TaskStatusSelectorPreview() {
     TreeTaskTheme {
-        AddTaskStatusSelector(
+        TaskStatusSelector(
             selectedStatus = TaskStatus.IN_PROGRESS,
             enabled = true,
             onStatusChange = {},
@@ -264,10 +264,10 @@ private fun AppDatePickerDialogPreview() {
 
 // endregion
 
-// region AddTaskDueDateInput
+// region TaskDueDateInput
 
 @Composable
-internal fun AddTaskDueDateInput(
+internal fun TaskDueDateInput(
     modifier: Modifier = Modifier,
     dueDate: String,
     enabled: Boolean,
@@ -308,9 +308,9 @@ internal fun AddTaskDueDateInput(
 
 @AppPreviewLightDark
 @Composable
-private fun AddTaskDueDateInputPreview() {
+private fun TaskDueDateInputPreview() {
     TreeTaskTheme {
-        AddTaskDueDateInput(
+        TaskDueDateInput(
             dueDate = "2026-05-31",
             enabled = true,
             onDueDateClick = {},
@@ -320,10 +320,10 @@ private fun AddTaskDueDateInputPreview() {
 
 // endregion
 
-// region AddTaskSubmitButton
+// region TaskSubmitButton
 
 @Composable
-internal fun AddTaskSubmitButton(
+internal fun TaskSubmitButton(
     isLoading: Boolean,
     onSubmit: () -> Unit,
     modifier: Modifier = Modifier,
@@ -345,9 +345,9 @@ internal fun AddTaskSubmitButton(
 
 @AppPreviewLightDark
 @Composable
-private fun AddTaskSubmitButtonPreview() {
+private fun TaskSubmitButtonPreview() {
     TreeTaskTheme {
-        AddTaskSubmitButton(
+        TaskSubmitButton(
             isLoading = false,
             onSubmit = {},
         )
