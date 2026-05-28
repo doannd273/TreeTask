@@ -188,6 +188,39 @@ private fun SearchTaskInputPreview() {
 
 // endregion
 
+// region TasksEmptyState
+
+@Composable
+internal fun TasksEmptyState(
+    modifier: Modifier = Modifier,
+) {
+    Box(
+        modifier = modifier,
+        contentAlignment = Alignment.Center,
+    ) {
+        Text(
+            text = stringResource(R.string.tasks_empty_state_message),
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
+    }
+}
+
+@AppPreviewLightDark
+@Composable
+private fun TasksEmptyStatePreview() {
+    TreeTaskTheme {
+        TasksEmptyState(
+            modifier =
+            Modifier
+                .fillMaxWidth()
+                .padding(32.dp),
+        )
+    }
+}
+
+// endregion
+
 // region SwipeToDeleteTaskItem
 
 @Composable
