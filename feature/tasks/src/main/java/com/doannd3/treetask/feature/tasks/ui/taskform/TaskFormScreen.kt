@@ -1,4 +1,4 @@
-package com.doannd3.treetask.feature.tasks.ui.add
+package com.doannd3.treetask.feature.tasks.ui.taskform
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -43,8 +43,8 @@ import com.doannd3.treetask.core.model.task.TaskStatus
 import com.doannd3.treetask.feature.tasks.R
 
 @Composable
-fun AddTaskRoute(
-    viewModel: AddTaskViewModel = hiltViewModel(),
+fun TaskFormRoute(
+    viewModel: TaskFormViewModel = hiltViewModel(),
     onNavigateBack: () -> Unit,
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
@@ -53,7 +53,7 @@ fun AddTaskRoute(
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
 
-    AddTaskScreen(
+    TaskFormScreen(
         state = state,
         onEvent = viewModel::onEvent,
     )
@@ -62,17 +62,17 @@ fun AddTaskRoute(
         lifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
             viewModel.effect.collect { effect ->
                 when (effect) {
-                    is AddTaskEffect.ShowErrorMessage -> {
+                    is TaskFormEffect.ShowErrorMessage -> {
                         globalAppState.showError(effect.message.asString(context))
                     }
 
-                    is AddTaskEffect.ShowSuccessMessage -> {
+                    is TaskFormEffect.ShowSuccessMessage -> {
                         globalAppState.showSuccess(effect.message.asString(context)) {
-                            viewModel.onEvent(AddTaskEvent.SuccessAcknowledged)
+                            viewModel.onEvent(TaskFormEvent.SuccessAcknowledged)
                         }
                     }
 
-                    is AddTaskEffect.NavigateBack -> {
+                    is TaskFormEffect.NavigateBack -> {
                         onNavigateBack()
                     }
                 }
@@ -98,9 +98,9 @@ fun AddTaskRoute(
 }
 
 @Composable
-internal fun AddTaskScreen(
-    state: AddTaskState,
-    onEvent: (AddTaskEvent) -> Unit,
+internal fun TaskFormScreen(
+    state: TaskFormState,
+    onEvent: (TaskFormEvent) -> Unit,
 ) {
     Scaffold(
         contentWindowInsets =
@@ -110,11 +110,11 @@ internal fun AddTaskScreen(
         topBar = {
             CommonHeader(
                 title = stringResource(R.string.tasks_add_task_title),
-                onNavigateBack = { onEvent(AddTaskEvent.BackClicked) },
+                onNavigateBack = { onEvent(TaskFormEvent.BackClicked) },
             )
         },
     ) { paddingValues ->
-        AddTaskContent(
+        TaskFormContent(
             modifier = Modifier.padding(paddingValues),
             state = state,
             onEvent = onEvent,
@@ -124,26 +124,26 @@ internal fun AddTaskScreen(
 
 @AppPreviewLightDark
 @Composable
-private fun AddTaskScreenPreview() {
+private fun TaskFormScreenPreview() {
     TreeTaskTheme {
-        AddTaskScreen(
-            state = AddTaskState(),
+        TaskFormScreen(
+            state = TaskFormState(),
             onEvent = {},
         )
     }
 }
 
 @Composable
-internal fun AddTaskContent(
+internal fun TaskFormContent(
     modifier: Modifier = Modifier,
-    state: AddTaskState,
-    onEvent: (AddTaskEvent) -> Unit,
+    state: TaskFormState,
+    onEvent: (TaskFormEvent) -> Unit,
 ) {
     val descriptionFocusRequester = remember { FocusRequester() }
     val focusManager = LocalFocusManager.current
-    val onSubmitAddTaskDebounced =
+    val onSubmitTaskFormDebounced =
         rememberDebouncedClick {
-            onEvent(AddTaskEvent.SubmitAddTask)
+            onEvent(TaskFormEvent.SubmitTaskForm)
         }
     val isInputEnabled = !state.isLoading
 
@@ -161,7 +161,7 @@ internal fun AddTaskContent(
         AppDatePickerDialog(
             selectedDateMillis = initialMillis,
             onDismiss = { showDatePicker = false },
-            onDateSelected = { onEvent(AddTaskEvent.DueDateChanged(it.toYmdDate())) },
+            onDateSelected = { onEvent(TaskFormEvent.DueDateChanged(it.toYmdDate())) },
         )
     }
 
@@ -176,42 +176,42 @@ internal fun AddTaskContent(
             modifier = Modifier.padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
-            AddTaskTitleInput(
+            TaskTitleInput(
                 title = state.title,
                 enabled = isInputEnabled,
-                onTitleChange = { onEvent(AddTaskEvent.TitleChanged(it)) },
+                onTitleChange = { onEvent(TaskFormEvent.TitleChanged(it)) },
                 onImeNext = { descriptionFocusRequester.requestFocus() },
             )
 
-            AddTaskDescriptionInput(
+            TaskDescriptionInput(
                 modifier =
                 Modifier.focusRequester(descriptionFocusRequester),
                 description = state.description,
                 enabled = isInputEnabled,
-                onDescriptionChange = { onEvent(AddTaskEvent.DescriptionChanged(it)) },
+                onDescriptionChange = { onEvent(TaskFormEvent.DescriptionChanged(it)) },
                 onImeNext = {
                     focusManager.clearFocus()
                 },
             )
 
-            AddTaskStatusSelector(
+            TaskStatusSelector(
                 selectedStatus = state.status,
                 enabled = isInputEnabled,
-                onStatusChange = { onEvent(AddTaskEvent.StatusChanged(it)) },
+                onStatusChange = { onEvent(TaskFormEvent.StatusChanged(it)) },
             )
 
-            AddTaskDueDateInput(
+            TaskDueDateInput(
                 dueDate = displayText,
                 enabled = isInputEnabled,
                 onDueDateClick = { showDatePicker = true },
             )
 
-            AddTaskSubmitButton(
+            TaskSubmitButton(
                 modifier = Modifier.padding(top = 8.dp),
                 isLoading = state.isLoading,
                 onSubmit = {
                     focusManager.clearFocus()
-                    onSubmitAddTaskDebounced()
+                    onSubmitTaskFormDebounced()
                 },
             )
         }
@@ -220,11 +220,11 @@ internal fun AddTaskContent(
 
 @AppPreviewLightDark
 @Composable
-private fun AddTaskContentPreview() {
+private fun TaskFormContentPreview() {
     TreeTaskTheme {
-        AddTaskContent(
+        TaskFormContent(
             state =
-            AddTaskState(
+            TaskFormState(
                 title = "Prepare sprint planning",
                 description = "Review backlog and define priorities for the next sprint.",
                 status = TaskStatus.IN_PROGRESS,
