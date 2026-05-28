@@ -30,4 +30,6 @@ interface TaskRepository {
     ): ApiResult<Task>
 
     suspend fun getTaskById(taskId: String): ApiResult<Task>
+
+    suspend fun deleteTask(taskId: String): ApiResult<Unit>
 }
