@@ -43,7 +43,7 @@ constructor(
 ) : BaseViewModel(),
     MviViewModel<TasksState, TasksEvent, TasksEffect> {
     override fun setLoading(isLoading: Boolean) {
-        _uiState.update { it.copy(isLoading = isLoading, isLoadingSearch = false) }
+        _uiState.update { it.copy(isLoading = isLoading) }
     }
 
     private val _uiState = MutableStateFlow(TasksState())
