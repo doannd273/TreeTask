@@ -23,7 +23,6 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
@@ -40,7 +39,6 @@ import com.doannd3.treetask.core.designsystem.theme.AppPreviewLightDark
 import com.doannd3.treetask.core.designsystem.theme.TreeTaskTheme
 import com.doannd3.treetask.core.designsystem.util.rememberDebouncedClick
 import com.doannd3.treetask.core.model.task.TaskStatus
-import com.doannd3.treetask.feature.tasks.R
 
 @Composable
 fun TaskFormRoute(
@@ -109,7 +107,7 @@ internal fun TaskFormScreen(
         ),
         topBar = {
             CommonHeader(
-                title = stringResource(R.string.tasks_add_task_title),
+                title = state.screenTitle?.asString(LocalContext.current).orEmpty(),
                 onNavigateBack = { onEvent(TaskFormEvent.BackClicked) },
             )
         },
