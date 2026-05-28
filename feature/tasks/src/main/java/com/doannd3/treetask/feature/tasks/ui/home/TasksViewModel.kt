@@ -5,8 +5,12 @@ package com.doannd3.treetask.feature.tasks.ui.home
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
+import com.doannd3.treetask.core.common.ApiResult
 import com.doannd3.treetask.core.common.BaseViewModel
 import com.doannd3.treetask.core.common.MviViewModel
+import com.doannd3.treetask.core.common.UiText
+import com.doannd3.treetask.core.common.toDisplayMessage
+import com.doannd3.treetask.core.domain.usecase.task.DeleteTaskUseCase
 import com.doannd3.treetask.core.domain.usecase.task.GetTasksUseCase
 import com.doannd3.treetask.core.domain.usecase.user.ObserveCurrentUserIdUseCase
 import com.doannd3.treetask.core.model.task.Task
@@ -26,6 +30,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import com.doannd3.treetask.core.common.R as CommonR
 
 @OptIn(FlowPreview::class)
 @HiltViewModel
@@ -33,6 +38,7 @@ class TasksViewModel
 @Inject
 constructor(
     private val getTasksUseCase: GetTasksUseCase,
+    private val deleteTaskUseCase: DeleteTaskUseCase,
     private val observeCurrentUserIdUseCase: ObserveCurrentUserIdUseCase,
 ) : BaseViewModel(),
     MviViewModel<TasksState, TasksEvent, TasksEffect> {
@@ -85,6 +91,27 @@ constructor(
             }
 
             TasksEvent.Refresh -> {
+            }
+
+            is TasksEvent.DeleteTask -> {
+                deleteTask(taskId = event.taskId)
+            }
+        }
+    }
+
+    private fun deleteTask(taskId: String) {
+        executeSafe {
+            _uiState.update { it.copy(isLoading = true) }
+            val result = deleteTaskUseCase(taskId = taskId)
+            _uiState.update { it.copy(isLoading = false) }
+            when (result) {
+                is ApiResult.Success -> { }
+                is ApiResult.Error -> {
+                    val message = result.toDisplayMessage(
+                        UiText.StringResource(CommonR.string.common_error_unknown),
+                    )
+                    _effect.emit(TasksEffect.ShowErrorMessage(message))
+                }
             }
         }
     }

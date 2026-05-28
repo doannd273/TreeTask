@@ -91,8 +91,9 @@ Paging:
 
 ## Accessibility
 
-- Action icons need meaningful `contentDescription`.
-- Decorative icons may use `contentDescription = null`.
+- Action icons (clickable, interactive, or communicating meaning) must have a `contentDescription` sourced from `strings.xml` — never a hardcoded string literal, never `null`.
+- Decorative icons that convey no information and are not interactive may use `contentDescription = null`.
+- When in doubt, treat the icon as an action icon and add a string resource.
 - Button labels should describe the action.
 - Do not rely on color alone to express state.
 - Tap targets should be large enough according to Material guidance.
@@ -127,7 +128,7 @@ Paging:
 - State/effects are collected lifecycle-aware.
 - Loading/error/empty paths are handled.
 - Text uses resources.
-- Action icons have accessibility labels.
+- Action icons have `contentDescription` from `strings.xml` (not hardcoded, not `null`).
 - Preview builds.
 - No unnecessary UI dependencies are added.
 - Business logic is not placed in composables.

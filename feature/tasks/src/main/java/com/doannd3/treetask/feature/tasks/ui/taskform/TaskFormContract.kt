@@ -5,6 +5,7 @@ import com.doannd3.treetask.core.model.task.TaskStatus
 
 data class TaskFormState(
     val screenTitle: UiText? = null,
+    val isEditMode: Boolean = false,
     val title: String = "",
     val description: String = "",
     val status: TaskStatus = TaskStatus.TODO,
