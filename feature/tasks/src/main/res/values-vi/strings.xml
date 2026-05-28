@@ -7,6 +7,8 @@
     <string name="tasks_cd_add_task">Thêm nhiệm vụ</string>
     <string name="tasks_due_date_label">Hạn chót: %s</string>
     <string name="tasks_error_retry">Lỗi kết nối. Thử lại</string>
+    <string name="tasks_empty_state_message">Chưa có nhiệm vụ nào</string>
+    <string name="tasks_refresh_error_message">Không thể làm mới danh sách nhiệm vụ. Vui lòng thử lại.</string>
     <string name="tasks_error_title_empty">Tiêu đề không thể trống</string>
     <string name="tasks_add_task_success">Thêm nhiệm vụ thành công</string>
     <string name="tasks_update_task_success">Sửa nhiệm vụ thành công</string>

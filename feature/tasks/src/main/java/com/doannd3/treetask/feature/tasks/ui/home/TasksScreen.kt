@@ -12,6 +12,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -26,6 +27,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
@@ -181,6 +183,15 @@ internal fun TasksContent(
             onFilterSelect = { onEvent(TasksEvent.FilterSelected(it)) },
         )
 
+        if (pagingItems.itemCount == 0 && pagingItems.loadState.refresh is LoadState.NotLoading) {
+            TasksEmptyState(
+                modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .weight(1f),
+            )
+        }
+
         LazyColumn(
             modifier = Modifier.padding(top = 6.dp),
         ) {
@@ -209,6 +220,22 @@ internal fun TasksContent(
                                 contentAlignment = Alignment.Center,
                             ) {
                                 CircularProgressIndicator()
+                            }
+                        }
+                    }
+
+                    loadState.refresh is LoadState.Error -> {
+                        item {
+                            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                                Text(
+                                    text = stringResource(R.string.tasks_refresh_error_message),
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                    textAlign = TextAlign.Center,
+                                )
+                                TextButton(onClick = { retry() }) {
+                                    Text(text = stringResource(R.string.tasks_error_retry)) // "Connection error. Retry"
+                                }
                             }
                         }
                     }
@@ -242,6 +269,35 @@ internal fun TasksContent(
                 }
             }
         }
+    }
+}
+
+@Composable
+internal fun TasksEmptyState(
+    modifier: Modifier = Modifier,
+) {
+    Box(
+        modifier = modifier,
+        contentAlignment = Alignment.Center,
+    ) {
+        Text(
+            text = stringResource(R.string.tasks_empty_state_message),
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
+    }
+}
+
+@AppPreviewLightDark
+@Composable
+private fun TasksEmptyStatePreview() {
+    TreeTaskTheme {
+        TasksEmptyState(
+            modifier =
+            Modifier
+                .fillMaxWidth()
+                .padding(32.dp),
+        )
     }
 }
 
