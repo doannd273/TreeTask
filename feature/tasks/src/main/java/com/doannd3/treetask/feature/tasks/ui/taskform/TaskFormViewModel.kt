@@ -1,12 +1,16 @@
 package com.doannd3.treetask.feature.tasks.ui.taskform
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.doannd3.treetask.core.common.ApiResult
 import com.doannd3.treetask.core.common.BaseViewModel
 import com.doannd3.treetask.core.common.MviViewModel
 import com.doannd3.treetask.core.common.UiText
+import com.doannd3.treetask.core.common.extension.toYmd
 import com.doannd3.treetask.core.common.toDisplayMessage
 import com.doannd3.treetask.core.domain.usecase.task.CreateTaskUseCase
+import com.doannd3.treetask.core.domain.usecase.task.GetTaskByIdUseCase
+import com.doannd3.treetask.core.domain.usecase.task.UpdateTaskUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -24,7 +28,10 @@ import com.doannd3.treetask.feature.tasks.R as TasksR
 class TaskFormViewModel
 @Inject
 constructor(
+    savedStateHandle: SavedStateHandle,
     private val createTaskUseCase: CreateTaskUseCase,
+    private val updateTaskUseCase: UpdateTaskUseCase,
+    private val getTaskByIdUseCase: GetTaskByIdUseCase,
 ) : BaseViewModel(),
     MviViewModel<TaskFormState, TaskFormEvent, TaskFormEffect> {
     private val _uiState = MutableStateFlow(TaskFormState())
@@ -32,6 +39,51 @@ constructor(
 
     private val _effect = MutableSharedFlow<TaskFormEffect>()
     override val effect: SharedFlow<TaskFormEffect> = _effect.asSharedFlow()
+
+    private val taskId: String? = savedStateHandle["taskId"]
+    private val isEditMode = taskId != null
+
+    init {
+        if (isEditMode) {
+            loadTask(taskId = taskId!!)
+        }
+    }
+
+    private fun loadTask(taskId: String) {
+        executeSafe {
+            _uiState.update { it.copy(isLoadingTask = true) }
+            when (val result = getTaskByIdUseCase(taskId)) {
+                is ApiResult.Success -> {
+                    val task = result.data ?: run {
+                        _uiState.update { it.copy(isLoadingTask = false) }
+                        _effect.emit(
+                            TaskFormEffect.ShowErrorMessage(
+                                UiText.StringResource(CommonR.string.common_error_unknown),
+                            ),
+                        )
+                        return@executeSafe
+                    }
+                    val dueDateString = task.dueDate.toYmd()
+                    _uiState.update {
+                        it.copy(
+                            isLoadingTask = false,
+                            title = task.title,
+                            description = task.description.orEmpty(),
+                            status = task.status,
+                            dueDate = dueDateString,
+                        )
+                    }
+                }
+                is ApiResult.Error -> {
+                    _uiState.update { it.copy(isLoadingTask = false) }
+                    val message = result.toDisplayMessage(
+                        UiText.StringResource(CommonR.string.common_error_unknown),
+                    )
+                    _effect.emit(TaskFormEffect.ShowErrorMessage(message))
+                }
+            }
+        }
+    }
 
     override fun onEvent(event: TaskFormEvent) {
         when (event) {
@@ -48,7 +100,7 @@ constructor(
             }
 
             TaskFormEvent.SubmitTaskForm -> {
-                submitTaskForm()
+                if (isEditMode) updateTask() else createTask()
             }
 
             TaskFormEvent.SuccessAcknowledged -> {
@@ -75,7 +127,44 @@ constructor(
         }
     }
 
-    private fun submitTaskForm() {
+    private fun updateTask() {
+        val state = _uiState.value
+        if (state.isLoading) {
+            return
+        }
+
+        executeSafe {
+            _uiState.update { it.copy(isLoading = true) }
+            val result =
+                updateTaskUseCase(
+                    taskId = taskId!!,
+                    title = state.title,
+                    description = state.description,
+                    status = state.status.apiValue,
+                    dueDate = state.dueDate,
+                )
+            _uiState.update { it.copy(isLoading = false) }
+
+            when (result) {
+                is ApiResult.Success -> {
+                    val message =
+                        result.message
+                            ?: UiText.StringResource(TasksR.string.tasks_update_task_success)
+                    _effect.emit(TaskFormEffect.ShowSuccessMessage(message))
+                }
+
+                is ApiResult.Error -> {
+                    val message =
+                        result.toDisplayMessage(
+                            UiText.StringResource(CommonR.string.common_error_unknown),
+                        )
+                    _effect.emit(TaskFormEffect.ShowErrorMessage(message))
+                }
+            }
+        }
+    }
+
+    private fun createTask() {
         val state = _uiState.value
         if (state.isLoading) {
             return
