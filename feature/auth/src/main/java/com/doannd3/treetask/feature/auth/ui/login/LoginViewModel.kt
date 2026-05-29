@@ -73,6 +73,16 @@ class LoginViewModel
                         _effect.emit(LoginEffect.NavigateToHome)
                         runCatching {
                             registerCurrentDeviceTokenUseCase()
+                        }.onSuccess { result ->
+                            when (result) {
+                                null -> Timber.tag(AppTag.NETWORK).d("Skip FCM token registration after login: no current token")
+                                is ApiResult.Success -> Timber.tag(AppTag.NETWORK).d("FCM token registered after login")
+                                is ApiResult.Error ->
+                                    Timber.tag(AppTag.NETWORK).w(
+                                        result.exception,
+                                        "Register FCM token failed after login: ${result.backendErrorCode}",
+                                    )
+                            }
                         }.onFailure { e ->
                             Timber.tag(AppTag.NETWORK).w(e, "Register FCM token failed after login")
                         }
