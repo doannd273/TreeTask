@@ -76,9 +76,10 @@ internal fun ProfileHeader(
             model = avatarUrl,
             contentDescription = stringResource(R.string.profile_cd_user_avatar),
             contentScale = ContentScale.Crop,
-            modifier = Modifier
-                .size(72.dp)
-                .clip(CircleShape),
+            modifier =
+                Modifier
+                    .size(72.dp)
+                    .clip(CircleShape),
             placeholder = painterResource(R.drawable.profile_ic_avatar),
             error = painterResource(R.drawable.profile_ic_avatar),
         )
@@ -133,14 +134,15 @@ internal fun ProfileSwitchItem(
     onCheckedChange: (Boolean) -> Unit,
 ) {
     Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .toggleable(
-                value = checked,
-                onValueChange = onCheckedChange,
-                role = Role.Switch,
-            )
-            .padding(horizontal = 16.dp, vertical = 24.dp),
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .toggleable(
+                    value = checked,
+                    onValueChange = onCheckedChange,
+                    role = Role.Switch,
+                )
+                .padding(horizontal = 16.dp, vertical = 24.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Icon(
@@ -201,16 +203,17 @@ internal fun ProfileItem(
     val contentAlpha = if (enabled) 1f else 0.38f
 
     Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .then(
-                if (onClick != null && enabled) {
-                    Modifier.clickable(onClick = onClick)
-                } else {
-                    Modifier
-                },
-            )
-            .padding(horizontal = 16.dp, vertical = 14.dp),
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .then(
+                    if (onClick != null && enabled) {
+                        Modifier.clickable(onClick = onClick)
+                    } else {
+                        Modifier
+                    },
+                )
+                .padding(horizontal = 16.dp, vertical = 14.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Icon(
@@ -299,9 +302,10 @@ internal fun ProfileSection(
         Card(
             modifier = Modifier.fillMaxWidth(),
             shape = RoundedCornerShape(12.dp),
-            colors = CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
-            ),
+            colors =
+                CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
+                ),
         ) {
             Column {
                 content()
@@ -345,10 +349,11 @@ internal fun LogoutButton(
         onClick = onSubmitLogout,
         enabled = isEnable,
         modifier = Modifier.fillMaxWidth(),
-        colors = ButtonDefaults.buttonColors(
-            containerColor = MaterialTheme.colorScheme.errorContainer,
-            contentColor = MaterialTheme.colorScheme.onErrorContainer,
-        ),
+        colors =
+            ButtonDefaults.buttonColors(
+                containerColor = MaterialTheme.colorScheme.errorContainer,
+                contentColor = MaterialTheme.colorScheme.onErrorContainer,
+            ),
         shape = RoundedCornerShape(12.dp),
     ) {
         Text(
@@ -364,9 +369,10 @@ internal fun LogoutButton(
 private fun LogoutButtonPreview() {
     TreeTaskTheme {
         Surface(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
             color = MaterialTheme.colorScheme.background,
         ) {
             LogoutButton(
@@ -417,19 +423,21 @@ private fun LanguagePickerDialogContent(
     }
 
     Surface(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(horizontal = 24.dp, vertical = 8.dp),
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .padding(horizontal = 24.dp, vertical = 8.dp),
         shape = RoundedCornerShape(20.dp),
         color = MaterialTheme.colorScheme.surface,
         tonalElevation = 8.dp,
     ) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Column(
-                modifier = Modifier
-                    .padding(16.dp)
-                    .heightIn(max = 400.dp)
-                    .verticalScroll(scrollState),
+                modifier =
+                    Modifier
+                        .padding(16.dp)
+                        .heightIn(max = 400.dp)
+                        .verticalScroll(scrollState),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 Text(
@@ -444,14 +452,15 @@ private fun LanguagePickerDialogContent(
 
                 AppLanguage.entries.forEach { language ->
                     Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .selectable(
-                                selected = selectedLanguage == language,
-                                onClick = { selectedLanguage = language },
-                                role = Role.RadioButton,
-                            )
-                            .padding(4.dp),
+                        modifier =
+                            Modifier
+                                .fillMaxWidth()
+                                .selectable(
+                                    selected = selectedLanguage == language,
+                                    onClick = { selectedLanguage = language },
+                                    role = Role.RadioButton,
+                                )
+                                .padding(4.dp),
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
                         RadioButton(
@@ -473,9 +482,10 @@ private fun LanguagePickerDialogContent(
             )
 
             Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(IntrinsicSize.Min),
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .height(IntrinsicSize.Min),
             ) {
                 TextButton(
                     modifier = Modifier.weight(1f),

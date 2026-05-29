@@ -25,132 +25,135 @@ import com.doannd3.treetask.feature.profile.R as ProfileR
 
 @HiltViewModel
 class EditProfileViewModel
-@Inject
-constructor(
-    private val updateProfileUseCase: UpdateProfileUseCase,
-    private val userUseCase: ObserveCurrentUserUseCase,
-    private val uploadAvatarUseCase: UploadAvatarUseCase,
-) : BaseViewModel(),
-    MviViewModel<EditProfileState, EditProfileEvent, EditProfileEffect> {
-    private val _uiState = MutableStateFlow(EditProfileState())
-    override val uiState: StateFlow<EditProfileState> = _uiState.asStateFlow()
+    @Inject
+    constructor(
+        private val updateProfileUseCase: UpdateProfileUseCase,
+        private val userUseCase: ObserveCurrentUserUseCase,
+        private val uploadAvatarUseCase: UploadAvatarUseCase,
+    ) : BaseViewModel(),
+        MviViewModel<EditProfileState, EditProfileEvent, EditProfileEffect> {
+        private val _uiState = MutableStateFlow(EditProfileState())
+        override val uiState: StateFlow<EditProfileState> = _uiState.asStateFlow()
 
-    private val _effect = MutableSharedFlow<EditProfileEffect>()
-    override val effect: SharedFlow<EditProfileEffect> = _effect.asSharedFlow()
+        private val _effect = MutableSharedFlow<EditProfileEffect>()
+        override val effect: SharedFlow<EditProfileEffect> = _effect.asSharedFlow()
 
-    init {
-        executeSafe {
-            val user = userUseCase.invoke().firstOrNull()
-            if (user != null) {
-                _uiState.update {
-                    it.copy(
-                        email = user.email,
-                        fullName = user.fullName,
-                        avatarUrl = user.avatar ?: "",
-                        phone = user.phone ?: "",
-                    )
+        init {
+            executeSafe {
+                val user = userUseCase.invoke().firstOrNull()
+                if (user != null) {
+                    _uiState.update {
+                        it.copy(
+                            email = user.email,
+                            fullName = user.fullName,
+                            avatarUrl = user.avatar ?: "",
+                            phone = user.phone ?: "",
+                        )
+                    }
                 }
             }
         }
-    }
 
-    override fun onEvent(event: EditProfileEvent) {
-        when (event) {
-            is EditProfileEvent.FullNameChanged -> {
-                _uiState.update { it.copy(fullName = event.fullName) }
-            }
+        override fun onEvent(event: EditProfileEvent) {
+            when (event) {
+                is EditProfileEvent.FullNameChanged -> {
+                    _uiState.update { it.copy(fullName = event.fullName) }
+                }
 
-            is EditProfileEvent.PhoneChanged -> {
-                _uiState.update { it.copy(phone = event.phone) }
-            }
+                is EditProfileEvent.PhoneChanged -> {
+                    _uiState.update { it.copy(phone = event.phone) }
+                }
 
-            EditProfileEvent.SubmitEditProfile -> {
-                submitEditProfile()
-            }
+                EditProfileEvent.SubmitEditProfile -> {
+                    submitEditProfile()
+                }
 
-            EditProfileEvent.BackClicked -> {
-                navigateBack()
-            }
+                EditProfileEvent.BackClicked -> {
+                    navigateBack()
+                }
 
-            EditProfileEvent.SuccessAcknowledged -> {
-                navigateBack()
-            }
+                EditProfileEvent.SuccessAcknowledged -> {
+                    navigateBack()
+                }
 
-            is EditProfileEvent.AvatarChanged -> {
-                _uiState.update { it.copy(avatarUri = event.avatarUri) }
+                is EditProfileEvent.AvatarChanged -> {
+                    _uiState.update { it.copy(avatarUri = event.avatarUri) }
+                }
             }
         }
-    }
 
-    private fun submitEditProfile() {
-        val state = _uiState.value
-        if (state.isLoading) return
+        private fun submitEditProfile() {
+            val state = _uiState.value
+            if (state.isLoading) return
 
-        executeSafe {
-            _uiState.update { it.copy(isLoading = true) }
+            executeSafe {
+                _uiState.update { it.copy(isLoading = true) }
 
-            // Bước 1: upload avatar nếu có
-            val avatarUrl = if (state.avatarUri != null) {
-                when (val upload = uploadAvatarUseCase(uri = state.avatarUri)) {
-                    is ApiResult.Success -> {
-                        val url = upload.data
-                        if (url.isNullOrBlank()) {
-                            _uiState.update { it.copy(isLoading = false) }
-                            _effect.emit(
-                                EditProfileEffect.ShowErrorMessage(
-                                    UiText.StringResource(CommonR.string.common_error_unknown),
-                                ),
-                            )
-                            return@executeSafe
+                // Bước 1: upload avatar nếu có
+                val avatarUrl =
+                    if (state.avatarUri != null) {
+                        when (val upload = uploadAvatarUseCase(uri = state.avatarUri)) {
+                            is ApiResult.Success -> {
+                                val url = upload.data
+                                if (url.isNullOrBlank()) {
+                                    _uiState.update { it.copy(isLoading = false) }
+                                    _effect.emit(
+                                        EditProfileEffect.ShowErrorMessage(
+                                            UiText.StringResource(CommonR.string.common_error_unknown),
+                                        ),
+                                    )
+                                    return@executeSafe
+                                }
+                                url
+                            }
+                            is ApiResult.Error -> {
+                                _uiState.update { it.copy(isLoading = false) }
+                                _effect.emit(
+                                    EditProfileEffect.ShowErrorMessage(
+                                        upload.toDisplayMessage(UiText.StringResource(CommonR.string.common_error_unknown)),
+                                    ),
+                                )
+                                return@executeSafe
+                            }
                         }
-                        url
+                    } else {
+                        state.avatarUrl // giữ nguyên URL cũ
+                    }
+
+                // Bước 2: update profile
+                val result =
+                    updateProfileUseCase(
+                        fullName = state.fullName,
+                        phone = state.phone,
+                        avatar = avatarUrl,
+                    )
+                _uiState.update { it.copy(isLoading = false) }
+
+                when (result) {
+                    is ApiResult.Success -> {
+                        val message =
+                            result.message
+                                ?: UiText.StringResource(ProfileR.string.profile_edit_update_successfully)
+                        _effect.emit(EditProfileEffect.ShowSuccessMessage(message))
                     }
                     is ApiResult.Error -> {
-                        _uiState.update { it.copy(isLoading = false) }
                         _effect.emit(
                             EditProfileEffect.ShowErrorMessage(
-                                upload.toDisplayMessage(UiText.StringResource(CommonR.string.common_error_unknown)),
+                                result.toDisplayMessage(UiText.StringResource(CommonR.string.common_error_unknown)),
                             ),
                         )
-                        return@executeSafe
                     }
                 }
-            } else {
-                state.avatarUrl // giữ nguyên URL cũ
-            }
-
-            // Bước 2: update profile
-            val result = updateProfileUseCase(
-                fullName = state.fullName,
-                phone = state.phone,
-                avatar = avatarUrl,
-            )
-            _uiState.update { it.copy(isLoading = false) }
-
-            when (result) {
-                is ApiResult.Success -> {
-                    val message = result.message
-                        ?: UiText.StringResource(ProfileR.string.profile_edit_update_successfully)
-                    _effect.emit(EditProfileEffect.ShowSuccessMessage(message))
-                }
-                is ApiResult.Error -> {
-                    _effect.emit(
-                        EditProfileEffect.ShowErrorMessage(
-                            result.toDisplayMessage(UiText.StringResource(CommonR.string.common_error_unknown)),
-                        ),
-                    )
-                }
             }
         }
-    }
 
-    private fun navigateBack() {
-        viewModelScope.launch {
-            _effect.emit(EditProfileEffect.NavigateBack)
+        private fun navigateBack() {
+            viewModelScope.launch {
+                _effect.emit(EditProfileEffect.NavigateBack)
+            }
+        }
+
+        override fun setLoading(isLoading: Boolean) {
+            _uiState.update { it.copy(isLoading = isLoading) }
         }
     }
-
-    override fun setLoading(isLoading: Boolean) {
-        _uiState.update { it.copy(isLoading = isLoading) }
-    }
-}

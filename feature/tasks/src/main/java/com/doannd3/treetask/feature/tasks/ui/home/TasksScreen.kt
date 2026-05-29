@@ -166,9 +166,9 @@ internal fun TasksContent(
 
     Column(
         modifier =
-        modifier
-            .fillMaxSize()
-            .padding(16.dp),
+            modifier
+                .fillMaxSize()
+                .padding(16.dp),
         verticalArrangement = Arrangement.Top,
     ) {
         SearchTaskInput(
@@ -186,9 +186,9 @@ internal fun TasksContent(
         if (pagingItems.itemCount == 0 && pagingItems.loadState.refresh is LoadState.NotLoading) {
             TasksEmptyState(
                 modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .weight(1f),
+                    Modifier
+                        .fillMaxWidth()
+                        .weight(1f),
             )
         }
 
@@ -244,9 +244,9 @@ internal fun TasksContent(
                         item {
                             Box(
                                 modifier =
-                                Modifier
-                                    .fillMaxWidth()
-                                    .padding(16.dp),
+                                    Modifier
+                                        .fillMaxWidth()
+                                        .padding(16.dp),
                                 contentAlignment = Alignment.Center,
                             ) {
                                 CircularProgressIndicator()

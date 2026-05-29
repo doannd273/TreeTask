@@ -132,11 +132,12 @@ internal fun LoginContent(
     val focusManager = LocalFocusManager.current
 
     Column(
-        modifier = modifier
-            .fillMaxSize()
-            .verticalScroll(rememberScrollState())
-            .padding(16.dp)
-            .imePadding(),
+        modifier =
+            modifier
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState())
+                .padding(16.dp)
+                .imePadding(),
         verticalArrangement = Arrangement.Center,
     ) {
         TreeTaskAppName()
@@ -157,9 +158,10 @@ internal fun LoginContent(
         Spacer(modifier = Modifier.height(8.dp))
 
         PasswordInput(
-            modifier = Modifier
-                .fillMaxWidth()
-                .focusRequester(passwordFocusRequester),
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .focusRequester(passwordFocusRequester),
             label = stringResource(R.string.auth_password_hint),
             password = state.password,
             passwordVisible = state.passwordVisible,
@@ -197,10 +199,10 @@ private fun LoginScreenPreview() {
     TreeTaskTheme {
         LoginScreen(
             state =
-            LoginState(
-                email = "demo@gmail.com",
-                password = "123456",
-            ),
+                LoginState(
+                    email = "demo@gmail.com",
+                    password = "123456",
+                ),
             onEvent = {},
             onNavigateToRegister = {},
             onNavigateToForgotPassword = {},

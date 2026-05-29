@@ -13,14 +13,18 @@ fun AnalyticsHelper.logLogin(method: String) {
     )
 }
 
-fun AnalyticsHelper.logTaskCreated(taskId: String, taskType: String) {
+fun AnalyticsHelper.logTaskCreated(
+    taskId: String,
+    taskType: String,
+) {
     logEvent(
         AnalyticsEvent(
             type = "task_created",
-            extras = listOf(
-                Param("task_id", taskId),
-                Param("task_type", taskType),
-            ),
+            extras =
+                listOf(
+                    Param("task_id", taskId),
+                    Param("task_type", taskType),
+                ),
         ),
     )
 }
@@ -37,7 +41,11 @@ fun AnalyticsHelper.logSyncFailed(reason: String) {
 /**
  * Log các lỗi mạng hoặc lỗi logic quan trọng kèm theo context
  */
-fun AnalyticsHelper.logNetworkError(url: String, errorCode: Int, exception: Throwable) {
+fun AnalyticsHelper.logNetworkError(
+    url: String,
+    errorCode: Int,
+    exception: Throwable,
+) {
     logError(
         exception = exception,
         message = "Network Error at $url | Code: $errorCode",

@@ -15,7 +15,10 @@ interface TokenStorage {
 
     fun getRefreshToken(): Flow<String?>
 
-    suspend fun saveToken(accessToken: String, refreshToken: String)
+    suspend fun saveToken(
+        accessToken: String,
+        refreshToken: String,
+    )
 
     suspend fun clearToken()
 }

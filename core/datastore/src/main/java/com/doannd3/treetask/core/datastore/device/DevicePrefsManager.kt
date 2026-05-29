@@ -17,49 +17,49 @@ import javax.inject.Singleton
 
 @Singleton
 class DevicePrefsManager
-@Inject
-constructor(
-    @ApplicationContext private val context: Context,
-) : DeviceStorage {
-    private var cachedDeviceId: String? = null
-    private val mutex = Mutex()
+    @Inject
+    constructor(
+        @ApplicationContext private val context: Context,
+    ) : DeviceStorage {
+        private var cachedDeviceId: String? = null
+        private val mutex = Mutex()
 
-    override suspend fun getDeviceId(): String {
-        cachedDeviceId?.let { return it }
-
-        return mutex.withLock {
+        override suspend fun getDeviceId(): String {
             cachedDeviceId?.let { return it }
 
-            val id =
-                context.deviceDataStore.data
-                    .map { it[KEY_DEVICE_ID] }
-                    .first()
-            if (!id.isNullOrEmpty()) {
-                cachedDeviceId = id
-                return@withLock id
+            return mutex.withLock {
+                cachedDeviceId?.let { return it }
+
+                val id =
+                    context.deviceDataStore.data
+                        .map { it[KEY_DEVICE_ID] }
+                        .first()
+                if (!id.isNullOrEmpty()) {
+                    cachedDeviceId = id
+                    return@withLock id
+                }
+
+                val newId = generateId()
+                context.deviceDataStore.edit { it[KEY_DEVICE_ID] = newId }
+                cachedDeviceId = newId
+                newId
             }
+        }
 
-            val newId = generateId()
-            context.deviceDataStore.edit { it[KEY_DEVICE_ID] = newId }
-            cachedDeviceId = newId
-            newId
+        @SuppressLint("HardwareIds")
+        private fun generateId(): String {
+            var deviceId =
+                Settings.Secure.getString(
+                    context.contentResolver,
+                    Settings.Secure.ANDROID_ID,
+                )
+            if (deviceId.isNullOrEmpty() || deviceId.startsWith("00000")) {
+                deviceId = "00000" + UUID.randomUUID().toString()
+            }
+            return deviceId
+        }
+
+        companion object {
+            private val KEY_DEVICE_ID = stringPreferencesKey("device_id")
         }
     }
-
-    @SuppressLint("HardwareIds")
-    private fun generateId(): String {
-        var deviceId =
-            Settings.Secure.getString(
-                context.contentResolver,
-                Settings.Secure.ANDROID_ID,
-            )
-        if (deviceId.isNullOrEmpty() || deviceId.startsWith("00000")) {
-            deviceId = "00000" + UUID.randomUUID().toString()
-        }
-        return deviceId
-    }
-
-    companion object {
-        private val KEY_DEVICE_ID = stringPreferencesKey("device_id")
-    }
-}

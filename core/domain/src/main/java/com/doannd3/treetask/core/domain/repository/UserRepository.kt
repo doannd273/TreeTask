@@ -6,10 +6,7 @@ import com.doannd3.treetask.core.model.user.User
 import kotlinx.coroutines.flow.Flow
 
 interface UserRepository {
-
-    suspend fun uploadFile(
-        uri: Uri,
-    ): ApiResult<String>
+    suspend fun uploadFile(uri: Uri): ApiResult<String>
 
     suspend fun updateProfile(
         fullName: String,

@@ -5,6 +5,8 @@ import kotlinx.coroutines.flow.Flow
 
 interface UserStorage {
     fun getUserProfile(): Flow<User?>
+
     suspend fun saveUserProfile(user: User)
+
     suspend fun clearUserProfile()
 }

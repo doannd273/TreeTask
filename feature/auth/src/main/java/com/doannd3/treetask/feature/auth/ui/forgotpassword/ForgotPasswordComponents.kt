@@ -37,9 +37,10 @@ internal fun EmailStep(
     onEvent: (ForgotPasswordEvent) -> Unit,
 ) {
     if (isVisible) {
-        val onSubmitSendEmailDebounced = rememberDebouncedClick {
-            onEvent(ForgotPasswordEvent.SubmitEmail)
-        }
+        val onSubmitSendEmailDebounced =
+            rememberDebouncedClick {
+                onEvent(ForgotPasswordEvent.SubmitEmail)
+            }
 
         Column(
             modifier = modifier.padding(16.dp),
@@ -71,11 +72,12 @@ private fun EmailStepPreview() {
     TreeTaskTheme {
         Surface(color = MaterialTheme.colorScheme.background) {
             EmailStep(
-                state = ForgotPasswordState(
-                    email = "doan@gmail.com",
-                    step = ForgotPasswordStep.EmailInput,
-                    isLoading = false,
-                ),
+                state =
+                    ForgotPasswordState(
+                        email = "doan@gmail.com",
+                        step = ForgotPasswordStep.EmailInput,
+                        isLoading = false,
+                    ),
                 onEvent = {},
             )
         }
@@ -88,11 +90,12 @@ private fun EmailStepLoadingPreview() {
     TreeTaskTheme {
         Surface(color = MaterialTheme.colorScheme.background) {
             EmailStep(
-                state = ForgotPasswordState(
-                    email = "doan@gmail.com",
-                    step = ForgotPasswordStep.EmailInput,
-                    isLoading = true,
-                ),
+                state =
+                    ForgotPasswordState(
+                        email = "doan@gmail.com",
+                        step = ForgotPasswordStep.EmailInput,
+                        isLoading = true,
+                    ),
                 onEvent = {},
             )
         }
@@ -111,12 +114,14 @@ internal fun ResetPasswordStep(
     onEvent: (ForgotPasswordEvent) -> Unit,
 ) {
     if (isVisible) {
-        val onSubmitResetPasswordDebounced = rememberDebouncedClick {
-            onEvent(ForgotPasswordEvent.SubmitResetPassword)
-        }
-        val onResendOtpDebounced = rememberDebouncedClick {
-            onEvent(ForgotPasswordEvent.ResendOtp)
-        }
+        val onSubmitResetPasswordDebounced =
+            rememberDebouncedClick {
+                onEvent(ForgotPasswordEvent.SubmitResetPassword)
+            }
+        val onResendOtpDebounced =
+            rememberDebouncedClick {
+                onEvent(ForgotPasswordEvent.ResendOtp)
+            }
         val passwordFocusRequester = remember { FocusRequester() }
         val confirmPasswordFocusRequester = remember { FocusRequester() }
 
@@ -143,9 +148,10 @@ internal fun ResetPasswordStep(
             Spacer(modifier = Modifier.height(16.dp))
 
             PasswordInput(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .focusRequester(passwordFocusRequester),
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .focusRequester(passwordFocusRequester),
                 label = stringResource(R.string.auth_new_password_hint),
                 password = state.newPassword,
                 passwordVisible = state.passwordVisible,
@@ -158,9 +164,10 @@ internal fun ResetPasswordStep(
             Spacer(modifier = Modifier.height(16.dp))
 
             PasswordInput(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .focusRequester(confirmPasswordFocusRequester),
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .focusRequester(confirmPasswordFocusRequester),
                 label = stringResource(R.string.auth_confirm_password_hint),
                 password = state.confirmPassword,
                 passwordVisible = state.confirmPasswordVisible,
@@ -200,14 +207,15 @@ private fun ResetPasswordStepPreview() {
     TreeTaskTheme {
         Surface(color = MaterialTheme.colorScheme.background) {
             ResetPasswordStep(
-                state = ForgotPasswordState(
-                    step = ForgotPasswordStep.ResetInput,
-                    email = "doan@gmail.com",
-                    otp = "123",
-                    newPassword = "",
-                    isLoading = false,
-                    confirmPassword = "",
-                ),
+                state =
+                    ForgotPasswordState(
+                        step = ForgotPasswordStep.ResetInput,
+                        email = "doan@gmail.com",
+                        otp = "123",
+                        newPassword = "",
+                        isLoading = false,
+                        confirmPassword = "",
+                    ),
                 onEvent = {},
             )
         }
@@ -220,16 +228,17 @@ private fun ResetPasswordStepFilledPreview() {
     TreeTaskTheme {
         Surface(color = MaterialTheme.colorScheme.background) {
             ResetPasswordStep(
-                state = ForgotPasswordState(
-                    step = ForgotPasswordStep.ResetInput,
-                    email = "doan@gmail.com",
-                    otp = "123456",
-                    newPassword = "password123",
-                    passwordVisible = false,
-                    isLoading = false,
-                    confirmPassword = "password124",
-                    confirmPasswordVisible = false,
-                ),
+                state =
+                    ForgotPasswordState(
+                        step = ForgotPasswordStep.ResetInput,
+                        email = "doan@gmail.com",
+                        otp = "123456",
+                        newPassword = "password123",
+                        passwordVisible = false,
+                        isLoading = false,
+                        confirmPassword = "password124",
+                        confirmPasswordVisible = false,
+                    ),
                 onEvent = {},
             )
         }
@@ -242,13 +251,14 @@ private fun ResetPasswordStepLoadingPreview() {
     TreeTaskTheme {
         Surface(color = MaterialTheme.colorScheme.background) {
             ResetPasswordStep(
-                state = ForgotPasswordState(
-                    step = ForgotPasswordStep.ResetInput,
-                    email = "doan@gmail.com",
-                    otp = "123456",
-                    newPassword = "password123",
-                    isLoading = true,
-                ),
+                state =
+                    ForgotPasswordState(
+                        step = ForgotPasswordStep.ResetInput,
+                        email = "doan@gmail.com",
+                        otp = "123456",
+                        newPassword = "password123",
+                        isLoading = true,
+                    ),
                 onEvent = {},
             )
         }

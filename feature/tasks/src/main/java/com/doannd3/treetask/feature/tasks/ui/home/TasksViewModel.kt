@@ -35,84 +35,85 @@ import com.doannd3.treetask.core.common.R as CommonR
 @OptIn(FlowPreview::class)
 @HiltViewModel
 class TasksViewModel
-@Inject
-constructor(
-    private val getTasksUseCase: GetTasksUseCase,
-    private val deleteTaskUseCase: DeleteTaskUseCase,
-    private val observeCurrentUserIdUseCase: ObserveCurrentUserIdUseCase,
-) : BaseViewModel(),
-    MviViewModel<TasksState, TasksEvent, TasksEffect> {
-    override fun setLoading(isLoading: Boolean) {
-        _uiState.update { it.copy(isLoading = isLoading) }
-    }
-
-    private val _uiState = MutableStateFlow(TasksState())
-    override val uiState: StateFlow<TasksState> = _uiState.asStateFlow()
-
-    private val _effect = MutableSharedFlow<TasksEffect>()
-    override val effect: SharedFlow<TasksEffect> = _effect.asSharedFlow()
-
-    private fun getPagingTasks(): Flow<PagingData<Task>> =
-        uiState
-            .map {
-                Triple(it.searchQuery, it.taskStatusSelected, it.userId)
-            }.distinctUntilChanged()
-            .flatMapLatest { (query, status, userId) ->
-                getTasksUseCase(
-                    keyword = query,
-                    status = status?.apiValue ?: "",
-                    userId = userId,
-                )
-            }.cachedIn(viewModelScope)
-
-    init {
-        // Giả sử bạn lấy userId từ storage khi init
-        viewModelScope.launch {
-            observeCurrentUserIdUseCase().collect { userId ->
-                _uiState.update { it.copy(userId = userId) }
-            }
+    @Inject
+    constructor(
+        private val getTasksUseCase: GetTasksUseCase,
+        private val deleteTaskUseCase: DeleteTaskUseCase,
+        private val observeCurrentUserIdUseCase: ObserveCurrentUserIdUseCase,
+    ) : BaseViewModel(),
+        MviViewModel<TasksState, TasksEvent, TasksEffect> {
+        override fun setLoading(isLoading: Boolean) {
+            _uiState.update { it.copy(isLoading = isLoading) }
         }
-        // Gán flow paging vào state
-        _uiState.update { it.copy(tasks = getPagingTasks()) }
-    }
 
-    override fun onEvent(event: TasksEvent) {
-        when (event) {
-            is TasksEvent.SearchChanged -> {
-                _uiState.update { it.copy(searchQuery = event.searchQuery) }
-            }
+        private val _uiState = MutableStateFlow(TasksState())
+        override val uiState: StateFlow<TasksState> = _uiState.asStateFlow()
 
-            is TasksEvent.FilterSelected -> {
-                _uiState.update { it.copy(taskStatusSelected = event.taskStatusSelected) }
-            }
+        private val _effect = MutableSharedFlow<TasksEffect>()
+        override val effect: SharedFlow<TasksEffect> = _effect.asSharedFlow()
 
-            is TasksEvent.SearchQueryClear -> {
-                _uiState.update { it.copy(searchQuery = "") }
-            }
-
-            TasksEvent.Refresh -> {
-            }
-
-            is TasksEvent.DeleteTask -> {
-                deleteTask(taskId = event.taskId)
-            }
-        }
-    }
-
-    private fun deleteTask(taskId: String) {
-        executeSafe {
-            _uiState.update { it.copy(isLoading = true) }
-            val result = deleteTaskUseCase(taskId = taskId)
-            _uiState.update { it.copy(isLoading = false) }
-            when (result) {
-                is ApiResult.Success -> { }
-                is ApiResult.Error -> {
-                    val message = result.toDisplayMessage(
-                        UiText.StringResource(CommonR.string.common_error_unknown),
+        private fun getPagingTasks(): Flow<PagingData<Task>> =
+            uiState
+                .map {
+                    Triple(it.searchQuery, it.taskStatusSelected, it.userId)
+                }.distinctUntilChanged()
+                .flatMapLatest { (query, status, userId) ->
+                    getTasksUseCase(
+                        keyword = query,
+                        status = status?.apiValue ?: "",
+                        userId = userId,
                     )
-                    _effect.emit(TasksEffect.ShowErrorMessage(message))
+                }.cachedIn(viewModelScope)
+
+        init {
+            // Giả sử bạn lấy userId từ storage khi init
+            viewModelScope.launch {
+                observeCurrentUserIdUseCase().collect { userId ->
+                    _uiState.update { it.copy(userId = userId) }
+                }
+            }
+            // Gán flow paging vào state
+            _uiState.update { it.copy(tasks = getPagingTasks()) }
+        }
+
+        override fun onEvent(event: TasksEvent) {
+            when (event) {
+                is TasksEvent.SearchChanged -> {
+                    _uiState.update { it.copy(searchQuery = event.searchQuery) }
+                }
+
+                is TasksEvent.FilterSelected -> {
+                    _uiState.update { it.copy(taskStatusSelected = event.taskStatusSelected) }
+                }
+
+                is TasksEvent.SearchQueryClear -> {
+                    _uiState.update { it.copy(searchQuery = "") }
+                }
+
+                TasksEvent.Refresh -> {
+                }
+
+                is TasksEvent.DeleteTask -> {
+                    deleteTask(taskId = event.taskId)
+                }
+            }
+        }
+
+        private fun deleteTask(taskId: String) {
+            executeSafe {
+                _uiState.update { it.copy(isLoading = true) }
+                val result = deleteTaskUseCase(taskId = taskId)
+                _uiState.update { it.copy(isLoading = false) }
+                when (result) {
+                    is ApiResult.Success -> { }
+                    is ApiResult.Error -> {
+                        val message =
+                            result.toDisplayMessage(
+                                UiText.StringResource(CommonR.string.common_error_unknown),
+                            )
+                        _effect.emit(TasksEffect.ShowErrorMessage(message))
+                    }
                 }
             }
         }
     }
-}

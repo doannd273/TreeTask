@@ -109,36 +109,36 @@ internal fun SearchTaskInput(
 ) {
     TextField(
         modifier =
-        Modifier
-            .fillMaxWidth()
-            .border(
-                width = 1.dp,
-                color = MaterialTheme.colorScheme.primary,
-                shape = RoundedCornerShape(6.dp),
-            )
-            .background(
-                color = MaterialTheme.colorScheme.surface,
-                shape = RoundedCornerShape(6.dp),
-            ),
+            Modifier
+                .fillMaxWidth()
+                .border(
+                    width = 1.dp,
+                    color = MaterialTheme.colorScheme.primary,
+                    shape = RoundedCornerShape(6.dp),
+                )
+                .background(
+                    color = MaterialTheme.colorScheme.surface,
+                    shape = RoundedCornerShape(6.dp),
+                ),
         colors =
-        TextFieldDefaults.colors(
-            focusedTextColor = MaterialTheme.colorScheme.onSurface,
-            unfocusedTextColor = MaterialTheme.colorScheme.onSurfaceVariant,
-            focusedIndicatorColor = Color.Transparent,
-            unfocusedIndicatorColor = Color.Transparent,
-            disabledIndicatorColor = Color.Transparent,
-            focusedContainerColor = Color.Transparent,
-            unfocusedContainerColor = Color.Transparent,
-            disabledContainerColor = Color.Transparent,
-        ),
+            TextFieldDefaults.colors(
+                focusedTextColor = MaterialTheme.colorScheme.onSurface,
+                unfocusedTextColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                focusedIndicatorColor = Color.Transparent,
+                unfocusedIndicatorColor = Color.Transparent,
+                disabledIndicatorColor = Color.Transparent,
+                focusedContainerColor = Color.Transparent,
+                unfocusedContainerColor = Color.Transparent,
+                disabledContainerColor = Color.Transparent,
+            ),
         textStyle =
-        MaterialTheme.typography.bodyMedium,
+            MaterialTheme.typography.bodyMedium,
         singleLine = true,
         keyboardOptions =
-        KeyboardOptions(
-            keyboardType = KeyboardType.Text,
-            imeAction = ImeAction.Done,
-        ),
+            KeyboardOptions(
+                keyboardType = KeyboardType.Text,
+                imeAction = ImeAction.Done,
+            ),
         placeholder = {
             Text(text = stringResource(R.string.tasks_search_hint))
         },
@@ -191,9 +191,7 @@ private fun SearchTaskInputPreview() {
 // region TasksEmptyState
 
 @Composable
-internal fun TasksEmptyState(
-    modifier: Modifier = Modifier,
-) {
+internal fun TasksEmptyState(modifier: Modifier = Modifier) {
     Box(
         modifier = modifier,
         contentAlignment = Alignment.Center,
@@ -212,9 +210,9 @@ private fun TasksEmptyStatePreview() {
     TreeTaskTheme {
         TasksEmptyState(
             modifier =
-            Modifier
-                .fillMaxWidth()
-                .padding(32.dp),
+                Modifier
+                    .fillMaxWidth()
+                    .padding(32.dp),
         )
     }
 }
@@ -229,14 +227,15 @@ internal fun SwipeToDeleteTaskItem(
     onClick: () -> Unit,
     onDeleteClick: () -> Unit,
 ) {
-    val dismissState = rememberSwipeToDismissBoxState(
-        confirmValueChange = { value ->
-            if (value == SwipeToDismissBoxValue.EndToStart) {
-                onDeleteClick()
-            }
-            false
-        },
-    )
+    val dismissState =
+        rememberSwipeToDismissBoxState(
+            confirmValueChange = { value ->
+                if (value == SwipeToDismissBoxValue.EndToStart) {
+                    onDeleteClick()
+                }
+                false
+            },
+        )
 
     SwipeToDismissBox(
         state = dismissState,
@@ -245,10 +244,11 @@ internal fun SwipeToDeleteTaskItem(
         backgroundContent = {
             val isActive = dismissState.dismissDirection == SwipeToDismissBoxValue.EndToStart
             Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(if (isActive) MaterialTheme.colorScheme.error else Color.Transparent)
-                    .padding(end = 16.dp),
+                modifier =
+                    Modifier
+                        .fillMaxSize()
+                        .background(if (isActive) MaterialTheme.colorScheme.error else Color.Transparent)
+                        .padding(end = 16.dp),
                 contentAlignment = Alignment.CenterEnd,
             ) {
                 if (isActive) {
@@ -279,9 +279,9 @@ internal fun TaskItem(
     Card(
         onClick = onClick,
         modifier =
-        modifier
-            .fillMaxWidth()
-            .padding(vertical = 6.dp),
+            modifier
+                .fillMaxWidth()
+                .padding(vertical = 6.dp),
         shape = RoundedCornerShape(12.dp),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
@@ -349,21 +349,22 @@ internal fun TaskItem(
 @Composable
 internal fun StatusBadge(status: TaskStatus) {
     val colorScheme = MaterialTheme.colorScheme
-    val (backgroundColor, textColor) = when (status) {
-        TaskStatus.TODO -> colorScheme.surfaceVariant to colorScheme.onSurfaceVariant
-        TaskStatus.IN_PROGRESS -> colorScheme.primary to colorScheme.onPrimary
-        TaskStatus.PENDING -> colorScheme.error to colorScheme.onError
-        TaskStatus.DONE -> MaterialTheme.treeTaskColors.success to MaterialTheme.treeTaskColors.onSuccess
-    }
+    val (backgroundColor, textColor) =
+        when (status) {
+            TaskStatus.TODO -> colorScheme.surfaceVariant to colorScheme.onSurfaceVariant
+            TaskStatus.IN_PROGRESS -> colorScheme.primary to colorScheme.onPrimary
+            TaskStatus.PENDING -> colorScheme.error to colorScheme.onError
+            TaskStatus.DONE -> MaterialTheme.treeTaskColors.success to MaterialTheme.treeTaskColors.onSuccess
+        }
 
     Row(
         modifier =
-        Modifier
-            .background(
-                shape = RoundedCornerShape(3.dp),
-                color = backgroundColor,
-            )
-            .padding(vertical = 4.dp, horizontal = 8.dp),
+            Modifier
+                .background(
+                    shape = RoundedCornerShape(3.dp),
+                    color = backgroundColor,
+                )
+                .padding(vertical = 4.dp, horizontal = 8.dp),
     ) {
         Text(
             text = stringResource(status.labelRes()),
@@ -387,16 +388,16 @@ private fun TaskItemPreview() {
     TreeTaskTheme {
         TaskItem(
             task =
-            Task(
-                id = "1",
-                userId = "user_1",
-                title = "Fix login bug",
-                description = "Crash when login with Google",
-                status = TaskStatus.IN_PROGRESS,
-                dueDate = Instant.parse("2026-04-20T10:00:00Z"),
-                createdAt = Instant.parse("2026-04-10T08:00:00Z"),
-                updatedAt = Instant.parse("2026-04-15T09:00:00Z"),
-            ),
+                Task(
+                    id = "1",
+                    userId = "user_1",
+                    title = "Fix login bug",
+                    description = "Crash when login with Google",
+                    status = TaskStatus.IN_PROGRESS,
+                    dueDate = Instant.parse("2026-04-20T10:00:00Z"),
+                    createdAt = Instant.parse("2026-04-10T08:00:00Z"),
+                    updatedAt = Instant.parse("2026-04-15T09:00:00Z"),
+                ),
             onClick = {},
             onDeleteClick = {},
         )

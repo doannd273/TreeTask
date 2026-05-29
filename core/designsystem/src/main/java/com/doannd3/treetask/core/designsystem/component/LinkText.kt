@@ -94,24 +94,24 @@ private fun LinkTextRegisterPreview() {
             modifier = Modifier.padding(16.dp),
             text = "Don't have an account? Register",
             links =
-            listOf(
-                LinkPart(
-                    text = "Register",
-                    tag = LinkTag.REGISTER.name,
-                    onClick = {},
+                listOf(
+                    LinkPart(
+                        text = "Register",
+                        tag = LinkTag.REGISTER.name,
+                        onClick = {},
+                    ),
                 ),
-            ),
             parentStyle =
-            TextStyle(
-                color = MaterialTheme.colorScheme.primary,
-                fontSize = 15.sp,
-            ),
+                TextStyle(
+                    color = MaterialTheme.colorScheme.primary,
+                    fontSize = 15.sp,
+                ),
             linkStyle =
-            SpanStyle(
-                color = MaterialTheme.colorScheme.primary,
-                fontSize = 15.sp,
-                textDecoration = TextDecoration.Underline,
-            ),
+                SpanStyle(
+                    color = MaterialTheme.colorScheme.primary,
+                    fontSize = 15.sp,
+                    textDecoration = TextDecoration.Underline,
+                ),
         )
     }
 }

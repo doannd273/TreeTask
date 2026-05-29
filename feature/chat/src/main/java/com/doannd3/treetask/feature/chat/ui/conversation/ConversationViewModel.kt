@@ -13,17 +13,17 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ConversationViewModel
-@Inject
-constructor() :
+    @Inject
+    constructor() :
     BaseViewModel(),
-    MviViewModel<ConversationState, ConversationEvent, ConversationEffect> {
-    private val _uiState = MutableStateFlow(ConversationState())
-    override val uiState: StateFlow<ConversationState> = _uiState.asStateFlow()
+        MviViewModel<ConversationState, ConversationEvent, ConversationEffect> {
+        private val _uiState = MutableStateFlow(ConversationState())
+        override val uiState: StateFlow<ConversationState> = _uiState.asStateFlow()
 
-    private val _effect = MutableSharedFlow<ConversationEffect>()
-    override val effect: SharedFlow<ConversationEffect> = _effect.asSharedFlow()
+        private val _effect = MutableSharedFlow<ConversationEffect>()
+        override val effect: SharedFlow<ConversationEffect> = _effect.asSharedFlow()
 
-    override fun onEvent(event: ConversationEvent) {
-        // TODO
+        override fun onEvent(event: ConversationEvent) {
+            // TODO
+        }
     }
-}

@@ -13,17 +13,17 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ChartViewModel
-@Inject
-constructor() :
+    @Inject
+    constructor() :
     BaseViewModel(),
-    MviViewModel<ChartState, ChartEvent, ChartEffect> {
-    private val _uiState = MutableStateFlow(ChartState())
-    override val uiState: StateFlow<ChartState> = _uiState.asStateFlow()
+        MviViewModel<ChartState, ChartEvent, ChartEffect> {
+        private val _uiState = MutableStateFlow(ChartState())
+        override val uiState: StateFlow<ChartState> = _uiState.asStateFlow()
 
-    private val _effect = MutableSharedFlow<ChartEffect>()
-    override val effect: SharedFlow<ChartEffect> = _effect.asSharedFlow()
+        private val _effect = MutableSharedFlow<ChartEffect>()
+        override val effect: SharedFlow<ChartEffect> = _effect.asSharedFlow()
 
-    override fun onEvent(event: ChartEvent) {
-        // TODO
+        override fun onEvent(event: ChartEvent) {
+            // TODO
+        }
     }
-}

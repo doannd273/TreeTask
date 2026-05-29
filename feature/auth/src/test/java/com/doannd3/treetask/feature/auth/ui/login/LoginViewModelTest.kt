@@ -8,7 +8,6 @@ import org.junit.Before
 import org.junit.Rule
 
 class LoginViewModelTest {
-
     @get:Rule
     val mainDispatcherRule = MainDispatcherRule()
 
@@ -17,8 +16,9 @@ class LoginViewModelTest {
 
     @Before
     fun setUp() {
-        viewModel = LoginViewModel(
-            loginUseCase = loginUseCase,
-        )
+        viewModel =
+            LoginViewModel(
+                loginUseCase = loginUseCase,
+            )
     }
 }

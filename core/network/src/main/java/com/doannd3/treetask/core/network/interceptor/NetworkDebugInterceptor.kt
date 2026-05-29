@@ -9,48 +9,48 @@ import java.io.IOException
 import javax.inject.Inject
 
 class NetworkDebugInterceptor
-@Inject
-constructor() : Interceptor {
-    override fun intercept(chain: Interceptor.Chain): Response {
-        val request = chain.request()
+    @Inject
+    constructor() : Interceptor {
+        override fun intercept(chain: Interceptor.Chain): Response {
+            val request = chain.request()
 
-        val startTime = System.currentTimeMillis()
+            val startTime = System.currentTimeMillis()
 
-        // Log request
-        Timber.tag(AppTag.NETWORK).d(
-            """
+            // Log request
+            Timber.tag(AppTag.NETWORK).d(
+                """
                 ➡️ REQUEST
                 ${request.method} ${request.url}
                 Headers: ${request.headers.redact()}
-            """.trimIndent(),
-        )
+                """.trimIndent(),
+            )
 
-        return try {
-            val response = chain.proceed(request)
+            return try {
+                val response = chain.proceed(request)
 
-            val duration = System.currentTimeMillis() - startTime
+                val duration = System.currentTimeMillis() - startTime
 
-            // 👉 Log response
-            Timber.tag(AppTag.NETWORK).d(
-                """
+                // 👉 Log response
+                Timber.tag(AppTag.NETWORK).d(
+                    """
                     ⬅️ RESPONSE (${duration}ms)
                     ${response.code} ${response.request.url}
-                """.trimIndent(),
-            )
+                    """.trimIndent(),
+                )
 
-            response
-        } catch (e: IOException) {
-            val duration = System.currentTimeMillis() - startTime
+                response
+            } catch (e: IOException) {
+                val duration = System.currentTimeMillis() - startTime
 
-            Timber.tag(AppTag.NETWORK).e(
-                e,
-                """
+                Timber.tag(AppTag.NETWORK).e(
+                    e,
+                    """
                     ❌ ERROR (${duration}ms)
                     ${request.method} ${request.url}
-                """.trimIndent(),
-            )
+                    """.trimIndent(),
+                )
 
-            throw e
+                throw e
+            }
         }
     }
-}

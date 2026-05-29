@@ -67,9 +67,9 @@ fun OtpInput(
                     repeat(resolvedOtpLength) { index ->
                         OtpDigitBox(
                             modifier =
-                            Modifier
-                                .weight(1f)
-                                .height(52.dp),
+                                Modifier
+                                    .weight(1f)
+                                    .height(52.dp),
                             digit = currentValue.getOrNull(index)?.toString().orEmpty(),
                             isActive = currentValue.length == index,
                             enabled = enabled,
@@ -80,9 +80,9 @@ fun OtpInput(
 
                 Box(
                     modifier =
-                    Modifier
-                        .size(1.dp)
-                        .alpha(0f),
+                        Modifier
+                            .size(1.dp)
+                            .alpha(0f),
                 ) {
                     innerTextField()
                 }
@@ -111,12 +111,12 @@ private fun OtpDigitBox(
 
     Box(
         modifier =
-        modifier
-            .border(
-                width = if (isActive) 2.dp else 1.dp,
-                color = borderColor,
-                shape = RoundedCornerShape(6.dp),
-            ).padding(horizontal = 4.dp),
+            modifier
+                .border(
+                    width = if (isActive) 2.dp else 1.dp,
+                    color = borderColor,
+                    shape = RoundedCornerShape(6.dp),
+                ).padding(horizontal = 4.dp),
         contentAlignment = Alignment.Center,
     ) {
         Text(
