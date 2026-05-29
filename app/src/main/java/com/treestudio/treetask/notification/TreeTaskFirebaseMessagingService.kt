@@ -10,6 +10,7 @@ import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
@@ -29,6 +30,11 @@ class TreeTaskFirebaseMessagingService : FirebaseMessagingService() {
     @Dispatcher(TreeTaskDispatchers.IO)
     lateinit var ioDispatcher: CoroutineDispatcher
 
+    private val exceptionHandler =
+        CoroutineExceptionHandler { _, throwable ->
+            Timber.tag(AppTag.NETWORK).e(throwable, "Register FCM token failed unexpectedly")
+        }
+
     private val serviceScope by lazy {
         CoroutineScope(SupervisorJob() + ioDispatcher)
     }
@@ -47,8 +53,9 @@ class TreeTaskFirebaseMessagingService : FirebaseMessagingService() {
     }
 
     override fun onNewToken(token: String) {
-        serviceScope.launch {
-            when (val result = registerDeviceTokenIfAuthenticatedUseCase(token)) {
+        serviceScope.launch(exceptionHandler) {
+            val result = registerDeviceTokenIfAuthenticatedUseCase(token)
+            when (result) {
                 null -> {
                     Timber.tag(AppTag.NETWORK).d("Skip FCM token registration: user not logged in")
                 }
