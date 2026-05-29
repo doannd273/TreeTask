@@ -11,4 +11,10 @@ android {
 }
 dependencies {
     implementation(projects.core.model)
+
+    // androidx
+    implementation(libs.androidx.core.ktx)
+
+    // testing
+    testImplementation(projects.core.testing)
 }
