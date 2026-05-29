@@ -155,6 +155,7 @@ dependencies {
     implementation(projects.core.data)
     implementation(projects.core.permission)
     implementation(projects.core.network)
+    implementation(projects.core.notification)
 
     // androidx
     implementation(libs.androidx.activity.compose)
