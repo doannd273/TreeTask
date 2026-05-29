@@ -20,4 +20,16 @@ interface TaskRepository {
         status: String,
         dueDate: String,
     ): ApiResult<Task>
+
+    suspend fun updateTask(
+        taskId: String,
+        title: String,
+        description: String,
+        status: String,
+        dueDate: String,
+    ): ApiResult<Task>
+
+    suspend fun getTaskById(taskId: String): ApiResult<Task>
+
+    suspend fun deleteTask(taskId: String): ApiResult<Unit>
 }

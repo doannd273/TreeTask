@@ -12,16 +12,22 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
@@ -35,6 +41,7 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.itemContentType
 import androidx.paging.compose.itemKey
 import com.doannd3.treetask.core.common.asString
+import com.doannd3.treetask.core.designsystem.component.CommonConfirmDialog
 import com.doannd3.treetask.core.designsystem.component.LocalGlobalAppState
 import com.doannd3.treetask.core.designsystem.theme.AppPreviewLightDark
 import com.doannd3.treetask.core.designsystem.theme.TreeTaskTheme
@@ -98,7 +105,7 @@ fun TasksRoute(
 }
 
 @Composable
-fun TasksScreen(
+internal fun TasksScreen(
     state: TasksState,
     pagingItems: LazyPagingItems<Task>,
     onEvent: (TasksEvent) -> Unit,
@@ -113,7 +120,7 @@ fun TasksScreen(
             ) {
                 Icon(
                     painter = painterResource(R.drawable.tasks_ic_add),
-                    contentDescription = null,
+                    contentDescription = stringResource(R.string.tasks_cd_add_task),
                 )
             }
         },
@@ -129,13 +136,34 @@ fun TasksScreen(
 }
 
 @Composable
-fun TasksContent(
+internal fun TasksContent(
     modifier: Modifier = Modifier,
     state: TasksState,
     pagingItems: LazyPagingItems<Task>,
     onEvent: (TasksEvent) -> Unit,
     onTaskClick: (Task) -> Unit,
 ) {
+    var showConfirmDialog by remember { mutableStateOf(false) }
+    var taskIdToDelete by remember { mutableStateOf<String?>(null) }
+
+    if (showConfirmDialog && taskIdToDelete != null) {
+        CommonConfirmDialog(
+            title = stringResource(R.string.tasks_delete_task_confirm_title),
+            message = stringResource(R.string.tasks_delete_task_confirm_message),
+            confirmLabel = stringResource(R.string.tasks_delete_task_confirm_button),
+            cancelLabel = stringResource(R.string.tasks_delete_task_cancel_button),
+            onConfirm = {
+                onEvent(TasksEvent.DeleteTask(taskIdToDelete!!))
+                showConfirmDialog = false
+                taskIdToDelete = null
+            },
+            onDismiss = {
+                showConfirmDialog = false
+                taskIdToDelete = null
+            },
+        )
+    }
+
     Column(
         modifier =
         modifier
@@ -155,6 +183,15 @@ fun TasksContent(
             onFilterSelect = { onEvent(TasksEvent.FilterSelected(it)) },
         )
 
+        if (pagingItems.itemCount == 0 && pagingItems.loadState.refresh is LoadState.NotLoading) {
+            TasksEmptyState(
+                modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .weight(1f),
+            )
+        }
+
         LazyColumn(
             modifier = Modifier.padding(top = 6.dp),
         ) {
@@ -163,12 +200,15 @@ fun TasksContent(
                 key = pagingItems.itemKey { it.id },
                 contentType = pagingItems.itemContentType { "task" },
             ) { index ->
-                val task = pagingItems[index]
-                if (task != null) {
-                    TaskItem(task = task, onClick = {
-                        onTaskClick.invoke(task)
-                    })
-                }
+                val task = pagingItems[index] ?: return@items
+                SwipeToDeleteTaskItem(
+                    task = task,
+                    onClick = { onTaskClick(task) },
+                    onDeleteClick = {
+                        taskIdToDelete = task.id
+                        showConfirmDialog = true
+                    },
+                )
             }
 
             pagingItems.apply {
@@ -183,10 +223,28 @@ fun TasksContent(
                             }
                         }
                     }
+
+                    loadState.refresh is LoadState.Error -> {
+                        item {
+                            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                                Text(
+                                    text = stringResource(R.string.tasks_refresh_error_message),
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                    textAlign = TextAlign.Center,
+                                )
+                                TextButton(onClick = { retry() }) {
+                                    Text(text = stringResource(R.string.tasks_error_retry)) // "Connection error. Retry"
+                                }
+                            }
+                        }
+                    }
+
                     loadState.append is LoadState.Loading -> {
                         item {
                             Box(
-                                modifier = Modifier
+                                modifier =
+                                Modifier
                                     .fillMaxWidth()
                                     .padding(16.dp),
                                 contentAlignment = Alignment.Center,
@@ -195,6 +253,7 @@ fun TasksContent(
                             }
                         }
                     }
+
                     loadState.append is LoadState.Error -> {
                         item {
                             Box(
@@ -202,7 +261,7 @@ fun TasksContent(
                                 contentAlignment = Alignment.Center,
                             ) {
                                 TextButton(onClick = { retry() }) {
-                                    Text("Lỗi kết nối. Thử lại")
+                                    Text(text = stringResource(R.string.tasks_error_retry))
                                 }
                             }
                         }
@@ -217,28 +276,29 @@ fun TasksContent(
 @Composable
 private fun TasksScreenPreview() {
     TreeTaskTheme {
-        val sampleTasks = listOf(
-            Task(
-                id = "1",
-                userId = "user_1",
-                title = "Fix login bug",
-                description = "Crash when login with Google",
-                status = TaskStatus.PENDING,
-                dueDate = Instant.parse("2026-04-20T10:00:00Z"),
-                createdAt = Instant.parse("2026-04-10T08:00:00Z"),
-                updatedAt = Instant.parse("2026-04-15T09:00:00Z"),
-            ),
-            Task(
-                id = "2",
-                userId = "user_1",
-                title = "Design home screen",
-                description = "Create UI with Compose",
-                status = TaskStatus.TODO,
-                dueDate = Instant.parse("2026-04-25T10:00:00Z"),
-                createdAt = Instant.parse("2026-04-11T08:00:00Z"),
-                updatedAt = Instant.parse("2026-04-12T09:00:00Z"),
-            ),
-        )
+        val sampleTasks =
+            listOf(
+                Task(
+                    id = "1",
+                    userId = "user_1",
+                    title = "Fix login bug",
+                    description = "Crash when login with Google",
+                    status = TaskStatus.PENDING,
+                    dueDate = Instant.parse("2026-04-20T10:00:00Z"),
+                    createdAt = Instant.parse("2026-04-10T08:00:00Z"),
+                    updatedAt = Instant.parse("2026-04-15T09:00:00Z"),
+                ),
+                Task(
+                    id = "2",
+                    userId = "user_1",
+                    title = "Design home screen",
+                    description = "Create UI with Compose",
+                    status = TaskStatus.TODO,
+                    dueDate = Instant.parse("2026-04-25T10:00:00Z"),
+                    createdAt = Instant.parse("2026-04-11T08:00:00Z"),
+                    updatedAt = Instant.parse("2026-04-12T09:00:00Z"),
+                ),
+            )
 
         val sampleTasksState =
             TasksState(

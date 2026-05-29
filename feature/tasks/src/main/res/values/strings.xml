@@ -2,9 +2,18 @@
 <resources>
     <string name="tasks_title">Task Management</string>
     <string name="tasks_search_hint">Search tasks…</string>
+    <string name="tasks_cd_search">Search tasks</string>
+    <string name="tasks_cd_clear_search">Clear search</string>
+    <string name="tasks_cd_add_task">Add task</string>
+    <string name="tasks_due_date_label">Due: %s</string>
+    <string name="tasks_error_retry">Connection error. Retry</string>
+    <string name="tasks_empty_state_message">No tasks yet</string>
+    <string name="tasks_refresh_error_message">Unable to refresh tasks. Please try again.</string>
     <string name="tasks_error_title_empty">Title cannot be empty</string>
     <string name="tasks_add_task_success">Add task successfully</string>
+    <string name="tasks_update_task_success">Update task successfully</string>
     <string name="tasks_add_task_title">Add Task</string>
+    <string name="tasks_edit_task_title">Edit Task</string>
     <string name="tasks_add_task_title_label">Title</string>
     <string name="tasks_add_task_title_placeholder">Enter task title</string>
     <string name="tasks_add_task_description_label">Description</string>
@@ -12,10 +21,19 @@
     <string name="tasks_add_task_status_label">Status</string>
     <string name="tasks_add_task_due_date_label">Due date</string>
     <string name="tasks_add_task_due_date_placeholder">YYYY-MM-DD</string>
+    <string name="tasks_date_picker_confirm">OK</string>
+    <string name="tasks_date_picker_cancel">Cancel</string>
     <string name="tasks_add_task_submit">Create task</string>
     <string name="tasks_add_task_submit_loading">Creating…</string>
+    <string name="tasks_edit_task_submit">Save changes</string>
+    <string name="tasks_edit_task_submit_loading">Saving…</string>
     <string name="tasks_status_todo">Todo</string>
     <string name="tasks_status_in_progress">In progress</string>
     <string name="tasks_status_pending">Pending</string>
     <string name="tasks_status_done">Done</string>
+    <string name="tasks_delete_task_icon_description">Delete task</string>
+    <string name="tasks_delete_task_confirm_title">Delete Task</string>
+    <string name="tasks_delete_task_confirm_message">Are you sure you want to delete this task? This action cannot be undone.</string>
+    <string name="tasks_delete_task_confirm_button">Delete</string>
+    <string name="tasks_delete_task_cancel_button">Cancel</string>
 </resources>

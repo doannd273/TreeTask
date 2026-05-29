@@ -9,12 +9,13 @@ import com.doannd3.treetask.core.model.task.Task
 import com.doannd3.treetask.core.model.task.TaskStatus
 import javax.inject.Inject
 
-class CreateTaskUseCase
+class UpdateTaskUseCase
 @Inject
 constructor(
     private val taskRepository: TaskRepository,
 ) {
     suspend operator fun invoke(
+        taskId: String,
         title: String,
         description: String,
         status: String,
@@ -46,7 +47,8 @@ constructor(
             return validationError(R.string.common_error_task_due_date_invalid)
         }
 
-        return taskRepository.createTask(
+        return taskRepository.updateTask(
+            taskId = taskId,
             title = titleTrimmed,
             description = descriptionTrimmed,
             status = statusTrimmed,

@@ -3,9 +3,11 @@ package com.doannd3.treetask.feature.tasks.ui.home
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -20,9 +22,12 @@ import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SwipeToDismissBox
+import androidx.compose.material3.SwipeToDismissBoxValue
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -33,12 +38,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.doannd3.treetask.core.common.extension.toDayMonth
 import com.doannd3.treetask.core.designsystem.theme.AppPreviewLightDark
 import com.doannd3.treetask.core.designsystem.theme.TreeTaskTheme
@@ -49,8 +53,10 @@ import com.doannd3.treetask.feature.tasks.R
 import com.doannd3.treetask.feature.tasks.ui.model.labelRes
 import java.time.Instant
 
+// region TaskStatusChips
+
 @Composable
-fun TaskStatusChips(
+internal fun TaskStatusChips(
     taskStatusSelected: TaskStatus?,
     onFilterSelect: (TaskStatus?) -> Unit,
 ) {
@@ -77,8 +83,25 @@ fun TaskStatusChips(
     }
 }
 
+@AppPreviewLightDark
 @Composable
-fun SearchTaskInput(
+private fun TaskStatusChipsPreview() {
+    TreeTaskTheme {
+        var selected by remember { mutableStateOf<TaskStatus?>(TaskStatus.TODO) }
+
+        TaskStatusChips(
+            taskStatusSelected = selected,
+            onFilterSelect = { selected = it },
+        )
+    }
+}
+
+// endregion
+
+// region SearchTaskInput
+
+@Composable
+internal fun SearchTaskInput(
     isLoadingSearch: Boolean,
     searchQuery: String,
     onSearchChange: (String) -> Unit,
@@ -92,7 +115,8 @@ fun SearchTaskInput(
                 width = 1.dp,
                 color = MaterialTheme.colorScheme.primary,
                 shape = RoundedCornerShape(6.dp),
-            ).background(
+            )
+            .background(
                 color = MaterialTheme.colorScheme.surface,
                 shape = RoundedCornerShape(6.dp),
             ),
@@ -108,9 +132,7 @@ fun SearchTaskInput(
             disabledContainerColor = Color.Transparent,
         ),
         textStyle =
-        TextStyle(
-            fontSize = 15.sp,
-        ),
+        MaterialTheme.typography.bodyMedium,
         singleLine = true,
         keyboardOptions =
         KeyboardOptions(
@@ -123,7 +145,7 @@ fun SearchTaskInput(
         leadingIcon = {
             Icon(
                 painterResource(R.drawable.tasks_ic_search),
-                contentDescription = null,
+                contentDescription = stringResource(R.string.tasks_cd_search),
             )
         },
         trailingIcon = {
@@ -140,7 +162,7 @@ fun SearchTaskInput(
                     IconButton(onClick = onClearClick) {
                         Icon(
                             painterResource(R.drawable.tasks_ic_clear),
-                            contentDescription = null,
+                            contentDescription = stringResource(R.string.tasks_cd_clear_search),
                         )
                     }
                 }
@@ -151,11 +173,108 @@ fun SearchTaskInput(
     )
 }
 
+@AppPreviewLightDark
 @Composable
-fun TaskItem(
+private fun SearchTaskInputPreview() {
+    TreeTaskTheme {
+        SearchTaskInput(
+            searchQuery = "",
+            isLoadingSearch = true,
+            onSearchChange = {},
+            onClearClick = {},
+        )
+    }
+}
+
+// endregion
+
+// region TasksEmptyState
+
+@Composable
+internal fun TasksEmptyState(
+    modifier: Modifier = Modifier,
+) {
+    Box(
+        modifier = modifier,
+        contentAlignment = Alignment.Center,
+    ) {
+        Text(
+            text = stringResource(R.string.tasks_empty_state_message),
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
+    }
+}
+
+@AppPreviewLightDark
+@Composable
+private fun TasksEmptyStatePreview() {
+    TreeTaskTheme {
+        TasksEmptyState(
+            modifier =
+            Modifier
+                .fillMaxWidth()
+                .padding(32.dp),
+        )
+    }
+}
+
+// endregion
+
+// region SwipeToDeleteTaskItem
+
+@Composable
+internal fun SwipeToDeleteTaskItem(
+    task: Task,
+    onClick: () -> Unit,
+    onDeleteClick: () -> Unit,
+) {
+    val dismissState = rememberSwipeToDismissBoxState(
+        confirmValueChange = { value ->
+            if (value == SwipeToDismissBoxValue.EndToStart) {
+                onDeleteClick()
+            }
+            false
+        },
+    )
+
+    SwipeToDismissBox(
+        state = dismissState,
+        enableDismissFromStartToEnd = false,
+        enableDismissFromEndToStart = true,
+        backgroundContent = {
+            val isActive = dismissState.dismissDirection == SwipeToDismissBoxValue.EndToStart
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(if (isActive) MaterialTheme.colorScheme.error else Color.Transparent)
+                    .padding(end = 16.dp),
+                contentAlignment = Alignment.CenterEnd,
+            ) {
+                if (isActive) {
+                    Icon(
+                        painter = painterResource(R.drawable.tasks_ic_delete),
+                        contentDescription = stringResource(R.string.tasks_delete_task_icon_description),
+                        tint = MaterialTheme.colorScheme.onError,
+                    )
+                }
+            }
+        },
+    ) {
+        TaskItem(task = task, onClick = onClick, onDeleteClick = onDeleteClick)
+    }
+}
+
+// endregion
+
+// region TaskItem
+
+@Composable
+internal fun TaskItem(
     modifier: Modifier = Modifier,
     task: Task,
     onClick: () -> Unit,
+    onDeleteClick: () -> Unit,
 ) {
     Card(
         onClick = onClick,
@@ -163,68 +282,102 @@ fun TaskItem(
         modifier
             .fillMaxWidth()
             .padding(vertical = 6.dp),
-        shape = RoundedCornerShape(3.dp),
+        shape = RoundedCornerShape(12.dp),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
     ) {
         Column(
             modifier = Modifier.padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp),
+            verticalArrangement = Arrangement.spacedBy(10.dp),
         ) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Text(
                     text = task.title,
                     color = MaterialTheme.colorScheme.primary,
-                    fontSize = 16.sp,
+                    style = MaterialTheme.typography.bodyLarge,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                     modifier = Modifier.weight(1f),
                 )
 
-                // Hiển thị Status Tag
-                StatusBadge(status = task.status)
+                IconButton(
+                    modifier = Modifier.size(40.dp),
+                    onClick = onDeleteClick,
+                ) {
+                    Icon(
+                        modifier = Modifier.size(20.dp),
+                        painter = painterResource(R.drawable.tasks_ic_delete),
+                        contentDescription = stringResource(R.string.tasks_delete_task_icon_description),
+                        tint = MaterialTheme.colorScheme.error,
+                    )
+                }
             }
             if (task.description?.isNotBlank() == true) {
                 Text(
                     text = task.description ?: "",
                     color = MaterialTheme.colorScheme.onSurface,
-                    fontSize = 13.sp,
+                    style = MaterialTheme.typography.bodySmall,
                     maxLines = 2,
                     overflow = TextOverflow.Ellipsis,
                 )
             }
-            Text(
-                text = "Hạn chót: ${task.dueDate.toDayMonth()}",
-                color = MaterialTheme.colorScheme.onSurface,
-                fontSize = 13.sp,
-            )
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                StatusBadge(status = task.status)
+
+                Text(
+                    modifier = Modifier.weight(1f),
+                    text = stringResource(R.string.tasks_due_date_label, task.dueDate.toDayMonth()),
+                    color = MaterialTheme.colorScheme.onSurface,
+                    style = MaterialTheme.typography.bodySmall,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    textAlign = TextAlign.End,
+                )
+            }
         }
     }
 }
 
 @Composable
-fun StatusBadge(status: TaskStatus) {
+internal fun StatusBadge(status: TaskStatus) {
     val colorScheme = MaterialTheme.colorScheme
-    val backgroundColor =
-        when (status) {
-            TaskStatus.TODO -> colorScheme.outline
-            TaskStatus.IN_PROGRESS -> colorScheme.primary
-            TaskStatus.PENDING -> colorScheme.error
-            TaskStatus.DONE -> MaterialTheme.treeTaskColors.success
-        }
+    val (backgroundColor, textColor) = when (status) {
+        TaskStatus.TODO -> colorScheme.surfaceVariant to colorScheme.onSurfaceVariant
+        TaskStatus.IN_PROGRESS -> colorScheme.primary to colorScheme.onPrimary
+        TaskStatus.PENDING -> colorScheme.error to colorScheme.onError
+        TaskStatus.DONE -> MaterialTheme.treeTaskColors.success to MaterialTheme.treeTaskColors.onSuccess
+    }
+
     Row(
         modifier =
         Modifier
             .background(
                 shape = RoundedCornerShape(3.dp),
                 color = backgroundColor,
-            ).padding(vertical = 4.dp, horizontal = 8.dp),
+            )
+            .padding(vertical = 4.dp, horizontal = 8.dp),
     ) {
-        Text(text = stringResource(status.labelRes()), color = Color.White, fontSize = 13.sp)
+        Text(
+            text = stringResource(status.labelRes()),
+            color = textColor,
+            style = MaterialTheme.typography.labelSmall,
+        )
+    }
+}
+
+@AppPreviewLightDark
+@Composable
+private fun StatusBadgeTodoPreview() {
+    TreeTaskTheme {
+        StatusBadge(status = TaskStatus.TODO)
     }
 }
 
@@ -245,32 +398,17 @@ private fun TaskItemPreview() {
                 updatedAt = Instant.parse("2026-04-15T09:00:00Z"),
             ),
             onClick = {},
+            onDeleteClick = {},
         )
     }
 }
 
 @AppPreviewLightDark
 @Composable
-private fun SearchTaskInputPreview() {
+private fun StatusBadgePreview() {
     TreeTaskTheme {
-        SearchTaskInput(
-            searchQuery = "",
-            isLoadingSearch = true,
-            onSearchChange = {},
-            onClearClick = {},
-        )
+        StatusBadge(status = TaskStatus.DONE)
     }
 }
 
-@AppPreviewLightDark
-@Composable
-private fun TaskStatusChipsPreview() {
-    TreeTaskTheme {
-        var selected by remember { mutableStateOf(TaskStatus.TODO) }
-
-        TaskStatusChips(
-            taskStatusSelected = selected,
-            onFilterSelect = { },
-        )
-    }
-}
+// endregion

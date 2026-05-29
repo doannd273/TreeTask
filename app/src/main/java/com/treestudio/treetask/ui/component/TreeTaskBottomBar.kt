@@ -4,14 +4,17 @@ import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hierarchy
+import com.doannd3.treetask.core.designsystem.theme.Purple40
 import com.treestudio.treetask.navigation.TopLevelDestination
 
 @Composable
@@ -45,6 +48,14 @@ fun TreeTaskBottomBar(
             NavigationBarItem(
                 selected = selected,
                 onClick = { onNavigateToDestination(destination) },
+                colors =
+                NavigationBarItemDefaults.colors(
+                    selectedIconColor = Purple40,
+                    selectedTextColor = Purple40,
+                    indicatorColor = MaterialTheme.colorScheme.primaryContainer,
+                    unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                    unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                ),
                 icon = {
                     Icon(
                         painter = painterResource(if (selected) destination.selectedIcon else destination.unselectedIcon),

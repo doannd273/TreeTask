@@ -8,7 +8,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
 
 data class TasksState(
-    val page: Int = 1,
     val isLoadingSearch: Boolean = false,
     val isLoading: Boolean = false,
     val tasks: Flow<PagingData<Task>> = flowOf(PagingData.empty()),
@@ -29,6 +28,8 @@ sealed class TasksEvent {
     data class FilterSelected(
         val taskStatusSelected: TaskStatus?,
     ) : TasksEvent()
+
+    data class DeleteTask(val taskId: String) : TasksEvent()
 }
 
 sealed class TasksEffect {
