@@ -102,9 +102,9 @@ internal fun TaskFormScreen(
 ) {
     Scaffold(
         contentWindowInsets =
-        WindowInsets.safeDrawing.only(
-            WindowInsetsSides.Horizontal + WindowInsetsSides.Bottom,
-        ),
+            WindowInsets.safeDrawing.only(
+                WindowInsetsSides.Horizontal + WindowInsetsSides.Bottom,
+            ),
         topBar = {
             CommonHeader(
                 title = state.screenTitle?.asString(LocalContext.current).orEmpty(),
@@ -165,10 +165,10 @@ internal fun TaskFormContent(
 
     Column(
         modifier =
-        modifier
-            .fillMaxSize()
-            .verticalScroll(rememberScrollState())
-            .imePadding(),
+            modifier
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState())
+                .imePadding(),
     ) {
         Column(
             modifier = Modifier.padding(16.dp),
@@ -183,7 +183,7 @@ internal fun TaskFormContent(
 
             TaskDescriptionInput(
                 modifier =
-                Modifier.focusRequester(descriptionFocusRequester),
+                    Modifier.focusRequester(descriptionFocusRequester),
                 description = state.description,
                 enabled = isInputEnabled,
                 onDescriptionChange = { onEvent(TaskFormEvent.DescriptionChanged(it)) },
@@ -223,12 +223,12 @@ private fun TaskFormContentPreview() {
     TreeTaskTheme {
         TaskFormContent(
             state =
-            TaskFormState(
-                title = "Prepare sprint planning",
-                description = "Review backlog and define priorities for the next sprint.",
-                status = TaskStatus.IN_PROGRESS,
-                dueDate = "2026-05-31",
-            ),
+                TaskFormState(
+                    title = "Prepare sprint planning",
+                    description = "Review backlog and define priorities for the next sprint.",
+                    status = TaskStatus.IN_PROGRESS,
+                    dueDate = "2026-05-31",
+                ),
             onEvent = {},
         )
     }

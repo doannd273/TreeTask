@@ -7,15 +7,15 @@ import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 class GetTasksUseCase
-@Inject
-constructor(
-    private val tasksRepository: TaskRepository,
-) {
-    operator fun invoke(
-        status: String,
-        keyword: String,
-        userId: String,
-    ): Flow<PagingData<Task>> {
-        return tasksRepository.getTasks(status = status, keyword = keyword, userId = userId)
+    @Inject
+    constructor(
+        private val tasksRepository: TaskRepository,
+    ) {
+        operator fun invoke(
+            status: String,
+            keyword: String,
+            userId: String,
+        ): Flow<PagingData<Task>> {
+            return tasksRepository.getTasks(status = status, keyword = keyword, userId = userId)
+        }
     }
-}

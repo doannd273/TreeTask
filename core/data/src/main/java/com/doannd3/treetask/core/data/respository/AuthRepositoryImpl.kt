@@ -17,142 +17,143 @@ import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 class AuthRepositoryImpl
-@Inject
-constructor(
-    private val authService: AuthService,
-    private val tokenStorage: TokenStorage,
-    private val userStorage: UserStorage,
-) : AuthRepository {
-    override val isSessionExpired: Flow<Boolean>
-        get() = tokenStorage.sessionExpiredEvent.map { true }
+    @Inject
+    constructor(
+        private val authService: AuthService,
+        private val tokenStorage: TokenStorage,
+        private val userStorage: UserStorage,
+    ) : AuthRepository {
+        override val isSessionExpired: Flow<Boolean>
+            get() = tokenStorage.sessionExpiredEvent.map { true }
 
-    override suspend fun login(
-        email: String,
-        password: String,
-    ): ApiResult<Unit> {
-        val result = authService.login(LoginRequest(email = email, password = password))
-        return when (result) {
-            is ApiResult.Success -> {
-                val data = result.data
-                if (data == null) {
-                    return ApiResult.Error(
-                        appErrorCode = AppErrorCode.MISSING_RESPONSE_DATA,
-                        exception = MissingResponseDataException(),
+        override suspend fun login(
+            email: String,
+            password: String,
+        ): ApiResult<Unit> {
+            val result = authService.login(LoginRequest(email = email, password = password))
+            return when (result) {
+                is ApiResult.Success -> {
+                    val data = result.data
+                    if (data == null) {
+                        return ApiResult.Error(
+                            appErrorCode = AppErrorCode.MISSING_RESPONSE_DATA,
+                            exception = MissingResponseDataException(),
+                        )
+                    }
+
+                    // save profile user
+                    val user = data.user.toUserOrNull()
+                    if (user == null) {
+                        return ApiResult.Error(
+                            appErrorCode = AppErrorCode.MISSING_RESPONSE_DATA,
+                            exception = MissingResponseDataException(),
+                        )
+                    }
+                    // save token
+                    tokenStorage.saveToken(
+                        accessToken = data.accessToken,
+                        refreshToken = data.refreshToken,
                     )
+                    // save profile
+                    userStorage.saveUserProfile(user)
+
+                    ApiResult.Success(data = Unit)
                 }
 
-                // save profile user
-                val user = data.user.toUserOrNull()
-                if (user == null) {
-                    return ApiResult.Error(
-                        appErrorCode = AppErrorCode.MISSING_RESPONSE_DATA,
-                        exception = MissingResponseDataException(),
-                    )
-                }
-                // save token
-                tokenStorage.saveToken(
-                    accessToken = data.accessToken,
-                    refreshToken = data.refreshToken,
-                )
-                // save profile
-                userStorage.saveUserProfile(user)
-
-                ApiResult.Success(data = Unit)
+                is ApiResult.Error -> {
+                    result
+                } // propagate thẳng
             }
-
-            is ApiResult.Error -> {
-                result
-            } // propagate thẳng
         }
-    }
 
-    override suspend fun register(
-        fullName: String,
-        email: String,
-        password: String,
-    ): ApiResult<String> {
-        val result =
-            authService.register(
-                RegisterRequest(
-                    fullName = fullName,
+        override suspend fun register(
+            fullName: String,
+            email: String,
+            password: String,
+        ): ApiResult<String> {
+            val result =
+                authService.register(
+                    RegisterRequest(
+                        fullName = fullName,
+                        email = email,
+                        password = password,
+                    ),
+                )
+            return when (result) {
+                is ApiResult.Success -> {
+                    val data = result.data
+                    if (data == null) {
+                        return ApiResult.Error(
+                            appErrorCode = AppErrorCode.MISSING_RESPONSE_DATA,
+                            exception = MissingResponseDataException(),
+                        )
+                    }
+
+                    // save profile user
+                    val user = data.user.toUserOrNull()
+                    if (user == null) {
+                        return ApiResult.Error(
+                            appErrorCode = AppErrorCode.MISSING_RESPONSE_DATA,
+                            exception = MissingResponseDataException(),
+                        )
+                    }
+
+                    // save token
+                    tokenStorage.saveToken(
+                        data.accessToken,
+                        data.refreshToken,
+                    )
+
+                    // save profile
+                    userStorage.saveUserProfile(user)
+
+                    ApiResult.Success(message = result.message)
+                }
+
+                is ApiResult.Error -> {
+                    result
+                } // propagate thẳng
+            }
+        }
+
+        override suspend fun forgotPassword(email: String): ApiResult<String> {
+            val result = authService.forgotPassword(ForgotPasswordRequest(email = email))
+            return when (result) {
+                is ApiResult.Success -> {
+                    ApiResult.Success(message = result.message)
+                }
+
+                is ApiResult.Error -> {
+                    result
+                } // propagate thẳng
+            }
+        }
+
+        override suspend fun resetPassword(
+            email: String,
+            otp: String,
+            newPassword: String,
+        ): ApiResult<String> {
+            val body =
+                ResetPasswordRequest(
                     email = email,
-                    password = password,
-                ),
-            )
-        return when (result) {
-            is ApiResult.Success -> {
-                val data = result.data
-                if (data == null) {
-                    return ApiResult.Error(
-                        appErrorCode = AppErrorCode.MISSING_RESPONSE_DATA,
-                        exception = MissingResponseDataException(),
-                    )
-                }
-
-                // save profile user
-                val user = data.user.toUserOrNull()
-                if (user == null) {
-                    return ApiResult.Error(
-                        appErrorCode = AppErrorCode.MISSING_RESPONSE_DATA,
-                        exception = MissingResponseDataException(),
-                    )
-                }
-
-                // save token
-                tokenStorage.saveToken(
-                    data.accessToken,
-                    data.refreshToken,
+                    otp = otp,
+                    newPassword = newPassword,
                 )
+            val result = authService.resetPassword(body = body)
+            return when (result) {
+                is ApiResult.Success -> {
+                    ApiResult.Success(message = result.message)
+                }
 
-                // save profile
-                userStorage.saveUserProfile(user)
-
-                ApiResult.Success(message = result.message)
-            }
-
-            is ApiResult.Error -> {
-                result
-            } // propagate thẳng
-        }
-    }
-
-    override suspend fun forgotPassword(email: String): ApiResult<String> {
-        val result = authService.forgotPassword(ForgotPasswordRequest(email = email))
-        return when (result) {
-            is ApiResult.Success -> {
-                ApiResult.Success(message = result.message)
-            }
-
-            is ApiResult.Error -> {
-                result
-            } // propagate thẳng
-        }
-    }
-
-    override suspend fun resetPassword(
-        email: String,
-        otp: String,
-        newPassword: String,
-    ): ApiResult<String> {
-        val body = ResetPasswordRequest(
-            email = email,
-            otp = otp,
-            newPassword = newPassword,
-        )
-        val result = authService.resetPassword(body = body)
-        return when (result) {
-            is ApiResult.Success -> {
-                ApiResult.Success(message = result.message)
-            }
-
-            is ApiResult.Error -> {
-                result
+                is ApiResult.Error -> {
+                    result
+                }
             }
         }
-    }
 
-    override suspend fun logout() {
-        tokenStorage.clearToken()
-        userStorage.clearUserProfile()
+        override suspend fun logout() {
+            tokenStorage.clearToken()
+            userStorage.clearUserProfile()
+        }
     }
-}

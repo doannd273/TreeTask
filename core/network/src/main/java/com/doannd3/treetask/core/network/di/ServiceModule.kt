@@ -2,6 +2,7 @@ package com.doannd3.treetask.core.network.di
 
 import com.doannd3.treetask.core.network.service.AuthService
 import com.doannd3.treetask.core.network.service.ChatService
+import com.doannd3.treetask.core.network.service.DeviceService
 import com.doannd3.treetask.core.network.service.StatsService
 import com.doannd3.treetask.core.network.service.TaskService
 import com.doannd3.treetask.core.network.service.UserService
@@ -53,5 +54,13 @@ object ServiceModule {
         @AuthenticatedNetwork retrofit: Retrofit,
     ): ChatService {
         return retrofit.create(ChatService::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideDeviceService(
+        @AuthenticatedNetwork retrofit: Retrofit,
+    ): DeviceService {
+        return retrofit.create(DeviceService::class.java)
     }
 }

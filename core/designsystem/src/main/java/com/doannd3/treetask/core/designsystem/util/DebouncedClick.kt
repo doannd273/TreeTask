@@ -32,7 +32,8 @@ fun Modifier.debouncedClickable(
     enabled: Boolean = true,
     intervalMillis: Long = 600L,
     onClick: () -> Unit,
-): Modifier = composed {
-    val debouncedClick = rememberDebouncedClick(intervalMillis, onClick)
-    clickable(enabled = enabled, onClick = debouncedClick)
-}
+): Modifier =
+    composed {
+        val debouncedClick = rememberDebouncedClick(intervalMillis, onClick)
+        clickable(enabled = enabled, onClick = debouncedClick)
+    }

@@ -26,9 +26,9 @@ fun TreeTaskBottomBar(
 ) {
     NavigationBar(
         modifier =
-        modifier
-            .navigationBarsPadding()
-            .height(56.dp),
+            modifier
+                .navigationBarsPadding()
+                .height(56.dp),
         windowInsets = WindowInsets(0, 0, 0, 0),
     ) {
         // Lôi từng Menu ra vẽ
@@ -49,13 +49,13 @@ fun TreeTaskBottomBar(
                 selected = selected,
                 onClick = { onNavigateToDestination(destination) },
                 colors =
-                NavigationBarItemDefaults.colors(
-                    selectedIconColor = Purple40,
-                    selectedTextColor = Purple40,
-                    indicatorColor = MaterialTheme.colorScheme.primaryContainer,
-                    unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                    unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                ),
+                    NavigationBarItemDefaults.colors(
+                        selectedIconColor = Purple40,
+                        selectedTextColor = Purple40,
+                        indicatorColor = MaterialTheme.colorScheme.primaryContainer,
+                        unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                        unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                    ),
                 icon = {
                     Icon(
                         painter = painterResource(if (selected) destination.selectedIcon else destination.unselectedIcon),

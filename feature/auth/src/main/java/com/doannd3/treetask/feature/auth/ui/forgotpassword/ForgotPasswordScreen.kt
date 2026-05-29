@@ -109,9 +109,9 @@ internal fun ForgotPasswordScreen(
 
     Scaffold(
         contentWindowInsets =
-        WindowInsets.safeDrawing.only(
-            WindowInsetsSides.Horizontal + WindowInsetsSides.Bottom,
-        ),
+            WindowInsets.safeDrawing.only(
+                WindowInsetsSides.Horizontal + WindowInsetsSides.Bottom,
+            ),
         topBar = {
             CommonHeader(
                 title = stringResource(R.string.auth_forgot_password),
@@ -127,9 +127,9 @@ internal fun ForgotPasswordScreen(
     ) { paddingValues ->
         ForgotPasswordContent(
             modifier =
-            Modifier.padding(
-                paddingValues = paddingValues,
-            ),
+                Modifier.padding(
+                    paddingValues = paddingValues,
+                ),
             state = state,
             onEvent = onEvent,
         )
@@ -144,10 +144,10 @@ internal fun ForgotPasswordContent(
 ) {
     Column(
         modifier =
-        modifier
-            .fillMaxSize()
-            .verticalScroll(rememberScrollState())
-            .imePadding(),
+            modifier
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState())
+                .imePadding(),
     ) {
         EmailStep(
             isVisible = (state.step == ForgotPasswordStep.EmailInput),
@@ -168,9 +168,9 @@ private fun ForgotPasswordPreview() {
     TreeTaskTheme {
         ForgotPasswordScreen(
             state =
-            ForgotPasswordState(
-                email = "demo@gmail.com",
-            ),
+                ForgotPasswordState(
+                    email = "demo@gmail.com",
+                ),
             onEvent = {},
             onForgotPasswordBack = {},
         )
@@ -183,12 +183,12 @@ private fun ForgotPasswordResetPreview() {
     TreeTaskTheme {
         ForgotPasswordScreen(
             state =
-            ForgotPasswordState(
-                step = ForgotPasswordStep.ResetInput,
-                email = "demo@gmail.com",
-                otp = "123456",
-                newPassword = "password123",
-            ),
+                ForgotPasswordState(
+                    step = ForgotPasswordStep.ResetInput,
+                    email = "demo@gmail.com",
+                    otp = "123456",
+                    newPassword = "password123",
+                ),
             onEvent = {},
             onForgotPasswordBack = {},
         )

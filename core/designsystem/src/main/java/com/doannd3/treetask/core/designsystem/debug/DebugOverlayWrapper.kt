@@ -34,11 +34,11 @@ fun DebugOverlayWrapper(
             val offsetY = maxHeight / 5
             Text(
                 modifier =
-                Modifier
-                    .align(Alignment.TopEnd)
-                    .offset(y = offsetY)
-                    .background(DevBackground)
-                    .padding(horizontal = 10.dp),
+                    Modifier
+                        .align(Alignment.TopEnd)
+                        .offset(y = offsetY)
+                        .background(DevBackground)
+                        .padding(horizontal = 10.dp),
                 text = label,
                 color = DevText,
                 fontSize = 13.sp,
@@ -58,9 +58,9 @@ private fun DebugOverlayWrapperPreview() {
         ) {
             Box(
                 modifier =
-                Modifier
-                    .fillMaxSize()
-                    .background(Color.LightGray),
+                    Modifier
+                        .fillMaxSize()
+                        .background(Color.LightGray),
                 contentAlignment = Alignment.Center,
             ) {
                 Text(text = "Main Content")

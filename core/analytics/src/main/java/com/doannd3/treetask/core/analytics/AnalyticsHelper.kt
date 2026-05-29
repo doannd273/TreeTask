@@ -7,5 +7,8 @@ interface AnalyticsHelper {
 
     fun logEvent(event: AnalyticsEvent)
 
-    fun logError(exception: Throwable, message: String? = null)
+    fun logError(
+        exception: Throwable,
+        message: String? = null,
+    )
 }
