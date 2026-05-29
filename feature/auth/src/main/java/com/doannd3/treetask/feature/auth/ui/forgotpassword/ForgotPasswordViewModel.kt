@@ -23,167 +23,167 @@ import com.doannd3.treetask.feature.auth.R as AuthR
 
 @HiltViewModel
 class ForgotPasswordViewModel
-@Inject
-constructor(
-    private val forgotPasswordUseCase: ForgotPasswordUseCase,
-    private val resetPasswordUseCase: ResetPasswordUseCase,
-) : BaseViewModel(),
-    MviViewModel<ForgotPasswordState, ForgotPasswordEvent, ForgotPasswordEffect> {
-    override fun setLoading(isLoading: Boolean) {
-        _uiState.update { it.copy(isLoading = isLoading) }
-    }
-
-    private val _uiState = MutableStateFlow(ForgotPasswordState())
-    override val uiState: StateFlow<ForgotPasswordState> = _uiState.asStateFlow()
-
-    private val _effect = MutableSharedFlow<ForgotPasswordEffect>()
-    override val effect: SharedFlow<ForgotPasswordEffect> = _effect.asSharedFlow()
-
-    override fun onEvent(event: ForgotPasswordEvent) {
-        when (event) {
-            is ForgotPasswordEvent.EmailChanged -> {
-                _uiState.update { it.copy(email = event.email) }
-            }
-
-            is ForgotPasswordEvent.SubmitEmail -> {
-                submitEmail()
-            }
-
-            is ForgotPasswordEvent.SubmitResetPassword -> {
-                submitResetPassword()
-            }
-
-            ForgotPasswordEvent.BackToEmailInput -> {
-                _uiState.update {
-                    it.copy(
-                        step = ForgotPasswordStep.EmailInput,
-                        otp = "",
-                        newPassword = "",
-                        passwordVisible = false,
-                        confirmPassword = "",
-                        confirmPasswordVisible = false,
-                    )
-                }
-            }
-
-            is ForgotPasswordEvent.NewPasswordChanged -> {
-                _uiState.update { it.copy(newPassword = event.newPassword) }
-            }
-
-            is ForgotPasswordEvent.OtpChanged -> {
-                _uiState.update { it.copy(otp = event.otp) }
-            }
-
-            is ForgotPasswordEvent.PasswordVisibleChanged -> {
-                _uiState.update { it.copy(passwordVisible = event.passwordVisible) }
-            }
-
-            ForgotPasswordEvent.ResendOtp -> {
-                _uiState.update { it.copy(otp = "") }
-                submitEmail()
-            }
-
-            ForgotPasswordEvent.ResetPasswordAcknowledged -> {
-                viewModelScope.launch {
-                    _effect.emit(ForgotPasswordEffect.NavigateToLogin)
-                }
-            }
-
-            is ForgotPasswordEvent.ConfirmPasswordChanged -> {
-                _uiState.update { it.copy(confirmPassword = event.confirmPassword) }
-            }
-
-            is ForgotPasswordEvent.ConfirmPasswordVisibleChanged -> {
-                _uiState.update { it.copy(confirmPasswordVisible = event.confirmPasswordVisible) }
-            }
-        }
-    }
-
-    private fun submitResetPassword() {
-        val state = uiState.value
-
-        if (state.isLoading) {
-            return
+    @Inject
+    constructor(
+        private val forgotPasswordUseCase: ForgotPasswordUseCase,
+        private val resetPasswordUseCase: ResetPasswordUseCase,
+    ) : BaseViewModel(),
+        MviViewModel<ForgotPasswordState, ForgotPasswordEvent, ForgotPasswordEffect> {
+        override fun setLoading(isLoading: Boolean) {
+            _uiState.update { it.copy(isLoading = isLoading) }
         }
 
-        if (state.newPassword != state.confirmPassword) {
-            viewModelScope.launch {
-                _effect.emit(
-                    ForgotPasswordEffect.ShowErrorMessage(
-                        UiText.StringResource(AuthR.string.auth_error_password_mismatch),
-                    ),
-                )
-            }
-            return
-        }
+        private val _uiState = MutableStateFlow(ForgotPasswordState())
+        override val uiState: StateFlow<ForgotPasswordState> = _uiState.asStateFlow()
 
-        executeSafe {
-            _uiState.update { it.copy(isLoading = true) }
+        private val _effect = MutableSharedFlow<ForgotPasswordEffect>()
+        override val effect: SharedFlow<ForgotPasswordEffect> = _effect.asSharedFlow()
 
-            val result =
-                resetPasswordUseCase(
-                    email = state.email,
-                    otp = state.otp,
-                    newPassword = state.newPassword,
-                )
-
-            _uiState.update { it.copy(isLoading = false) }
-
-            when (result) {
-                is ApiResult.Success -> {
-                    val message =
-                        result.message
-                            ?: UiText.StringResource(AuthR.string.auth_reset_password_success)
-                    _effect.emit(ForgotPasswordEffect.ResetPasswordSuccess(message))
+        override fun onEvent(event: ForgotPasswordEvent) {
+            when (event) {
+                is ForgotPasswordEvent.EmailChanged -> {
+                    _uiState.update { it.copy(email = event.email) }
                 }
 
-                is ApiResult.Error -> {
-                    val message =
-                        result.toDisplayMessage(
-                            UiText.StringResource(CommonR.string.common_error_unknown),
-                        )
-                    _effect.emit(ForgotPasswordEffect.ShowErrorMessage(message))
+                is ForgotPasswordEvent.SubmitEmail -> {
+                    submitEmail()
                 }
-            }
-        }
-    }
 
-    private fun submitEmail() {
-        val state = uiState.value
+                is ForgotPasswordEvent.SubmitResetPassword -> {
+                    submitResetPassword()
+                }
 
-        if (state.isLoading) {
-            return
-        }
-
-        executeSafe {
-            _uiState.update { it.copy(isLoading = true) }
-
-            val result = forgotPasswordUseCase(email = state.email)
-
-            _uiState.update { it.copy(isLoading = false) }
-
-            when (result) {
-                is ApiResult.Success -> {
+                ForgotPasswordEvent.BackToEmailInput -> {
                     _uiState.update {
                         it.copy(
-                            step = ForgotPasswordStep.ResetInput,
+                            step = ForgotPasswordStep.EmailInput,
+                            otp = "",
+                            newPassword = "",
+                            passwordVisible = false,
+                            confirmPassword = "",
+                            confirmPasswordVisible = false,
                         )
                     }
-
-                    val message =
-                        result.message
-                            ?: UiText.StringResource(AuthR.string.auth_forgot_password_success)
-                    _effect.emit(ForgotPasswordEffect.SendEmailSuccess(message))
                 }
 
-                is ApiResult.Error -> {
-                    val message =
-                        result.toDisplayMessage(
-                            UiText.StringResource(CommonR.string.common_error_unknown),
-                        )
-                    _effect.emit(ForgotPasswordEffect.ShowErrorMessage(message))
+                is ForgotPasswordEvent.NewPasswordChanged -> {
+                    _uiState.update { it.copy(newPassword = event.newPassword) }
+                }
+
+                is ForgotPasswordEvent.OtpChanged -> {
+                    _uiState.update { it.copy(otp = event.otp) }
+                }
+
+                is ForgotPasswordEvent.PasswordVisibleChanged -> {
+                    _uiState.update { it.copy(passwordVisible = event.passwordVisible) }
+                }
+
+                ForgotPasswordEvent.ResendOtp -> {
+                    _uiState.update { it.copy(otp = "") }
+                    submitEmail()
+                }
+
+                ForgotPasswordEvent.ResetPasswordAcknowledged -> {
+                    viewModelScope.launch {
+                        _effect.emit(ForgotPasswordEffect.NavigateToLogin)
+                    }
+                }
+
+                is ForgotPasswordEvent.ConfirmPasswordChanged -> {
+                    _uiState.update { it.copy(confirmPassword = event.confirmPassword) }
+                }
+
+                is ForgotPasswordEvent.ConfirmPasswordVisibleChanged -> {
+                    _uiState.update { it.copy(confirmPasswordVisible = event.confirmPasswordVisible) }
+                }
+            }
+        }
+
+        private fun submitResetPassword() {
+            val state = uiState.value
+
+            if (state.isLoading) {
+                return
+            }
+
+            if (state.newPassword != state.confirmPassword) {
+                viewModelScope.launch {
+                    _effect.emit(
+                        ForgotPasswordEffect.ShowErrorMessage(
+                            UiText.StringResource(AuthR.string.auth_error_password_mismatch),
+                        ),
+                    )
+                }
+                return
+            }
+
+            executeSafe {
+                _uiState.update { it.copy(isLoading = true) }
+
+                val result =
+                    resetPasswordUseCase(
+                        email = state.email,
+                        otp = state.otp,
+                        newPassword = state.newPassword,
+                    )
+
+                _uiState.update { it.copy(isLoading = false) }
+
+                when (result) {
+                    is ApiResult.Success -> {
+                        val message =
+                            result.message
+                                ?: UiText.StringResource(AuthR.string.auth_reset_password_success)
+                        _effect.emit(ForgotPasswordEffect.ResetPasswordSuccess(message))
+                    }
+
+                    is ApiResult.Error -> {
+                        val message =
+                            result.toDisplayMessage(
+                                UiText.StringResource(CommonR.string.common_error_unknown),
+                            )
+                        _effect.emit(ForgotPasswordEffect.ShowErrorMessage(message))
+                    }
+                }
+            }
+        }
+
+        private fun submitEmail() {
+            val state = uiState.value
+
+            if (state.isLoading) {
+                return
+            }
+
+            executeSafe {
+                _uiState.update { it.copy(isLoading = true) }
+
+                val result = forgotPasswordUseCase(email = state.email)
+
+                _uiState.update { it.copy(isLoading = false) }
+
+                when (result) {
+                    is ApiResult.Success -> {
+                        _uiState.update {
+                            it.copy(
+                                step = ForgotPasswordStep.ResetInput,
+                            )
+                        }
+
+                        val message =
+                            result.message
+                                ?: UiText.StringResource(AuthR.string.auth_forgot_password_success)
+                        _effect.emit(ForgotPasswordEffect.SendEmailSuccess(message))
+                    }
+
+                    is ApiResult.Error -> {
+                        val message =
+                            result.toDisplayMessage(
+                                UiText.StringResource(CommonR.string.common_error_unknown),
+                            )
+                        _effect.emit(ForgotPasswordEffect.ShowErrorMessage(message))
+                    }
                 }
             }
         }
     }
-}

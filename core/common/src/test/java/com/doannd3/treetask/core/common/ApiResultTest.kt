@@ -5,7 +5,6 @@ import com.google.common.truth.Truth.assertThat
 import org.junit.Test
 
 class ApiResultTest {
-
     @Test
     fun `toDisplayMessage returns backend message first`() {
         val backendMessage = UiText.DynamicString("Backend error")

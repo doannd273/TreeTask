@@ -12,7 +12,6 @@ import javax.inject.Inject
 class TreeTaskApplication :
     Application(),
     Configuration.Provider {
-
     @Inject
     lateinit var notificationHelper: NotificationHelper
 
@@ -37,7 +36,8 @@ class TreeTaskApplication :
     }
 
     override val workManagerConfiguration: Configuration
-        get() = Configuration.Builder()
-            .setWorkerFactory(workerFactory)
-            .build()
+        get() =
+            Configuration.Builder()
+                .setWorkerFactory(workerFactory)
+                .build()
 }

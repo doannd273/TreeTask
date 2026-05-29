@@ -61,22 +61,25 @@ internal fun RegisterTextButton(onNavigateToRegister: () -> Unit) {
 
         LinkText(
             text = text,
-            links = listOf(
-                LinkPart(
-                    text = registerText,
-                    tag = LinkTag.REGISTER.name,
-                    onClick = onNavigateToRegister,
+            links =
+                listOf(
+                    LinkPart(
+                        text = registerText,
+                        tag = LinkTag.REGISTER.name,
+                        onClick = onNavigateToRegister,
+                    ),
                 ),
-            ),
-            parentStyle = TextStyle(
-                color = MaterialTheme.colorScheme.primary,
-                fontSize = 15.sp,
-            ),
-            linkStyle = SpanStyle(
-                color = MaterialTheme.colorScheme.primary,
-                fontSize = 15.sp,
-                textDecoration = TextDecoration.Underline,
-            ),
+            parentStyle =
+                TextStyle(
+                    color = MaterialTheme.colorScheme.primary,
+                    fontSize = 15.sp,
+                ),
+            linkStyle =
+                SpanStyle(
+                    color = MaterialTheme.colorScheme.primary,
+                    fontSize = 15.sp,
+                    textDecoration = TextDecoration.Underline,
+                ),
         )
     }
 }
@@ -105,22 +108,25 @@ internal fun ForgotPasswordTextButton(onNavigateToForgotPassword: () -> Unit) {
 
         LinkText(
             text = forgotPassword,
-            links = listOf(
-                LinkPart(
-                    text = forgotPassword,
-                    tag = LinkTag.FORGOT_PASSWORD.name,
-                    onClick = onNavigateToForgotPassword,
+            links =
+                listOf(
+                    LinkPart(
+                        text = forgotPassword,
+                        tag = LinkTag.FORGOT_PASSWORD.name,
+                        onClick = onNavigateToForgotPassword,
+                    ),
                 ),
-            ),
-            parentStyle = TextStyle(
-                color = MaterialTheme.colorScheme.primary,
-                fontSize = 15.sp,
-            ),
-            linkStyle = SpanStyle(
-                color = MaterialTheme.colorScheme.primary,
-                fontSize = 15.sp,
-                textDecoration = TextDecoration.Underline,
-            ),
+            parentStyle =
+                TextStyle(
+                    color = MaterialTheme.colorScheme.primary,
+                    fontSize = 15.sp,
+                ),
+            linkStyle =
+                SpanStyle(
+                    color = MaterialTheme.colorScheme.primary,
+                    fontSize = 15.sp,
+                    textDecoration = TextDecoration.Underline,
+                ),
         )
     }
 }

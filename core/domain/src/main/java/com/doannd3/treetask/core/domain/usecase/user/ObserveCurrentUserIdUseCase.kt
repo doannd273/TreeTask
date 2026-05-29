@@ -7,14 +7,14 @@ import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 class ObserveCurrentUserIdUseCase
-@Inject
-constructor(
-    private val userRepository: UserRepository,
-) {
-    operator fun invoke(): Flow<String> =
-        userRepository
-            .getCachedProfile()
-            .map { user ->
-                user?.id.orEmpty()
-            }.distinctUntilChanged()
-}
+    @Inject
+    constructor(
+        private val userRepository: UserRepository,
+    ) {
+        operator fun invoke(): Flow<String> =
+            userRepository
+                .getCachedProfile()
+                .map { user ->
+                    user?.id.orEmpty()
+                }.distinctUntilChanged()
+    }

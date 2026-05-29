@@ -54,18 +54,20 @@ internal fun AvatarPicker(
         contentAlignment = Alignment.Center,
     ) {
         Column(
-            modifier = Modifier
-                .wrapContentWidth()
-                .clickable(onClick = avatarClick, enabled = isEnable),
+            modifier =
+                Modifier
+                    .wrapContentWidth()
+                    .clickable(onClick = avatarClick, enabled = isEnable),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             AsyncImage(
                 model = avatarUri ?: avatarUrl,
                 contentDescription = stringResource(R.string.profile_cd_user_avatar),
                 contentScale = ContentScale.Crop,
-                modifier = Modifier
-                    .size(72.dp)
-                    .clip(CircleShape),
+                modifier =
+                    Modifier
+                        .size(72.dp)
+                        .clip(CircleShape),
                 placeholder = painterResource(R.drawable.profile_ic_avatar),
                 error = painterResource(R.drawable.profile_ic_avatar),
             )
@@ -107,14 +109,16 @@ internal fun EditProfileForm(
 ) {
     val phoneFocusRequester = remember { FocusRequester() }
     val focusManager = LocalFocusManager.current
-    val onSaveDebounced = rememberDebouncedClick {
-        onEvent(EditProfileEvent.SubmitEditProfile)
-    }
+    val onSaveDebounced =
+        rememberDebouncedClick {
+            onEvent(EditProfileEvent.SubmitEditProfile)
+        }
 
     Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(16.dp),
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
         // Email
@@ -135,34 +139,39 @@ internal fun EditProfileForm(
             label = { Text(text = stringResource(R.string.profile_edit_full_name_label)) },
             enabled = !state.isLoading,
             singleLine = true,
-            keyboardOptions = KeyboardOptions(
-                imeAction = ImeAction.Next,
-            ),
-            keyboardActions = KeyboardActions(
-                onNext = { phoneFocusRequester.requestFocus() },
-            ),
+            keyboardOptions =
+                KeyboardOptions(
+                    imeAction = ImeAction.Next,
+                ),
+            keyboardActions =
+                KeyboardActions(
+                    onNext = { phoneFocusRequester.requestFocus() },
+                ),
         )
 
         // phone
         OutlinedTextField(
-            modifier = Modifier
-                .fillMaxWidth()
-                .focusRequester(phoneFocusRequester),
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .focusRequester(phoneFocusRequester),
             value = state.phone,
             onValueChange = { onEvent(EditProfileEvent.PhoneChanged(it)) },
             label = { Text(text = stringResource(R.string.profile_edit_phone_label)) },
             enabled = !state.isLoading,
             singleLine = true,
-            keyboardOptions = KeyboardOptions(
-                keyboardType = KeyboardType.Phone,
-                imeAction = ImeAction.Done,
-            ),
-            keyboardActions = KeyboardActions(
-                onDone = {
-                    focusManager.clearFocus()
-                    onSaveDebounced()
-                },
-            ),
+            keyboardOptions =
+                KeyboardOptions(
+                    keyboardType = KeyboardType.Phone,
+                    imeAction = ImeAction.Done,
+                ),
+            keyboardActions =
+                KeyboardActions(
+                    onDone = {
+                        focusManager.clearFocus()
+                        onSaveDebounced()
+                    },
+                ),
         )
 
         Spacer(modifier = Modifier.height(8.dp))
@@ -181,11 +190,12 @@ private fun EditProfileFormPreview() {
     TreeTaskTheme {
         Surface(color = MaterialTheme.colorScheme.background) {
             EditProfileForm(
-                state = EditProfileState(
-                    email = stringResource(R.string.profile_preview_email),
-                    fullName = stringResource(R.string.profile_preview_full_name),
-                    phone = stringResource(R.string.profile_preview_phone),
-                ),
+                state =
+                    EditProfileState(
+                        email = stringResource(R.string.profile_preview_email),
+                        fullName = stringResource(R.string.profile_preview_full_name),
+                        phone = stringResource(R.string.profile_preview_phone),
+                    ),
                 onEvent = {},
             )
         }

@@ -7,7 +7,6 @@ import org.junit.Before
 import org.junit.Rule
 
 class RegisterViewModelTest {
-
     @get:Rule
     val mainDispatcherRule = MainDispatcherRule()
 
@@ -16,8 +15,9 @@ class RegisterViewModelTest {
 
     @Before
     fun setUp() {
-        viewModel = RegisterViewModel(
-            registerUseCase = registerUseCase,
-        )
+        viewModel =
+            RegisterViewModel(
+                registerUseCase = registerUseCase,
+            )
     }
 }

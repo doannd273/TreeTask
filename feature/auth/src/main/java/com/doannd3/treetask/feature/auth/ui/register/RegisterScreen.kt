@@ -111,9 +111,9 @@ internal fun RegisterScreen(
 ) {
     Scaffold(
         contentWindowInsets =
-        WindowInsets.safeDrawing.only(
-            WindowInsetsSides.Horizontal + WindowInsetsSides.Bottom,
-        ),
+            WindowInsets.safeDrawing.only(
+                WindowInsetsSides.Horizontal + WindowInsetsSides.Bottom,
+            ),
         topBar = {
             CommonHeader(
                 title = stringResource(R.string.auth_register),
@@ -123,9 +123,9 @@ internal fun RegisterScreen(
     ) { paddingValues ->
         RegisterContent(
             modifier =
-            Modifier.padding(
-                paddingValues = paddingValues,
-            ),
+                Modifier.padding(
+                    paddingValues = paddingValues,
+                ),
             state = state,
             onEvent = onEvent,
             onRegisterBack = onRegisterBack,
@@ -152,10 +152,10 @@ internal fun RegisterContent(
 
     Column(
         modifier =
-        modifier
-            .fillMaxSize()
-            .verticalScroll(rememberScrollState())
-            .imePadding(),
+            modifier
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState())
+                .imePadding(),
     ) {
         Column(
             modifier = Modifier.padding(16.dp),
@@ -172,9 +172,9 @@ internal fun RegisterContent(
 
             EmailInput(
                 modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .focusRequester(emailFocusRequester),
+                    Modifier
+                        .fillMaxWidth()
+                        .focusRequester(emailFocusRequester),
                 label = stringResource(R.string.auth_email_hint),
                 email = state.email,
                 onEmailChange = { onEvent(RegisterEvent.EmailChanged(it)) },
@@ -188,9 +188,9 @@ internal fun RegisterContent(
 
             PasswordInput(
                 modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .focusRequester(passwordFocusRequester),
+                    Modifier
+                        .fillMaxWidth()
+                        .focusRequester(passwordFocusRequester),
                 label = stringResource(R.string.auth_password_hint),
                 password = state.password,
                 passwordVisible = state.passwordVisible,
@@ -206,9 +206,9 @@ internal fun RegisterContent(
 
             PasswordInput(
                 modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .focusRequester(confirmPasswordFocusRequester),
+                    Modifier
+                        .fillMaxWidth()
+                        .focusRequester(confirmPasswordFocusRequester),
                 label = stringResource(R.string.auth_confirm_password_hint),
                 password = state.confirmPassword,
                 passwordVisible = state.confirmPasswordVisible,
@@ -242,12 +242,12 @@ private fun RegisterScreenPreview() {
     TreeTaskTheme {
         RegisterScreen(
             state =
-            RegisterState(
-                fullName = "Nguyễn Demo",
-                email = "demo@gmail.com",
-                password = "123456",
-                confirmPassword = "12321",
-            ),
+                RegisterState(
+                    fullName = "Nguyễn Demo",
+                    email = "demo@gmail.com",
+                    password = "123456",
+                    confirmPassword = "12321",
+                ),
             onEvent = {},
             onRegisterBack = {},
         )
