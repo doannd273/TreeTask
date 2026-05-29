@@ -10,7 +10,7 @@ class SessionRepositoryImpl
     constructor(
         private val tokenStorage: TokenStorage,
     ) : SessionRepository {
-        override suspend fun hasActiveSession(): Boolean {
+        override suspend fun hasStoredSession(): Boolean {
             return !tokenStorage.getAccessToken().first().isNullOrBlank()
         }
     }
