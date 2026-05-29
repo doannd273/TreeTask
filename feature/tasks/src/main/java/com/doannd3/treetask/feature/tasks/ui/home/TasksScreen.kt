@@ -1,7 +1,6 @@
 package com.doannd3.treetask.feature.tasks.ui.home
 
 import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContract
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -72,9 +71,10 @@ fun TasksRoute(
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
 
-    val permissionChecker = remember(context) {
-        PermissionChecker(context)
-    }
+    val permissionChecker =
+        remember(context) {
+            PermissionChecker(context)
+        }
     var hasRequestedNotificationPermission by rememberSaveable {
         mutableStateOf(false)
     }
@@ -97,7 +97,7 @@ fun TasksRoute(
 
             PermissionStatus.Granted,
             PermissionStatus.NotRequired,
-                -> Unit
+            -> Unit
         }
     }
 
