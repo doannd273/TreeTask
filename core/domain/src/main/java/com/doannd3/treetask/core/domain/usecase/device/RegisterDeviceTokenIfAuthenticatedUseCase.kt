@@ -11,7 +11,7 @@ class RegisterDeviceTokenIfAuthenticatedUseCase
         private val registerDeviceTokenUseCase: RegisterDeviceTokenUseCase,
     ) {
         suspend operator fun invoke(token: String): ApiResult<Unit>? {
-            if (!sessionRepository.hasActiveSession()) {
+            if (!sessionRepository.hasStoredSession()) {
                 return null
             }
 
