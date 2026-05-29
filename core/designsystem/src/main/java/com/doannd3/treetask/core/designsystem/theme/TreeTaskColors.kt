@@ -11,15 +11,17 @@ data class TreeTaskColors(
     val onSuccess: Color,
 )
 
-internal val LightTreeTaskColors = TreeTaskColors(
-    success = SuccessGreen40,
-    onSuccess = Neutral100,
-)
+internal val LightTreeTaskColors =
+    TreeTaskColors(
+        success = SuccessGreen40,
+        onSuccess = Neutral100,
+    )
 
-internal val DarkTreeTaskColors = TreeTaskColors(
-    success = SuccessGreen80,
-    onSuccess = Neutral10,
-)
+internal val DarkTreeTaskColors =
+    TreeTaskColors(
+        success = SuccessGreen80,
+        onSuccess = Neutral10,
+    )
 
 internal val LocalTreeTaskColors = staticCompositionLocalOf { LightTreeTaskColors }
 

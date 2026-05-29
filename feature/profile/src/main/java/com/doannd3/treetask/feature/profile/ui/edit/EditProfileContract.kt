@@ -13,7 +13,6 @@ data class EditProfileState(
 )
 
 sealed class EditProfileEvent {
-
     data class AvatarChanged(
         val avatarUri: Uri?,
     ) : EditProfileEvent()

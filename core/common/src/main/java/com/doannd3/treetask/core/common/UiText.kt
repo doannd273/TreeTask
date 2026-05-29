@@ -4,7 +4,6 @@ import android.content.Context
 import androidx.annotation.StringRes
 
 sealed interface UiText {
-
     // backend, runtime
     data class DynamicString(
         val value: String?,

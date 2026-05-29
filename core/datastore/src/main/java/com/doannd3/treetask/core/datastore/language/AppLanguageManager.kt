@@ -13,37 +13,38 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class AppLanguageManager @Inject constructor(
-    @ApplicationContext private val context: Context,
-) : AppLanguageStorage {
-
-    override fun getAppLanguage(): Flow<AppLanguage> {
-        return context.appLanguageDataStore.data.map { prefs ->
-            val appLanguageTag = prefs[APP_LANGUAGE_KEY]
-            if (appLanguageTag != null) {
-                AppLanguage.fromLocaleTag(localeTag = appLanguageTag)
-            } else {
-                getDefaultAppLanguage()
+class AppLanguageManager
+    @Inject
+    constructor(
+        @ApplicationContext private val context: Context,
+    ) : AppLanguageStorage {
+        override fun getAppLanguage(): Flow<AppLanguage> {
+            return context.appLanguageDataStore.data.map { prefs ->
+                val appLanguageTag = prefs[APP_LANGUAGE_KEY]
+                if (appLanguageTag != null) {
+                    AppLanguage.fromLocaleTag(localeTag = appLanguageTag)
+                } else {
+                    getDefaultAppLanguage()
+                }
             }
         }
-    }
 
-    private fun getDefaultAppLanguage(): AppLanguage {
-        val systemLanguage = Locale.getDefault().language
-        return AppLanguage.fromLocaleTag(systemLanguage)
-    }
+        private fun getDefaultAppLanguage(): AppLanguage {
+            val systemLanguage = Locale.getDefault().language
+            return AppLanguage.fromLocaleTag(systemLanguage)
+        }
 
-    override suspend fun saveAppLanguage(appLanguage: AppLanguage) {
-        context.appLanguageDataStore.edit { prefs ->
-            prefs[APP_LANGUAGE_KEY] = appLanguage.localeTag
+        override suspend fun saveAppLanguage(appLanguage: AppLanguage) {
+            context.appLanguageDataStore.edit { prefs ->
+                prefs[APP_LANGUAGE_KEY] = appLanguage.localeTag
+            }
+        }
+
+        override suspend fun clearAppLanguage() {
+            context.appLanguageDataStore.edit { it.clear() }
+        }
+
+        companion object {
+            private val APP_LANGUAGE_KEY = stringPreferencesKey("APP_LANGUAGE_KEY")
         }
     }
-
-    override suspend fun clearAppLanguage() {
-        context.appLanguageDataStore.edit { it.clear() }
-    }
-
-    companion object {
-        private val APP_LANGUAGE_KEY = stringPreferencesKey("APP_LANGUAGE_KEY")
-    }
-}

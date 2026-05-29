@@ -35,12 +35,13 @@ fun TreeTaskNavHost(
         authGraph(
             onNavigateToHome = {
                 navController.navigateToTasksGraph(
-                    navOptions = navOptions {
-                        popUpTo(AuthGraphDestination) {
-                            inclusive = true
-                        }
-                        launchSingleTop = true
-                    },
+                    navOptions =
+                        navOptions {
+                            popUpTo(AuthGraphDestination) {
+                                inclusive = true
+                            }
+                            launchSingleTop = true
+                        },
                 )
             },
             onNavigateToRegister = {
@@ -79,12 +80,13 @@ fun TreeTaskNavHost(
         profileGraph(
             onNavigateToLogin = {
                 navController.navigateToAuthGraph(
-                    navOptions = navOptions {
-                        popUpTo(navController.graph.id) {
-                            inclusive = true
-                        }
-                        launchSingleTop = true
-                    },
+                    navOptions =
+                        navOptions {
+                            popUpTo(navController.graph.id) {
+                                inclusive = true
+                            }
+                            launchSingleTop = true
+                        },
                 )
             },
             onNavigateBack = {

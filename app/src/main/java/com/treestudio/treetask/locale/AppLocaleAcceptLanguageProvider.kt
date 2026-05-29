@@ -7,10 +7,10 @@ import java.util.Locale
 import javax.inject.Inject
 
 class AppLocaleAcceptLanguageProvider
-@Inject
-constructor() : AcceptLanguageProvider {
-    override fun getAcceptLanguage(): String {
-        val appLanguage = AppCompatDelegate.getApplicationLocales().get(0)?.language
-        return AppLanguage.normalizeLocaleTag(localeTag = (appLanguage ?: Locale.getDefault().language))
+    @Inject
+    constructor() : AcceptLanguageProvider {
+        override fun getAcceptLanguage(): String {
+            val appLanguage = AppCompatDelegate.getApplicationLocales().get(0)?.language
+            return AppLanguage.normalizeLocaleTag(localeTag = (appLanguage ?: Locale.getDefault().language))
+        }
     }
-}

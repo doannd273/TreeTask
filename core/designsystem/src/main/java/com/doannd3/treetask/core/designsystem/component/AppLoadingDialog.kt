@@ -24,19 +24,19 @@ fun AppLoadingDialog(
     Dialog(
         onDismissRequest = { },
         properties =
-        DialogProperties(
-            dismissOnBackPress = false,
-            dismissOnClickOutside = false,
-        ),
+            DialogProperties(
+                dismissOnBackPress = false,
+                dismissOnClickOutside = false,
+            ),
     ) {
         Box(
             modifier =
-            modifier
-                .size(100.dp)
-                .background(
-                    color = MaterialTheme.colorScheme.surface,
-                    shape = RoundedCornerShape(16.dp),
-                ),
+                modifier
+                    .size(100.dp)
+                    .background(
+                        color = MaterialTheme.colorScheme.surface,
+                        shape = RoundedCornerShape(16.dp),
+                    ),
             contentAlignment = Alignment.Center,
         ) {
             CircularProgressIndicator()

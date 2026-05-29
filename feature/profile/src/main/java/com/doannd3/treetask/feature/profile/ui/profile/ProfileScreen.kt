@@ -115,9 +115,10 @@ internal fun ProfileContent(
     state: ProfileState,
     onEvent: (ProfileEvent) -> Unit,
 ) {
-    val onSubmitLogoutDebounced = rememberDebouncedClick {
-        onEvent(ProfileEvent.SubmitLogout)
-    }
+    val onSubmitLogoutDebounced =
+        rememberDebouncedClick {
+            onEvent(ProfileEvent.SubmitLogout)
+        }
 
     if (state.showLanguagePicker) {
         LanguagePickerDialog(
@@ -130,17 +131,17 @@ internal fun ProfileContent(
 
     Column(
         modifier =
-        modifier
-            .fillMaxSize()
-            .padding(horizontal = 16.dp, vertical = 24.dp),
+            modifier
+                .fillMaxSize()
+                .padding(horizontal = 16.dp, vertical = 24.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Column(
             modifier =
-            Modifier
-                .fillMaxWidth()
-                .weight(1f)
-                .verticalScroll(rememberScrollState()),
+                Modifier
+                    .fillMaxWidth()
+                    .weight(1f)
+                    .verticalScroll(rememberScrollState()),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             state.user?.let { user ->
@@ -204,18 +205,18 @@ internal fun ProfileContent(
 private fun ProfileScreenPreview() {
     ProfileScreen(
         state =
-        ProfileState(
-            isLoading = false,
-            isDarkMode = false,
-            user =
-            User(
-                id = stringResource(R.string.profile_preview_user_id),
-                email = stringResource(R.string.profile_preview_email),
-                fullName = stringResource(R.string.profile_preview_full_name),
-                avatar = null,
-                phone = stringResource(R.string.profile_preview_phone),
+            ProfileState(
+                isLoading = false,
+                isDarkMode = false,
+                user =
+                    User(
+                        id = stringResource(R.string.profile_preview_user_id),
+                        email = stringResource(R.string.profile_preview_email),
+                        fullName = stringResource(R.string.profile_preview_full_name),
+                        avatar = null,
+                        phone = stringResource(R.string.profile_preview_phone),
+                    ),
             ),
-        ),
         onEvent = {},
     )
 }

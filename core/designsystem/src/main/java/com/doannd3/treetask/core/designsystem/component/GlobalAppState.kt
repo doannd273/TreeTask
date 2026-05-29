@@ -15,49 +15,63 @@ class GlobalAppState {
         private set
 
     fun showError(message: String?) {
-        val errorDialogState = AppDialogState(
-            type = AppDialogType.Error,
-            message = message,
-        )
+        val errorDialogState =
+            AppDialogState(
+                type = AppDialogType.Error,
+                message = message,
+            )
 
         this@GlobalAppState.appDialogState = errorDialogState
     }
 
-    fun showError(message: String?, title: String?) {
-        val errorDialogState = AppDialogState(
-            type = AppDialogType.Error,
-            message = message,
-            title = title,
-        )
+    fun showError(
+        message: String?,
+        title: String?,
+    ) {
+        val errorDialogState =
+            AppDialogState(
+                type = AppDialogType.Error,
+                message = message,
+                title = title,
+            )
 
         this@GlobalAppState.appDialogState = errorDialogState
     }
 
     fun showSuccess(message: String?) {
-        val errorDialogState = AppDialogState(
-            type = AppDialogType.Success,
-            message = message,
-        )
+        val errorDialogState =
+            AppDialogState(
+                type = AppDialogType.Success,
+                message = message,
+            )
 
         this@GlobalAppState.appDialogState = errorDialogState
     }
 
-    fun showSuccess(message: String?, onDismiss: () -> Unit) {
-        val errorDialogState = AppDialogState(
-            type = AppDialogType.Success,
-            message = message,
-            onDismiss = onDismiss,
-        )
+    fun showSuccess(
+        message: String?,
+        onDismiss: () -> Unit,
+    ) {
+        val errorDialogState =
+            AppDialogState(
+                type = AppDialogType.Success,
+                message = message,
+                onDismiss = onDismiss,
+            )
 
         this@GlobalAppState.appDialogState = errorDialogState
     }
 
-    fun showSuccess(message: String?, title: String?) {
-        val errorDialogState = AppDialogState(
-            type = AppDialogType.Success,
-            message = message,
-            title = title,
-        )
+    fun showSuccess(
+        message: String?,
+        title: String?,
+    ) {
+        val errorDialogState =
+            AppDialogState(
+                type = AppDialogType.Success,
+                message = message,
+                title = title,
+            )
 
         this@GlobalAppState.appDialogState = errorDialogState
     }
@@ -80,6 +94,7 @@ class GlobalAppState {
 }
 
 // CHÚ Ý: Biến này phải NẰM NGOÀI class GlobalAppState
-val LocalGlobalAppState = compositionLocalOf<GlobalAppState> {
-    error("Vui lòng Provide GlobalAppState trước khi gọi LocalGlobalAppState.current")
-}
+val LocalGlobalAppState =
+    compositionLocalOf<GlobalAppState> {
+        error("Vui lòng Provide GlobalAppState trước khi gọi LocalGlobalAppState.current")
+    }

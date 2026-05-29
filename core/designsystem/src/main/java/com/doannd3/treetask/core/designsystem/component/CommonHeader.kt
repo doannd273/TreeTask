@@ -28,11 +28,11 @@ fun CommonHeader(
 ) {
     Row(
         modifier =
-        Modifier
-            .fillMaxWidth()
-            .height(50.dp)
-            .background(color = MaterialTheme.colorScheme.background)
-            .padding(horizontal = 8.dp),
+            Modifier
+                .fillMaxWidth()
+                .height(50.dp)
+                .background(color = MaterialTheme.colorScheme.background)
+                .padding(horizontal = 8.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         IconButton(onClick = onNavigateBack) {

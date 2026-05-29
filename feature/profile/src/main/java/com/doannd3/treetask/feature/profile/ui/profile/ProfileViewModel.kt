@@ -22,98 +22,98 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ProfileViewModel
-@Inject
-constructor(
-    private val logoutUseCase: LogoutUseCase,
-    private val observeCurrentUserUseCase: ObserveCurrentUserUseCase,
-    private val observeAppLanguageUseCase: ObserveAppLanguageUseCase,
-    private val setAppLanguageUseCase: SetAppLanguageUseCase,
-    private val saveDarkModeUseCase: SaveDarkModeUseCase,
-    private val observeDarkModeUseCase: ObserveDarkModeUseCase,
-) : BaseViewModel(),
-    MviViewModel<ProfileState, ProfileEvent, ProfileEffect> {
-    private val _uiState = MutableStateFlow(ProfileState())
-    override val uiState: StateFlow<ProfileState> = _uiState.asStateFlow()
+    @Inject
+    constructor(
+        private val logoutUseCase: LogoutUseCase,
+        private val observeCurrentUserUseCase: ObserveCurrentUserUseCase,
+        private val observeAppLanguageUseCase: ObserveAppLanguageUseCase,
+        private val setAppLanguageUseCase: SetAppLanguageUseCase,
+        private val saveDarkModeUseCase: SaveDarkModeUseCase,
+        private val observeDarkModeUseCase: ObserveDarkModeUseCase,
+    ) : BaseViewModel(),
+        MviViewModel<ProfileState, ProfileEvent, ProfileEffect> {
+        private val _uiState = MutableStateFlow(ProfileState())
+        override val uiState: StateFlow<ProfileState> = _uiState.asStateFlow()
 
-    private val _effect = MutableSharedFlow<ProfileEffect>()
-    override val effect: SharedFlow<ProfileEffect> = _effect.asSharedFlow()
+        private val _effect = MutableSharedFlow<ProfileEffect>()
+        override val effect: SharedFlow<ProfileEffect> = _effect.asSharedFlow()
 
-    init {
-        executeSafe {
-            observeCurrentUserUseCase().collect { user ->
-                _uiState.update { it.copy(user = user) }
+        init {
+            executeSafe {
+                observeCurrentUserUseCase().collect { user ->
+                    _uiState.update { it.copy(user = user) }
+                }
+            }
+
+            executeSafe {
+                observeAppLanguageUseCase().collect { appLanguage ->
+                    _uiState.update { it.copy(selectedLanguage = appLanguage) }
+                }
+            }
+
+            executeSafe {
+                observeDarkModeUseCase().collect { isDarkMode ->
+                    _uiState.update { it.copy(isDarkMode = isDarkMode) }
+                }
             }
         }
 
-        executeSafe {
-            observeAppLanguageUseCase().collect { appLanguage ->
-                _uiState.update { it.copy(selectedLanguage = appLanguage) }
-            }
-        }
+        override fun onEvent(event: ProfileEvent) {
+            when (event) {
+                ProfileEvent.SubmitLogout -> {
+                    submitLogout()
+                }
 
-        executeSafe {
-            observeDarkModeUseCase().collect { isDarkMode ->
-                _uiState.update { it.copy(isDarkMode = isDarkMode) }
-            }
-        }
-    }
+                ProfileEvent.OpenLanguagePicker -> {
+                    _uiState.update { it.copy(showLanguagePicker = true) }
+                }
 
-    override fun onEvent(event: ProfileEvent) {
-        when (event) {
-            ProfileEvent.SubmitLogout -> {
-                submitLogout()
-            }
+                ProfileEvent.DismissLanguagePicker -> {
+                    _uiState.update { it.copy(showLanguagePicker = false) }
+                }
 
-            ProfileEvent.OpenLanguagePicker -> {
-                _uiState.update { it.copy(showLanguagePicker = true) }
-            }
+                is ProfileEvent.ConfirmLanguage -> {
+                    executeSafe {
+                        setAppLanguageUseCase(appLanguage = event.language)
+                        _uiState.update {
+                            it.copy(showLanguagePicker = false)
+                        }
+                    }
+                }
 
-            ProfileEvent.DismissLanguagePicker -> {
-                _uiState.update { it.copy(showLanguagePicker = false) }
-            }
-
-            is ProfileEvent.ConfirmLanguage -> {
-                executeSafe {
-                    setAppLanguageUseCase(appLanguage = event.language)
-                    _uiState.update {
-                        it.copy(showLanguagePicker = false)
+                ProfileEvent.NavigateChangePassword -> {
+                    viewModelScope.launch {
+                        _effect.emit(ProfileEffect.NavigateToChangePassword)
+                    }
+                }
+                ProfileEvent.NavigateEditProfile -> {
+                    viewModelScope.launch {
+                        _effect.emit(ProfileEffect.NavigateToEditProfile)
+                    }
+                }
+                is ProfileEvent.ToggleDarkMode -> {
+                    executeSafe {
+                        saveDarkModeUseCase(isDarkMode = event.isDarkMode)
                     }
                 }
             }
-
-            ProfileEvent.NavigateChangePassword -> {
-                viewModelScope.launch {
-                    _effect.emit(ProfileEffect.NavigateToChangePassword)
-                }
-            }
-            ProfileEvent.NavigateEditProfile -> {
-                viewModelScope.launch {
-                    _effect.emit(ProfileEffect.NavigateToEditProfile)
-                }
-            }
-            is ProfileEvent.ToggleDarkMode -> {
-                executeSafe {
-                    saveDarkModeUseCase(isDarkMode = event.isDarkMode)
-                }
-            }
-        }
-    }
-
-    private fun submitLogout() {
-        val state = _uiState.value
-        if (state.isLoading) {
-            return
         }
 
-        executeSafe {
-            _uiState.update { it.copy(isLoading = true) }
-            logoutUseCase()
-            _uiState.update { it.copy(isLoading = false) }
-            _effect.emit(ProfileEffect.NavigateToLogin)
+        private fun submitLogout() {
+            val state = _uiState.value
+            if (state.isLoading) {
+                return
+            }
+
+            executeSafe {
+                _uiState.update { it.copy(isLoading = true) }
+                logoutUseCase()
+                _uiState.update { it.copy(isLoading = false) }
+                _effect.emit(ProfileEffect.NavigateToLogin)
+            }
+        }
+
+        override fun setLoading(isLoading: Boolean) {
+            _uiState.update { it.copy(isLoading = isLoading) }
         }
     }
-
-    override fun setLoading(isLoading: Boolean) {
-        _uiState.update { it.copy(isLoading = isLoading) }
-    }
-}

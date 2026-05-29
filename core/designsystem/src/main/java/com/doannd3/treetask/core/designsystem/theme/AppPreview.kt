@@ -12,7 +12,17 @@ annotation class AppPreviewLightDark
 annotation class PreviewLocales
 
 @Preview(name = "EN Light", locale = "en", showBackground = true)
-@Preview(name = "EN Dark", locale = "en", showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES or Configuration.UI_MODE_TYPE_NORMAL)
+@Preview(
+    name = "EN Dark",
+    locale = "en",
+    showBackground = true,
+    uiMode = Configuration.UI_MODE_NIGHT_YES or Configuration.UI_MODE_TYPE_NORMAL,
+)
 @Preview(name = "VI Light", locale = "vi", showBackground = true)
-@Preview(name = "VI Dark", locale = "vi", showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES or Configuration.UI_MODE_TYPE_NORMAL)
+@Preview(
+    name = "VI Dark",
+    locale = "vi",
+    showBackground = true,
+    uiMode = Configuration.UI_MODE_NIGHT_YES or Configuration.UI_MODE_TYPE_NORMAL,
+)
 annotation class AppPreviewLocalesLightDark

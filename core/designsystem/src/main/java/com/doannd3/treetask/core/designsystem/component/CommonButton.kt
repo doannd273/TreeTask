@@ -24,13 +24,13 @@ fun CommonButton(
 ) {
     Button(
         modifier =
-        modifier
-            .fillMaxWidth()
-            .height(50.dp),
+            modifier
+                .fillMaxWidth()
+                .height(50.dp),
         colors =
-        ButtonDefaults.buttonColors(
-            containerColor = MaterialTheme.colorScheme.primary,
-        ),
+            ButtonDefaults.buttonColors(
+                containerColor = MaterialTheme.colorScheme.primary,
+            ),
         shape = RoundedCornerShape(corner = CornerSize(size = 3.dp)),
         enabled = isEnable,
         onClick = { onSubmit() },
