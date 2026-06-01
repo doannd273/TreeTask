@@ -8,3 +8,8 @@ data class RegisterDeviceTokenRequest(
     @SerialName("token") val token: String,
     @SerialName("platform") val platform: String = "android",
 )
+
+@Serializable
+data class UnRegisterTokenRequest(
+    @SerialName("token") val token: String,
+)

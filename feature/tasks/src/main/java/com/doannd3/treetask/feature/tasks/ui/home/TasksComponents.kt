@@ -1,7 +1,6 @@
 package com.doannd3.treetask.feature.tasks.ui.home
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -14,10 +13,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -25,8 +22,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SwipeToDismissBox
 import androidx.compose.material3.SwipeToDismissBoxValue
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -38,8 +33,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -92,96 +85,6 @@ private fun TaskStatusChipsPreview() {
         TaskStatusChips(
             taskStatusSelected = selected,
             onFilterSelect = { selected = it },
-        )
-    }
-}
-
-// endregion
-
-// region SearchTaskInput
-
-@Composable
-internal fun SearchTaskInput(
-    isLoadingSearch: Boolean,
-    searchQuery: String,
-    onSearchChange: (String) -> Unit,
-    onClearClick: () -> Unit,
-) {
-    TextField(
-        modifier =
-            Modifier
-                .fillMaxWidth()
-                .border(
-                    width = 1.dp,
-                    color = MaterialTheme.colorScheme.primary,
-                    shape = RoundedCornerShape(6.dp),
-                )
-                .background(
-                    color = MaterialTheme.colorScheme.surface,
-                    shape = RoundedCornerShape(6.dp),
-                ),
-        colors =
-            TextFieldDefaults.colors(
-                focusedTextColor = MaterialTheme.colorScheme.onSurface,
-                unfocusedTextColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                focusedIndicatorColor = Color.Transparent,
-                unfocusedIndicatorColor = Color.Transparent,
-                disabledIndicatorColor = Color.Transparent,
-                focusedContainerColor = Color.Transparent,
-                unfocusedContainerColor = Color.Transparent,
-                disabledContainerColor = Color.Transparent,
-            ),
-        textStyle =
-            MaterialTheme.typography.bodyMedium,
-        singleLine = true,
-        keyboardOptions =
-            KeyboardOptions(
-                keyboardType = KeyboardType.Text,
-                imeAction = ImeAction.Done,
-            ),
-        placeholder = {
-            Text(text = stringResource(R.string.tasks_search_hint))
-        },
-        leadingIcon = {
-            Icon(
-                painterResource(R.drawable.tasks_ic_search),
-                contentDescription = stringResource(R.string.tasks_cd_search),
-            )
-        },
-        trailingIcon = {
-            when {
-                isLoadingSearch -> {
-                    CircularProgressIndicator(
-                        modifier = Modifier.size(18.dp),
-                        strokeWidth = 2.dp,
-                        color = MaterialTheme.colorScheme.primary,
-                    )
-                }
-
-                searchQuery.isNotEmpty() -> {
-                    IconButton(onClick = onClearClick) {
-                        Icon(
-                            painterResource(R.drawable.tasks_ic_clear),
-                            contentDescription = stringResource(R.string.tasks_cd_clear_search),
-                        )
-                    }
-                }
-            }
-        },
-        value = searchQuery,
-        onValueChange = onSearchChange,
-    )
-}
-
-@AppPreviewLightDark
-@Composable
-private fun SearchTaskInputPreview() {
-    TreeTaskTheme {
-        SearchTaskInput(
-            searchQuery = "",
-            isLoadingSearch = true,
-            onSearchChange = {},
-            onClearClick = {},
         )
     }
 }

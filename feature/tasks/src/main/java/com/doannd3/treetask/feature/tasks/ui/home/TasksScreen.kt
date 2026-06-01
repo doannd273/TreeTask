@@ -45,6 +45,7 @@ import androidx.paging.compose.itemContentType
 import androidx.paging.compose.itemKey
 import com.doannd3.treetask.core.common.asString
 import com.doannd3.treetask.core.designsystem.component.CommonConfirmDialog
+import com.doannd3.treetask.core.designsystem.component.CommonSearch
 import com.doannd3.treetask.core.designsystem.component.LocalGlobalAppState
 import com.doannd3.treetask.core.designsystem.theme.AppPreviewLightDark
 import com.doannd3.treetask.core.designsystem.theme.TreeTaskTheme
@@ -207,7 +208,8 @@ internal fun TasksContent(
                 .padding(16.dp),
         verticalArrangement = Arrangement.Top,
     ) {
-        SearchTaskInput(
+        CommonSearch(
+            hintText = R.string.tasks_search_hint,
             isLoadingSearch = state.isLoadingSearch,
             searchQuery = state.searchQuery,
             onSearchChange = { onEvent(TasksEvent.SearchChanged(it)) },

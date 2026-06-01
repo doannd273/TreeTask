@@ -42,7 +42,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
-        requestDebugNotificationPermissionIfNeeded()
+        requestDebugNotificationPermissionForChuckerIfNeeded()
 
         splashScreen.setKeepOnScreenCondition {
             viewModel.isLoadingMain
@@ -85,7 +85,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun requestDebugNotificationPermissionIfNeeded() {
+    private fun requestDebugNotificationPermissionForChuckerIfNeeded() {
         if (!BuildConfig.DEBUG) return
 
         val status = permissionChecked.check(AppPermission.PostNotification)
