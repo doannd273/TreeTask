@@ -1,6 +1,8 @@
 package com.doannd3.treetask.feature.profile.ui.profile
 
 import androidx.annotation.DrawableRes
+import androidx.annotation.StringRes
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
@@ -14,6 +16,8 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.toggleable
@@ -26,9 +30,11 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
@@ -57,6 +63,173 @@ import com.doannd3.treetask.core.designsystem.theme.AppPreviewLightDark
 import com.doannd3.treetask.core.designsystem.theme.TreeTaskTheme
 import com.doannd3.treetask.core.model.profile.AppLanguage
 import com.doannd3.treetask.feature.profile.R
+
+// region LanguagePickerBottomSheet
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+internal fun LanguagePickerBottomSheet(
+    currentLanguage: AppLanguage,
+    onLanguageSelected: (AppLanguage) -> Unit,
+    onDismiss: () -> Unit,
+) {
+    ModalBottomSheet(
+        onDismissRequest = onDismiss,
+    ) {
+        Column(
+            modifier = Modifier.fillMaxWidth().padding(16.dp),
+        ) {
+            Text(
+                modifier = Modifier.fillMaxWidth(),
+                text = stringResource(R.string.profile_dialog_language_title),
+                style = MaterialTheme.typography.bodyLarge,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+
+            Spacer(Modifier.height(16.dp))
+
+            Text(
+                text = stringResource(R.string.profile_language_selected),
+                style = MaterialTheme.typography.labelSmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+
+            Spacer(Modifier.height(16.dp))
+
+            LanguageItemRow(
+                flagIcon = currentLanguage.flagIconRes(),
+                displayName = currentLanguage.displayNameResId(),
+                nativeName = currentLanguage.nativeName(),
+                showCheckmark = true,
+            )
+
+            HorizontalDivider(thickness = 0.3.dp, color = MaterialTheme.colorScheme.outlineVariant)
+
+            Spacer(Modifier.height(16.dp))
+
+            Text(
+                text = stringResource(R.string.profile_language_all),
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+
+            Spacer(Modifier.height(8.dp))
+
+            LazyColumn(
+                modifier = Modifier.fillMaxWidth().weight(1f, fill = false),
+                horizontalAlignment = Alignment.CenterHorizontally,
+            ) {
+                items(
+                    items = AppLanguage.entries,
+                    key = { appLanguage -> appLanguage.name },
+                ) { appLanguage ->
+                    LanguageItemRow(
+                        flagIcon = appLanguage.flagIconRes(),
+                        displayName = appLanguage.displayNameResId(),
+                        nativeName = appLanguage.nativeName(),
+                        showCheckmark = currentLanguage == appLanguage,
+                    ) {
+                        onLanguageSelected(appLanguage)
+                    }
+                }
+            }
+        }
+    }
+}
+
+@AppPreviewLightDark
+@Composable
+private fun LanguagePickerBottomSheetPreview() {
+    TreeTaskTheme {
+        Surface(color = MaterialTheme.colorScheme.background) {
+            LanguagePickerBottomSheet(
+                currentLanguage = AppLanguage.VIETNAMESE,
+                onLanguageSelected = {},
+                onDismiss = {},
+            )
+        }
+    }
+}
+
+// end region
+
+// region LanguageItemRow
+
+@Composable
+internal fun LanguageItemRow(
+    @DrawableRes flagIcon: Int,
+    @StringRes displayName: Int,
+    nativeName: String,
+    showCheckmark: Boolean = false,
+    onClick: (() -> Unit)? = null,
+) {
+    val languageDisplayName = stringResource(displayName)
+
+    Row(
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .then(
+                    if (onClick != null) {
+                        Modifier.clickable(onClick = onClick)
+                    } else {
+                        Modifier
+                    },
+                ).padding(
+                    vertical = 8.dp,
+                ),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Image(
+            modifier = Modifier.size(22.dp),
+            painter = painterResource(flagIcon),
+            contentDescription = stringResource(R.string.profile_cd_language_flag, languageDisplayName),
+        )
+
+        Column(
+            modifier = Modifier.weight(1f).padding(horizontal = 12.dp),
+        ) {
+            Text(
+                text = nativeName,
+                style = MaterialTheme.typography.bodyLarge,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+
+            Spacer(Modifier.height(4.dp))
+
+            Text(
+                text = languageDisplayName,
+                style = MaterialTheme.typography.labelSmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        }
+
+        if (showCheckmark) {
+            Icon(
+                modifier = Modifier.size(22.dp),
+                painter = painterResource(R.drawable.profile_ic_checkmark),
+                contentDescription = stringResource(R.string.profile_cd_language_checkmark),
+            )
+        }
+    }
+}
+
+@AppPreviewLightDark
+@Composable
+private fun LanguageItemRowPreview() {
+    TreeTaskTheme {
+        Surface(color = MaterialTheme.colorScheme.background) {
+            LanguageItemRow(
+                flagIcon = R.drawable.profile_ic_flag_vi,
+                displayName = R.string.profile_language_vi,
+                nativeName = "Tiếng việt",
+                showCheckmark = true,
+            )
+        }
+    }
+}
+
+// endregion
 
 // region ProfileHeader
 
@@ -141,8 +314,7 @@ internal fun ProfileSwitchItem(
                     value = checked,
                     onValueChange = onCheckedChange,
                     role = Role.Switch,
-                )
-                .padding(horizontal = 16.dp, vertical = 24.dp),
+                ).padding(horizontal = 16.dp, vertical = 24.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Icon(
@@ -212,8 +384,7 @@ internal fun ProfileItem(
                     } else {
                         Modifier
                     },
-                )
-                .padding(horizontal = 16.dp, vertical = 14.dp),
+                ).padding(horizontal = 16.dp, vertical = 14.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Icon(
@@ -453,8 +624,7 @@ private fun LanguagePickerDialogContent(
                                     selected = selectedLanguage == language,
                                     onClick = { selectedLanguage = language },
                                     role = Role.RadioButton,
-                                )
-                                .padding(4.dp),
+                                ).padding(4.dp),
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
                         RadioButton(
