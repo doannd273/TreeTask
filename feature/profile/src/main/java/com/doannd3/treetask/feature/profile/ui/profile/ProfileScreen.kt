@@ -123,16 +123,9 @@ internal fun ProfileContent(
     if (state.showLanguagePicker) {
         LanguagePickerBottomSheet(
             currentLanguage = state.selectedLanguage,
-            onLanguageSelected = { onEvent(ProfileEvent.ConfirmLanguage(it)) },
+            onLanguageSelected = { onEvent(ProfileEvent.SelectLanguage(it)) },
             onDismiss = { onEvent(ProfileEvent.DismissLanguagePicker) },
         )
-
-//        LanguagePickerDialog(
-//            modifier = Modifier,
-//            currentLanguage = state.selectedLanguage,
-//            onConfirm = { onEvent(ProfileEvent.ConfirmLanguage(it)) },
-//            onDismiss = { onEvent(ProfileEvent.DismissLanguagePicker) },
-//        )
     }
 
     Column(

@@ -75,7 +75,7 @@ class ProfileViewModel
                     _uiState.update { it.copy(showLanguagePicker = false) }
                 }
 
-                is ProfileEvent.ConfirmLanguage -> {
+                is ProfileEvent.SelectLanguage -> {
                     executeSafe {
                         setAppLanguageUseCase(appLanguage = event.language)
                         _uiState.update {
