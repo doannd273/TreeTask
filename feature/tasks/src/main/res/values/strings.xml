@@ -2,8 +2,6 @@
 <resources>
     <string name="tasks_title">Task Management</string>
     <string name="tasks_search_hint">Search tasks…</string>
-    <string name="tasks_cd_search">Search tasks</string>
-    <string name="tasks_cd_clear_search">Clear search</string>
     <string name="tasks_cd_add_task">Add task</string>
     <string name="tasks_due_date_label">Due: %s</string>
     <string name="tasks_error_retry">Connection error. Retry</string>

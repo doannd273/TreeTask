@@ -89,11 +89,13 @@ class ProfileViewModel
                         _effect.emit(ProfileEffect.NavigateToChangePassword)
                     }
                 }
+
                 ProfileEvent.NavigateEditProfile -> {
                     viewModelScope.launch {
                         _effect.emit(ProfileEffect.NavigateToEditProfile)
                     }
                 }
+
                 is ProfileEvent.ToggleDarkMode -> {
                     executeSafe {
                         saveDarkModeUseCase(isDarkMode = event.isDarkMode)
