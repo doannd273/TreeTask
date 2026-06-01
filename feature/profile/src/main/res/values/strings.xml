@@ -12,6 +12,8 @@
     <string name="profile_language_no_results">No languages found</string>
     <string name="profile_language_en">English</string>
     <string name="profile_language_vi">Vietnamese</string>
+    <string name="profile_language_en_native" translatable="false">English</string>
+    <string name="profile_language_vi_native" translatable="false">Tiếng Việt</string>
     <string name="profile_cd_language_checkmark">Language checkmark</string>
 
     <!-- Profile screen -->
