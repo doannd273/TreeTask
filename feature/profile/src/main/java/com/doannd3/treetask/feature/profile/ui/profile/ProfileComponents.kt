@@ -70,15 +70,20 @@ internal fun LanguagePickerBottomSheet(
             stringResource(language.displayNameResId())
         }
 
+    val languagesNativeNames =
+        AppLanguage.entries.associateWith { language ->
+            stringResource(language.nativeNameResId())
+        }
+
     val filteredLanguages =
-        remember(searchQuery, languagesDisplayNames) {
+        remember(searchQuery, languagesDisplayNames, languagesNativeNames) {
             val query = searchQuery.trim()
             if (query.isBlank()) {
                 AppLanguage.entries
             } else {
                 AppLanguage.entries.filter { language ->
                     languagesDisplayNames.getValue(language).contains(query, ignoreCase = true) ||
-                        language.nativeName().contains(query, ignoreCase = true)
+                        languagesNativeNames.getValue(language).contains(query, ignoreCase = true)
                 }
             }
         }
@@ -123,7 +128,7 @@ internal fun LanguagePickerBottomSheet(
             LanguageItemRow(
                 flagIcon = currentLanguage.flagIconRes(),
                 displayName = currentLanguage.displayNameResId(),
-                nativeName = currentLanguage.nativeName(),
+                nativeName = currentLanguage.nativeNameResId(),
                 showCheckmark = true,
             )
 
@@ -158,7 +163,7 @@ internal fun LanguagePickerBottomSheet(
                     LanguageItemRow(
                         flagIcon = appLanguage.flagIconRes(),
                         displayName = appLanguage.displayNameResId(),
-                        nativeName = appLanguage.nativeName(),
+                        nativeName = appLanguage.nativeNameResId(),
                         showCheckmark = currentLanguage == appLanguage,
                     ) {
                         onLanguageSelected(appLanguage)
@@ -191,11 +196,12 @@ private fun LanguagePickerBottomSheetPreview() {
 internal fun LanguageItemRow(
     @DrawableRes flagIcon: Int,
     @StringRes displayName: Int,
-    nativeName: String,
+    @StringRes nativeName: Int,
     showCheckmark: Boolean = false,
     onClick: (() -> Unit)? = null,
 ) {
     val languageDisplayName = stringResource(displayName)
+    val languageNativeName = stringResource(nativeName)
 
     Row(
         modifier =
@@ -222,7 +228,7 @@ internal fun LanguageItemRow(
             modifier = Modifier.weight(1f).padding(horizontal = 12.dp),
         ) {
             Text(
-                text = nativeName,
+                text = languageNativeName,
                 style = MaterialTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
@@ -254,7 +260,7 @@ private fun LanguageItemRowPreview() {
             LanguageItemRow(
                 flagIcon = R.drawable.profile_ic_flag_vi,
                 displayName = R.string.profile_language_vi,
-                nativeName = "Tiếng việt",
+                nativeName = R.string.profile_language_vi_native,
                 showCheckmark = true,
             )
         }
