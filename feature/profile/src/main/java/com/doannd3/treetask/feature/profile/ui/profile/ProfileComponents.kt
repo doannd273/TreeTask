@@ -45,6 +45,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -59,6 +60,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import coil.compose.AsyncImage
+import com.doannd3.treetask.core.designsystem.component.CommonSearch
 import com.doannd3.treetask.core.designsystem.theme.AppPreviewLightDark
 import com.doannd3.treetask.core.designsystem.theme.TreeTaskTheme
 import com.doannd3.treetask.core.model.profile.AppLanguage
@@ -73,6 +75,26 @@ internal fun LanguagePickerBottomSheet(
     onLanguageSelected: (AppLanguage) -> Unit,
     onDismiss: () -> Unit,
 ) {
+    var searchQuery by rememberSaveable { mutableStateOf("") }
+
+    val languagesDisplayNames =
+        AppLanguage.entries.associateWith { language ->
+            stringResource(language.displayNameResId())
+        }
+
+    val filteredLanguages =
+        remember(searchQuery, languagesDisplayNames) {
+            val query = searchQuery.trim()
+            if (query.isBlank()) {
+                AppLanguage.entries
+            } else {
+                AppLanguage.entries.filter { language ->
+                    languagesDisplayNames.getValue(language).contains(query, ignoreCase = true) ||
+                        language.nativeName().contains(query, ignoreCase = true)
+                }
+            }
+        }
+
     ModalBottomSheet(
         onDismissRequest = onDismiss,
     ) {
@@ -84,6 +106,20 @@ internal fun LanguagePickerBottomSheet(
                 text = stringResource(R.string.profile_dialog_language_title),
                 style = MaterialTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+
+            Spacer(Modifier.height(16.dp))
+
+            CommonSearch(
+                hintText = R.string.profile_language_search_hint,
+                isLoadingSearch = false,
+                searchQuery = searchQuery,
+                onSearchChange = {
+                    searchQuery = it
+                },
+                onClearClick = {
+                    searchQuery = ""
+                },
             )
 
             Spacer(Modifier.height(16.dp))
@@ -120,8 +156,8 @@ internal fun LanguagePickerBottomSheet(
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 items(
-                    items = AppLanguage.entries,
-                    key = { appLanguage -> appLanguage.name },
+                    items = filteredLanguages,
+                    key = { appLanguage -> appLanguage.localeTag },
                 ) { appLanguage ->
                     LanguageItemRow(
                         flagIcon = appLanguage.flagIconRes(),

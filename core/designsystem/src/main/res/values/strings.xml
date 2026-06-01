@@ -8,4 +8,6 @@
     <string name="designsystem_cd_show_password">Show password</string>
     <string name="designsystem_cd_hide_password">Hide password</string>
     <string name="designsystem_cd_navigate_back">Go back</string>
+    <string name="designsystem_cd_search">Search</string>
+    <string name="designsystem_cd_clear_search">Clear search</string>
 </resources>
