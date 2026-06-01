@@ -1,5 +1,7 @@
 package com.doannd3.treetask.feature.tasks.ui.home
 
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -21,6 +23,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -47,6 +50,9 @@ import com.doannd3.treetask.core.designsystem.theme.AppPreviewLightDark
 import com.doannd3.treetask.core.designsystem.theme.TreeTaskTheme
 import com.doannd3.treetask.core.model.task.Task
 import com.doannd3.treetask.core.model.task.TaskStatus
+import com.doannd3.treetask.core.permission.AppPermission
+import com.doannd3.treetask.core.permission.PermissionChecker
+import com.doannd3.treetask.core.permission.PermissionStatus
 import com.doannd3.treetask.feature.tasks.R
 import kotlinx.coroutines.flow.flowOf
 import java.time.Instant
@@ -64,6 +70,36 @@ fun TasksRoute(
     val globalAppState = LocalGlobalAppState.current
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
+
+    val permissionChecker =
+        remember(context) {
+            PermissionChecker(context)
+        }
+    var hasRequestedNotificationPermission by rememberSaveable {
+        mutableStateOf(false)
+    }
+
+    val notificationPermissionLauncher =
+        rememberLauncherForActivityResult(
+            contract = ActivityResultContracts.RequestMultiplePermissions(),
+        ) {
+            hasRequestedNotificationPermission = true
+        }
+    LaunchedEffect(Unit) {
+        if (hasRequestedNotificationPermission) return@LaunchedEffect
+
+        when (val status = permissionChecker.check(AppPermission.PostNotification)) {
+            is PermissionStatus.Denied -> {
+                notificationPermissionLauncher.launch(
+                    status.missingPermissions.toTypedArray(),
+                )
+            }
+
+            PermissionStatus.Granted,
+            PermissionStatus.NotRequired,
+            -> Unit
+        }
+    }
 
     TasksScreen(
         state = state,
@@ -166,9 +202,9 @@ internal fun TasksContent(
 
     Column(
         modifier =
-        modifier
-            .fillMaxSize()
-            .padding(16.dp),
+            modifier
+                .fillMaxSize()
+                .padding(16.dp),
         verticalArrangement = Arrangement.Top,
     ) {
         SearchTaskInput(
@@ -186,9 +222,9 @@ internal fun TasksContent(
         if (pagingItems.itemCount == 0 && pagingItems.loadState.refresh is LoadState.NotLoading) {
             TasksEmptyState(
                 modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .weight(1f),
+                    Modifier
+                        .fillMaxWidth()
+                        .weight(1f),
             )
         }
 
@@ -244,9 +280,9 @@ internal fun TasksContent(
                         item {
                             Box(
                                 modifier =
-                                Modifier
-                                    .fillMaxWidth()
-                                    .padding(16.dp),
+                                    Modifier
+                                        .fillMaxWidth()
+                                        .padding(16.dp),
                                 contentAlignment = Alignment.Center,
                             ) {
                                 CircularProgressIndicator()

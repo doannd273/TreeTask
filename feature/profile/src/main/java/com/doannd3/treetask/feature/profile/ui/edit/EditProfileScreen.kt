@@ -93,9 +93,9 @@ internal fun EditProfileScreen(
 ) {
     Scaffold(
         contentWindowInsets =
-        WindowInsets.safeDrawing.only(
-            WindowInsetsSides.Horizontal + WindowInsetsSides.Bottom,
-        ),
+            WindowInsets.safeDrawing.only(
+                WindowInsetsSides.Horizontal + WindowInsetsSides.Bottom,
+            ),
         topBar = {
             CommonHeader(
                 title = stringResource(R.string.profile_edit_title),
@@ -128,20 +128,21 @@ internal fun EditProfileContent(
     state: EditProfileState,
     onEvent: (EditProfileEvent) -> Unit,
 ) {
-    val launcher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.PickVisualMedia(),
-    ) { uri ->
-        if (uri != null) {
-            onEvent(EditProfileEvent.AvatarChanged(avatarUri = uri))
+    val launcher =
+        rememberLauncherForActivityResult(
+            contract = ActivityResultContracts.PickVisualMedia(),
+        ) { uri ->
+            if (uri != null) {
+                onEvent(EditProfileEvent.AvatarChanged(avatarUri = uri))
+            }
         }
-    }
 
     Column(
         modifier =
-        modifier
-            .fillMaxSize()
-            .verticalScroll(rememberScrollState())
-            .imePadding(),
+            modifier
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState())
+                .imePadding(),
     ) {
         AvatarPicker(
             isEnable = !state.isLoading,

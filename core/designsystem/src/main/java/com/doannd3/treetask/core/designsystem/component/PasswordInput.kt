@@ -40,25 +40,25 @@ fun PasswordInput(
         modifier = modifier,
         enabled = enabled,
         colors =
-        OutlinedTextFieldDefaults.colors(
-            focusedTextColor = MaterialTheme.colorScheme.onSurface,
-            unfocusedTextColor = MaterialTheme.colorScheme.onSurfaceVariant,
-        ),
+            OutlinedTextFieldDefaults.colors(
+                focusedTextColor = MaterialTheme.colorScheme.onSurface,
+                unfocusedTextColor = MaterialTheme.colorScheme.onSurfaceVariant,
+            ),
         textStyle =
-        TextStyle(
-            fontSize = 15.sp,
-        ),
+            TextStyle(
+                fontSize = 15.sp,
+            ),
         singleLine = true,
         keyboardOptions =
-        KeyboardOptions(
-            keyboardType = KeyboardType.Password,
-            imeAction = imeAction,
-        ),
+            KeyboardOptions(
+                keyboardType = KeyboardType.Password,
+                imeAction = imeAction,
+            ),
         keyboardActions =
-        KeyboardActions(
-            onNext = { onImeNext() },
-            onDone = { onImeDone() },
-        ),
+            KeyboardActions(
+                onNext = { onImeNext() },
+                onDone = { onImeDone() },
+            ),
         value = password,
         onValueChange = { onPasswordChange(it) },
         label = { Text(text = label) },
@@ -88,11 +88,11 @@ fun PasswordInput(
             }
         },
         visualTransformation =
-        if (passwordVisible) {
-            VisualTransformation.None
-        } else {
-            PasswordVisualTransformation()
-        },
+            if (passwordVisible) {
+                VisualTransformation.None
+            } else {
+                PasswordVisualTransformation()
+            },
     )
 }
 

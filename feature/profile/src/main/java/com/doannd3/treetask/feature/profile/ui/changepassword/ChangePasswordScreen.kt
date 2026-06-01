@@ -93,9 +93,9 @@ internal fun ChangePasswordScreen(
 ) {
     Scaffold(
         contentWindowInsets =
-        WindowInsets.safeDrawing.only(
-            WindowInsetsSides.Horizontal + WindowInsetsSides.Bottom,
-        ),
+            WindowInsets.safeDrawing.only(
+                WindowInsetsSides.Horizontal + WindowInsetsSides.Bottom,
+            ),
         topBar = {
             CommonHeader(
                 title = stringResource(R.string.profile_change_password_title),
@@ -119,10 +119,10 @@ internal fun ChangePasswordContent(
 ) {
     Column(
         modifier =
-        modifier
-            .fillMaxSize()
-            .verticalScroll(rememberScrollState())
-            .imePadding(),
+            modifier
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState())
+                .imePadding(),
     ) {
         ChangePasswordForm(
             state = state,
@@ -149,11 +149,11 @@ private fun ChangePasswordScreenFilledPreview() {
     TreeTaskTheme {
         ChangePasswordScreen(
             state =
-            ChangePasswordState(
-                currentPassword = stringResource(R.string.profile_preview_current_password),
-                newPassword = stringResource(R.string.profile_preview_new_password),
-                confirmPassword = stringResource(R.string.profile_preview_new_password),
-            ),
+                ChangePasswordState(
+                    currentPassword = stringResource(R.string.profile_preview_current_password),
+                    newPassword = stringResource(R.string.profile_preview_new_password),
+                    confirmPassword = stringResource(R.string.profile_preview_new_password),
+                ),
             onEvent = {},
             onNavigateBack = {},
         )

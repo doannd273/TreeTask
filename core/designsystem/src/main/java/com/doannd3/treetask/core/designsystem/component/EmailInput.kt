@@ -31,25 +31,25 @@ fun EmailInput(
         modifier = modifier,
         enabled = isEnable,
         colors =
-        OutlinedTextFieldDefaults.colors(
-            focusedTextColor = MaterialTheme.colorScheme.onSurface,
-            unfocusedTextColor = MaterialTheme.colorScheme.onSurfaceVariant,
-        ),
+            OutlinedTextFieldDefaults.colors(
+                focusedTextColor = MaterialTheme.colorScheme.onSurface,
+                unfocusedTextColor = MaterialTheme.colorScheme.onSurfaceVariant,
+            ),
         textStyle =
-        TextStyle(
-            fontSize = 15.sp,
-        ),
+            TextStyle(
+                fontSize = 15.sp,
+            ),
         singleLine = true,
         keyboardOptions =
-        KeyboardOptions(
-            keyboardType = KeyboardType.Email,
-            imeAction = imeAction,
-        ),
+            KeyboardOptions(
+                keyboardType = KeyboardType.Email,
+                imeAction = imeAction,
+            ),
         keyboardActions =
-        KeyboardActions(
-            onNext = { onImeNext() },
-            onDone = { onImeDone() },
-        ),
+            KeyboardActions(
+                onNext = { onImeNext() },
+                onDone = { onImeDone() },
+            ),
         value = email,
         onValueChange = { onEmailChange(it) },
         label = { Text(text = label) },

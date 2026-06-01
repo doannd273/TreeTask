@@ -4,7 +4,6 @@ import com.doannd3.treetask.core.common.ApiResult
 import kotlinx.coroutines.flow.Flow
 
 interface AuthRepository {
-
     val isSessionExpired: Flow<Boolean>
 
     suspend fun login(

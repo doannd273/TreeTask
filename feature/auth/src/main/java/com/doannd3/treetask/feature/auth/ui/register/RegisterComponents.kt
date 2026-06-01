@@ -29,9 +29,7 @@ import com.doannd3.treetask.feature.auth.R
 // region AlreadyHaveAccountTextButton
 
 @Composable
-internal fun AlreadyHaveAccountTextButton(
-    onRegisterBack: () -> Unit,
-) {
+internal fun AlreadyHaveAccountTextButton(onRegisterBack: () -> Unit) {
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.Center,
@@ -41,22 +39,25 @@ internal fun AlreadyHaveAccountTextButton(
 
         LinkText(
             text = text,
-            links = listOf(
-                LinkPart(
-                    text = loginText,
-                    tag = LinkTag.LOGIN.name,
-                    onClick = onRegisterBack,
+            links =
+                listOf(
+                    LinkPart(
+                        text = loginText,
+                        tag = LinkTag.LOGIN.name,
+                        onClick = onRegisterBack,
+                    ),
                 ),
-            ),
-            parentStyle = TextStyle(
-                color = MaterialTheme.colorScheme.primary,
-                fontSize = 15.sp,
-            ),
-            linkStyle = SpanStyle(
-                color = MaterialTheme.colorScheme.primary,
-                fontSize = 15.sp,
-                textDecoration = TextDecoration.Underline,
-            ),
+            parentStyle =
+                TextStyle(
+                    color = MaterialTheme.colorScheme.primary,
+                    fontSize = 15.sp,
+                ),
+            linkStyle =
+                SpanStyle(
+                    color = MaterialTheme.colorScheme.primary,
+                    fontSize = 15.sp,
+                    textDecoration = TextDecoration.Underline,
+                ),
         )
     }
 }
@@ -84,16 +85,18 @@ internal fun FullNameInput(
 ) {
     OutlinedTextField(
         modifier = modifier.fillMaxWidth(),
-        colors = OutlinedTextFieldDefaults.colors(
-            focusedTextColor = MaterialTheme.colorScheme.onSurface,
-            unfocusedTextColor = MaterialTheme.colorScheme.onSurfaceVariant,
-        ),
+        colors =
+            OutlinedTextFieldDefaults.colors(
+                focusedTextColor = MaterialTheme.colorScheme.onSurface,
+                unfocusedTextColor = MaterialTheme.colorScheme.onSurfaceVariant,
+            ),
         textStyle = TextStyle(fontSize = 15.sp),
         singleLine = true,
-        keyboardOptions = KeyboardOptions(
-            keyboardType = KeyboardType.Text,
-            imeAction = ImeAction.Next,
-        ),
+        keyboardOptions =
+            KeyboardOptions(
+                keyboardType = KeyboardType.Text,
+                imeAction = ImeAction.Next,
+            ),
         keyboardActions = KeyboardActions(onNext = { onImeNext() }),
         value = fullName,
         onValueChange = { onFullNameChange(it) },

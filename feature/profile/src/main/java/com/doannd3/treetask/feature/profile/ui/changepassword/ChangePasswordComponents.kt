@@ -35,20 +35,23 @@ internal fun ChangePasswordForm(
     val newPasswordFocusRequester = remember { FocusRequester() }
     val confirmPasswordFocusRequester = remember { FocusRequester() }
     val focusManager = LocalFocusManager.current
-    val onSubmitDebounced = rememberDebouncedClick {
-        onEvent(ChangePasswordEvent.SubmitChangePassword)
-    }
+    val onSubmitDebounced =
+        rememberDebouncedClick {
+            onEvent(ChangePasswordEvent.SubmitChangePassword)
+        }
 
     Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(16.dp),
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
         PasswordInput(
-            modifier = Modifier
-                .fillMaxWidth()
-                .focusRequester(currentPasswordFocusRequester),
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .focusRequester(currentPasswordFocusRequester),
             label = stringResource(R.string.profile_change_password_current_label),
             password = state.currentPassword,
             passwordVisible = state.currentPasswordVisible,
@@ -60,9 +63,10 @@ internal fun ChangePasswordForm(
         )
 
         PasswordInput(
-            modifier = Modifier
-                .fillMaxWidth()
-                .focusRequester(newPasswordFocusRequester),
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .focusRequester(newPasswordFocusRequester),
             label = stringResource(R.string.profile_change_password_new_label),
             password = state.newPassword,
             passwordVisible = state.newPasswordVisible,
@@ -74,9 +78,10 @@ internal fun ChangePasswordForm(
         )
 
         PasswordInput(
-            modifier = Modifier
-                .fillMaxWidth()
-                .focusRequester(confirmPasswordFocusRequester),
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .focusRequester(confirmPasswordFocusRequester),
             label = stringResource(R.string.profile_change_password_confirm_label),
             password = state.confirmPassword,
             passwordVisible = state.confirmPasswordVisible,
@@ -119,11 +124,12 @@ private fun ChangePasswordFormFilledPreview() {
     TreeTaskTheme {
         Surface(color = MaterialTheme.colorScheme.background) {
             ChangePasswordForm(
-                state = ChangePasswordState(
-                    currentPassword = stringResource(R.string.profile_preview_current_password),
-                    newPassword = stringResource(R.string.profile_preview_new_password),
-                    confirmPassword = stringResource(R.string.profile_preview_new_password),
-                ),
+                state =
+                    ChangePasswordState(
+                        currentPassword = stringResource(R.string.profile_preview_current_password),
+                        newPassword = stringResource(R.string.profile_preview_new_password),
+                        confirmPassword = stringResource(R.string.profile_preview_new_password),
+                    ),
                 onEvent = {},
             )
         }

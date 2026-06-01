@@ -44,9 +44,9 @@ fun CommonConfirmDialog(
     Dialog(onDismissRequest = onDismiss) {
         Surface(
             modifier =
-            modifier
-                .fillMaxWidth()
-                .padding(horizontal = 24.dp, vertical = 8.dp),
+                modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 24.dp, vertical = 8.dp),
             shape = RoundedCornerShape(20.dp),
             color = MaterialTheme.colorScheme.surface,
             tonalElevation = 8.dp,
@@ -54,10 +54,10 @@ fun CommonConfirmDialog(
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 Column(
                     modifier =
-                    Modifier
-                        .padding(16.dp)
-                        .heightIn(max = 400.dp)
-                        .verticalScroll(rememberScrollState()),
+                        Modifier
+                            .padding(16.dp)
+                            .heightIn(max = 400.dp)
+                            .verticalScroll(rememberScrollState()),
                     horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
                     Text(
