@@ -8,4 +8,6 @@
     <string name="designsystem_cd_show_password">Hiện mật khẩu</string>
     <string name="designsystem_cd_hide_password">Ẩn mật khẩu</string>
     <string name="designsystem_cd_navigate_back">Quay lại</string>
+    <string name="designsystem_cd_search">Tìm kiếm</string>
+    <string name="designsystem_cd_clear_search">Xóa tìm kiếm</string>
 </resources>
