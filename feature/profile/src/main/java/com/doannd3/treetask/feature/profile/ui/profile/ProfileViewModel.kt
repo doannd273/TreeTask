@@ -1,8 +1,10 @@
 package com.doannd3.treetask.feature.profile.ui.profile
 
 import androidx.lifecycle.viewModelScope
+import com.doannd3.treetask.core.common.ApiResult
 import com.doannd3.treetask.core.common.BaseViewModel
 import com.doannd3.treetask.core.common.MviViewModel
+import com.doannd3.treetask.core.common.log.AppTag
 import com.doannd3.treetask.core.domain.usecase.auth.LogoutUseCase
 import com.doannd3.treetask.core.domain.usecase.setting.ObserveAppLanguageUseCase
 import com.doannd3.treetask.core.domain.usecase.setting.ObserveDarkModeUseCase
@@ -18,6 +20,7 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
@@ -107,8 +110,18 @@ class ProfileViewModel
 
             executeSafe {
                 _uiState.update { it.copy(isLoading = true) }
-                logoutUseCase()
+                val result = logoutUseCase()
                 _uiState.update { it.copy(isLoading = false) }
+
+                result.unregisterDeviceTokenResult?.let { e ->
+                    if (e is ApiResult.Error) {
+                        Timber.tag(AppTag.PROFILE).e(
+                            e.exception,
+                            "UnRegister device token error: ${e.message}",
+                        )
+                    }
+                }
+
                 _effect.emit(ProfileEffect.NavigateToLogin)
             }
         }

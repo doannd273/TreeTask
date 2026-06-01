@@ -40,4 +40,5 @@ object AppTag {
     const val DATABASE = "$PREFIX:Database"
     const val DATA = "$PREFIX:Data"
     const val COMMON = "$PREFIX:Common"
+    const val DOMAIN = "$PREFIX:Domain"
 }
