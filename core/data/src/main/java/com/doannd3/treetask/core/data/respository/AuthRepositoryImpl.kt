@@ -3,6 +3,7 @@ package com.doannd3.treetask.core.data.respository
 import com.doannd3.treetask.core.common.ApiResult
 import com.doannd3.treetask.core.common.error.AppErrorCode
 import com.doannd3.treetask.core.common.error.MissingResponseDataException
+import com.doannd3.treetask.core.common.log.AppTag
 import com.doannd3.treetask.core.data.model.toUserOrNull
 import com.doannd3.treetask.core.datastore.token.TokenStorage
 import com.doannd3.treetask.core.datastore.user.UserStorage
@@ -12,14 +13,17 @@ import com.doannd3.treetask.core.network.model.request.LoginRequest
 import com.doannd3.treetask.core.network.model.request.RegisterRequest
 import com.doannd3.treetask.core.network.model.request.ResetPasswordRequest
 import com.doannd3.treetask.core.network.service.AuthService
+import com.doannd3.treetask.core.network.service.AuthenticatedAuthService
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import timber.log.Timber
 import javax.inject.Inject
 
 class AuthRepositoryImpl
     @Inject
     constructor(
         private val authService: AuthService,
+        private val authenticatedAuthService: AuthenticatedAuthService,
         private val tokenStorage: TokenStorage,
         private val userStorage: UserStorage,
     ) : AuthRepository {
@@ -153,7 +157,23 @@ class AuthRepositoryImpl
         }
 
         override suspend fun logout() {
-            tokenStorage.clearToken()
-            userStorage.clearUserProfile()
+            var logoutResult: ApiResult<Unit>? = null
+            try {
+                logoutResult = authenticatedAuthService.logout()
+            } catch (e: Exception) {
+                logoutResult = ApiResult.Error(exception = e)
+            } finally {
+                logoutResult?.let { result ->
+                    if (result is ApiResult.Error) {
+                        Timber.tag(AppTag.DATA).e(
+                            result.exception,
+                            "Logout error: ${result.message}, status code: ${result.statusCode}",
+                        )
+                    }
+                }
+
+                tokenStorage.clearToken()
+                userStorage.clearUserProfile()
+            }
         }
     }
