@@ -9,11 +9,10 @@
     <string name="profile_language_search_hint">Tìm ngôn ngữ</string>
     <string name="profile_language_all">Tất cả ngôn ngữ</string>
     <string name="profile_language_selected">Đã chọn</string>
-    <string name="profile_language_en">English</string>
+    <string name="profile_language_no_results">Không tìm thấy ngôn ngữ</string>
+    <string name="profile_language_en">Tiếng Anh</string>
     <string name="profile_language_vi">Tiếng Việt</string>
-    <string name="profile_action_cancel">Hủy</string>
-    <string name="profile_action_confirm">Xác nhận</string>
-    <string name="profile_cd_language_checkmark">Chọn ngôn ngữ</string>
+    <string name="profile_cd_language_checkmark">Đã chọn</string>
 
     <!-- Profile screen -->
     <string name="profile_section_account">Tài khoản</string>

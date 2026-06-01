@@ -19,7 +19,7 @@ sealed class ProfileEvent {
 
     data object DismissLanguagePicker : ProfileEvent()
 
-    data class ConfirmLanguage(
+    data class SelectLanguage(
         val language: AppLanguage,
     ) : ProfileEvent()
 
