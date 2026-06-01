@@ -10,6 +10,7 @@ import com.doannd3.treetask.core.network.model.response.RegisterResponse
 import com.doannd3.treetask.core.network.model.response.TokenResponse
 import com.doannd3.treetask.core.network.model.response.UserResponse
 import com.doannd3.treetask.core.network.service.AuthService
+import com.doannd3.treetask.core.network.service.AuthenticatedAuthService
 import com.google.common.truth.Truth.assertThat
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -22,6 +23,7 @@ import org.junit.Test
 
 class AuthRepositoryImplTest {
     private val authService: AuthService = mockk()
+    private val authenticatedAuthService: AuthenticatedAuthService = mockk()
     private val tokenManager: TokenStorage = mockk(relaxed = true)
     private val userPrefsManager: UserStorage = mockk(relaxed = true)
 
@@ -40,6 +42,7 @@ class AuthRepositoryImplTest {
         authRepository =
             AuthRepositoryImpl(
                 authService = authService,
+                authenticatedAuthService = authenticatedAuthService,
                 tokenStorage = tokenManager,
                 userStorage = userPrefsManager,
             )
