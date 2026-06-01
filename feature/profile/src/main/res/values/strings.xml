@@ -1,14 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="profile_cd_user_avatar">avatar</string>
+    <string name="profile_cd_language_flag">%1$s flag</string>
     <string name="profile_action_logout">Logout</string>
 
     <string name="profile_menu_language">Language</string>
     <string name="profile_dialog_language_title">Choose language</string>
+    <string name="profile_language_search_hint">Search language</string>
+    <string name="profile_language_all">All languages</string>
+    <string name="profile_language_selected">Selected</string>
     <string name="profile_language_en">English</string>
     <string name="profile_language_vi">Tiếng Việt</string>
     <string name="profile_action_cancel">Cancel</string>
     <string name="profile_action_confirm">Confirm</string>
+    <string name="profile_cd_language_checkmark">Language checkmark</string>
 
     <!-- Profile screen -->
     <string name="profile_section_account">Account</string>
