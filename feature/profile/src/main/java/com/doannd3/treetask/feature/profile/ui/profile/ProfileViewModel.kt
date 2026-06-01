@@ -117,7 +117,7 @@ class ProfileViewModel
                     if (e is ApiResult.Error) {
                         Timber.tag(AppTag.PROFILE).e(
                             e.exception,
-                            "UnRegister device token error: ${e.message}",
+                            "UnRegister device token error: ${e.message}, status code: ${e.statusCode}",
                         )
                     }
                 }
