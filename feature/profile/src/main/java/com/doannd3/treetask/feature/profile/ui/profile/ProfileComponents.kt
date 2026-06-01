@@ -404,12 +404,6 @@ internal fun LanguagePickerDialog(
     }
 }
 
-internal fun AppLanguage.displayNameResId(): Int =
-    when (this) {
-        AppLanguage.ENGLISH -> R.string.profile_language_en
-        AppLanguage.VIETNAMESE -> R.string.profile_language_vi
-    }
-
 @Composable
 private fun LanguagePickerDialogContent(
     modifier: Modifier,
