@@ -9,10 +9,9 @@
     <string name="profile_language_search_hint">Search language</string>
     <string name="profile_language_all">All languages</string>
     <string name="profile_language_selected">Selected</string>
+    <string name="profile_language_no_results">No languages found</string>
     <string name="profile_language_en">English</string>
-    <string name="profile_language_vi">Tiếng Việt</string>
-    <string name="profile_action_cancel">Cancel</string>
-    <string name="profile_action_confirm">Confirm</string>
+    <string name="profile_language_vi">Vietnamese</string>
     <string name="profile_cd_language_checkmark">Language checkmark</string>
 
     <!-- Profile screen -->

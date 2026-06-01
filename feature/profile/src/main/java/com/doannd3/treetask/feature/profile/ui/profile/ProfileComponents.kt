@@ -6,24 +6,18 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
-import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material3.Button
@@ -35,12 +29,9 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
-import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
-import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -55,10 +46,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import androidx.compose.ui.window.Dialog
 import coil.compose.AsyncImage
 import com.doannd3.treetask.core.designsystem.component.CommonSearch
 import com.doannd3.treetask.core.designsystem.theme.AppPreviewLightDark
@@ -150,6 +138,14 @@ internal fun LanguagePickerBottomSheet(
             )
 
             Spacer(Modifier.height(8.dp))
+
+            if (filteredLanguages.isEmpty()) {
+                Text(
+                    text = stringResource(R.string.profile_language_no_results),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
 
             LazyColumn(
                 modifier = Modifier.fillMaxWidth().weight(1f, fill = false),
@@ -585,154 +581,6 @@ private fun LogoutButtonPreview() {
             LogoutButton(
                 isEnable = true,
                 onSubmitLogout = {},
-            )
-        }
-    }
-}
-
-// endregion
-
-// region LanguagePickerDialog
-
-@Composable
-internal fun LanguagePickerDialog(
-    modifier: Modifier,
-    currentLanguage: AppLanguage,
-    onConfirm: (AppLanguage) -> Unit,
-    onDismiss: () -> Unit,
-) {
-    Dialog(onDismissRequest = onDismiss) {
-        LanguagePickerDialogContent(
-            modifier = modifier,
-            currentLanguage = currentLanguage,
-            onConfirm = onConfirm,
-            onDismiss = onDismiss,
-        )
-    }
-}
-
-@Composable
-private fun LanguagePickerDialogContent(
-    modifier: Modifier,
-    currentLanguage: AppLanguage,
-    onConfirm: (AppLanguage) -> Unit,
-    onDismiss: () -> Unit,
-) {
-    val scrollState = rememberScrollState()
-    var selectedLanguage by remember(currentLanguage) {
-        mutableStateOf(currentLanguage)
-    }
-
-    Surface(
-        modifier =
-            modifier
-                .fillMaxWidth()
-                .padding(horizontal = 24.dp, vertical = 8.dp),
-        shape = RoundedCornerShape(20.dp),
-        color = MaterialTheme.colorScheme.surface,
-        tonalElevation = 8.dp,
-    ) {
-        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-            Column(
-                modifier =
-                    Modifier
-                        .padding(16.dp)
-                        .heightIn(max = 400.dp)
-                        .verticalScroll(scrollState),
-                horizontalAlignment = Alignment.CenterHorizontally,
-            ) {
-                Text(
-                    text = stringResource(R.string.profile_dialog_language_title),
-                    color = MaterialTheme.colorScheme.onSurface,
-                    fontSize = 18.sp,
-                    fontWeight = FontWeight.Medium,
-                    textAlign = TextAlign.Center,
-                )
-
-                Spacer(modifier = Modifier.height(8.dp))
-
-                AppLanguage.entries.forEach { language ->
-                    Row(
-                        modifier =
-                            Modifier
-                                .fillMaxWidth()
-                                .selectable(
-                                    selected = selectedLanguage == language,
-                                    onClick = { selectedLanguage = language },
-                                    role = Role.RadioButton,
-                                ).padding(4.dp),
-                        verticalAlignment = Alignment.CenterVertically,
-                    ) {
-                        RadioButton(
-                            selected = language == selectedLanguage,
-                            onClick = null,
-                        )
-                        Spacer(Modifier.width(12.dp))
-                        Text(
-                            text = stringResource(language.displayNameResId()),
-                            style = MaterialTheme.typography.bodyLarge,
-                        )
-                    }
-                }
-            }
-
-            HorizontalDivider(
-                thickness = 0.3.dp,
-                color = MaterialTheme.colorScheme.outline,
-            )
-
-            Row(
-                modifier =
-                    Modifier
-                        .fillMaxWidth()
-                        .height(IntrinsicSize.Min),
-            ) {
-                TextButton(
-                    modifier = Modifier.weight(1f),
-                    onClick = onDismiss,
-                ) {
-                    Text(
-                        text = stringResource(R.string.profile_action_cancel),
-                        fontSize = 16.sp,
-                        color = MaterialTheme.colorScheme.primary,
-                        fontWeight = FontWeight.Medium,
-                        textAlign = TextAlign.Center,
-                    )
-                }
-
-                VerticalDivider(
-                    modifier = Modifier.fillMaxHeight(),
-                    thickness = 0.3.dp,
-                    color = MaterialTheme.colorScheme.outline,
-                )
-
-                TextButton(
-                    modifier = Modifier.weight(1f),
-                    onClick = { onConfirm(selectedLanguage) },
-                ) {
-                    Text(
-                        text = stringResource(R.string.profile_action_confirm),
-                        fontSize = 16.sp,
-                        color = MaterialTheme.colorScheme.primary,
-                        fontWeight = FontWeight.Medium,
-                        textAlign = TextAlign.Center,
-                    )
-                }
-            }
-        }
-    }
-}
-
-@AppPreviewLightDark
-@Composable
-private fun LanguagePickerDialogPreview() {
-    TreeTaskTheme {
-        Surface(color = MaterialTheme.colorScheme.background) {
-            LanguagePickerDialogContent(
-                modifier = Modifier,
-                currentLanguage = AppLanguage.VIETNAMESE,
-                onConfirm = {},
-                onDismiss = {},
             )
         }
     }
