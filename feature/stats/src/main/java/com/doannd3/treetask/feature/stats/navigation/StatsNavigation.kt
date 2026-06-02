@@ -5,29 +5,29 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
-import com.doannd3.treetask.feature.stats.ui.chart.ChartRoute
+import com.doannd3.treetask.feature.stats.ui.StatsRoute
 import kotlinx.serialization.Serializable
 
 @Serializable
 data object StatsGraphDestination
 
 @Serializable
-data object ChartDestination
+data object StatsDestination
 
 fun NavController.navigateToStatsGraph(navOptions: NavOptions? = null) {
     this.navigate(route = StatsGraphDestination, navOptions = navOptions)
 }
 
-fun NavController.navigateToChart(navOptions: NavOptions? = null) {
-    this.navigate(route = ChartDestination, navOptions = navOptions)
+fun NavController.navigateToStats(navOptions: NavOptions? = null) {
+    this.navigate(route = StatsDestination, navOptions = navOptions)
 }
 
-fun NavGraphBuilder.statsGraph() {
+fun NavGraphBuilder.statsGraph(onRecentTaskClick: (String) -> Unit) {
     navigation<StatsGraphDestination>(
-        startDestination = ChartDestination,
+        startDestination = StatsDestination,
     ) {
-        composable<ChartDestination> {
-            ChartRoute()
+        composable<StatsDestination> {
+            StatsRoute(onRecentTaskClick = onRecentTaskClick)
         }
     }
 }

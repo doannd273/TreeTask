@@ -3,18 +3,9 @@ package com.doannd3.treetask.core.common.extension
 import timber.log.Timber
 import java.time.Instant
 import java.time.LocalDate
-import java.time.ZoneId
 import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeParseException
-
-fun Instant.toDayMonth(): String {
-    val formatter = DateTimeFormatter.ofPattern("dd/MM")
-    return this
-        .atZone(ZoneId.systemDefault())
-        .toLocalDate()
-        .format(formatter)
-}
 
 fun String?.toInstantOrNow(): Instant =
     try {
@@ -22,6 +13,14 @@ fun String?.toInstantOrNow(): Instant =
     } catch (e: DateTimeParseException) {
         Timber.e(e, "Invalid instant format: $this")
         Instant.now()
+    }
+
+fun String?.toInstantOrNull(): Instant? =
+    try {
+        this?.let { Instant.parse(it) }
+    } catch (e: DateTimeParseException) {
+        Timber.e(e, "Invalid instant format: $this")
+        null
     }
 
 fun Long.toInstant(): Instant = Instant.ofEpochMilli(this)

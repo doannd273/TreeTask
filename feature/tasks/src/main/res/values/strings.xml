@@ -12,6 +12,7 @@
     <string name="tasks_update_task_success">Update task successfully</string>
     <string name="tasks_add_task_title">Add Task</string>
     <string name="tasks_edit_task_title">Edit Task</string>
+    <string name="tasks_task_details_title">Task Details</string>
     <string name="tasks_add_task_title_label">Title</string>
     <string name="tasks_add_task_title_placeholder">Enter task title</string>
     <string name="tasks_add_task_description_label">Description</string>
@@ -25,10 +26,6 @@
     <string name="tasks_add_task_submit_loading">Creating…</string>
     <string name="tasks_edit_task_submit">Save changes</string>
     <string name="tasks_edit_task_submit_loading">Saving…</string>
-    <string name="tasks_status_todo">Todo</string>
-    <string name="tasks_status_in_progress">In progress</string>
-    <string name="tasks_status_pending">Pending</string>
-    <string name="tasks_status_done">Done</string>
     <string name="tasks_delete_task_icon_description">Delete task</string>
     <string name="tasks_delete_task_confirm_title">Delete Task</string>
     <string name="tasks_delete_task_confirm_message">Are you sure you want to delete this task? This action cannot be undone.</string>

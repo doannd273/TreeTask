@@ -144,6 +144,8 @@ internal fun TaskFormContent(
             onEvent(TaskFormEvent.SubmitTaskForm)
         }
     val isInputEnabled = !state.isLoading
+    val isEditable = state.mode.isEditable
+    val isReadOnly = !isEditable
 
     var showDatePicker by remember { mutableStateOf(false) }
     val displayText =
@@ -155,7 +157,7 @@ internal fun TaskFormContent(
             state.dueDate.ymdToEpochMillis()
         }
 
-    if (showDatePicker) {
+    if (showDatePicker && isEditable) {
         AppDatePickerDialog(
             selectedDateMillis = initialMillis,
             onDismiss = { showDatePicker = false },
@@ -177,6 +179,7 @@ internal fun TaskFormContent(
             TaskTitleInput(
                 title = state.title,
                 enabled = isInputEnabled,
+                readOnly = isReadOnly,
                 onTitleChange = { onEvent(TaskFormEvent.TitleChanged(it)) },
                 onImeNext = { descriptionFocusRequester.requestFocus() },
             )
@@ -186,6 +189,7 @@ internal fun TaskFormContent(
                     Modifier.focusRequester(descriptionFocusRequester),
                 description = state.description,
                 enabled = isInputEnabled,
+                readOnly = isReadOnly,
                 onDescriptionChange = { onEvent(TaskFormEvent.DescriptionChanged(it)) },
                 onImeNext = {
                     focusManager.clearFocus()
@@ -195,24 +199,28 @@ internal fun TaskFormContent(
             TaskStatusSelector(
                 selectedStatus = state.status,
                 enabled = isInputEnabled,
+                readOnly = isReadOnly,
                 onStatusChange = { onEvent(TaskFormEvent.StatusChanged(it)) },
             )
 
             TaskDueDateInput(
                 dueDate = displayText,
                 enabled = isInputEnabled,
+                readOnly = isReadOnly,
                 onDueDateClick = { showDatePicker = true },
             )
 
-            TaskSubmitButton(
-                modifier = Modifier.padding(top = 8.dp),
-                isLoading = state.isLoading,
-                isEditMode = state.isEditMode,
-                onSubmit = {
-                    focusManager.clearFocus()
-                    onSubmitTaskFormDebounced()
-                },
-            )
+            if (isEditable) {
+                TaskSubmitButton(
+                    modifier = Modifier.padding(top = 8.dp),
+                    isLoading = state.isLoading,
+                    isEditMode = state.mode.isEdit,
+                    onSubmit = {
+                        focusManager.clearFocus()
+                        onSubmitTaskFormDebounced()
+                    },
+                )
+            }
         }
     }
 }
@@ -228,6 +236,24 @@ private fun TaskFormContentPreview() {
                     description = "Review backlog and define priorities for the next sprint.",
                     status = TaskStatus.IN_PROGRESS,
                     dueDate = "2026-05-31",
+                ),
+            onEvent = {},
+        )
+    }
+}
+
+@AppPreviewLightDark
+@Composable
+private fun TaskFormContentReadOnlyPreview() {
+    TreeTaskTheme {
+        TaskFormContent(
+            state =
+                TaskFormState(
+                    mode = TaskFormMode.VIEW,
+                    title = "Review dashboard analytics",
+                    description = "Check completion rate and recent task behavior before release.",
+                    status = TaskStatus.DONE,
+                    dueDate = "2026-06-02",
                 ),
             onEvent = {},
         )

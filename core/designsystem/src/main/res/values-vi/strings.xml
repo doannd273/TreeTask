@@ -5,9 +5,14 @@
     <string name="designsystem_action_ok">OK</string>
     <string name="designsystem_success_dialog_title">Thành công</string>
     <string name="designsystem_info_dialog_title">Thông báo</string>
+    <string name="designsystem_loading_message">Đang tải...</string>
     <string name="designsystem_cd_show_password">Hiện mật khẩu</string>
     <string name="designsystem_cd_hide_password">Ẩn mật khẩu</string>
     <string name="designsystem_cd_navigate_back">Quay lại</string>
     <string name="designsystem_cd_search">Tìm kiếm</string>
     <string name="designsystem_cd_clear_search">Xóa tìm kiếm</string>
+    <string name="designsystem_status_todo">Cần làm</string>
+    <string name="designsystem_status_in_progress">Đang làm</string>
+    <string name="designsystem_status_pending">Đang chờ</string>
+    <string name="designsystem_status_done">Hoàn thành</string>
 </resources>

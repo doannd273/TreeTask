@@ -2,6 +2,37 @@
 
 A modern, offline-first Android Task Management application built using **Clean Architecture**, **MVI Pattern**, and heavily inspired by Google's official **Now in Android** (NiA) architecture.
 
+## 📸 Screenshots
+
+> Replace the images below with actual screenshots after capturing from a device or emulator.
+> Recommended: `adb exec-out screencap -p > docs/screenshots/<name>.png`
+
+### Authentication
+
+| Login | Register | Forgot Password |
+|:---:|:---:|:---:|
+| ![Login](docs/screenshots/auth_login.png) | ![Register](docs/screenshots/auth_register.png) | ![Forgot Password](docs/screenshots/auth_forgot_password.png) |
+
+### Tasks
+
+| Task List | Add Task | Edit / View Task |
+|:---:|:---:|:---:|
+| ![Task List](docs/screenshots/tasks_list.png) | ![Add Task](docs/screenshots/tasks_add.png) | ![Edit Task](docs/screenshots/tasks_edit.png) |
+
+### Stats
+
+| Stats Overview |
+|:---:|
+| ![Stats](docs/screenshots/stats_overview.png) |
+
+### Profile
+
+| Profile | Language Picker |
+|:---:|:---:|
+| ![Profile](docs/screenshots/profile.png) | ![Language Picker](docs/screenshots/profile_language_picker.png) |
+
+---
+
 ## 🏗 Architecture & Tech Stack
 
 This project follows a highly modularized architecture to ensure scalability, robust testing, and separation of concerns.
@@ -19,19 +50,17 @@ This project follows a highly modularized architecture to ensure scalability, ro
 * **Localization**: Multi-language support (English & Vietnamese)
 * **Security & Optimization**: R8/ProGuard obfuscation, EncryptedSharedPreferences (planned)
 
-## 📦 Key Features (Ready)
+## 📦 Key Features
 
-* **Offline-first Sync**: Uses `RemoteMediator` for seamless data synchronization between Room and REST API.
-* **Real-time Network Monitor**: Dynamic UI feedback (Offline Banner) when connectivity changes.
-* **Robust Authentication**: 
-    * Support for Login/Register with instant profile sync.
-    * Automatic Token Refresh mechanism via OkHttp Interceptors.
-    * **Global Session Management**: Automatic forced logout and backstack clearing when sessions expire.
-* **Localization (i18n)**: Fully translated for EN and VI locales.
-* **Advanced Analytics**: Custom event tracking (`task_created`, `sync_failed`, `login_method`) and non-fatal error reporting via Crashlytics.
-* **Clean Code & Quality**: 
-    * Strict Linting rules (Detekt, Spotless).
-    * High Unit Test coverage for UseCases and Repositories.
+* **Authentication**: Login, Register, Forgot Password with OTP verification. Automatic token refresh via OkHttp Interceptors. Forced logout and backstack clearing on session expiry.
+* **Task Management**: Create, edit, view, and delete tasks. Filter by status (Todo / In Progress / Pending / Done). Swipe-to-delete with confirmation dialog. Paginated list via Paging 3 + `RemoteMediator`.
+* **Stats Dashboard**: Completion rate ring, status breakdown grid, workload bar, and recent task feed.
+* **Profile & Settings**: Language picker (EN / VI) with system-default fallback.
+* **Offline-first Sync**: Room + `RemoteMediator` syncs with REST API; works offline and reconciles on reconnect.
+* **Real-time Network Monitor**: Offline banner reacts to connectivity changes.
+* **Localization (i18n)**: Fully translated for English and Vietnamese.
+* **Observability**: Custom analytics events, non-fatal error reporting via Firebase Crashlytics, LeakCanary in debug builds.
+* **Code Quality**: Detekt static analysis, Spotless formatting, CI via GitHub Actions.
 
 ## 🚀 Setup Instructions
 
@@ -51,14 +80,12 @@ To build and run this project on your local machine:
 4. **Build and Run**:
    Sync the Gradle project and click the Run button.
 
-## 🔮 Future Roadmap
+## 🔮 Roadmap
 
-The foundational core is fully established. Upcoming updates will focus on:
-
-* **UI/UX Polishing**: Implementing "Premium" design elements like glassmorphism and smooth animations in the Profile and Tasks screens.
-* **Task Management Features**: Adding, editing, and deleting tasks with complex scheduling.
-* **Settings Module**: Dark Mode toggle, language switcher, and notification preferences.
-* **Real-time Chat**: Wiring up Socket.IO streams to the Compose UI layer.
+* **Real-time Chat**: Socket.IO stream wired to the Compose UI layer.
+* **Notification Preferences**: Granular notification controls in Settings.
+* **Dark Mode Toggle**: User-controlled theme override.
+* **Task Scheduling**: Recurring tasks and calendar-based scheduling.
 
 ---
-*Note: This README is continuously updated as new features are deployed.*
+*This README is continuously updated as new features ship.*

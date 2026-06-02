@@ -39,11 +39,11 @@ import androidx.compose.ui.unit.dp
 import com.doannd3.treetask.core.common.extension.toDayMonth
 import com.doannd3.treetask.core.designsystem.theme.AppPreviewLightDark
 import com.doannd3.treetask.core.designsystem.theme.TreeTaskTheme
-import com.doannd3.treetask.core.designsystem.theme.treeTaskColors
+import com.doannd3.treetask.core.designsystem.theme.labelRes
+import com.doannd3.treetask.core.designsystem.theme.statusColors
 import com.doannd3.treetask.core.model.task.Task
 import com.doannd3.treetask.core.model.task.TaskStatus
 import com.doannd3.treetask.feature.tasks.R
-import com.doannd3.treetask.feature.tasks.ui.model.labelRes
 import java.time.Instant
 
 // region TaskStatusChips
@@ -174,10 +174,10 @@ internal fun SwipeToDeleteTaskItem(
 
 @Composable
 internal fun TaskItem(
-    modifier: Modifier = Modifier,
     task: Task,
     onClick: () -> Unit,
     onDeleteClick: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     Card(
         onClick = onClick,
@@ -251,27 +251,20 @@ internal fun TaskItem(
 
 @Composable
 internal fun StatusBadge(status: TaskStatus) {
-    val colorScheme = MaterialTheme.colorScheme
-    val (backgroundColor, textColor) =
-        when (status) {
-            TaskStatus.TODO -> colorScheme.surfaceVariant to colorScheme.onSurfaceVariant
-            TaskStatus.IN_PROGRESS -> colorScheme.primary to colorScheme.onPrimary
-            TaskStatus.PENDING -> colorScheme.error to colorScheme.onError
-            TaskStatus.DONE -> MaterialTheme.treeTaskColors.success to MaterialTheme.treeTaskColors.onSuccess
-        }
+    val colors = status.statusColors()
 
     Row(
         modifier =
             Modifier
                 .background(
                     shape = RoundedCornerShape(3.dp),
-                    color = backgroundColor,
+                    color = colors.containerColor,
                 )
                 .padding(vertical = 4.dp, horizontal = 8.dp),
     ) {
         Text(
             text = stringResource(status.labelRes()),
-            color = textColor,
+            color = colors.contentColor,
             style = MaterialTheme.typography.labelSmall,
         )
     }

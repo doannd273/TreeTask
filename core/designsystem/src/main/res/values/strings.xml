@@ -5,9 +5,14 @@
     <string name="designsystem_action_ok">OK</string>
     <string name="designsystem_success_dialog_title">Success</string>
     <string name="designsystem_info_dialog_title">Notice</string>
+    <string name="designsystem_loading_message">Loading...</string>
     <string name="designsystem_cd_show_password">Show password</string>
     <string name="designsystem_cd_hide_password">Hide password</string>
     <string name="designsystem_cd_navigate_back">Go back</string>
     <string name="designsystem_cd_search">Search</string>
     <string name="designsystem_cd_clear_search">Clear search</string>
+    <string name="designsystem_status_todo">Todo</string>
+    <string name="designsystem_status_in_progress">In progress</string>
+    <string name="designsystem_status_pending">Pending</string>
+    <string name="designsystem_status_done">Done</string>
 </resources>
