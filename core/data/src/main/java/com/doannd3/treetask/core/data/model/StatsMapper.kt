@@ -15,7 +15,7 @@ fun DashboardResponse.toTaskStats(): TaskStats {
         inProgress = inProgress ?: 0,
         pending = pending ?: 0,
         done = done ?: 0,
-        completionRate = completionRate ?: 0,
+        completionRate = completionRate ?: 0.0,
         recentTasks = recentTasks.map { recentTask -> recentTask.toRecentTaskSummary() },
     )
 }
