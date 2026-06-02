@@ -61,14 +61,6 @@ fun StatsRoute(viewModel: StatsViewModel = hiltViewModel()) {
             }
         }
     }
-
-    LaunchedEffect(state.isLoading) {
-        if (state.isLoading) {
-            globalAppState.showLoading()
-        } else {
-            globalAppState.hideLoading()
-        }
-    }
 }
 
 @Composable
@@ -94,6 +86,10 @@ internal fun StatsContent(
     onEvent: (StatsEvent) -> Unit,
 ) {
     when {
+        state.isLoading && state.taskStats == null -> {
+            StatsLoadingState(modifier = modifier)
+        }
+
         state.hasInitialLoadError -> {
             StatsErrorState(
                 modifier = modifier,
@@ -102,7 +98,7 @@ internal fun StatsContent(
         }
 
         state.taskStats == null -> {
-            Unit
+            StatsLoadingState(modifier = modifier)
         }
 
         state.isEmpty -> {
