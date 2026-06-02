@@ -24,6 +24,14 @@ fun String?.toInstantOrNow(): Instant =
         Instant.now()
     }
 
+fun String?.toInstantOrNull(): Instant? =
+    try {
+        this?.let { Instant.parse(it) }
+    } catch (e: DateTimeParseException) {
+        Timber.e(e, "Invalid instant format: $this")
+        null
+    }
+
 fun Long.toInstant(): Instant = Instant.ofEpochMilli(this)
 
 fun Instant.toLong() = toEpochMilli()
