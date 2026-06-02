@@ -1,4 +1,4 @@
-package com.doannd3.treetask.feature.stats.ui.chart
+package com.doannd3.treetask.feature.stats.ui
 
 import com.doannd3.treetask.core.common.BaseViewModel
 import com.doannd3.treetask.core.common.MviViewModel
@@ -12,18 +12,18 @@ import kotlinx.coroutines.flow.asStateFlow
 import javax.inject.Inject
 
 @HiltViewModel
-class ChartViewModel
+class StatsViewModel
     @Inject
     constructor() :
     BaseViewModel(),
-        MviViewModel<ChartState, ChartEvent, ChartEffect> {
-        private val _uiState = MutableStateFlow(ChartState())
-        override val uiState: StateFlow<ChartState> = _uiState.asStateFlow()
+        MviViewModel<StatsState, StatsEvent, StatsEffect> {
+        private val _uiState = MutableStateFlow(StatsState())
+        override val uiState: StateFlow<StatsState> = _uiState.asStateFlow()
 
-        private val _effect = MutableSharedFlow<ChartEffect>()
-        override val effect: SharedFlow<ChartEffect> = _effect.asSharedFlow()
+        private val _effect = MutableSharedFlow<StatsEffect>()
+        override val effect: SharedFlow<StatsEffect> = _effect.asSharedFlow()
 
-        override fun onEvent(event: ChartEvent) {
+        override fun onEvent(event: StatsEvent) {
             // TODO
         }
     }
