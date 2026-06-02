@@ -20,4 +20,5 @@ data class RecentTask(
     @SerialName("title") val title: String? = null,
     @SerialName("status") val status: String? = null,
     @SerialName("createdAt") val createdAt: String? = null,
+    @SerialName("dueDate") val dueDate: String? = null,
 )
