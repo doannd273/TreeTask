@@ -1,4 +1,4 @@
-package com.doannd3.treetask.feature.stats.ui.chart
+package com.doannd3.treetask.feature.stats.ui
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -13,7 +13,7 @@ import com.doannd3.treetask.core.common.asString
 import com.doannd3.treetask.core.designsystem.component.LocalGlobalAppState
 
 @Composable
-fun ChartRoute(viewModel: ChartViewModel = hiltViewModel()) {
+fun StatsRoute(viewModel: StatsViewModel = hiltViewModel()) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
 
     val globalAppState = LocalGlobalAppState.current
