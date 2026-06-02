@@ -23,6 +23,12 @@ fun StatsRoute(viewModel: StatsViewModel = hiltViewModel()) {
     LaunchedEffect(viewModel.effect, lifecycleOwner) {
         lifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
             viewModel.effect.collect { effect ->
+                when (effect) {
+                    is StatsEffect.ShowErrorMessage -> {
+                        val errorStr = effect.message.asString(context)
+                        globalAppState.showError(errorStr)
+                    }
+                }
             }
         }
     }
