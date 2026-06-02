@@ -6,6 +6,6 @@ data class TaskStats(
     val inProgress: Int,
     val pending: Int,
     val done: Int,
-    val completionRate: Int,
+    val completionRate: Double,
     val recentTasks: List<RecentTaskSummary>,
 )
