@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
@@ -62,14 +61,6 @@ fun StatsRoute(viewModel: StatsViewModel = hiltViewModel()) {
             }
         }
     }
-
-    LaunchedEffect(state.isLoading) {
-        if (state.isLoading) {
-            globalAppState.showLoading()
-        } else {
-            globalAppState.hideLoading()
-        }
-    }
 }
 
 @Composable
@@ -78,7 +69,7 @@ internal fun StatsScreen(
     onEvent: (StatsEvent) -> Unit,
 ) {
     Scaffold(
-        contentWindowInsets = WindowInsets.safeDrawing,
+        contentWindowInsets = WindowInsets(0, 0, 0, 0),
     ) { paddingValues ->
         StatsContent(
             modifier = Modifier.padding(paddingValues),
@@ -95,6 +86,10 @@ internal fun StatsContent(
     onEvent: (StatsEvent) -> Unit,
 ) {
     when {
+        state.isLoading && state.taskStats == null -> {
+            StatsLoadingState(modifier = modifier)
+        }
+
         state.hasInitialLoadError -> {
             StatsErrorState(
                 modifier = modifier,
@@ -103,7 +98,7 @@ internal fun StatsContent(
         }
 
         state.taskStats == null -> {
-            Unit
+            StatsLoadingState(modifier = modifier)
         }
 
         state.isEmpty -> {
