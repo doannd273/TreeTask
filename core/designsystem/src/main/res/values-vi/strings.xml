@@ -10,4 +10,8 @@
     <string name="designsystem_cd_navigate_back">Quay lại</string>
     <string name="designsystem_cd_search">Tìm kiếm</string>
     <string name="designsystem_cd_clear_search">Xóa tìm kiếm</string>
+    <string name="designsystem_status_todo">Cần làm</string>
+    <string name="designsystem_status_in_progress">Đang làm</string>
+    <string name="designsystem_status_pending">Đang chờ</string>
+    <string name="designsystem_status_done">Hoàn thành</string>
 </resources>
