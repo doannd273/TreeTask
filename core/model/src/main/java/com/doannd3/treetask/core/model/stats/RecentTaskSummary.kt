@@ -7,6 +7,6 @@ data class RecentTaskSummary(
     val id: String,
     val title: String,
     val status: TaskStatus,
-    val createAt: Instant,
+    val createdAt: Instant,
     val dueDate: Instant?,
 )

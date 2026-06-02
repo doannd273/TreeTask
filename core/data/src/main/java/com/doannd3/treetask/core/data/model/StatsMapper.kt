@@ -37,7 +37,7 @@ private fun RecentTask.toRecentTaskSummary(): RecentTaskSummary {
         id = id.orEmpty(),
         title = title.orEmpty(),
         status = TaskStatus.fromStatus(status),
-        createAt = createdAt.toInstantOrNow(),
+        createdAt = createdAt.toInstantOrNow(),
         dueDate = dueDate.toInstantOrNull(),
     )
 }
@@ -47,7 +47,7 @@ private fun RecentTaskSummary.toRecentTaskResponse(): RecentTask {
         id = id,
         title = title,
         status = status.apiValue,
-        createdAt = createAt.toString(),
+        createdAt = createdAt.toString(),
         dueDate = dueDate?.toString(),
     )
 }

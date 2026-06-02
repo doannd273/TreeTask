@@ -10,7 +10,7 @@ data class DashboardResponse(
     @SerialName("inProgress") val inProgress: Int? = null,
     @SerialName("pending") val pending: Int? = null,
     @SerialName("done") val done: Int? = null,
-    @SerialName("completionRate") val completionRate: Int? = null,
+    @SerialName("completionRate") val completionRate: Double? = null,
     @SerialName("recentTasks") val recentTasks: List<RecentTask> = emptyList(),
 )
 
