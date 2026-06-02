@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Completion Hero -->
+    <string name="stats_completion_rate">Tỷ lệ hoàn thành</string>
+    <string name="stats_completion_rate_value">%1$d%%</string>
+    <string name="stats_tasks_done">Đã hoàn thành %1$d/%2$d công việc</string>
+
+    <!-- Workload Bar -->
+    <string name="stats_workload_breakdown">Phân bổ công việc</string>
+
+    <!-- Recent Tasks -->
+    <string name="stats_recent_tasks">Công việc gần đây</string>
+
+    <!-- Empty State -->
+    <string name="stats_empty_message">Chưa có dữ liệu công việc</string>
+    <string name="stats_empty_cta">Tạo công việc</string>
+
+    <!-- Error State -->
+    <string name="stats_error_message">Không thể tải thống kê</string>
+    <string name="stats_retry">Thử lại</string>
+</resources>

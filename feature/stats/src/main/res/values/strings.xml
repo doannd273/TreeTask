@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Completion Hero -->
+    <string name="stats_completion_rate">Completion rate</string>
+    <string name="stats_completion_rate_value">%1$d%%</string>
+    <string name="stats_tasks_done">%1$d of %2$d tasks done</string>
+
+    <!-- Workload Bar -->
+    <string name="stats_workload_breakdown">Workload breakdown</string>
+
+    <!-- Recent Tasks -->
+    <string name="stats_recent_tasks">Recent tasks</string>
+
+    <!-- Empty State -->
+    <string name="stats_empty_message">No task data yet</string>
+    <string name="stats_empty_cta">Create task</string>
+
+    <!-- Error State -->
+    <string name="stats_error_message">Failed to load stats</string>
+    <string name="stats_retry">Retry</string>
+</resources>
