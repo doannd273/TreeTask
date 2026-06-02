@@ -174,10 +174,10 @@ internal fun SwipeToDeleteTaskItem(
 
 @Composable
 internal fun TaskItem(
-    modifier: Modifier = Modifier,
     task: Task,
     onClick: () -> Unit,
     onDeleteClick: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     Card(
         onClick = onClick,

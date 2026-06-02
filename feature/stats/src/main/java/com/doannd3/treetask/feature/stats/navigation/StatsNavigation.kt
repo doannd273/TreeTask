@@ -22,12 +22,12 @@ fun NavController.navigateToStats(navOptions: NavOptions? = null) {
     this.navigate(route = StatsDestination, navOptions = navOptions)
 }
 
-fun NavGraphBuilder.statsGraph() {
+fun NavGraphBuilder.statsGraph(onRecentTaskClick: (String) -> Unit) {
     navigation<StatsGraphDestination>(
         startDestination = StatsDestination,
     ) {
         composable<StatsDestination> {
-            StatsRoute()
+            StatsRoute(onRecentTaskClick = onRecentTaskClick)
         }
     }
 }

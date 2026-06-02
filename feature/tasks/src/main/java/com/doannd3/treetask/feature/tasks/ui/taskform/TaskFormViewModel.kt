@@ -41,24 +41,18 @@ class TaskFormViewModel
         override val effect: SharedFlow<TaskFormEffect> = _effect.asSharedFlow()
 
         private val taskId: String? = savedStateHandle["taskId"]
-        private val isEditMode = taskId != null
+        private val mode = resolveMode(taskId = taskId, routeModeValue = savedStateHandle["mode"])
 
         init {
-            val screenTitle =
-                if (isEditMode) {
-                    UiText.StringResource(TasksR.string.tasks_edit_task_title)
-                } else {
-                    UiText.StringResource(TasksR.string.tasks_add_task_title)
-                }
             _uiState.update {
                 it.copy(
-                    screenTitle = screenTitle,
-                    isEditMode = isEditMode,
+                    screenTitle = mode.screenTitle(),
+                    mode = mode,
                 )
             }
 
-            if (isEditMode) {
-                loadTask(taskId = taskId!!)
+            if (taskId != null) {
+                loadTask(taskId = taskId)
             }
         }
 
@@ -103,19 +97,23 @@ class TaskFormViewModel
         override fun onEvent(event: TaskFormEvent) {
             when (event) {
                 is TaskFormEvent.TitleChanged -> {
-                    _uiState.update { it.copy(title = event.title) }
+                    updateIfEditable { it.copy(title = event.title) }
                 }
 
                 is TaskFormEvent.DescriptionChanged -> {
-                    _uiState.update { it.copy(description = event.description) }
+                    updateIfEditable { it.copy(description = event.description) }
                 }
 
                 is TaskFormEvent.StatusChanged -> {
-                    _uiState.update { it.copy(status = event.status) }
+                    updateIfEditable { it.copy(status = event.status) }
                 }
 
                 TaskFormEvent.SubmitTaskForm -> {
-                    if (isEditMode) updateTask() else createTask()
+                    when (mode) {
+                        TaskFormMode.ADD -> createTask()
+                        TaskFormMode.EDIT -> updateTask()
+                        TaskFormMode.VIEW -> Unit
+                    }
                 }
 
                 TaskFormEvent.SuccessAcknowledged -> {
@@ -127,14 +125,36 @@ class TaskFormViewModel
                 }
 
                 is TaskFormEvent.DueDateChanged -> {
-                    _uiState.update {
-                        it.copy(
-                            dueDate = event.dueDate,
-                        )
+                    updateIfEditable {
+                        it.copy(dueDate = event.dueDate)
                     }
                 }
             }
         }
+
+        private inline fun updateIfEditable(transform: (TaskFormState) -> TaskFormState) {
+            if (mode.isEditable) {
+                _uiState.update(transform)
+            }
+        }
+
+        private fun resolveMode(
+            taskId: String?,
+            routeModeValue: String?,
+        ): TaskFormMode =
+            when {
+                taskId == null -> TaskFormMode.ADD
+                else -> TaskFormMode.fromRouteValue(routeModeValue) ?: TaskFormMode.EDIT
+            }
+
+        private fun TaskFormMode.screenTitle(): UiText =
+            UiText.StringResource(
+                when (this) {
+                    TaskFormMode.ADD -> TasksR.string.tasks_add_task_title
+                    TaskFormMode.EDIT -> TasksR.string.tasks_edit_task_title
+                    TaskFormMode.VIEW -> TasksR.string.tasks_task_details_title
+                },
+            )
 
         private fun navigateBack() {
             viewModelScope.launch {

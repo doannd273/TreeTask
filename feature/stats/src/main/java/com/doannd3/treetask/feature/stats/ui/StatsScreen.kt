@@ -29,7 +29,10 @@ import java.time.Instant
 import kotlin.math.roundToInt
 
 @Composable
-fun StatsRoute(viewModel: StatsViewModel = hiltViewModel()) {
+fun StatsRoute(
+    viewModel: StatsViewModel = hiltViewModel(),
+    onRecentTaskClick: (String) -> Unit,
+) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
 
     val globalAppState = LocalGlobalAppState.current
@@ -39,6 +42,7 @@ fun StatsRoute(viewModel: StatsViewModel = hiltViewModel()) {
     StatsScreen(
         state = state,
         onEvent = viewModel::onEvent,
+        onRecentTaskClick = onRecentTaskClick,
     )
 
     LaunchedEffect(viewModel.effect, lifecycleOwner) {
@@ -67,6 +71,7 @@ fun StatsRoute(viewModel: StatsViewModel = hiltViewModel()) {
 internal fun StatsScreen(
     state: StatsState,
     onEvent: (StatsEvent) -> Unit,
+    onRecentTaskClick: (String) -> Unit,
 ) {
     Scaffold(
         contentWindowInsets = WindowInsets(0, 0, 0, 0),
@@ -75,6 +80,7 @@ internal fun StatsScreen(
             modifier = Modifier.padding(paddingValues),
             state = state,
             onEvent = onEvent,
+            onRecentTaskClick = onRecentTaskClick,
         )
     }
 }
@@ -84,6 +90,7 @@ internal fun StatsContent(
     modifier: Modifier = Modifier,
     state: StatsState,
     onEvent: (StatsEvent) -> Unit,
+    onRecentTaskClick: (String) -> Unit,
 ) {
     when {
         state.isLoading && state.taskStats == null -> {
@@ -109,6 +116,7 @@ internal fun StatsContent(
             StatsDataContent(
                 modifier = modifier,
                 stats = state.taskStats,
+                onRecentTaskClick = onRecentTaskClick,
             )
         }
     }
@@ -118,6 +126,7 @@ internal fun StatsContent(
 private fun StatsDataContent(
     modifier: Modifier = Modifier,
     stats: TaskStats,
+    onRecentTaskClick: (String) -> Unit,
 ) {
     val completionRate = stats.completionRate.roundToInt().coerceIn(0, 100)
 
@@ -156,7 +165,7 @@ private fun StatsDataContent(
             item(key = "recent_tasks") {
                 RecentTasksCard(
                     tasks = stats.recentTasks,
-                    onTaskClick = {},
+                    onTaskClick = onRecentTaskClick,
                 )
             }
         }
@@ -212,6 +221,7 @@ private fun StatsScreenDataPreview() {
                         ),
                 ),
             onEvent = {},
+            onRecentTaskClick = {},
         )
     }
 }

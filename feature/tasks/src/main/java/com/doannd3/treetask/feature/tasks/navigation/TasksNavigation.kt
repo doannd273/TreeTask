@@ -6,6 +6,7 @@ import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
 import com.doannd3.treetask.feature.tasks.ui.home.TasksRoute
+import com.doannd3.treetask.feature.tasks.ui.taskform.TaskFormMode
 import com.doannd3.treetask.feature.tasks.ui.taskform.TaskFormRoute
 import kotlinx.serialization.Serializable
 
@@ -21,6 +22,13 @@ data object AddTasksDestination
 @Serializable
 data class EditTaskDestination(
     val taskId: String,
+    val mode: String,
+)
+
+@Serializable
+data class ViewTaskDestination(
+    val taskId: String,
+    val mode: String,
 )
 
 fun NavController.navigateToTasksGraph(navOptions: NavOptions? = null) {
@@ -31,7 +39,28 @@ fun NavController.navigateToEditTask(
     taskId: String,
     navOptions: NavOptions? = null,
 ) {
-    this.navigate(route = EditTaskDestination(taskId = taskId), navOptions = navOptions)
+    this.navigate(
+        route =
+            EditTaskDestination(
+                taskId = taskId,
+                mode = TaskFormMode.EDIT.name,
+            ),
+        navOptions = navOptions,
+    )
+}
+
+fun NavController.navigateToViewTask(
+    taskId: String,
+    navOptions: NavOptions? = null,
+) {
+    this.navigate(
+        route =
+            ViewTaskDestination(
+                taskId = taskId,
+                mode = TaskFormMode.VIEW.name,
+            ),
+        navOptions = navOptions,
+    )
 }
 
 fun NavController.navigateToAddTask(navOptions: NavOptions? = null) {
@@ -52,6 +81,10 @@ fun NavGraphBuilder.tasksGraph(
         }
 
         composable<EditTaskDestination> {
+            TaskFormRoute(onNavigateBack = onNavigateBack)
+        }
+
+        composable<ViewTaskDestination> {
             TaskFormRoute(onNavigateBack = onNavigateBack)
         }
 

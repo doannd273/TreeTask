@@ -17,6 +17,7 @@ import com.doannd3.treetask.feature.stats.navigation.statsGraph
 import com.doannd3.treetask.feature.tasks.navigation.navigateToAddTask
 import com.doannd3.treetask.feature.tasks.navigation.navigateToEditTask
 import com.doannd3.treetask.feature.tasks.navigation.navigateToTasksGraph
+import com.doannd3.treetask.feature.tasks.navigation.navigateToViewTask
 import com.doannd3.treetask.feature.tasks.navigation.tasksGraph
 import com.treestudio.treetask.ui.TreeTaskAppState
 
@@ -75,7 +76,11 @@ fun TreeTaskNavHost(
 
         chatGraph()
 
-        statsGraph()
+        statsGraph(
+            onRecentTaskClick = { taskId ->
+                navController.navigateToViewTask(taskId = taskId)
+            },
+        )
 
         profileGraph(
             onNavigateToLogin = {

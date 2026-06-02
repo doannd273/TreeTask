@@ -12,6 +12,7 @@
     <string name="tasks_update_task_success">Sửa nhiệm vụ thành công</string>
     <string name="tasks_add_task_title">Thêm nhiệm vụ</string>
     <string name="tasks_edit_task_title">Sửa nhiệm vụ</string>
+    <string name="tasks_task_details_title">Chi tiết nhiệm vụ</string>
     <string name="tasks_add_task_title_label">Tiêu đề</string>
     <string name="tasks_add_task_title_placeholder">Nhập tiêu đề nhiệm vụ</string>
     <string name="tasks_add_task_description_label">Mô tả</string>

@@ -381,7 +381,7 @@ internal fun StatsEmptyState(modifier: Modifier = Modifier) {
 @Composable
 internal fun RecentTasksCard(
     tasks: List<RecentTaskSummary>,
-    onTaskClick: () -> Unit,
+    onTaskClick: (String) -> Unit,
 ) {
     val visibleTasks = tasks.take(MAX_RECENT_TASK_ROWS)
 
@@ -409,7 +409,7 @@ internal fun RecentTasksCard(
             visibleTasks.forEachIndexed { index, task ->
                 RecentTaskRow(
                     taskRecent = task,
-                    onTaskClick = onTaskClick,
+                    onTaskClick = { onTaskClick(task.id) },
                 )
 
                 if (index < visibleTasks.lastIndex) {
