@@ -184,15 +184,34 @@ class TaskRepositoryImpl
                 ApiResult.Error(exception = e)
             }
 
-        override suspend fun getTaskById(taskId: String): ApiResult<Task> {
-            val entity =
-                taskDao.getTaskById(taskId = taskId) ?: return ApiResult.Error(
-                    appErrorCode = AppErrorCode.MISSING_RESPONSE_DATA,
-                    exception = MissingResponseDataException(),
-                )
+        override suspend fun getTaskById(taskId: String): ApiResult<Task> =
+            try {
+                val cachedTask = taskDao.getTaskById(taskId = taskId)
+                if (cachedTask != null) {
+                    ApiResult.Success(data = cachedTask.toTaskDomain())
+                } else {
+                    when (val response = taskService.getTaskById(taskId = taskId)) {
+                        is ApiResult.Success -> {
+                            val taskResponse =
+                                response.data ?: return ApiResult.Error(
+                                    appErrorCode = AppErrorCode.MISSING_RESPONSE_DATA,
+                                    exception = MissingResponseDataException(),
+                                )
+                            val taskEntity = taskResponse.toTaskEntity()
+                            taskDao.insertTasks(listOf(taskEntity))
+                            ApiResult.Success(data = taskEntity.toTaskDomain())
+                        }
 
-            return ApiResult.Success(data = entity.toTaskDomain())
-        }
+                        is ApiResult.Error -> {
+                            response
+                        }
+                    }
+                }
+            } catch (e: IOException) {
+                ApiResult.Error(exception = e)
+            } catch (e: HttpException) {
+                ApiResult.Error(exception = e)
+            }
 
         override suspend fun deleteTask(taskId: String) =
             try {

@@ -32,6 +32,8 @@ import com.treestudio.treetask.ui.component.TreeTaskBottomBar
 fun TreeTaskApp(
     startDestination: Any,
     isOnline: Boolean,
+    pendingTaskId: String?,
+    onPendingTaskConsumed: () -> Unit,
     appState: TreeTaskAppState = rememberTreeTaskAppState(),
 ) {
     // Toàn bộ logic Màn Hình Báo Lỗi/Loading Toàn Sự Kiện (Ở Module core:designsystem)
@@ -82,6 +84,8 @@ fun TreeTaskApp(
             TreeTaskNavHost(
                 startDestination = startDestination,
                 appState = appState,
+                pendingTaskId = pendingTaskId,
+                onPendingTaskConsumed = onPendingTaskConsumed,
                 modifier = Modifier.padding(paddingValues),
             )
 

@@ -1,6 +1,9 @@
 package com.treestudio.treetask.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.navOptions
@@ -25,9 +28,43 @@ import com.treestudio.treetask.ui.TreeTaskAppState
 fun TreeTaskNavHost(
     startDestination: Any,
     appState: TreeTaskAppState,
+    pendingTaskId: String?,
+    onPendingTaskConsumed: () -> Unit,
     modifier: Modifier,
 ) {
     val navController = appState.navController
+    val currentPendingTaskId by rememberUpdatedState(pendingTaskId)
+    val currentOnPendingTaskConsumed by rememberUpdatedState(onPendingTaskConsumed)
+
+    fun navigateToPendingTask(
+        taskId: String,
+        clearAuthBackStack: Boolean = false,
+    ) {
+        navController.navigateToTasksGraph(
+            navOptions =
+                navOptions {
+                    if (clearAuthBackStack) {
+                        popUpTo(AuthGraphDestination) {
+                            inclusive = true
+                        }
+                    } else {
+                        popUpTo(navController.graph.startDestinationId) {
+                            saveState = true
+                        }
+                    }
+                    launchSingleTop = true
+                },
+        )
+        navController.navigateToEditTask(
+            taskId = taskId,
+            navOptions =
+                navOptions {
+                    launchSingleTop = true
+                },
+        )
+        currentOnPendingTaskConsumed()
+    }
+
     NavHost(
         modifier = modifier,
         navController = navController,
@@ -35,15 +72,23 @@ fun TreeTaskNavHost(
     ) {
         authGraph(
             onNavigateToHome = {
-                navController.navigateToTasksGraph(
-                    navOptions =
-                        navOptions {
-                            popUpTo(AuthGraphDestination) {
-                                inclusive = true
-                            }
-                            launchSingleTop = true
-                        },
-                )
+                val taskId = currentPendingTaskId
+                if (taskId != null) {
+                    navigateToPendingTask(
+                        taskId = taskId,
+                        clearAuthBackStack = true,
+                    )
+                } else {
+                    navController.navigateToTasksGraph(
+                        navOptions =
+                            navOptions {
+                                popUpTo(AuthGraphDestination) {
+                                    inclusive = true
+                                }
+                                launchSingleTop = true
+                            },
+                    )
+                }
             },
             onNavigateToRegister = {
                 navController.navigateToRegister()
@@ -104,5 +149,12 @@ fun TreeTaskNavHost(
                 navController.navigateToEditProfile()
             },
         )
+    }
+
+    LaunchedEffect(startDestination, pendingTaskId) {
+        val taskId = pendingTaskId ?: return@LaunchedEffect
+        if (startDestination != AuthGraphDestination) {
+            navigateToPendingTask(taskId)
+        }
     }
 }
