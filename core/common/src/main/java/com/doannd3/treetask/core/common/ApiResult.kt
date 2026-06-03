@@ -23,3 +23,5 @@ sealed interface ApiResult<out T> {
 }
 
 fun ApiResult.Error.toDisplayMessage(fallback: UiText): UiText = message ?: appErrorCode?.toUiText() ?: fallback
+
+fun ApiResult.Error.isAuthError(): Boolean = statusCode == 401 || backendErrorCode?.startsWith("AUTH_") == true
