@@ -2,7 +2,6 @@ package com.treestudio.treetask.navigation
 
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
-import com.doannd3.treetask.feature.chat.navigation.ChatGraphDestination
 import com.doannd3.treetask.feature.profile.navigation.ProfileGraphDestination
 import com.doannd3.treetask.feature.stats.navigation.StatsGraphDestination
 import com.doannd3.treetask.feature.tasks.navigation.TasksGraphDestination
@@ -21,12 +20,12 @@ enum class TopLevelDestination(
         route = TasksGraphDestination,
     ),
 
-    CHAT(
-        selectedIcon = R.drawable.ic_chat_selected,
-        unselectedIcon = R.drawable.ic_chat_unselected,
-        titleTextId = R.string.app_tab_chat,
-        route = ChatGraphDestination,
-    ),
+//    CHAT(
+//        selectedIcon = R.drawable.ic_chat_selected,
+//        unselectedIcon = R.drawable.ic_chat_unselected,
+//        titleTextId = R.string.app_tab_chat,
+//        route = ChatGraphDestination,
+//    ),
 
     STATS(
         selectedIcon = R.drawable.ic_stats_selected,
