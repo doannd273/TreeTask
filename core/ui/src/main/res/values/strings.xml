@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="ui_status_todo">Todo</string>
+    <string name="ui_status_in_progress">In progress</string>
+    <string name="ui_status_pending">Pending</string>
+    <string name="ui_status_done">Done</string>
+</resources>

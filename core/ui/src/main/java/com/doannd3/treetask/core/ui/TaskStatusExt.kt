@@ -1,4 +1,4 @@
-package com.doannd3.treetask.core.designsystem.theme
+package com.doannd3.treetask.core.ui
 
 import androidx.annotation.StringRes
 import androidx.compose.material3.MaterialTheme
@@ -6,16 +6,16 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.ui.graphics.Color
-import com.doannd3.treetask.core.designsystem.R
+import com.doannd3.treetask.core.designsystem.theme.treeTaskColors
 import com.doannd3.treetask.core.model.task.TaskStatus
 
 @StringRes
 fun TaskStatus.labelRes(): Int =
     when (this) {
-        TaskStatus.TODO -> R.string.designsystem_status_todo
-        TaskStatus.IN_PROGRESS -> R.string.designsystem_status_in_progress
-        TaskStatus.PENDING -> R.string.designsystem_status_pending
-        TaskStatus.DONE -> R.string.designsystem_status_done
+        TaskStatus.TODO -> R.string.ui_status_todo
+        TaskStatus.IN_PROGRESS -> R.string.ui_status_in_progress
+        TaskStatus.PENDING -> R.string.ui_status_pending
+        TaskStatus.DONE -> R.string.ui_status_done
     }
 
 @Immutable

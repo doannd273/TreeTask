@@ -40,11 +40,11 @@ import androidx.compose.ui.unit.dp
 import com.doannd3.treetask.core.common.extension.toMonthDay
 import com.doannd3.treetask.core.designsystem.theme.AppPreviewLight
 import com.doannd3.treetask.core.designsystem.theme.TreeTaskTheme
-import com.doannd3.treetask.core.designsystem.theme.labelRes
-import com.doannd3.treetask.core.designsystem.theme.statusColors
 import com.doannd3.treetask.core.designsystem.theme.treeTaskColors
 import com.doannd3.treetask.core.model.stats.RecentTaskSummary
 import com.doannd3.treetask.core.model.task.TaskStatus
+import com.doannd3.treetask.core.ui.labelRes
+import com.doannd3.treetask.core.ui.statusColors
 import com.doannd3.treetask.feature.stats.R
 import java.time.Instant
 

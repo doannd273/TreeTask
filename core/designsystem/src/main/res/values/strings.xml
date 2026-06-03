@@ -11,8 +11,4 @@
     <string name="designsystem_cd_navigate_back">Go back</string>
     <string name="designsystem_cd_search">Search</string>
     <string name="designsystem_cd_clear_search">Clear search</string>
-    <string name="designsystem_status_todo">Todo</string>
-    <string name="designsystem_status_in_progress">In progress</string>
-    <string name="designsystem_status_pending">Pending</string>
-    <string name="designsystem_status_done">Done</string>
 </resources>
