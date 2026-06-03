@@ -21,6 +21,11 @@ interface TaskService {
         @Query("keyword") keyword: String,
     ): ApiResult<TaskListResponse>
 
+    @GET("/api/tasks/getTaskById/{taskId}")
+    suspend fun getTaskById(
+        @Path("taskId") taskId: String,
+    ): ApiResult<TaskResponse>
+
     @DELETE("/api/tasks/deleteTask/{taskId}")
     suspend fun deleteTask(
         @Path("taskId") taskId: String,
