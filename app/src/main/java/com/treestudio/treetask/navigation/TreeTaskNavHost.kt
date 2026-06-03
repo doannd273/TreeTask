@@ -17,7 +17,6 @@ import com.doannd3.treetask.feature.profile.navigation.navigateToChangePassword
 import com.doannd3.treetask.feature.profile.navigation.navigateToEditProfile
 import com.doannd3.treetask.feature.profile.navigation.profileGraph
 import com.doannd3.treetask.feature.stats.navigation.statsGraph
-import com.doannd3.treetask.feature.tasks.navigation.TasksGraphDestination
 import com.doannd3.treetask.feature.tasks.navigation.navigateToAddTask
 import com.doannd3.treetask.feature.tasks.navigation.navigateToEditTask
 import com.doannd3.treetask.feature.tasks.navigation.navigateToTasksGraph
@@ -37,7 +36,25 @@ fun TreeTaskNavHost(
     val currentPendingTaskId by rememberUpdatedState(pendingTaskId)
     val currentOnPendingTaskConsumed by rememberUpdatedState(onPendingTaskConsumed)
 
-    fun navigateToPendingTask(taskId: String) {
+    fun navigateToPendingTask(
+        taskId: String,
+        clearAuthBackStack: Boolean = false,
+    ) {
+        navController.navigateToTasksGraph(
+            navOptions =
+                navOptions {
+                    if (clearAuthBackStack) {
+                        popUpTo(AuthGraphDestination) {
+                            inclusive = true
+                        }
+                    } else {
+                        popUpTo(navController.graph.startDestinationId) {
+                            saveState = true
+                        }
+                    }
+                    launchSingleTop = true
+                },
+        )
         navController.navigateToEditTask(
             taskId = taskId,
             navOptions =
@@ -57,17 +74,10 @@ fun TreeTaskNavHost(
             onNavigateToHome = {
                 val taskId = currentPendingTaskId
                 if (taskId != null) {
-                    navController.navigateToEditTask(
+                    navigateToPendingTask(
                         taskId = taskId,
-                        navOptions =
-                            navOptions {
-                                popUpTo(AuthGraphDestination) {
-                                    inclusive = true
-                                }
-                                launchSingleTop = true
-                            },
+                        clearAuthBackStack = true,
                     )
-                    currentOnPendingTaskConsumed()
                 } else {
                     navController.navigateToTasksGraph(
                         navOptions =
@@ -143,7 +153,7 @@ fun TreeTaskNavHost(
 
     LaunchedEffect(startDestination, pendingTaskId) {
         val taskId = pendingTaskId ?: return@LaunchedEffect
-        if (startDestination == TasksGraphDestination) {
+        if (startDestination != AuthGraphDestination) {
             navigateToPendingTask(taskId)
         }
     }
