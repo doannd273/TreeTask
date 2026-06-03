@@ -6,7 +6,10 @@ plugins {
     alias(libs.plugins.treetask.android.spotless)
 }
 android {
-    namespace = "com.doannd3.treetask.core.designsystem"
-    resourcePrefix = "designsystem_"
+    namespace = "com.doannd3.treetask.core.ui"
+    resourcePrefix = "ui_"
 }
-dependencies {}
+dependencies {
+    implementation(projects.core.model)
+    implementation(projects.core.designsystem)
+}

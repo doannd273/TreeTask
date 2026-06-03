@@ -28,11 +28,12 @@ class AuthAuthenticator
             route: Route?,
             response: Response,
         ): Request? {
-            if (responseCount(response) >= 2) {
-                return null
-            }
-
             synchronized(this) {
+                if (responseCount(response) >= 2) {
+                    runBlocking { tokenStorage.clearToken() }
+                    return null
+                }
+
                 val currentAccessToken = runBlocking { tokenStorage.getAccessToken().first() }
                 val originalToken = response.request.header("Authorization")?.removePrefix("Bearer ")
                 if (currentAccessToken != null && currentAccessToken != originalToken) {
@@ -46,7 +47,12 @@ class AuthAuthenticator
                     val refreshToken =
                         runBlocking {
                             tokenStorage.getRefreshToken().first()
-                        } ?: return null
+                        }
+                    if (refreshToken.isNullOrBlank()) {
+                        runBlocking { tokenStorage.clearToken() }
+                        Timber.tag(AppTag.NETWORK).w("AuthAuthenticator: no refresh token, clearing session")
+                        return null
+                    }
 
                     val refreshResult =
                         runBlocking {

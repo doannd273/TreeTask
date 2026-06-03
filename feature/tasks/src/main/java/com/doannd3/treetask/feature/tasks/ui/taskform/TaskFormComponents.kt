@@ -35,9 +35,9 @@ import androidx.compose.ui.unit.dp
 import com.doannd3.treetask.core.designsystem.component.CommonButton
 import com.doannd3.treetask.core.designsystem.theme.AppPreviewLightDark
 import com.doannd3.treetask.core.designsystem.theme.TreeTaskTheme
-import com.doannd3.treetask.core.designsystem.theme.labelRes
-import com.doannd3.treetask.core.designsystem.theme.statusColors
 import com.doannd3.treetask.core.model.task.TaskStatus
+import com.doannd3.treetask.core.ui.labelRes
+import com.doannd3.treetask.core.ui.statusColors
 import com.doannd3.treetask.feature.tasks.R
 import java.time.LocalDate
 import java.time.ZoneOffset
