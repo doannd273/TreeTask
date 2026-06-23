@@ -36,13 +36,7 @@ fun ConversationResponse.toConversationOrNull(): Conversation? {
         participants.mapOrNull { participant ->
             participant.toUserOrNull()
         } ?: return null
-    val rawLastMessage = lastMessage
-    val latestMessage =
-        if (rawLastMessage != null) {
-            rawLastMessage.toMessageOrNull(conversationId = conversationId) ?: return null
-        } else {
-            null
-        }
+    val latestMessage = lastMessage?.toMessageOrNull(conversationId = conversationId)
 
     return Conversation(
         id = conversationId,

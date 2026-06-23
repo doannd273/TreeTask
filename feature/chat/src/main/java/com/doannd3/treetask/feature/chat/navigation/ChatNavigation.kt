@@ -27,7 +27,10 @@ fun NavGraphBuilder.chatGraph() {
         startDestination = ConversationDestination,
     ) {
         composable<ConversationDestination> {
-            ConversationRoute()
+            ConversationRoute(
+                onNavigationToChat = { conversationId ->
+                },
+            )
         }
     }
 }

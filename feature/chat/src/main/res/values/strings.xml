@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="chat_empty_conversations">No conversations yet</string>
+    <string name="chat_error_conversations">Unable to load conversations</string>
+    <string name="chat_retry">Retry</string>
+    <string name="chat_no_messages_yet">No messages yet</string>
+    <string name="chat_unknown_conversation">Conversation</string>
+    <string name="chat_time_yesterday">Yesterday</string>
+    <string name="chat_time_monday">Mon</string>
+    <string name="chat_time_tuesday">Tue</string>
+    <string name="chat_time_wednesday">Wed</string>
+    <string name="chat_time_thursday">Thu</string>
+    <string name="chat_time_friday">Fri</string>
+    <string name="chat_time_saturday">Sat</string>
+    <string name="chat_time_sunday">Sun</string>
+</resources>
