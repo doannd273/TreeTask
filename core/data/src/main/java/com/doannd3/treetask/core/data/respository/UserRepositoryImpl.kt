@@ -4,8 +4,7 @@ import android.content.Context
 import android.net.Uri
 import com.doannd3.treetask.core.common.ApiResult
 import com.doannd3.treetask.core.common.error.AppErrorCode
-import com.doannd3.treetask.core.common.error.MissingResponseDataException
-import com.doannd3.treetask.core.data.model.toUserOrNull
+import com.doannd3.treetask.core.data.mapper.toUserOrNull
 import com.doannd3.treetask.core.datastore.user.UserStorage
 import com.doannd3.treetask.core.domain.repository.UserRepository
 import com.doannd3.treetask.core.model.user.User
@@ -49,21 +48,17 @@ class UserRepositoryImpl
                 )
             }
             val avatarPart = uri.toAvatarPart(context)
-            val result = userService.uploadFile(avatarPart)
-            return when (result) {
-                is ApiResult.Success -> {
-                    val avatarUrl =
-                        result.data?.avatar?.takeIf { it.isNotBlank() }
-                            ?: return ApiResult.Error(
-                                appErrorCode = AppErrorCode.MISSING_RESPONSE_DATA,
-                                exception = MissingResponseDataException(),
-                            )
-                    ApiResult.Success(data = avatarUrl)
-                }
+            val result = userService.uploadFile(avatar = avatarPart)
+            return result.mapSuccessResult { success ->
+                val data = success.data ?: return@mapSuccessResult missingResponseDataError()
+                val avatarUrl =
+                    data.avatar?.takeIf { it.isNotBlank() }
+                        ?: return@mapSuccessResult missingResponseDataError()
 
-                is ApiResult.Error -> {
-                    result
-                }
+                ApiResult.Success(
+                    data = avatarUrl,
+                    message = success.message,
+                )
             }
         }
 
@@ -72,69 +67,31 @@ class UserRepositoryImpl
             phone: String,
             avatar: String,
         ): ApiResult<User> {
-            val result =
-                userService.updateProfile(
-                    UpdateProfileRequest(
-                        fullName = fullName,
-                        phone = phone,
-                        avatar = avatar,
-                    ),
+            val request =
+                UpdateProfileRequest(
+                    fullName = fullName,
+                    phone = phone,
+                    avatar = avatar,
                 )
-            return when (result) {
-                is ApiResult.Success -> {
-                    val data = result.data
-                    if (data == null) {
-                        return ApiResult.Error(
-                            appErrorCode = AppErrorCode.MISSING_RESPONSE_DATA,
-                            exception = MissingResponseDataException(),
-                        )
-                    }
 
-                    val user = data.toUserOrNull()
-                    if (user == null) {
-                        return ApiResult.Error(
-                            appErrorCode = AppErrorCode.MISSING_RESPONSE_DATA,
-                            exception = MissingResponseDataException(),
-                        )
-                    }
+            val result = userService.updateProfile(request = request)
+            return result.mapSuccessResult { success ->
+                val data = success.data ?: return@mapSuccessResult missingResponseDataError()
+                val user = data.toUserOrNull() ?: return@mapSuccessResult missingResponseDataError()
 
-                    userStorage.saveUserProfile(user)
-                    ApiResult.Success(message = result.message, data = user)
-                }
-
-                is ApiResult.Error -> {
-                    result
-                }
+                userStorage.saveUserProfile(user = user)
+                ApiResult.Success(message = success.message, data = user)
             }
         }
 
         override suspend fun getProfile(): ApiResult<User> {
             val result = userService.getProfile()
-            return when (result) {
-                is ApiResult.Success -> {
-                    val data = result.data
-                    if (data == null) {
-                        return ApiResult.Error(
-                            appErrorCode = AppErrorCode.MISSING_RESPONSE_DATA,
-                            exception = MissingResponseDataException(),
-                        )
-                    }
+            return result.mapSuccessResult { success ->
+                val data = success.data ?: return@mapSuccessResult missingResponseDataError()
+                val user = data.toUserOrNull() ?: return@mapSuccessResult missingResponseDataError()
 
-                    val user = data.toUserOrNull()
-                    if (user == null) {
-                        return ApiResult.Error(
-                            appErrorCode = AppErrorCode.MISSING_RESPONSE_DATA,
-                            exception = MissingResponseDataException(),
-                        )
-                    }
-
-                    userStorage.saveUserProfile(user)
-                    ApiResult.Success(data = user)
-                }
-
-                is ApiResult.Error -> {
-                    result
-                }
+                userStorage.saveUserProfile(user = user)
+                ApiResult.Success(data = user)
             }
         }
 
@@ -148,14 +105,8 @@ class UserRepositoryImpl
                     newPassword = newPassword,
                 )
             val result = userService.changePassword(body = body)
-            return when (result) {
-                is ApiResult.Success -> {
-                    ApiResult.Success(message = result.message)
-                }
-
-                is ApiResult.Error -> {
-                    result
-                }
+            return result.mapSuccessResult { success ->
+                ApiResult.Success(message = success.message)
             }
         }
 

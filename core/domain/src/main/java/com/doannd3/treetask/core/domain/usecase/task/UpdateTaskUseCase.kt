@@ -21,6 +21,11 @@ class UpdateTaskUseCase
             status: String,
             dueDate: String,
         ): ApiResult<Task> {
+            val taskIdTrimmed = taskId.trim()
+            if (taskIdTrimmed.isBlank()) {
+                return validationError(R.string.common_error_task_id_empty)
+            }
+
             val titleTrimmed = title.trim()
             if (titleTrimmed.isBlank()) {
                 return validationError(R.string.common_error_task_title_empty)
@@ -48,7 +53,7 @@ class UpdateTaskUseCase
             }
 
             return taskRepository.updateTask(
-                taskId = taskId,
+                taskId = taskIdTrimmed,
                 title = titleTrimmed,
                 description = descriptionTrimmed,
                 status = statusTrimmed,

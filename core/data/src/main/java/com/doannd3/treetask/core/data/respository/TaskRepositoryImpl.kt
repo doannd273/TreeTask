@@ -7,10 +7,8 @@ import androidx.paging.PagingData
 import androidx.paging.map
 import androidx.room.withTransaction
 import com.doannd3.treetask.core.common.ApiResult
-import com.doannd3.treetask.core.common.error.AppErrorCode
-import com.doannd3.treetask.core.common.error.MissingResponseDataException
-import com.doannd3.treetask.core.data.model.toTaskDomain
-import com.doannd3.treetask.core.data.model.toTaskEntity
+import com.doannd3.treetask.core.data.mapper.toTask
+import com.doannd3.treetask.core.data.mapper.toTaskEntityOrNull
 import com.doannd3.treetask.core.database.TreeTaskDatabase
 import com.doannd3.treetask.core.database.dao.TaskDao
 import com.doannd3.treetask.core.database.dao.TaskRemoteKeysDao
@@ -58,7 +56,7 @@ class TaskRepositoryImpl
                     ),
                 pagingSourceFactory = pagingSourceFactory,
             ).flow.map { pagingData ->
-                pagingData.map { it.toTaskDomain() }
+                pagingData.map { it.toTask() }
             }
         }
 
@@ -73,39 +71,34 @@ class TaskRepositoryImpl
                         keyword = "",
                     )
 
-                when (apiResponse) {
-                    is ApiResult.Success -> {
-                        val data =
-                            apiResponse.data ?: return ApiResult.Error(
-                                appErrorCode = AppErrorCode.MISSING_RESPONSE_DATA,
-                                exception = MissingResponseDataException(),
-                            )
-                        val tasks = data.tasks ?: emptyList()
-
-                        // Cập nhật lại db như logic REFRESH của RemoteMediator trong một transaction
-                        database.withTransaction {
-                            taskRemoteKeysDao.clearRemoteKeys()
-                            taskDao.deleteTaskByUserId(userId)
-
-                            val keys =
-                                tasks.map {
-                                    TaskRemoteKeysEntity(
-                                        taskId = it.id ?: "",
-                                        preKey = null,
-                                        nextKey = if (tasks.isEmpty()) null else 2,
-                                    )
-                                }
-
-                            taskRemoteKeysDao.insertAll(keys)
-                            taskDao.insertTasks(tasks.map { it.toTaskEntity() })
+                apiResponse.mapSuccessResult { success ->
+                    val data = success.data ?: return@mapSuccessResult missingResponseDataError()
+                    val tasks = data.tasks ?: return@mapSuccessResult missingResponseDataError()
+                    val taskEntities =
+                        tasks.map { taskResponse ->
+                            taskResponse.toTaskEntityOrNull()
+                                ?: return@mapSuccessResult missingResponseDataError()
                         }
 
-                        ApiResult.Success(data = Unit)
+                    // Cập nhật lại db như logic REFRESH của RemoteMediator trong một transaction
+                    database.withTransaction {
+                        taskRemoteKeysDao.clearRemoteKeys()
+                        taskDao.deleteTaskByUserId(userId)
+
+                        val keys =
+                            taskEntities.map { task ->
+                                TaskRemoteKeysEntity(
+                                    taskId = task.id,
+                                    preKey = null,
+                                    nextKey = if (taskEntities.isEmpty()) null else 2,
+                                )
+                            }
+
+                        taskRemoteKeysDao.insertAll(keys)
+                        taskDao.insertTasks(taskEntities)
                     }
 
-                    is ApiResult.Error -> {
-                        apiResponse
-                    }
+                    ApiResult.Success(data = Unit)
                 }
             } catch (e: IOException) {
                 ApiResult.Error(exception = e)
@@ -120,31 +113,23 @@ class TaskRepositoryImpl
             dueDate: String,
         ): ApiResult<Task> =
             try {
-                val response =
-                    taskService.createTask(
-                        TaskRequest(
-                            title = title,
-                            description = description,
-                            status = status,
-                            dueDate = dueDate,
-                        ),
+                val request =
+                    TaskRequest(
+                        title = title,
+                        description = description,
+                        status = status,
+                        dueDate = dueDate,
                     )
-                when (response) {
-                    is ApiResult.Success -> {
-                        val taskResponse =
-                            response.data ?: return ApiResult.Error(
-                                appErrorCode = AppErrorCode.MISSING_RESPONSE_DATA,
-                                exception = MissingResponseDataException(),
-                            )
 
-                        val taskEntity = taskResponse.toTaskEntity()
-                        taskDao.insertTasks(listOf(taskEntity))
-                        ApiResult.Success(data = taskEntity.toTaskDomain())
-                    }
+                val response = taskService.createTask(request = request)
+                response.mapSuccessResult { success ->
+                    val taskResponse =
+                        success.data ?: return@mapSuccessResult missingResponseDataError()
+                    val taskEntity =
+                        taskResponse.toTaskEntityOrNull() ?: return@mapSuccessResult missingResponseDataError()
 
-                    is ApiResult.Error -> {
-                        response
-                    }
+                    taskDao.insertTasks(listOf(taskEntity))
+                    ApiResult.Success(data = taskEntity.toTask())
                 }
             } catch (e: IOException) {
                 ApiResult.Error(exception = e)
@@ -160,23 +145,27 @@ class TaskRepositoryImpl
             dueDate: String,
         ): ApiResult<Task> =
             try {
+                val request =
+                    TaskRequest(
+                        title = title,
+                        description = description,
+                        status = status,
+                        dueDate = dueDate,
+                    )
+
                 val response =
                     taskService.updateTask(
                         taskId = taskId,
-                        request = TaskRequest(title = title, description = description, status = status, dueDate = dueDate),
+                        request = request,
                     )
-                when (response) {
-                    is ApiResult.Success -> {
-                        val taskResponse =
-                            response.data ?: return ApiResult.Error(
-                                appErrorCode = AppErrorCode.MISSING_RESPONSE_DATA,
-                                exception = MissingResponseDataException(),
-                            )
-                        val taskEntity = taskResponse.toTaskEntity()
-                        taskDao.insertTasks(listOf(taskEntity))
-                        ApiResult.Success(data = taskEntity.toTaskDomain())
-                    }
-                    is ApiResult.Error -> response
+                response.mapSuccessResult { success ->
+                    val taskResponse =
+                        success.data ?: return@mapSuccessResult missingResponseDataError()
+                    val taskEntity =
+                        taskResponse.toTaskEntityOrNull() ?: return@mapSuccessResult missingResponseDataError()
+
+                    taskDao.insertTasks(listOf(taskEntity))
+                    ApiResult.Success(data = taskEntity.toTask())
                 }
             } catch (e: IOException) {
                 ApiResult.Error(exception = e)
@@ -188,23 +177,17 @@ class TaskRepositoryImpl
             try {
                 val cachedTask = taskDao.getTaskById(taskId = taskId)
                 if (cachedTask != null) {
-                    ApiResult.Success(data = cachedTask.toTaskDomain())
+                    ApiResult.Success(data = cachedTask.toTask())
                 } else {
-                    when (val response = taskService.getTaskById(taskId = taskId)) {
-                        is ApiResult.Success -> {
-                            val taskResponse =
-                                response.data ?: return ApiResult.Error(
-                                    appErrorCode = AppErrorCode.MISSING_RESPONSE_DATA,
-                                    exception = MissingResponseDataException(),
-                                )
-                            val taskEntity = taskResponse.toTaskEntity()
-                            taskDao.insertTasks(listOf(taskEntity))
-                            ApiResult.Success(data = taskEntity.toTaskDomain())
-                        }
+                    val response = taskService.getTaskById(taskId = taskId)
+                    response.mapSuccessResult { success ->
+                        val taskResponse =
+                            success.data ?: return@mapSuccessResult missingResponseDataError()
+                        val taskEntity =
+                            taskResponse.toTaskEntityOrNull() ?: return@mapSuccessResult missingResponseDataError()
 
-                        is ApiResult.Error -> {
-                            response
-                        }
+                        taskDao.insertTasks(listOf(taskEntity))
+                        ApiResult.Success(data = taskEntity.toTask())
                     }
                 }
             } catch (e: IOException) {
@@ -216,12 +199,9 @@ class TaskRepositoryImpl
         override suspend fun deleteTask(taskId: String) =
             try {
                 val response = taskService.deleteTask(taskId = taskId)
-                when (response) {
-                    is ApiResult.Success -> {
-                        taskDao.deleteTaskById(taskId = taskId)
-                        ApiResult.Success(data = Unit)
-                    }
-                    is ApiResult.Error -> response
+                response.mapSuccessResult {
+                    taskDao.deleteTaskById(taskId = taskId)
+                    ApiResult.Success(data = Unit)
                 }
             } catch (e: IOException) {
                 ApiResult.Error(exception = e)

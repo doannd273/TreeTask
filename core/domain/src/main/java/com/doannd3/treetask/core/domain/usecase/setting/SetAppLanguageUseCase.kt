@@ -10,6 +10,6 @@ class SetAppLanguageUseCase
         private val settingRepository: SettingRepository,
     ) {
         suspend operator fun invoke(appLanguage: AppLanguage) {
-            settingRepository.saveAppLanguage(appLanguage)
+            settingRepository.saveAppLanguage(appLanguage = appLanguage)
         }
     }

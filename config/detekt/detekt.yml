@@ -9,7 +9,7 @@ style:
   MaxLineLength:
     active: false # Tránh chửi khi viết Compose bị thụt lùi quá sâu
   ReturnCount:
-    max: 7 # Cho phép 7 return trong 1 method
+    max: 10 # Mapper guard clauses cần fail-fast rõ ràng
   UnusedPrivateMember:
     ignoreAnnotated: [ 'Preview', 'AppPreviewLight', 'AppPreviewLightDark', 'AppPreviewLocalesLightDark' ]
 

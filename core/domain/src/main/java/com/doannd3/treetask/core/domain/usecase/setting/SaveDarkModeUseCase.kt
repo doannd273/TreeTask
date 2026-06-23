@@ -9,6 +9,6 @@ class SaveDarkModeUseCase
         private val settingRepository: SettingRepository,
     ) {
         suspend operator fun invoke(isDarkMode: Boolean) {
-            settingRepository.saveDarkMode(isDarkMode)
+            settingRepository.saveDarkMode(isDarkMode = isDarkMode)
         }
     }

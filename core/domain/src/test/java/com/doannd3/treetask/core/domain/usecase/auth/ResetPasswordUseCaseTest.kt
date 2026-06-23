@@ -62,6 +62,42 @@ class ResetPasswordUseCaseTest {
         }
 
     @Test
+    fun `reset password with invalid email returns email invalid error`() =
+        runTest {
+            val result =
+                resetPasswordUseCase(
+                    email = "invalid-email",
+                    otp = "123456",
+                    newPassword = "password123",
+                )
+
+            assertThat(result).isInstanceOf(ApiResult.Error::class.java)
+            val errorResult = result as ApiResult.Error
+            assertThat(errorResult.message).isInstanceOf(UiText.StringResource::class.java)
+            val stringResource = errorResult.message as UiText.StringResource
+            assertThat(stringResource.resId).isEqualTo(R.string.common_error_email_invalid)
+            coVerify(exactly = 0) { authRepository.resetPassword(any(), any(), any()) }
+        }
+
+    @Test
+    fun `reset password with invalid otp returns otp invalid error`() =
+        runTest {
+            val result =
+                resetPasswordUseCase(
+                    email = "test@treetask.com",
+                    otp = "12ab56",
+                    newPassword = "password123",
+                )
+
+            assertThat(result).isInstanceOf(ApiResult.Error::class.java)
+            val errorResult = result as ApiResult.Error
+            assertThat(errorResult.message).isInstanceOf(UiText.StringResource::class.java)
+            val stringResource = errorResult.message as UiText.StringResource
+            assertThat(stringResource.resId).isEqualTo(R.string.common_error_otp_invalid)
+            coVerify(exactly = 0) { authRepository.resetPassword(any(), any(), any()) }
+        }
+
+    @Test
     fun `reset password with empty password returns password empty error`() =
         runTest {
             // WHEN

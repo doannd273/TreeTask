@@ -8,7 +8,35 @@ This document describes the conventions currently used in TreeTask. If this docu
 - Prefer immutable data: `val`, `data class`, and sealed class/object for state/event/effect.
 - Use `data object` for sealed `Event`/`Effect` variants that carry no payload.
 - Use Hilt constructor injection when a class needs dependencies.
+- Use named arguments when calling service/repository/storage boundary methods with request or domain parameters.
+  For request bodies, always name the body parameter, for example `request = LoginRequest(...)` or `body = ResetPasswordRequest(...)`.
+- Build multi-field request/body DTOs before calling service methods.
+  Keep the service call focused on the boundary call, for example:
+
+  ```kotlin
+  val request =
+      CreateConversationRequest(
+          type = ConversationType.PRIVATE.type,
+          name = name,
+          participantIds = otherUserIds,
+      )
+
+  val result = chatService.createConversation(request = request)
+  ```
+
+  Inline request construction is acceptable only for trivial one-field DTOs that stay on one readable line.
+- In repositories, validate required success response data with one guard-clause style:
+  `val data = result.data ?: return missingResponseDataError()`, then
+  `val model = data.toModelOrNull() ?: return missingResponseDataError()`.
+  Avoid separate `if (data == null)` blocks in mapper/response handling paths.
+- In repositories, use `mapSuccessResult { ... }` to reuse only the repeated `ApiResult.Error` pass-through branch.
+  Keep required-data validation, mapping, success messages, persistence, cache writes, and database transactions explicit inside the success lambda.
 - Do not catch exceptions in UI with broad `catch (Exception)` if repository/use case boundaries already normalize errors with `ApiResult`.
+- Use cases must validate all required input before calling repositories.
+  Validate required strings, ids, lists, enum-like values, date formats, pagination, and any business preconditions owned by the use case.
+  Normalize input there too, such as `trim()` and `distinct()`, then call the repository only with validated values.
+  Invalid input must return `validationError(...)` and must not call the repository.
+  Repositories validate backend response contracts after network/database calls.
 - ViewModel coroutines that can fail should use `executeSafe { ... }` from `BaseViewModel`.
 - Fire-and-forget effect emissions that cannot throw may use `viewModelScope.launch { _effect.emit(...) }`.
 - Expose public flows as read-only types: `StateFlow`, `SharedFlow`, or `Flow`.

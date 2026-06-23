@@ -37,6 +37,19 @@ class ForgotPasswordUseCaseTest {
         }
 
     @Test
+    fun `forgot password with invalid email returns email invalid errors`() =
+        runTest {
+            val result = forgotPasswordUseCase(email = "invalid-email")
+
+            assertThat(result).isInstanceOf(ApiResult.Error::class.java)
+            val errorResult = result as ApiResult.Error
+            assertThat(errorResult.message).isInstanceOf(UiText.StringResource::class.java)
+            val stringResource = errorResult.message as UiText.StringResource
+            assertThat(stringResource.resId).isEqualTo(R.string.common_error_email_invalid)
+            coVerify(exactly = 0) { authRepository.forgotPassword(any()) }
+        }
+
+    @Test
     fun `forgot password with valid input calls repository and returns success`() =
         runTest {
             // GIVEN

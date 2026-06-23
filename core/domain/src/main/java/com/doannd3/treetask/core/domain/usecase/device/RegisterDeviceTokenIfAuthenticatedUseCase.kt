@@ -11,10 +11,15 @@ class RegisterDeviceTokenIfAuthenticatedUseCase
         private val registerDeviceTokenUseCase: RegisterDeviceTokenUseCase,
     ) {
         suspend operator fun invoke(token: String): ApiResult<Unit>? {
+            val tokenTrimmed = token.trim()
+            if (tokenTrimmed.isBlank()) {
+                return registerDeviceTokenUseCase(token = tokenTrimmed)
+            }
+
             if (!sessionRepository.hasStoredSession()) {
                 return null
             }
 
-            return registerDeviceTokenUseCase(token = token)
+            return registerDeviceTokenUseCase(token = tokenTrimmed)
         }
     }

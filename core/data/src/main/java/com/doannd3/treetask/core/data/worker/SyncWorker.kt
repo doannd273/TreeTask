@@ -35,7 +35,7 @@ class SyncWorker
             }
 
             // 2. Kêu gọi TaskRepository đồng bộ dữ liệu của ông user này
-            return when (val result = taskRepository.syncTasks(user.id)) {
+            return when (val result = taskRepository.syncTasks(userId = user.id)) {
                 is ApiResult.Success -> {
                     Timber.tag(AppTag.NETWORK).i("Đồng bộ THÀNH CÔNG!")
                     Result.success() // Báo cáo sếp: Đã xong việc!

@@ -7,7 +7,7 @@ import androidx.paging.RemoteMediator
 import androidx.room.withTransaction
 import com.doannd3.treetask.core.common.ApiResult
 import com.doannd3.treetask.core.common.error.MissingResponseDataException
-import com.doannd3.treetask.core.data.model.toTaskEntity
+import com.doannd3.treetask.core.data.mapper.toTaskEntityOrNull
 import com.doannd3.treetask.core.database.TreeTaskDatabase
 import com.doannd3.treetask.core.database.model.TaskEntity
 import com.doannd3.treetask.core.database.model.TaskRemoteKeysEntity
@@ -81,16 +81,20 @@ class TaskRemoteMediator(
         page: Int,
         loadType: LoadType,
     ): MediatorResult {
-        val tasks = networkTasks ?: emptyList()
-        val endOfPaginationReached = tasks.isEmpty()
+        val taskResponses = networkTasks ?: return MediatorResult.Error(MissingResponseDataException())
+        val taskEntities =
+            taskResponses.map { taskResponse ->
+                taskResponse.toTaskEntityOrNull() ?: return MediatorResult.Error(MissingResponseDataException())
+            }
+        val endOfPaginationReached = taskEntities.isEmpty()
 
         val prevKey = if (page == 1) null else page - 1
         val nextKey = if (endOfPaginationReached) null else page + 1
 
         val keys =
-            tasks.map {
+            taskEntities.map { task ->
                 TaskRemoteKeysEntity(
-                    taskId = it.id ?: "",
+                    taskId = task.id,
                     preKey = prevKey,
                     nextKey = nextKey,
                 )
@@ -102,7 +106,7 @@ class TaskRemoteMediator(
                 database.taskDao().deleteTaskByUserId(userId)
             }
             database.taskRemoteKeysDao().insertAll(keys)
-            database.taskDao().insertTasks(tasks.map { it.toTaskEntity() })
+            database.taskDao().insertTasks(taskEntities)
         }
 
         return MediatorResult.Success(endOfPaginationReached = endOfPaginationReached)

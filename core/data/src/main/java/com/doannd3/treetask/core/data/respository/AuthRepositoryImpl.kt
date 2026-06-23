@@ -1,10 +1,8 @@
 package com.doannd3.treetask.core.data.respository
 
 import com.doannd3.treetask.core.common.ApiResult
-import com.doannd3.treetask.core.common.error.AppErrorCode
-import com.doannd3.treetask.core.common.error.MissingResponseDataException
 import com.doannd3.treetask.core.common.log.AppTag
-import com.doannd3.treetask.core.data.model.toUserOrNull
+import com.doannd3.treetask.core.data.mapper.toUserOrNull
 import com.doannd3.treetask.core.datastore.token.TokenStorage
 import com.doannd3.treetask.core.datastore.user.UserStorage
 import com.doannd3.treetask.core.domain.repository.AuthRepository
@@ -34,39 +32,24 @@ class AuthRepositoryImpl
             email: String,
             password: String,
         ): ApiResult<Unit> {
-            val result = authService.login(LoginRequest(email = email, password = password))
-            return when (result) {
-                is ApiResult.Success -> {
-                    val data = result.data
-                    if (data == null) {
-                        return ApiResult.Error(
-                            appErrorCode = AppErrorCode.MISSING_RESPONSE_DATA,
-                            exception = MissingResponseDataException(),
-                        )
-                    }
+            val request =
+                LoginRequest(
+                    email = email,
+                    password = password,
+                )
 
-                    // save profile user
-                    val user = data.user.toUserOrNull()
-                    if (user == null) {
-                        return ApiResult.Error(
-                            appErrorCode = AppErrorCode.MISSING_RESPONSE_DATA,
-                            exception = MissingResponseDataException(),
-                        )
-                    }
-                    // save token
-                    tokenStorage.saveToken(
-                        accessToken = data.accessToken,
-                        refreshToken = data.refreshToken,
-                    )
-                    // save profile
-                    userStorage.saveUserProfile(user)
+            val result = authService.login(request = request)
+            return result.mapSuccessResult { success ->
+                val data = success.data ?: return@mapSuccessResult missingResponseDataError()
+                val user = data.user.toUserOrNull() ?: return@mapSuccessResult missingResponseDataError()
 
-                    ApiResult.Success(data = Unit)
-                }
+                tokenStorage.saveToken(
+                    accessToken = data.accessToken,
+                    refreshToken = data.refreshToken,
+                )
+                userStorage.saveUserProfile(user = user)
 
-                is ApiResult.Error -> {
-                    result
-                } // propagate thẳng
+                ApiResult.Success(data = Unit)
             }
         }
 
@@ -75,61 +58,35 @@ class AuthRepositoryImpl
             email: String,
             password: String,
         ): ApiResult<String> {
-            val result =
-                authService.register(
-                    RegisterRequest(
-                        fullName = fullName,
-                        email = email,
-                        password = password,
-                    ),
+            val request =
+                RegisterRequest(
+                    fullName = fullName,
+                    email = email,
+                    password = password,
                 )
-            return when (result) {
-                is ApiResult.Success -> {
-                    val data = result.data
-                    if (data == null) {
-                        return ApiResult.Error(
-                            appErrorCode = AppErrorCode.MISSING_RESPONSE_DATA,
-                            exception = MissingResponseDataException(),
-                        )
-                    }
 
-                    // save profile user
-                    val user = data.user.toUserOrNull()
-                    if (user == null) {
-                        return ApiResult.Error(
-                            appErrorCode = AppErrorCode.MISSING_RESPONSE_DATA,
-                            exception = MissingResponseDataException(),
-                        )
-                    }
+            val result = authService.register(request = request)
+            return result.mapSuccessResult { success ->
+                val data = success.data ?: return@mapSuccessResult missingResponseDataError()
+                val user = data.user.toUserOrNull() ?: return@mapSuccessResult missingResponseDataError()
 
-                    // save token
-                    tokenStorage.saveToken(
-                        data.accessToken,
-                        data.refreshToken,
-                    )
+                tokenStorage.saveToken(
+                    accessToken = data.accessToken,
+                    refreshToken = data.refreshToken,
+                )
+                userStorage.saveUserProfile(user = user)
 
-                    // save profile
-                    userStorage.saveUserProfile(user)
-
-                    ApiResult.Success(message = result.message)
-                }
-
-                is ApiResult.Error -> {
-                    result
-                } // propagate thẳng
+                ApiResult.Success(message = success.message)
             }
         }
 
         override suspend fun forgotPassword(email: String): ApiResult<String> {
-            val result = authService.forgotPassword(ForgotPasswordRequest(email = email))
-            return when (result) {
-                is ApiResult.Success -> {
-                    ApiResult.Success(message = result.message)
-                }
-
-                is ApiResult.Error -> {
-                    result
-                } // propagate thẳng
+            val result =
+                authService.forgotPassword(
+                    request = ForgotPasswordRequest(email = email),
+                )
+            return result.mapSuccessResult { success ->
+                ApiResult.Success(message = success.message)
             }
         }
 
@@ -145,14 +102,8 @@ class AuthRepositoryImpl
                     newPassword = newPassword,
                 )
             val result = authService.resetPassword(body = body)
-            return when (result) {
-                is ApiResult.Success -> {
-                    ApiResult.Success(message = result.message)
-                }
-
-                is ApiResult.Error -> {
-                    result
-                }
+            return result.mapSuccessResult { success ->
+                ApiResult.Success(message = success.message)
             }
         }
 

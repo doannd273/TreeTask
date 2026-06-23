@@ -11,7 +11,12 @@ class RegisterCurrentDeviceTokenUseCase
         private val registerDeviceTokenUseCase: RegisterDeviceTokenUseCase,
     ) {
         suspend operator fun invoke(): ApiResult<Unit>? {
-            val token = pushTokenProvider.getToken() ?: return null
-            return registerDeviceTokenUseCase(token)
+            val token =
+                pushTokenProvider.getToken()
+                    ?.trim()
+                    ?.takeIf { it.isNotBlank() }
+                    ?: return null
+
+            return registerDeviceTokenUseCase(token = token)
         }
     }

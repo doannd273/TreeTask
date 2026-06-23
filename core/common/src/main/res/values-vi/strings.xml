@@ -2,18 +2,31 @@
 <resources>
     <string name="common_app_name">Tree Task</string>
     <string name="common_error_email_empty">Email không thể để trống</string>
+    <string name="common_error_email_invalid">Email không hợp lệ</string>
     <string name="common_error_fullName_empty">Họ tên không thể để trống</string>
     <string name="common_error_otp_empty">OTP không thể để trống</string>
+    <string name="common_error_otp_invalid">OTP không hợp lệ</string>
     <string name="common_error_password_empty">Mật khẩu không thể để trống</string>
     <string name="common_error_network_timeout">Kết nối máy chủ đã hết hạn</string>
     <string name="common_error_unknown">Đã xảy ra lỗi không xác định</string>
     <string name="common_error_network_connection">Lỗi kết nối mạng</string>
     <string name="common_missing_response_data">Không tìm thấy dữ liệu</string>
     <string name="common_error_unsupported_media_type">Định dạng ảnh không được hỗ trợ</string>
+    <string name="common_error_avatar_empty">Cần chọn ảnh đại diện</string>
+    <string name="common_error_device_token_empty">Device token không thể để trống</string>
+    <string name="common_error_task_id_empty">ID công việc không thể để trống</string>
     <string name="common_error_task_title_empty">Tiêu đề công việc không thể để trống</string>
     <string name="common_error_task_description_empty">Mô tả công việc không thể để trống</string>
     <string name="common_error_task_status_empty">Trạng thái công việc là bắt buộc</string>
     <string name="common_error_task_status_invalid">Trạng thái công việc không hợp lệ</string>
     <string name="common_error_task_due_date_empty">Ngày đến hạn là bắt buộc</string>
     <string name="common_error_task_due_date_invalid">Ngày đến hạn không hợp lệ</string>
+    <string name="common_error_conversation_name_empty">Tên cuộc trò chuyện không thể để trống</string>
+    <string name="common_error_conversation_participants_empty">Cần chọn người tham gia cuộc trò chuyện</string>
+    <string name="common_error_conversation_participant_id_empty">ID người tham gia cuộc trò chuyện không thể để trống</string>
+    <string name="common_error_other_user_id_empty">Cần chọn người để chat</string>
+    <string name="common_error_conversation_id_empty">ID cuộc trò chuyện không thể để trống</string>
+    <string name="common_error_message_content_empty">Nội dung tin nhắn không thể để trống</string>
+    <string name="common_error_page_invalid">Trang không hợp lệ</string>
+    <string name="common_error_limit_invalid">Kích thước trang không hợp lệ</string>
 </resources>

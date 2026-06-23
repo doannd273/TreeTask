@@ -21,7 +21,7 @@ class LogoutUseCase
             var unregisterResult: ApiResult<Unit>? = null
             try {
                 // clear token firebase
-                val token = pushTokenProvider.getToken()
+                val token = pushTokenProvider.getToken()?.trim()?.takeIf { it.isNotBlank() }
                 if (token != null) {
                     unregisterResult = unRegisterDeviceTokenUseCase(token = token)
                 }

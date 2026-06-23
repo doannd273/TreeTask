@@ -24,8 +24,8 @@ class UpdateProfileUseCase
 
             return userRepository.updateProfile(
                 fullName = fullNameTrimmed,
-                phone = phone,
-                avatar = avatar,
+                phone = phone.trim(),
+                avatar = avatar.trim(),
             )
         }
     }

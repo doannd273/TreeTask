@@ -69,6 +69,24 @@ class RegisterUseCaseTest {
         }
 
     @Test
+    fun `register with invalid email returns email invalid errors`() =
+        runTest {
+            val result =
+                registerUseCase(
+                    fullName = "Nguyen A",
+                    email = "invalid-email",
+                    password = "password123",
+                )
+
+            assertThat(result).isInstanceOf(ApiResult.Error::class.java)
+            val errorResult = result as ApiResult.Error
+            assertThat(errorResult.message).isInstanceOf(UiText.StringResource::class.java)
+            val stringResource = errorResult.message as UiText.StringResource
+            assertThat(stringResource.resId).isEqualTo(R.string.common_error_email_invalid)
+            coVerify(exactly = 0) { authRepository.register(any(), any(), any()) }
+        }
+
+    @Test
     fun `register with valid input call repository and return success`() =
         runTest {
             // GIVEN

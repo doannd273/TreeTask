@@ -52,6 +52,19 @@ class LoginUseCaseTest {
         }
 
     @Test
+    fun `login with invalid email returns email invalid error`() =
+        runTest {
+            val result = loginUseCase(email = "invalid-email", password = "password123")
+
+            assertThat(result).isInstanceOf(ApiResult.Error::class.java)
+            val errorResult = result as ApiResult.Error
+            assertThat(errorResult.message).isInstanceOf(UiText.StringResource::class.java)
+            val stringResource = errorResult.message as UiText.StringResource
+            assertThat(stringResource.resId).isEqualTo(R.string.common_error_email_invalid)
+            coVerify(exactly = 0) { authRepository.login(any(), any()) }
+        }
+
+    @Test
     fun `login with valid input calls repository and returns success`() =
         runTest {
             // GIVEN
