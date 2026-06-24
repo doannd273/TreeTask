@@ -6,8 +6,10 @@ import com.doannd3.treetask.core.model.chat.Message
 data class ChatDetailState(
     val conversationId: String = "",
     val messages: List<Message> = emptyList(),
+    val draftMessage: String = "",
     val isLoading: Boolean = false,
     val isRefreshing: Boolean = false,
+    val isSending: Boolean = false,
     val hasInitialLoadError: Boolean = false,
 )
 
@@ -17,6 +19,10 @@ sealed class ChatDetailEvent {
     data object Refresh : ChatDetailEvent()
 
     data object BackClick : ChatDetailEvent()
+
+    data class MessageChanged(val message: String) : ChatDetailEvent()
+
+    data object SendMessageClicked : ChatDetailEvent()
 }
 
 sealed class ChatDetailEffect {

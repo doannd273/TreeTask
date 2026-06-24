@@ -1,4 +1,4 @@
-package com.doannd3.treetask.core.data.respository
+package com.doannd3.treetask.core.data.repository
 
 import com.doannd3.treetask.core.datastore.darkmode.DarkModeStorage
 import com.doannd3.treetask.core.datastore.language.AppLanguageStorage

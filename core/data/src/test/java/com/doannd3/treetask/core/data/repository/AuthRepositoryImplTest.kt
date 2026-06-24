@@ -1,4 +1,4 @@
-package com.doannd3.treetask.core.data.respository
+package com.doannd3.treetask.core.data.repository
 
 import app.cash.turbine.test
 import com.doannd3.treetask.core.common.ApiResult

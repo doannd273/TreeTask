@@ -17,7 +17,13 @@ import androidx.lifecycle.repeatOnLifecycle
 import com.doannd3.treetask.core.common.asString
 import com.doannd3.treetask.core.designsystem.component.CommonHeader
 import com.doannd3.treetask.core.designsystem.component.LocalGlobalAppState
+import com.doannd3.treetask.core.designsystem.theme.AppPreviewLightDark
+import com.doannd3.treetask.core.designsystem.theme.TreeTaskTheme
+import com.doannd3.treetask.core.model.chat.Message
+import com.doannd3.treetask.core.model.chat.MessageType
+import com.doannd3.treetask.core.model.user.User
 import com.doannd3.treetask.feature.chat.R
+import java.time.Instant
 
 @Composable
 fun ChatDetailRoute(
@@ -75,6 +81,18 @@ internal fun ChatDetailScreen(
                 onNavigateBack = { onEvent(ChatDetailEvent.BackClick) },
             )
         },
+        bottomBar = {
+            ChatMessageComposer(
+                message = state.draftMessage,
+                isSending = state.isSending,
+                onMessageChange = { message ->
+                    onEvent(ChatDetailEvent.MessageChanged(message = message))
+                },
+                onSendClick = {
+                    onEvent(ChatDetailEvent.SendMessageClicked)
+                }
+            )
+        }
     ) { paddingValues ->
         ChatDetailContent(
             modifier = Modifier.padding(paddingValues = paddingValues),
@@ -114,4 +132,60 @@ internal fun ChatDetailContent(
             )
         }
     }
+}
+
+@AppPreviewLightDark
+@Composable
+private fun ChatDetailScreenPreview() {
+    TreeTaskTheme {
+        ChatDetailScreen(
+            state =
+                ChatDetailState(
+                    conversationId = "conversation-preview",
+                    messages = chatDetailPreviewMessages(),
+                    draftMessage = "Can you review this task?",
+                    isSending = false,
+                ),
+            onEvent = {},
+        )
+    }
+}
+
+private fun chatDetailPreviewMessages(): List<Message> {
+    val now = Instant.parse("2026-06-24T10:30:00Z")
+    val alice =
+        User(
+            id = "user-alice",
+            email = "alice@example.com",
+            fullName = "Alice Nguyen",
+            avatar = null,
+            phone = null,
+        )
+    val doan =
+        User(
+            id = "user-doan",
+            email = "doan@example.com",
+            fullName = "Đoàn",
+            avatar = null,
+            phone = null,
+        )
+
+    return listOf(
+        Message(
+            id = "message-1",
+            conversationId = "conversation-preview",
+            user = alice,
+            type = MessageType.TEXT,
+            content = "Hey, did you finish the task review?",
+            createdAt = now.minusSeconds(3600),
+        ),
+        Message(
+            id = "message-2",
+            conversationId = "conversation-preview",
+            user = doan,
+            type = MessageType.TEXT,
+            content = "Almost done. I am checking the edge cases now.",
+            createdAt = now.minusSeconds(600),
+        ),
+    )
 }

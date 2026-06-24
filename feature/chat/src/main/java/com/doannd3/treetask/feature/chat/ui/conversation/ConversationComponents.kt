@@ -18,8 +18,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Warning
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -34,6 +32,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -150,7 +149,7 @@ internal fun ConversationErrorState(
             verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
             Icon(
-                imageVector = Icons.Outlined.Warning,
+                painter = painterResource(R.drawable.chat_ic_error),
                 contentDescription = null,
                 modifier = Modifier.size(48.dp),
                 tint = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -185,12 +184,23 @@ internal fun ConversationEmptyState(modifier: Modifier = Modifier) {
         modifier = modifier.fillMaxSize(),
         contentAlignment = Alignment.Center,
     ) {
-        Text(
-            text = stringResource(R.string.chat_empty_conversations),
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            textAlign = TextAlign.Center,
-        )
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(12.dp),
+        ) {
+            Icon(
+                painter = painterResource(R.drawable.chat_ic_empty_chat),
+                contentDescription = null,
+                modifier = Modifier.size(48.dp),
+                tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f),
+            )
+            Text(
+                text = stringResource(R.string.chat_empty_conversations),
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                textAlign = TextAlign.Center,
+            )
+        }
     }
 }
 

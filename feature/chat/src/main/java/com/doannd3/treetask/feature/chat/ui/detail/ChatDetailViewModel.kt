@@ -6,6 +6,7 @@ import com.doannd3.treetask.core.common.MviViewModel
 import com.doannd3.treetask.core.common.UiText
 import com.doannd3.treetask.core.common.toDisplayMessage
 import com.doannd3.treetask.core.domain.usecase.chat.GetMessagesUseCase
+import com.doannd3.treetask.core.domain.usecase.chat.SendMessageUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -22,6 +23,7 @@ class ChatDetailViewModel
     @Inject
     constructor(
         private val getMessagesUseCase: GetMessagesUseCase,
+        private val sendMessageUseCase: SendMessageUseCase,
     ) : BaseViewModel(),
         MviViewModel<
             ChatDetailState,
@@ -52,6 +54,18 @@ class ChatDetailViewModel
 
                 ChatDetailEvent.BackClick -> {
                     navigateBack()
+                }
+
+                is ChatDetailEvent.MessageChanged -> {
+                    _uiState.update {
+                        it.copy(
+                            draftMessage = event.message,
+                        )
+                    }
+                }
+
+                ChatDetailEvent.SendMessageClicked -> {
+                    sendMessage()
                 }
             }
         }
@@ -123,6 +137,73 @@ class ChatDetailViewModel
             }
         }
 
+        private fun sendMessage() {
+            val state = _uiState.value
+            if (state.isSending) {
+                return
+            }
+
+            val draftBeforeSend = state.draftMessage
+            val content = draftBeforeSend.trim()
+            if (content.isBlank()) {
+                executeSafe {
+                    _effect.emit(
+                        ChatDetailEffect.ShowErrorMessage(
+                            UiText.StringResource(CommonR.string.common_error_message_content_empty),
+                        ),
+                    )
+                }
+                return
+            }
+
+            executeSafe {
+                _uiState.update {
+                    it.copy(
+                        isSending = true,
+                    )
+                }
+
+                val result =
+                    sendMessageUseCase(
+                        conversationId = state.conversationId,
+                        content = content,
+                    )
+                when (result) {
+                    is ApiResult.Success -> {
+                        val sendMessage = result.data
+                        if (sendMessage == null) {
+                            _uiState.update { it.copy(isSending = false) }
+                            _effect.emit(
+                                ChatDetailEffect.ShowErrorMessage(
+                                    UiText.StringResource(CommonR.string.common_error_unknown),
+                                ),
+                            )
+                            return@executeSafe
+                        }
+
+                        _uiState.update {
+                            it.copy(
+                                draftMessage = if (it.draftMessage == draftBeforeSend) "" else it.draftMessage,
+                                messages = it.messages + sendMessage,
+                                isSending = false,
+                                hasInitialLoadError = false,
+                            )
+                        }
+                    }
+
+                    is ApiResult.Error -> {
+                        _uiState.update { it.copy(isSending = false) }
+
+                        val message =
+                            result.toDisplayMessage(
+                                UiText.StringResource(CommonR.string.common_error_unknown),
+                            )
+                        _effect.emit(ChatDetailEffect.ShowErrorMessage(message))
+                    }
+                }
+            }
+        }
+
         private fun navigateBack() {
             executeSafe {
                 _effect.emit(ChatDetailEffect.NavigateBack)
@@ -134,6 +215,7 @@ class ChatDetailViewModel
                 it.copy(
                     isLoading = isLoading,
                     isRefreshing = if (!isLoading) false else it.isRefreshing,
+                    isSending = if (!isLoading) false else it.isSending,
                 )
             }
         }

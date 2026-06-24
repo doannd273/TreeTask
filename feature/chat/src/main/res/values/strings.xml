@@ -17,4 +17,6 @@
     <string name="chat_detail_placeholder">Conversation %1$s</string>
     <string name="chat_error_messages">Unable to load messages</string>
     <string name="chat_unknown_sender">Unknown sender</string>
+    <string name="chat_message_input_placeholder">Type a message</string>
+    <string name="chat_send_message">Send message</string>
 </resources>
