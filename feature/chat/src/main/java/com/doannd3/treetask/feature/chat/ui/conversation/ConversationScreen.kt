@@ -27,7 +27,7 @@ import java.time.Instant
 @Composable
 fun ConversationRoute(
     viewModel: ConversationViewModel = hiltViewModel(),
-    onNavigationToChat: (String) -> Unit,
+    onNavigationToChatDetail: (String) -> Unit,
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
 
@@ -54,7 +54,7 @@ fun ConversationRoute(
                     }
 
                     is ConversationEffect.NavigateToChatDetail -> {
-                        onNavigationToChat(effect.conversationId)
+                        onNavigationToChatDetail(effect.conversationId)
                     }
                 }
             }

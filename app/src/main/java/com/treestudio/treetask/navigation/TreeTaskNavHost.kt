@@ -13,6 +13,7 @@ import com.doannd3.treetask.feature.auth.navigation.navigateToAuthGraph
 import com.doannd3.treetask.feature.auth.navigation.navigateToForgotPassword
 import com.doannd3.treetask.feature.auth.navigation.navigateToRegister
 import com.doannd3.treetask.feature.chat.navigation.chatGraph
+import com.doannd3.treetask.feature.chat.navigation.navigateToChatDetail
 import com.doannd3.treetask.feature.profile.navigation.navigateToChangePassword
 import com.doannd3.treetask.feature.profile.navigation.navigateToEditProfile
 import com.doannd3.treetask.feature.profile.navigation.profileGraph
@@ -119,7 +120,14 @@ fun TreeTaskNavHost(
             },
         )
 
-        chatGraph()
+        chatGraph(
+            onNavigateToBack = {
+                navController.popBackStack()
+            },
+            onNavigateToChatDetail = { conversationId ->
+                navController.navigateToChatDetail(conversationId = conversationId)
+            },
+        )
 
         statsGraph(
             onRecentTaskClick = { taskId ->

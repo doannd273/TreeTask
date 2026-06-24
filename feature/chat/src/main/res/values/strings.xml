@@ -13,4 +13,8 @@
     <string name="chat_time_friday">Fri</string>
     <string name="chat_time_saturday">Sat</string>
     <string name="chat_time_sunday">Sun</string>
+    <string name="chat_detail_title">Chat</string>
+    <string name="chat_detail_placeholder">Conversation %1$s</string>
+    <string name="chat_error_messages">Unable to load messages</string>
+    <string name="chat_unknown_sender">Unknown sender</string>
 </resources>
