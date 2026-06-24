@@ -34,4 +34,6 @@ dependencies {
     implementation(libs.coil.compose)
 
     implementation(libs.timber)
+
+    testImplementation(projects.core.testing)
 }

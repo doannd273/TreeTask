@@ -8,6 +8,7 @@ import com.doannd3.treetask.core.common.toDisplayMessage
 import com.doannd3.treetask.core.domain.usecase.chat.GetMessagesUseCase
 import com.doannd3.treetask.core.domain.usecase.chat.SendMessageUseCase
 import com.doannd3.treetask.core.domain.usecase.user.ObserveCurrentUserIdUseCase
+import com.doannd3.treetask.core.model.chat.Message
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -132,7 +133,7 @@ class ChatDetailViewModel
                     is ApiResult.Success -> {
                         _uiState.update {
                             it.copy(
-                                messages = result.data.orEmpty(),
+                                messages = result.data.orEmpty().toDisplayOrder(),
                                 hasInitialLoadError = false,
                             )
                         }
@@ -202,7 +203,7 @@ class ChatDetailViewModel
                         _uiState.update {
                             it.copy(
                                 draftMessage = if (it.draftMessage == draftBeforeSend) "" else it.draftMessage,
-                                messages = it.messages + sendMessage,
+                                messages = it.messages.upsertForDisplay(sendMessage),
                                 isSending = false,
                                 hasInitialLoadError = false,
                             )
@@ -227,6 +228,18 @@ class ChatDetailViewModel
                 _effect.emit(ChatDetailEffect.NavigateBack)
             }
         }
+
+        private fun List<Message>.toDisplayOrder(): List<Message> =
+            distinctBy { it.id }
+                .sortedWith(
+                    compareBy<Message> { it.createdAt }
+                        .thenBy { it.id },
+                )
+
+        private fun List<Message>.upsertForDisplay(message: Message): List<Message> =
+            filterNot { it.id == message.id }
+                .plus(message)
+                .toDisplayOrder()
 
         override fun setLoading(isLoading: Boolean) {
             _uiState.update {
