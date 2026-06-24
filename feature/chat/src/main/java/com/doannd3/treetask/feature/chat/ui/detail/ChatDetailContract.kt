@@ -5,6 +5,7 @@ import com.doannd3.treetask.core.model.chat.Message
 
 data class ChatDetailState(
     val conversationId: String = "",
+    val currentUserId: String? = null,
     val messages: List<Message> = emptyList(),
     val draftMessage: String = "",
     val isLoading: Boolean = false,

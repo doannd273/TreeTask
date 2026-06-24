@@ -90,9 +90,9 @@ internal fun ChatDetailScreen(
                 },
                 onSendClick = {
                     onEvent(ChatDetailEvent.SendMessageClicked)
-                }
+                },
             )
-        }
+        },
     ) { paddingValues ->
         ChatDetailContent(
             modifier = Modifier.padding(paddingValues = paddingValues),
@@ -129,6 +129,7 @@ internal fun ChatDetailContent(
                 modifier = modifier,
                 messages = state.messages,
                 isRefreshing = state.isRefreshing,
+                currentUserId = state.currentUserId,
             )
         }
     }
@@ -142,6 +143,7 @@ private fun ChatDetailScreenPreview() {
             state =
                 ChatDetailState(
                     conversationId = "conversation-preview",
+                    currentUserId = "user-doan",
                     messages = chatDetailPreviewMessages(),
                     draftMessage = "Can you review this task?",
                     isSending = false,

@@ -13,6 +13,8 @@ data class ConversationState(
 sealed class ConversationEvent {
     data object LoadConversations : ConversationEvent()
 
+    data object RefreshAfterReturnChatDetail : ConversationEvent()  
+
     data object Refresh : ConversationEvent()
 
     data class ConversationClicked(val conversation: Conversation) : ConversationEvent()

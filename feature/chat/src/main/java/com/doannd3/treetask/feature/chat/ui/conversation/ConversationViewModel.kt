@@ -43,6 +43,10 @@ class ConversationViewModel
                 is ConversationEvent.ConversationClicked -> {
                     navigateToConversation(event.conversation.id)
                 }
+
+                ConversationEvent.RefreshAfterReturnChatDetail -> {
+                    loadConversation(isRefresh = true)
+                }
             }
         }
 

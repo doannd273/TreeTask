@@ -4,15 +4,21 @@ import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.doannd3.treetask.core.common.asString
 import com.doannd3.treetask.core.designsystem.component.LocalGlobalAppState
 import com.doannd3.treetask.core.designsystem.theme.AppPreviewLightDark
@@ -35,10 +41,29 @@ fun ConversationRoute(
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
 
+    var shouldRefreshOnReturnFromDetail by rememberSaveable {
+        mutableStateOf(false)
+    }
+
     ConversationScreen(
         state = state,
         onEvent = viewModel::onEvent,
     )
+
+    DisposableEffect(lifecycleOwner) {
+        val observer = LifecycleEventObserver { _, event ->
+            if (event == Lifecycle.Event.ON_RESUME && shouldRefreshOnReturnFromDetail) {
+                shouldRefreshOnReturnFromDetail = false
+                viewModel.onEvent(ConversationEvent.RefreshAfterReturnChatDetail)
+            }
+        }
+
+        lifecycleOwner.lifecycle.addObserver(observer)
+
+        onDispose {
+            lifecycleOwner.lifecycle.removeObserver(observer)
+        }
+    }
 
     LaunchedEffect(Unit) {
         viewModel.onEvent(ConversationEvent.LoadConversations)
@@ -54,6 +79,7 @@ fun ConversationRoute(
                     }
 
                     is ConversationEffect.NavigateToChatDetail -> {
+                        shouldRefreshOnReturnFromDetail = true
                         onNavigationToChatDetail(effect.conversationId)
                     }
                 }

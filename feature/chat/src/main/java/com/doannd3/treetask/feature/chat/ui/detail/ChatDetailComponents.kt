@@ -47,7 +47,6 @@ import com.doannd3.treetask.feature.chat.R
 import com.doannd3.treetask.feature.chat.ui.util.toChatTimeLabel
 import com.doannd3.treetask.feature.chat.ui.util.toDisplayString
 import java.time.Instant
-import kotlin.math.min
 
 // region ChatDetailLoadingState
 @Composable
@@ -243,6 +242,7 @@ internal fun ChatMessageList(
     modifier: Modifier = Modifier,
     messages: List<Message>,
     isRefreshing: Boolean,
+    currentUserId: String? = null,
 ) {
     LazyColumn(
         modifier = modifier.fillMaxSize(),
@@ -260,7 +260,10 @@ internal fun ChatMessageList(
         }
 
         items(items = messages, key = { it.id }) { message ->
-            ChatMessageBubble(message = message)
+            ChatMessageBubble(
+                message = message,
+                isOwnMessage = currentUserId != null && message.user.id == currentUserId,
+            )
         }
     }
 }
@@ -269,11 +272,19 @@ internal fun ChatMessageList(
 @Composable
 private fun ChatMessageListPreview() {
     val now = Instant.now()
-    val mockUser =
+    val alice =
         User(
-            id = "u1",
+            id = "user-alice",
             email = "alice@example.com",
-            fullName = "Alice Nguyen",
+            fullName = "Alice Nguyen With A Very Long Display Name",
+            avatar = null,
+            phone = null,
+        )
+    val doan =
+        User(
+            id = "user-doan",
+            email = "doan@example.com",
+            fullName = "Đoàn",
             avatar = null,
             phone = null,
         )
@@ -282,7 +293,7 @@ private fun ChatMessageListPreview() {
             Message(
                 id = "m1",
                 conversationId = "c1",
-                user = mockUser,
+                user = alice,
                 type = MessageType.TEXT,
                 content = "Hey, did you finish the task review?",
                 createdAt = now,
@@ -290,9 +301,11 @@ private fun ChatMessageListPreview() {
             Message(
                 id = "m2",
                 conversationId = "c1",
-                user = mockUser,
+                user = doan,
                 type = MessageType.TEXT,
-                content = "Almost done. I am checking the edge cases now.",
+                content =
+                    "Almost done. I am checking the edge cases now, including a longer message " +
+                        "that should wrap without breaking the bubble layout.",
                 createdAt = now.minusSeconds(3600),
             ),
         )
@@ -301,49 +314,78 @@ private fun ChatMessageListPreview() {
         ChatMessageList(
             messages = mockMessages,
             isRefreshing = false,
+            currentUserId = "user-doan",
         )
     }
 }
 
 @Composable
-private fun ChatMessageBubble(message: Message) {
+private fun ChatMessageBubble(
+    message: Message,
+    isOwnMessage: Boolean,
+) {
     val timestamp = message.createdAt.toChatTimeLabel().toDisplayString()
     val senderName =
         message.user.fullName.ifBlank {
             stringResource(R.string.chat_unknown_sender)
         }
+    val bubbleAlignment =
+        if (isOwnMessage) Alignment.CenterEnd else Alignment.CenterStart
+    val bubbleColor =
+        if (isOwnMessage) {
+            MaterialTheme.colorScheme.primaryContainer
+        } else {
+            MaterialTheme.colorScheme.surfaceVariant
+        }
+    val contentColor =
+        if (isOwnMessage) {
+            MaterialTheme.colorScheme.onPrimaryContainer
+        } else {
+            MaterialTheme.colorScheme.onSurfaceVariant
+        }
+    val senderColor =
+        if (isOwnMessage) {
+            MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.82f)
+        } else {
+            MaterialTheme.colorScheme.primary
+        }
 
-    Surface(
-        modifier = Modifier.fillMaxWidth(0.88f),
-        shape = RoundedCornerShape(16.dp),
-        color = MaterialTheme.colorScheme.surfaceVariant,
+    Box(
+        modifier = Modifier.fillMaxWidth(),
+        contentAlignment = bubbleAlignment,
     ) {
-        Column(
-            modifier =
-                Modifier.padding(
-                    horizontal = 14.dp,
-                    vertical = 10.dp,
-                ),
-            verticalArrangement = Arrangement.spacedBy(4.dp),
+        Surface(
+            modifier = Modifier.fillMaxWidth(0.88f),
+            shape = RoundedCornerShape(16.dp),
+            color = bubbleColor,
         ) {
-            Text(
-                text = senderName,
-                style = MaterialTheme.typography.labelMedium,
-                color = MaterialTheme.colorScheme.primary,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-            )
-            Text(
-                text = message.content,
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
-            Text(
-                text = timestamp,
-                modifier = Modifier.align(Alignment.End),
-                style = MaterialTheme.typography.labelSmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.72f),
-            )
+            Column(
+                modifier =
+                    Modifier.padding(
+                        horizontal = 14.dp,
+                        vertical = 10.dp,
+                    ),
+                verticalArrangement = Arrangement.spacedBy(4.dp),
+            ) {
+                Text(
+                    text = senderName,
+                    style = MaterialTheme.typography.labelMedium,
+                    color = senderColor,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                )
+                Text(
+                    text = message.content,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = contentColor,
+                )
+                Text(
+                    text = timestamp,
+                    modifier = Modifier.align(Alignment.End),
+                    style = MaterialTheme.typography.labelSmall,
+                    color = contentColor.copy(alpha = 0.72f),
+                )
+            }
         }
     }
 }
@@ -359,16 +401,20 @@ internal fun ChatMessageComposer(
     val canSend = message.isNotBlank() && !isSending
 
     Surface(
-        modifier = modifier.fillMaxWidth()
-            .imePadding(),
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .imePadding(),
         color = MaterialTheme.colorScheme.surface,
     ) {
         Column {
             HorizontalDivider()
 
             Row(
-                modifier = Modifier.fillMaxWidth()
-                    .padding(horizontal = 12.dp, vertical = 8.dp),
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 12.dp, vertical = 8.dp),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
             ) {
@@ -378,21 +424,23 @@ internal fun ChatMessageComposer(
                     onValueChange = onMessageChange,
                     placeholder = {
                         Text(
-                            text = stringResource(R.string.chat_message_input_placeholder)
+                            text = stringResource(R.string.chat_message_input_placeholder),
                         )
                     },
                     minLines = 1,
                     maxLines = 4,
-                    keyboardOptions = KeyboardOptions(
-                        imeAction = ImeAction.Send
-                    ),
-                    keyboardActions = KeyboardActions(
-                        onSend = {
-                            if (canSend) {
-                                onSendClick()
-                            }
-                        },
-                    )
+                    keyboardOptions =
+                        KeyboardOptions(
+                            imeAction = ImeAction.Send,
+                        ),
+                    keyboardActions =
+                        KeyboardActions(
+                            onSend = {
+                                if (canSend) {
+                                    onSendClick()
+                                }
+                            },
+                        ),
                 )
 
                 FilledIconButton(

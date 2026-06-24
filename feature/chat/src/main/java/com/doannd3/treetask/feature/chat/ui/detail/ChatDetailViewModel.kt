@@ -7,6 +7,7 @@ import com.doannd3.treetask.core.common.UiText
 import com.doannd3.treetask.core.common.toDisplayMessage
 import com.doannd3.treetask.core.domain.usecase.chat.GetMessagesUseCase
 import com.doannd3.treetask.core.domain.usecase.chat.SendMessageUseCase
+import com.doannd3.treetask.core.domain.usecase.user.ObserveCurrentUserIdUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -22,6 +23,7 @@ import com.doannd3.treetask.core.common.R as CommonR
 class ChatDetailViewModel
     @Inject
     constructor(
+        private val observerUserIdUseCase: ObserveCurrentUserIdUseCase,
         private val getMessagesUseCase: GetMessagesUseCase,
         private val sendMessageUseCase: SendMessageUseCase,
     ) : BaseViewModel(),
@@ -35,6 +37,22 @@ class ChatDetailViewModel
 
         private val _effect = MutableSharedFlow<ChatDetailEffect>()
         override val effect: SharedFlow<ChatDetailEffect> = _effect.asSharedFlow()
+
+        init {
+            observeCurrentUserId()
+        }
+
+        private fun observeCurrentUserId() {
+            executeSafe {
+                observerUserIdUseCase().collect { userId ->
+                    _uiState.update { state ->
+                        state.copy(
+                            currentUserId = userId.takeIf { id -> id.isNotBlank() },
+                        )
+                    }
+                }
+            }
+        }
 
         override fun onEvent(event: ChatDetailEvent) {
             when (event) {
