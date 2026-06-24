@@ -51,12 +51,13 @@ fun ConversationRoute(
     )
 
     DisposableEffect(lifecycleOwner) {
-        val observer = LifecycleEventObserver { _, event ->
-            if (event == Lifecycle.Event.ON_RESUME && shouldRefreshOnReturnFromDetail) {
-                shouldRefreshOnReturnFromDetail = false
-                viewModel.onEvent(ConversationEvent.RefreshAfterReturnChatDetail)
+        val observer =
+            LifecycleEventObserver { _, event ->
+                if (event == Lifecycle.Event.ON_RESUME && shouldRefreshOnReturnFromDetail) {
+                    shouldRefreshOnReturnFromDetail = false
+                    viewModel.onEvent(ConversationEvent.RefreshAfterReturnChatDetail)
+                }
             }
-        }
 
         lifecycleOwner.lifecycle.addObserver(observer)
 
