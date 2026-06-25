@@ -15,6 +15,10 @@ data class ChatDetailState(
 )
 
 sealed class ChatDetailEvent {
+    data class StartRealtime(val conversationId: String) : ChatDetailEvent()
+
+    data class StopRealtime(val conversationId: String) : ChatDetailEvent()
+
     data class LoadMessages(val conversationId: String) : ChatDetailEvent()
 
     data object Refresh : ChatDetailEvent()

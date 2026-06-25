@@ -23,6 +23,7 @@ import com.doannd3.treetask.core.model.chat.Message
 import com.doannd3.treetask.core.model.chat.MessageType
 import com.doannd3.treetask.core.model.user.User
 import com.doannd3.treetask.feature.chat.R
+import kotlinx.coroutines.awaitCancellation
 import java.time.Instant
 
 @Composable
@@ -41,6 +42,18 @@ fun ChatDetailRoute(
 
     LaunchedEffect(conversationId) {
         viewModel.onEvent(ChatDetailEvent.LoadMessages(conversationId = conversationId))
+    }
+
+    LaunchedEffect(conversationId, lifecycleOwner) {
+        lifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+            viewModel.onEvent(ChatDetailEvent.StartRealtime(conversationId = conversationId))
+
+            try {
+                awaitCancellation()
+            } finally {
+                viewModel.onEvent(ChatDetailEvent.StopRealtime(conversationId = conversationId))
+            }
+        }
     }
 
     LaunchedEffect(viewModel.effect, lifecycleOwner) {

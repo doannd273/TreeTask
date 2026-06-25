@@ -28,6 +28,11 @@ dependencies {
     implementation(libs.work.runtime.ktx)
     implementation(libs.timber)
 
+    // socket
+    implementation(libs.socket.io) {
+        exclude(group = "org.json", module = "json")
+    }
+
     // hilt
     implementation(libs.androidx.hilt.work)
 

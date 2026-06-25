@@ -5,6 +5,8 @@ import com.doannd3.treetask.core.common.ApiResult
 import com.doannd3.treetask.core.common.UiText
 import com.doannd3.treetask.core.domain.usecase.chat.GetMessagesUseCase
 import com.doannd3.treetask.core.domain.usecase.chat.SendMessageUseCase
+import com.doannd3.treetask.core.domain.usecase.chat.realtime.StartChatConversationRealtimeUseCase
+import com.doannd3.treetask.core.domain.usecase.chat.realtime.StopChatConversationRealtimeUseCase
 import com.doannd3.treetask.core.domain.usecase.user.ObserveCurrentUserIdUseCase
 import com.doannd3.treetask.core.model.chat.Message
 import com.doannd3.treetask.core.model.chat.MessageType
@@ -32,6 +34,8 @@ class ChatDetailViewModelTest {
     private val observeCurrentUserIdUseCase: ObserveCurrentUserIdUseCase = mockk()
     private val getMessagesUseCase: GetMessagesUseCase = mockk()
     private val sendMessageUseCase: SendMessageUseCase = mockk()
+    private val startChatConversationRealtimeUseCase: StartChatConversationRealtimeUseCase = mockk()
+    private val stopChatConversationRealtimeUseCase: StopChatConversationRealtimeUseCase = mockk()
 
     private lateinit var viewModel: ChatDetailViewModel
 
@@ -43,6 +47,8 @@ class ChatDetailViewModelTest {
                 observerUserIdUseCase = observeCurrentUserIdUseCase,
                 getMessagesUseCase = getMessagesUseCase,
                 sendMessageUseCase = sendMessageUseCase,
+                startChatConversationRealtimeUseCase = startChatConversationRealtimeUseCase,
+                stopChatConversationRealtimeUseCase = stopChatConversationRealtimeUseCase,
             )
     }
 
@@ -104,6 +110,64 @@ class ChatDetailViewModelTest {
                 assertThat(state.isLoading).isFalse()
 
                 cancelAndIgnoreRemainingEvents()
+            }
+        }
+
+    @Test
+    fun `start realtime success starts trimmed conversation realtime`() =
+        runTest {
+            coEvery {
+                startChatConversationRealtimeUseCase(conversationId = CONVERSATION_ID)
+            } returns ApiResult.Success(data = Unit)
+
+            viewModel.onEvent(
+                ChatDetailEvent.StartRealtime(conversationId = "  $CONVERSATION_ID  "),
+            )
+            advanceUntilIdle()
+
+            coVerify(exactly = 1) {
+                startChatConversationRealtimeUseCase(conversationId = CONVERSATION_ID)
+            }
+        }
+
+    @Test
+    fun `start realtime error emits error effect`() =
+        runTest {
+            val errorMessage = UiText.DynamicString("Unable to connect realtime")
+            coEvery {
+                startChatConversationRealtimeUseCase(conversationId = CONVERSATION_ID)
+            } returns ApiResult.Error(message = errorMessage)
+
+            viewModel.effect.test {
+                viewModel.onEvent(ChatDetailEvent.StartRealtime(conversationId = CONVERSATION_ID))
+                advanceUntilIdle()
+
+                assertThat(awaitItem()).isEqualTo(ChatDetailEffect.ShowErrorMessage(errorMessage))
+                coVerify(exactly = 1) {
+                    startChatConversationRealtimeUseCase(conversationId = CONVERSATION_ID)
+                }
+
+                cancelAndIgnoreRemainingEvents()
+            }
+        }
+
+    @Test
+    fun `stop realtime leaves conversation and disconnects socket`() =
+        runTest {
+            coEvery {
+                startChatConversationRealtimeUseCase(conversationId = CONVERSATION_ID)
+            } returns ApiResult.Success(data = Unit)
+            coEvery {
+                stopChatConversationRealtimeUseCase(conversationId = CONVERSATION_ID)
+            } returns ApiResult.Success(data = Unit)
+
+            viewModel.onEvent(ChatDetailEvent.StartRealtime(conversationId = CONVERSATION_ID))
+            advanceUntilIdle()
+            viewModel.onEvent(ChatDetailEvent.StopRealtime(conversationId = CONVERSATION_ID))
+            advanceUntilIdle()
+
+            coVerify(exactly = 1) {
+                stopChatConversationRealtimeUseCase(conversationId = CONVERSATION_ID)
             }
         }
 

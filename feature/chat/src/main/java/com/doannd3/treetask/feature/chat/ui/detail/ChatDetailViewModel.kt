@@ -1,5 +1,6 @@
 package com.doannd3.treetask.feature.chat.ui.detail
 
+import androidx.lifecycle.viewModelScope
 import com.doannd3.treetask.core.common.ApiResult
 import com.doannd3.treetask.core.common.BaseViewModel
 import com.doannd3.treetask.core.common.MviViewModel
@@ -7,9 +8,14 @@ import com.doannd3.treetask.core.common.UiText
 import com.doannd3.treetask.core.common.toDisplayMessage
 import com.doannd3.treetask.core.domain.usecase.chat.GetMessagesUseCase
 import com.doannd3.treetask.core.domain.usecase.chat.SendMessageUseCase
+import com.doannd3.treetask.core.domain.usecase.chat.realtime.StartChatConversationRealtimeUseCase
+import com.doannd3.treetask.core.domain.usecase.chat.realtime.StopChatConversationRealtimeUseCase
 import com.doannd3.treetask.core.domain.usecase.user.ObserveCurrentUserIdUseCase
 import com.doannd3.treetask.core.model.chat.Message
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -17,6 +23,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 import com.doannd3.treetask.core.common.R as CommonR
 
@@ -27,6 +34,8 @@ class ChatDetailViewModel
         private val observerUserIdUseCase: ObserveCurrentUserIdUseCase,
         private val getMessagesUseCase: GetMessagesUseCase,
         private val sendMessageUseCase: SendMessageUseCase,
+        private val startChatConversationRealtimeUseCase: StartChatConversationRealtimeUseCase,
+        private val stopChatConversationRealtimeUseCase: StopChatConversationRealtimeUseCase,
     ) : BaseViewModel(),
         MviViewModel<
             ChatDetailState,
@@ -39,8 +48,92 @@ class ChatDetailViewModel
         private val _effect = MutableSharedFlow<ChatDetailEffect>()
         override val effect: SharedFlow<ChatDetailEffect> = _effect.asSharedFlow()
 
+        private var activeRealtimeConversationId: String? = null
+        private var realtimeStartJob: Job? = null
+        private var realtimeStopJob: Job? = null
+
         init {
             observeCurrentUserId()
+        }
+
+        private fun startRealtime(conversationId: String) {
+            val conversationIdTrimmed = conversationId.trim()
+            if (conversationIdTrimmed.isBlank()) {
+                executeSafe {
+                    _effect.emit(
+                        ChatDetailEffect.ShowErrorMessage(
+                            UiText.StringResource(CommonR.string.common_error_conversation_id_empty),
+                        ),
+                    )
+                }
+                return
+            }
+
+            if (activeRealtimeConversationId == conversationIdTrimmed) {
+                return
+            }
+
+            activeRealtimeConversationId?.let { activeConversationId ->
+                stopRealtime(activeConversationId)
+            }
+
+            val pendingStopJob = realtimeStopJob
+            realtimeStartJob?.cancel()
+            activeRealtimeConversationId = conversationIdTrimmed
+
+            realtimeStartJob =
+                viewModelScope.launch {
+                    try {
+                        pendingStopJob?.join()
+
+                        when (val startResult = startChatConversationRealtimeUseCase(conversationIdTrimmed)) {
+                            is ApiResult.Success -> Unit
+                            is ApiResult.Error -> {
+                                activeRealtimeConversationId = null
+                                val message =
+                                    startResult.toDisplayMessage(
+                                        UiText.StringResource(CommonR.string.common_error_unknown),
+                                    )
+                                _effect.emit(ChatDetailEffect.ShowErrorMessage(message))
+                            }
+                        }
+                    } catch (_: CancellationException) {
+                        return@launch
+                    } catch (_: Throwable) {
+                        activeRealtimeConversationId = null
+                        _effect.emit(
+                            ChatDetailEffect.ShowErrorMessage(
+                                UiText.StringResource(CommonR.string.common_error_unknown),
+                            ),
+                        )
+                    }
+                }
+        }
+
+        private fun stopRealtime(conversationId: String) {
+            val conversationIdTrimmed = conversationId.trim()
+            if (conversationIdTrimmed.isBlank()) {
+                return
+            }
+
+            if (activeRealtimeConversationId != null &&
+                activeRealtimeConversationId != conversationIdTrimmed
+            ) {
+                return
+            }
+
+            val startJob = realtimeStartJob
+            realtimeStartJob?.cancel()
+
+            realtimeStopJob =
+                viewModelScope.launch {
+                    startJob?.cancelAndJoin()
+                    if (activeRealtimeConversationId == conversationIdTrimmed) {
+                        activeRealtimeConversationId = null
+                    }
+
+                    stopChatConversationRealtimeUseCase(conversationIdTrimmed)
+                }
         }
 
         private fun observeCurrentUserId() {
@@ -85,6 +178,14 @@ class ChatDetailViewModel
 
                 ChatDetailEvent.SendMessageClicked -> {
                     sendMessage()
+                }
+
+                is ChatDetailEvent.StartRealtime -> {
+                    startRealtime(conversationId = event.conversationId)
+                }
+
+                is ChatDetailEvent.StopRealtime -> {
+                    stopRealtime(conversationId = event.conversationId)
                 }
             }
         }
