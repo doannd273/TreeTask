@@ -16,8 +16,7 @@ class SendMessageUseCase
             conversationId: String,
             content: String,
         ): ApiResult<Message> {
-            val conversationIdTrimmed = conversationId.trim()
-            if (conversationIdTrimmed.isBlank()) {
+            if (conversationId.isBlank()) {
                 return validationError(R.string.common_error_conversation_id_empty)
             }
 
@@ -27,7 +26,7 @@ class SendMessageUseCase
             }
 
             return chatRepository.sendMessage(
-                conversationId = conversationIdTrimmed,
+                conversationId = conversationId,
                 content = contentTrimmed,
             )
         }

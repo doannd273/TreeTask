@@ -12,8 +12,7 @@ class StartChatConversationRealtimeUseCase
         private val chatRealtimeRepository: ChatRealtimeRepository,
     ) {
         suspend operator fun invoke(conversationId: String): ApiResult<Unit> {
-            val conversationIdTrimmed = conversationId.trim()
-            if (conversationIdTrimmed.isBlank()) {
+            if (conversationId.isBlank()) {
                 return validationError(R.string.common_error_conversation_id_empty)
             }
 
@@ -23,7 +22,7 @@ class StartChatConversationRealtimeUseCase
             }
 
             val joinResult =
-                chatRealtimeRepository.joinConversation(conversationId = conversationIdTrimmed)
+                chatRealtimeRepository.joinConversation(conversationId = conversationId)
             if (joinResult is ApiResult.Error) {
                 chatRealtimeRepository.disconnect()
             }

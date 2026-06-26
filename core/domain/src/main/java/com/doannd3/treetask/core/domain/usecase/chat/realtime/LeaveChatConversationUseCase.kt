@@ -12,10 +12,9 @@ class LeaveChatConversationUseCase
         private val chatRealtimeRepository: ChatRealtimeRepository,
     ) {
         suspend operator fun invoke(conversationId: String): ApiResult<Unit> {
-            val conversationTrimmed = conversationId.trim()
-            if (conversationTrimmed.isBlank()) {
+            if (conversationId.isBlank()) {
                 return validationError(R.string.common_error_conversation_id_empty)
             }
-            return chatRealtimeRepository.leaveConversation(conversationId = conversationTrimmed)
+            return chatRealtimeRepository.leaveConversation(conversationId = conversationId)
         }
     }

@@ -57,8 +57,7 @@ class ChatDetailViewModel
         }
 
         private fun startRealtime(conversationId: String) {
-            val conversationIdTrimmed = conversationId.trim()
-            if (conversationIdTrimmed.isBlank()) {
+            if (conversationId.isBlank()) {
                 executeSafe {
                     _effect.emit(
                         ChatDetailEffect.ShowErrorMessage(
@@ -69,7 +68,7 @@ class ChatDetailViewModel
                 return
             }
 
-            if (activeRealtimeConversationId == conversationIdTrimmed) {
+            if (activeRealtimeConversationId == conversationId) {
                 return
             }
 
@@ -79,14 +78,14 @@ class ChatDetailViewModel
 
             val pendingStopJob = realtimeStopJob
             realtimeStartJob?.cancel()
-            activeRealtimeConversationId = conversationIdTrimmed
+            activeRealtimeConversationId = conversationId
 
             realtimeStartJob =
                 viewModelScope.launch {
                     try {
                         pendingStopJob?.join()
 
-                        when (val startResult = startChatConversationRealtimeUseCase(conversationIdTrimmed)) {
+                        when (val startResult = startChatConversationRealtimeUseCase(conversationId)) {
                             is ApiResult.Success -> Unit
                             is ApiResult.Error -> {
                                 activeRealtimeConversationId = null
@@ -111,13 +110,12 @@ class ChatDetailViewModel
         }
 
         private fun stopRealtime(conversationId: String) {
-            val conversationIdTrimmed = conversationId.trim()
-            if (conversationIdTrimmed.isBlank()) {
+            if (conversationId.isBlank()) {
                 return
             }
 
             if (activeRealtimeConversationId != null &&
-                activeRealtimeConversationId != conversationIdTrimmed
+                activeRealtimeConversationId != conversationId
             ) {
                 return
             }
@@ -128,11 +126,11 @@ class ChatDetailViewModel
             realtimeStopJob =
                 viewModelScope.launch {
                     startJob?.cancelAndJoin()
-                    if (activeRealtimeConversationId == conversationIdTrimmed) {
+                    if (activeRealtimeConversationId == conversationId) {
                         activeRealtimeConversationId = null
                     }
 
-                    stopChatConversationRealtimeUseCase(conversationIdTrimmed)
+                    stopChatConversationRealtimeUseCase(conversationId)
                 }
         }
 

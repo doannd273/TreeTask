@@ -12,11 +12,10 @@ class JoinChatConversationUseCase
         private val chatRealtimeRepository: ChatRealtimeRepository,
     ) {
         suspend operator fun invoke(conversationId: String): ApiResult<Unit> {
-            val conversationIdTrimmed = conversationId.trim()
-            if (conversationIdTrimmed.isBlank()) {
+            if (conversationId.isBlank()) {
                 return validationError(R.string.common_error_conversation_id_empty)
             }
 
-            return chatRealtimeRepository.joinConversation(conversationId = conversationIdTrimmed)
+            return chatRealtimeRepository.joinConversation(conversationId = conversationId)
         }
     }

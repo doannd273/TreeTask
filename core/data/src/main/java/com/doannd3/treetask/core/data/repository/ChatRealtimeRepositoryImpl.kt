@@ -158,8 +158,7 @@ class ChatRealtimeRepositoryImpl
             event: String,
             conversationId: String,
         ): ApiResult<Unit> {
-            val conversationTrimmed = conversationId.trim()
-            if (conversationTrimmed.isBlank()) {
+            if (conversationId.isBlank()) {
                 return ApiResult.Error(
                     exception = IllegalArgumentException("Conversation id cannot be blank"),
                 )
@@ -175,7 +174,7 @@ class ChatRealtimeRepositoryImpl
             return runCatching {
                 currentSocket.emit(
                     event,
-                    JSONObject().put(Payload.CONVERSATION_ID, conversationTrimmed),
+                    JSONObject().put(Payload.CONVERSATION_ID, conversationId),
                 )
             }.fold(
                 onSuccess = { ApiResult.Success(data = Unit) },

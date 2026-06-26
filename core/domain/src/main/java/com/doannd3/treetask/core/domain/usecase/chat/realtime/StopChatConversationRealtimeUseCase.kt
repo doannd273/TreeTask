@@ -12,13 +12,12 @@ class StopChatConversationRealtimeUseCase
         private val chatRealtimeRepository: ChatRealtimeRepository,
     ) {
         suspend operator fun invoke(conversationId: String): ApiResult<Unit> {
-            val conversationIdTrimmed = conversationId.trim()
-            if (conversationIdTrimmed.isBlank()) {
+            if (conversationId.isBlank()) {
                 return validationError(R.string.common_error_conversation_id_empty)
             }
 
             val leaveResult =
-                chatRealtimeRepository.leaveConversation(conversationId = conversationIdTrimmed)
+                chatRealtimeRepository.leaveConversation(conversationId = conversationId)
             val disconnectResult = chatRealtimeRepository.disconnect()
 
             return when (leaveResult) {

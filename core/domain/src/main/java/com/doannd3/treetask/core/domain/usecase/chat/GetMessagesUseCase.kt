@@ -18,8 +18,7 @@ class GetMessagesUseCase
             page: Int,
             limit: Int,
         ): ApiResult<List<Message>> {
-            val conversationIdTrimmed = conversationId.trim()
-            if (conversationIdTrimmed.isBlank()) {
+            if (conversationId.isBlank()) {
                 return validationError(R.string.common_error_conversation_id_empty)
             }
 
@@ -28,7 +27,7 @@ class GetMessagesUseCase
             }
 
             return chatRepository.getMessages(
-                conversationId = conversationIdTrimmed,
+                conversationId = conversationId,
                 page = page,
                 limit = limit,
             )
