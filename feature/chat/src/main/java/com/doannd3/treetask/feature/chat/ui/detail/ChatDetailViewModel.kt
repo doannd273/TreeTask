@@ -8,9 +8,11 @@ import com.doannd3.treetask.core.common.UiText
 import com.doannd3.treetask.core.common.toDisplayMessage
 import com.doannd3.treetask.core.domain.usecase.chat.GetMessagesUseCase
 import com.doannd3.treetask.core.domain.usecase.chat.SendMessageUseCase
+import com.doannd3.treetask.core.domain.usecase.chat.realtime.ObserveChatRealtimeEventsUseCase
 import com.doannd3.treetask.core.domain.usecase.chat.realtime.StartChatConversationRealtimeUseCase
 import com.doannd3.treetask.core.domain.usecase.chat.realtime.StopChatConversationRealtimeUseCase
 import com.doannd3.treetask.core.domain.usecase.user.ObserveCurrentUserIdUseCase
+import com.doannd3.treetask.core.model.chat.ChatRealtimeEvent
 import com.doannd3.treetask.core.model.chat.Message
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CancellationException
@@ -36,6 +38,7 @@ class ChatDetailViewModel
         private val sendMessageUseCase: SendMessageUseCase,
         private val startChatConversationRealtimeUseCase: StartChatConversationRealtimeUseCase,
         private val stopChatConversationRealtimeUseCase: StopChatConversationRealtimeUseCase,
+        private val observerChatRealtimeEventsUseCase: ObserveChatRealtimeEventsUseCase,
     ) : BaseViewModel(),
         MviViewModel<
             ChatDetailState,
@@ -54,6 +57,68 @@ class ChatDetailViewModel
 
         init {
             observeCurrentUserId()
+            observeRealtimeEvents()
+        }
+
+        private fun observeRealtimeEvents() {
+            executeSafe {
+                observerChatRealtimeEventsUseCase().collect { event ->
+                    when (event) {
+                        is ChatRealtimeEvent.NewMessage -> {
+                            handleRealtimeNewMessage(event.message)
+                        }
+
+                        is ChatRealtimeEvent.TypingStarted -> {
+                            handleTypingEvent(
+                                conversationId = event.conversationId,
+                                userId = event.userId,
+                                isTyping = true,
+                            )
+                        }
+
+                        is ChatRealtimeEvent.TypingStopped -> {
+                            handleTypingEvent(
+                                conversationId = event.conversationId,
+                                userId = event.userId,
+                                isTyping = false,
+                            )
+                        }
+                    }
+                }
+            }
+        }
+
+        private fun handleTypingEvent(
+            conversationId: String,
+            userId: String,
+            isTyping: Boolean,
+        ) {
+            _uiState.update { state ->
+                if (
+                    conversationId != state.conversationId ||
+                    userId == state.currentUserId
+                ) {
+                    state
+                } else if (isTyping) {
+                    state.copy(typingUserId = userId)
+                } else if (state.typingUserId == userId) {
+                    state.copy(typingUserId = null)
+                } else {
+                    state
+                }
+            }
+        }
+
+        private fun handleRealtimeNewMessage(message: Message) {
+            _uiState.update { state ->
+                if (message.conversationId != state.conversationId) {
+                    state
+                } else {
+                    state.copy(
+                        messages = state.messages.upsertForDisplay(message = message),
+                    )
+                }
+            }
         }
 
         private fun startRealtime(conversationId: String) {
@@ -86,7 +151,10 @@ class ChatDetailViewModel
                         pendingStopJob?.join()
 
                         when (val startResult = startChatConversationRealtimeUseCase(conversationId)) {
-                            is ApiResult.Success -> Unit
+                            is ApiResult.Success -> {
+                                Unit
+                            }
+
                             is ApiResult.Error -> {
                                 activeRealtimeConversationId = null
                                 val message =
@@ -119,6 +187,8 @@ class ChatDetailViewModel
             ) {
                 return
             }
+
+            _uiState.update { it.copy(typingUserId = null) }
 
             val startJob = realtimeStartJob
             realtimeStartJob?.cancel()
@@ -163,7 +233,9 @@ class ChatDetailViewModel
                 }
 
                 ChatDetailEvent.BackClick -> {
-                    navigateBack()
+                    executeSafe {
+                        _effect.emit(ChatDetailEffect.NavigateBack)
+                    }
                 }
 
                 is ChatDetailEvent.MessageChanged -> {
@@ -202,6 +274,7 @@ class ChatDetailViewModel
                     it.copy(
                         conversationId = conversationId,
                         isRefreshing = true,
+                        typingUserId = if (it.conversationId == conversationId) it.typingUserId else null,
                     )
                 }
             } else {
@@ -209,6 +282,7 @@ class ChatDetailViewModel
                     it.copy(
                         conversationId = conversationId,
                         isLoading = true,
+                        typingUserId = if (it.conversationId == conversationId) it.typingUserId else null,
                     )
                 }
             }
@@ -322,24 +396,6 @@ class ChatDetailViewModel
             }
         }
 
-        private fun navigateBack() {
-            executeSafe {
-                _effect.emit(ChatDetailEffect.NavigateBack)
-            }
-        }
-
-        private fun List<Message>.toDisplayOrder(): List<Message> =
-            distinctBy { it.id }
-                .sortedWith(
-                    compareBy<Message> { it.createdAt }
-                        .thenBy { it.id },
-                )
-
-        private fun List<Message>.upsertForDisplay(message: Message): List<Message> =
-            filterNot { it.id == message.id }
-                .plus(message)
-                .toDisplayOrder()
-
         override fun setLoading(isLoading: Boolean) {
             _uiState.update {
                 it.copy(
@@ -355,3 +411,15 @@ class ChatDetailViewModel
             const val DEFAULT_LIMIT = 20
         }
     }
+
+private fun List<Message>.toDisplayOrder(): List<Message> =
+    distinctBy { it.id }
+        .sortedWith(
+            compareBy<Message> { it.createdAt }
+                .thenBy { it.id },
+        )
+
+private fun List<Message>.upsertForDisplay(message: Message): List<Message> =
+    filterNot { it.id == message.id }
+        .plus(message)
+        .toDisplayOrder()

@@ -52,26 +52,26 @@ class SendMessageUseCaseTest {
         }
 
     @Test
-    fun `valid input trims fields and calls repository`() =
+    fun `valid input keeps conversation id trims content and calls repository`() =
         runTest {
             val message = createMessage()
             coEvery {
                 chatRepository.sendMessage(
-                    conversationId = "conversation-id",
+                    conversationId = RAW_CONVERSATION_ID,
                     content = "Hello",
                 )
             } returns ApiResult.Success(data = message)
 
             val result =
                 sendMessageUseCase(
-                    conversationId = "  conversation-id  ",
+                    conversationId = RAW_CONVERSATION_ID,
                     content = "  Hello  ",
                 )
 
             assertThat(result).isInstanceOf(ApiResult.Success::class.java)
             coVerify(exactly = 1) {
                 chatRepository.sendMessage(
-                    conversationId = "conversation-id",
+                    conversationId = RAW_CONVERSATION_ID,
                     content = "Hello",
                 )
             }
@@ -104,4 +104,8 @@ class SendMessageUseCaseTest {
             content = "Hello",
             createdAt = Instant.parse("2026-05-31T00:00:00Z"),
         )
+
+    private companion object {
+        const val RAW_CONVERSATION_ID = "  conversation-id  "
+    }
 }

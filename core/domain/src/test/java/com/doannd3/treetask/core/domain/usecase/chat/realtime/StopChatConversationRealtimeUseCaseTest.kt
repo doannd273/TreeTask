@@ -33,21 +33,21 @@ class StopChatConversationRealtimeUseCaseTest {
         }
 
     @Test
-    fun `valid input leaves trimmed conversation and disconnects socket`() =
+    fun `valid input leaves conversation id unchanged and disconnects socket`() =
         runTest {
             coEvery {
-                chatRealtimeRepository.leaveConversation(conversationId = CONVERSATION_ID)
+                chatRealtimeRepository.leaveConversation(conversationId = RAW_CONVERSATION_ID)
             } returns ApiResult.Success(data = Unit)
             coEvery { chatRealtimeRepository.disconnect() } returns ApiResult.Success(data = Unit)
 
             val result =
                 stopChatConversationRealtimeUseCase(
-                    conversationId = "  $CONVERSATION_ID  ",
+                    conversationId = RAW_CONVERSATION_ID,
                 )
 
             assertThat(result).isInstanceOf(ApiResult.Success::class.java)
             coVerify(exactly = 1) {
-                chatRealtimeRepository.leaveConversation(conversationId = CONVERSATION_ID)
+                chatRealtimeRepository.leaveConversation(conversationId = RAW_CONVERSATION_ID)
             }
             coVerify(exactly = 1) { chatRealtimeRepository.disconnect() }
         }
@@ -101,5 +101,6 @@ class StopChatConversationRealtimeUseCaseTest {
 
     private companion object {
         const val CONVERSATION_ID = "conversation-id"
+        const val RAW_CONVERSATION_ID = "  conversation-id  "
     }
 }

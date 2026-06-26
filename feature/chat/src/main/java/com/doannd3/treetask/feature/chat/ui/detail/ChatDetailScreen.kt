@@ -133,7 +133,7 @@ internal fun ChatDetailContent(
             )
         }
 
-        state.messages.isEmpty() -> {
+        state.messages.isEmpty() && state.typingUserId == null -> {
             ChatDetailEmptyState(modifier = modifier)
         }
 
@@ -142,6 +142,7 @@ internal fun ChatDetailContent(
                 modifier = modifier,
                 messages = state.messages,
                 isRefreshing = state.isRefreshing,
+                isTyping = state.typingUserId != null,
                 currentUserId = state.currentUserId,
             )
         }

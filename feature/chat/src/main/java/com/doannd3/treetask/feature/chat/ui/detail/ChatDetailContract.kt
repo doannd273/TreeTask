@@ -12,6 +12,7 @@ data class ChatDetailState(
     val isRefreshing: Boolean = false,
     val isSending: Boolean = false,
     val hasInitialLoadError: Boolean = false,
+    val typingUserId: String? = null,
 )
 
 sealed class ChatDetailEvent {

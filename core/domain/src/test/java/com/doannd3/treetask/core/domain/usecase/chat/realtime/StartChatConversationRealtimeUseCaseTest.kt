@@ -33,22 +33,22 @@ class StartChatConversationRealtimeUseCaseTest {
         }
 
     @Test
-    fun `valid input connects and joins trimmed conversation`() =
+    fun `valid input connects and joins conversation id unchanged`() =
         runTest {
             coEvery { chatRealtimeRepository.connect() } returns ApiResult.Success(data = Unit)
             coEvery {
-                chatRealtimeRepository.joinConversation(conversationId = CONVERSATION_ID)
+                chatRealtimeRepository.joinConversation(conversationId = RAW_CONVERSATION_ID)
             } returns ApiResult.Success(data = Unit)
 
             val result =
                 startChatConversationRealtimeUseCase(
-                    conversationId = "  $CONVERSATION_ID  ",
+                    conversationId = RAW_CONVERSATION_ID,
                 )
 
             assertThat(result).isInstanceOf(ApiResult.Success::class.java)
             coVerify(exactly = 1) { chatRealtimeRepository.connect() }
             coVerify(exactly = 1) {
-                chatRealtimeRepository.joinConversation(conversationId = CONVERSATION_ID)
+                chatRealtimeRepository.joinConversation(conversationId = RAW_CONVERSATION_ID)
             }
         }
 
@@ -98,5 +98,6 @@ class StartChatConversationRealtimeUseCaseTest {
 
     private companion object {
         const val CONVERSATION_ID = "conversation-id"
+        const val RAW_CONVERSATION_ID = "  conversation-id  "
     }
 }

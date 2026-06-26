@@ -64,11 +64,11 @@ class GetMessagesUseCaseTest {
         }
 
     @Test
-    fun `valid input trims conversation id and calls repository`() =
+    fun `valid input keeps conversation id unchanged and calls repository`() =
         runTest {
             coEvery {
                 chatRepository.getMessages(
-                    conversationId = "conversation-id",
+                    conversationId = RAW_CONVERSATION_ID,
                     page = 1,
                     limit = 20,
                 )
@@ -76,7 +76,7 @@ class GetMessagesUseCaseTest {
 
             val result =
                 getMessagesUseCase(
-                    conversationId = "  conversation-id  ",
+                    conversationId = RAW_CONVERSATION_ID,
                     page = 1,
                     limit = 20,
                 )
@@ -84,7 +84,7 @@ class GetMessagesUseCaseTest {
             assertThat(result).isInstanceOf(ApiResult.Success::class.java)
             coVerify(exactly = 1) {
                 chatRepository.getMessages(
-                    conversationId = "conversation-id",
+                    conversationId = RAW_CONVERSATION_ID,
                     page = 1,
                     limit = 20,
                 )
@@ -100,5 +100,9 @@ class GetMessagesUseCaseTest {
         assertThat(errorResult.message).isInstanceOf(UiText.StringResource::class.java)
         val stringResource = errorResult.message as UiText.StringResource
         assertThat(stringResource.resId).isEqualTo(expectedResId)
+    }
+
+    private companion object {
+        const val RAW_CONVERSATION_ID = "  conversation-id  "
     }
 }

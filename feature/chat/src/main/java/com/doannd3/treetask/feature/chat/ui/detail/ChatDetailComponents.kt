@@ -242,6 +242,7 @@ internal fun ChatMessageList(
     modifier: Modifier = Modifier,
     messages: List<Message>,
     isRefreshing: Boolean,
+    isTyping: Boolean,
     currentUserId: String? = null,
 ) {
     LazyColumn(
@@ -264,6 +265,12 @@ internal fun ChatMessageList(
                 message = message,
                 isOwnMessage = currentUserId != null && message.user.id == currentUserId,
             )
+        }
+
+        if (isTyping) {
+            item(key = "typing_indicator") {
+                ChatTypingIndicator()
+            }
         }
     }
 }
@@ -314,8 +321,34 @@ private fun ChatMessageListPreview() {
         ChatMessageList(
             messages = mockMessages,
             isRefreshing = false,
+            isTyping = true,
             currentUserId = "user-doan",
         )
+    }
+}
+
+@Composable
+private fun ChatTypingIndicator() {
+    Box(
+        modifier = Modifier.fillMaxWidth(),
+        contentAlignment = Alignment.CenterStart,
+    ) {
+        Surface(
+            modifier = Modifier.fillMaxWidth(0.88f),
+            shape = RoundedCornerShape(16.dp),
+            color = MaterialTheme.colorScheme.surfaceVariant,
+        ) {
+            Text(
+                text = stringResource(R.string.chat_typing_indicator),
+                modifier =
+                    Modifier.padding(
+                        horizontal = 14.dp,
+                        vertical = 8.dp,
+                    ),
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        }
     }
 }
 

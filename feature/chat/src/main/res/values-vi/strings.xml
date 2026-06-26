@@ -17,6 +17,7 @@
     <string name="chat_detail_placeholder">Cuộc trò chuyện %1$s</string>
     <string name="chat_error_messages">Không thể tải tin nhắn</string>
     <string name="chat_unknown_sender">Người gửi không xác định</string>
+    <string name="chat_typing_indicator">Có người đang nhập...</string>
     <string name="chat_message_input_placeholder">Nhập tin nhắn</string>
     <string name="chat_send_message">Gửi tin nhắn</string>
 </resources>
