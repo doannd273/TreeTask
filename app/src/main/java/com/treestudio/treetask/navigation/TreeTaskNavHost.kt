@@ -43,25 +43,25 @@ fun TreeTaskNavHost(
     ) {
         navController.navigateToTasksGraph(
             navOptions =
-                navOptions {
-                    if (clearAuthBackStack) {
-                        popUpTo(AuthGraphDestination) {
-                            inclusive = true
-                        }
-                    } else {
-                        popUpTo(navController.graph.startDestinationId) {
-                            saveState = true
-                        }
+            navOptions {
+                if (clearAuthBackStack) {
+                    popUpTo(AuthGraphDestination) {
+                        inclusive = true
                     }
-                    launchSingleTop = true
-                },
+                } else {
+                    popUpTo(navController.graph.startDestinationId) {
+                        saveState = true
+                    }
+                }
+                launchSingleTop = true
+            },
         )
         navController.navigateToEditTask(
             taskId = taskId,
             navOptions =
-                navOptions {
-                    launchSingleTop = true
-                },
+            navOptions {
+                launchSingleTop = true
+            },
         )
         currentOnPendingTaskConsumed()
     }
@@ -82,12 +82,12 @@ fun TreeTaskNavHost(
                 } else {
                     navController.navigateToTasksGraph(
                         navOptions =
-                            navOptions {
-                                popUpTo(AuthGraphDestination) {
-                                    inclusive = true
-                                }
-                                launchSingleTop = true
-                            },
+                        navOptions {
+                            popUpTo(AuthGraphDestination) {
+                                inclusive = true
+                            }
+                            launchSingleTop = true
+                        },
                     )
                 }
             },
@@ -139,12 +139,12 @@ fun TreeTaskNavHost(
             onNavigateToLogin = {
                 navController.navigateToAuthGraph(
                     navOptions =
-                        navOptions {
-                            popUpTo(navController.graph.id) {
-                                inclusive = true
-                            }
-                            launchSingleTop = true
-                        },
+                    navOptions {
+                        popUpTo(navController.graph.id) {
+                            inclusive = true
+                        }
+                        launchSingleTop = true
+                    },
                 )
             },
             onNavigateBack = {

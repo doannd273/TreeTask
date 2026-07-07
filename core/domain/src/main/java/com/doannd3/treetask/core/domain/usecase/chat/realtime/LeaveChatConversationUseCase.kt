@@ -6,15 +6,13 @@ import com.doannd3.treetask.core.domain.repository.ChatRealtimeRepository
 import com.doannd3.treetask.core.domain.validation.validationError
 import javax.inject.Inject
 
-class LeaveChatConversationUseCase
-    @Inject
-    constructor(
-        private val chatRealtimeRepository: ChatRealtimeRepository,
-    ) {
-        suspend operator fun invoke(conversationId: String): ApiResult<Unit> {
-            if (conversationId.isBlank()) {
-                return validationError(R.string.common_error_conversation_id_empty)
-            }
-            return chatRealtimeRepository.leaveConversation(conversationId = conversationId)
+class LeaveChatConversationUseCase @Inject constructor(
+    private val chatRealtimeRepository: ChatRealtimeRepository,
+) {
+    suspend operator fun invoke(conversationId: String): ApiResult<Unit> {
+        if (conversationId.isBlank()) {
+            return validationError(R.string.common_error_conversation_id_empty)
         }
+        return chatRealtimeRepository.leaveConversation(conversationId = conversationId)
     }
+}

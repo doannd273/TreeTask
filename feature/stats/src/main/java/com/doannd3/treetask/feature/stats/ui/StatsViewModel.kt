@@ -18,72 +18,69 @@ import javax.inject.Inject
 import com.doannd3.treetask.core.common.R as CommonR
 
 @HiltViewModel
-class StatsViewModel
-    @Inject
-    constructor(
-        private val getTaskStatsUseCase: GetTaskStatsUseCase,
-    ) : BaseViewModel(),
-        MviViewModel<StatsState, StatsEvent, StatsEffect> {
-        private val _uiState = MutableStateFlow(StatsState())
-        override val uiState: StateFlow<StatsState> = _uiState.asStateFlow()
+class StatsViewModel @Inject constructor(
+    private val getTaskStatsUseCase: GetTaskStatsUseCase,
+) : BaseViewModel(), MviViewModel<StatsState, StatsEvent, StatsEffect> {
+    private val _uiState = MutableStateFlow(StatsState())
+    override val uiState: StateFlow<StatsState> = _uiState.asStateFlow()
 
-        private val _effect = MutableSharedFlow<StatsEffect>()
-        override val effect: SharedFlow<StatsEffect> = _effect.asSharedFlow()
+    private val _effect = MutableSharedFlow<StatsEffect>()
+    override val effect: SharedFlow<StatsEffect> = _effect.asSharedFlow()
 
-        override fun setLoading(isLoading: Boolean) {
-            _uiState.update { it.copy(isLoading = isLoading) }
+    override fun setLoading(isLoading: Boolean) {
+        _uiState.update { it.copy(isLoading = isLoading) }
+    }
+
+    override fun onEvent(event: StatsEvent) {
+        when (event) {
+            StatsEvent.Refresh -> {
+                loadTaskStats()
+            }
+        }
+    }
+
+    init {
+        loadTaskStats()
+    }
+
+    private fun loadTaskStats() {
+        val state = _uiState.value
+        if (state.isLoading) {
+            return
         }
 
-        override fun onEvent(event: StatsEvent) {
-            when (event) {
-                StatsEvent.Refresh -> {
-                    loadTaskStats()
+        _uiState.update { it.copy(isLoading = true) }
+
+        executeSafe {
+            val result = getTaskStatsUseCase()
+            _uiState.update { it.copy(isLoading = false) }
+
+            when (result) {
+                is ApiResult.Success -> {
+                    _uiState.update {
+                        it.copy(
+                            hasInitialLoadError = false,
+                            taskStats = result.data,
+                        )
+                    }
                 }
-            }
-        }
 
-        init {
-            loadTaskStats()
-        }
-
-        private fun loadTaskStats() {
-            val state = _uiState.value
-            if (state.isLoading) {
-                return
-            }
-
-            _uiState.update { it.copy(isLoading = true) }
-
-            executeSafe {
-                val result = getTaskStatsUseCase()
-                _uiState.update { it.copy(isLoading = false) }
-
-                when (result) {
-                    is ApiResult.Success -> {
+                is ApiResult.Error -> {
+                    if (state.taskStats == null) {
                         _uiState.update {
                             it.copy(
-                                hasInitialLoadError = false,
-                                taskStats = result.data,
+                                hasInitialLoadError = true,
                             )
                         }
                     }
 
-                    is ApiResult.Error -> {
-                        if (state.taskStats == null) {
-                            _uiState.update {
-                                it.copy(
-                                    hasInitialLoadError = true,
-                                )
-                            }
-                        }
-
-                        val message =
-                            result.toDisplayMessage(
-                                UiText.StringResource(CommonR.string.common_error_unknown),
-                            )
-                        _effect.emit(StatsEffect.ShowErrorMessage(message))
-                    }
+                    val message =
+                        result.toDisplayMessage(
+                            UiText.StringResource(CommonR.string.common_error_unknown),
+                        )
+                    _effect.emit(StatsEffect.ShowErrorMessage(message))
                 }
             }
         }
     }
+}

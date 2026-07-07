@@ -472,13 +472,13 @@ class ChatDetailViewModelTest {
             id = id,
             conversationId = CONVERSATION_ID,
             user =
-                User(
-                    id = CURRENT_USER_ID,
-                    email = "doan@treetask.com",
-                    fullName = "Doan ND",
-                    avatar = null,
-                    phone = null,
-                ),
+            User(
+                id = CURRENT_USER_ID,
+                email = "doan@treetask.com",
+                fullName = "Doan ND",
+                avatar = null,
+                phone = null,
+            ),
             type = MessageType.TEXT,
             content = content,
             createdAt = createdAt,

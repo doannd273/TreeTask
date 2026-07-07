@@ -3,10 +3,8 @@ package com.doannd3.treetask.feature.tasks.ui.taskform
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.imePadding
-import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.rememberScrollState
@@ -33,8 +31,13 @@ import com.doannd3.treetask.core.common.asString
 import com.doannd3.treetask.core.common.extension.toYmdDate
 import com.doannd3.treetask.core.common.extension.ymdToDmy
 import com.doannd3.treetask.core.common.extension.ymdToEpochMillis
+import com.doannd3.treetask.core.designsystem.component.AppLoadingDialog
 import com.doannd3.treetask.core.designsystem.component.CommonHeader
-import com.doannd3.treetask.core.designsystem.component.LocalGlobalAppState
+import com.doannd3.treetask.core.designsystem.component.message.AppDialogType
+import com.doannd3.treetask.core.designsystem.component.message.AppMessage
+import com.doannd3.treetask.core.designsystem.component.message.AppMessageDialogHost
+import com.doannd3.treetask.core.designsystem.component.message.AppMessageId
+import com.doannd3.treetask.core.designsystem.component.message.rememberAppMessageHostState
 import com.doannd3.treetask.core.designsystem.theme.AppPreviewLightDark
 import com.doannd3.treetask.core.designsystem.theme.TreeTaskTheme
 import com.doannd3.treetask.core.designsystem.util.rememberDebouncedClick
@@ -47,13 +50,22 @@ fun TaskFormRoute(
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
 
-    val globalAppState = LocalGlobalAppState.current
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
+    val messageHostState = rememberAppMessageHostState()
 
     TaskFormScreen(
         state = state,
         onEvent = viewModel::onEvent,
+    )
+
+    AppMessageDialogHost(
+        state = messageHostState,
+        onAcknowledged = { message ->
+            if (message.id == TaskFormMessageIds.Success) {
+                viewModel.onEvent(TaskFormEvent.SuccessAcknowledged)
+            }
+        },
     )
 
     LaunchedEffect(viewModel.effect, lifecycleOwner) {
@@ -61,13 +73,23 @@ fun TaskFormRoute(
             viewModel.effect.collect { effect ->
                 when (effect) {
                     is TaskFormEffect.ShowErrorMessage -> {
-                        globalAppState.showError(effect.message.asString(context))
+                        messageHostState.enqueue(
+                            AppMessage(
+                                id = TaskFormMessageIds.Error,
+                                message = effect.message.asString(context),
+                                type = AppDialogType.Error,
+                            ),
+                        )
                     }
 
                     is TaskFormEffect.ShowSuccessMessage -> {
-                        globalAppState.showSuccess(effect.message.asString(context)) {
-                            viewModel.onEvent(TaskFormEvent.SuccessAcknowledged)
-                        }
+                        messageHostState.enqueue(
+                            AppMessage(
+                                id = TaskFormMessageIds.Success,
+                                message = effect.message.asString(context),
+                                type = AppDialogType.Success,
+                            ),
+                        )
                     }
 
                     is TaskFormEffect.NavigateBack -> {
@@ -81,16 +103,14 @@ fun TaskFormRoute(
     LaunchedEffect(viewModel.baseErrorEffect, lifecycleOwner) {
         lifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
             viewModel.baseErrorEffect.collect { message ->
-                globalAppState.showError(message.asString(context))
+                messageHostState.enqueue(
+                    AppMessage(
+                        id = TaskFormMessageIds.Error,
+                        message = message.asString(context),
+                        type = AppDialogType.Error,
+                    ),
+                )
             }
-        }
-    }
-
-    LaunchedEffect(state.isLoading, state.isLoadingTask) {
-        if (state.isLoading || state.isLoadingTask) {
-            globalAppState.showLoading()
-        } else {
-            globalAppState.hideLoading()
         }
     }
 }
@@ -102,9 +122,7 @@ internal fun TaskFormScreen(
 ) {
     Scaffold(
         contentWindowInsets =
-            WindowInsets.safeDrawing.only(
-                WindowInsetsSides.Horizontal + WindowInsetsSides.Bottom,
-            ),
+        WindowInsets.safeDrawing,
         topBar = {
             CommonHeader(
                 title = state.screenTitle?.asString(LocalContext.current).orEmpty(),
@@ -113,11 +131,13 @@ internal fun TaskFormScreen(
         },
     ) { paddingValues ->
         TaskFormContent(
-            modifier = Modifier.padding(paddingValues),
             state = state,
             onEvent = onEvent,
+            modifier = Modifier.padding(paddingValues),
         )
     }
+
+    AppLoadingDialog(isLoading = state.isLoading || state.isLoadingTask)
 }
 
 @AppPreviewLightDark
@@ -133,9 +153,9 @@ private fun TaskFormScreenPreview() {
 
 @Composable
 internal fun TaskFormContent(
-    modifier: Modifier = Modifier,
     state: TaskFormState,
     onEvent: (TaskFormEvent) -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     val descriptionFocusRequester = remember { FocusRequester() }
     val focusManager = LocalFocusManager.current
@@ -167,10 +187,10 @@ internal fun TaskFormContent(
 
     Column(
         modifier =
-            modifier
-                .fillMaxSize()
-                .verticalScroll(rememberScrollState())
-                .imePadding(),
+        modifier
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState())
+            .imePadding(),
     ) {
         Column(
             modifier = Modifier.padding(16.dp),
@@ -186,7 +206,7 @@ internal fun TaskFormContent(
 
             TaskDescriptionInput(
                 modifier =
-                    Modifier.focusRequester(descriptionFocusRequester),
+                Modifier.focusRequester(descriptionFocusRequester),
                 description = state.description,
                 enabled = isInputEnabled,
                 readOnly = isReadOnly,
@@ -231,12 +251,12 @@ private fun TaskFormContentPreview() {
     TreeTaskTheme {
         TaskFormContent(
             state =
-                TaskFormState(
-                    title = "Prepare sprint planning",
-                    description = "Review backlog and define priorities for the next sprint.",
-                    status = TaskStatus.IN_PROGRESS,
-                    dueDate = "2026-05-31",
-                ),
+            TaskFormState(
+                title = "Prepare sprint planning",
+                description = "Review backlog and define priorities for the next sprint.",
+                status = TaskStatus.IN_PROGRESS,
+                dueDate = "2026-05-31",
+            ),
             onEvent = {},
         )
     }
@@ -248,14 +268,19 @@ private fun TaskFormContentReadOnlyPreview() {
     TreeTaskTheme {
         TaskFormContent(
             state =
-                TaskFormState(
-                    mode = TaskFormMode.VIEW,
-                    title = "Review dashboard analytics",
-                    description = "Check completion rate and recent task behavior before release.",
-                    status = TaskStatus.DONE,
-                    dueDate = "2026-06-02",
-                ),
+            TaskFormState(
+                mode = TaskFormMode.VIEW,
+                title = "Review dashboard analytics",
+                description = "Check completion rate and recent task behavior before release.",
+                status = TaskStatus.DONE,
+                dueDate = "2026-06-02",
+            ),
             onEvent = {},
         )
     }
+}
+
+private object TaskFormMessageIds {
+    val Error = AppMessageId("task-form-error")
+    val Success = AppMessageId("task-form-success")
 }

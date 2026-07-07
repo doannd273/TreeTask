@@ -8,34 +8,32 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
 import javax.inject.Inject
 
-class GetTasksUseCase
-    @Inject
-    constructor(
-        private val tasksRepository: TaskRepository,
-    ) {
-        operator fun invoke(
-            status: String,
-            keyword: String,
-            userId: String,
-        ): Flow<PagingData<Task>> {
-            val userIdTrimmed = userId.trim()
-            if (userIdTrimmed.isBlank()) {
-                return flowOf(PagingData.empty<Task>())
-            }
-
-            val statusTrimmed = status.trim()
-            val normalizedStatus =
-                statusTrimmed.takeIf { value ->
-                    value.isBlank() ||
-                        TaskStatus.entries.any { taskStatus ->
-                            taskStatus.apiValue == value
-                        }
-                } ?: return flowOf(PagingData.empty<Task>())
-
-            return tasksRepository.getTasks(
-                status = normalizedStatus,
-                keyword = keyword.trim(),
-                userId = userIdTrimmed,
-            )
+class GetTasksUseCase @Inject constructor(
+    private val tasksRepository: TaskRepository,
+) {
+    operator fun invoke(
+        status: String,
+        keyword: String,
+        userId: String,
+    ): Flow<PagingData<Task>> {
+        val userIdTrimmed = userId.trim()
+        if (userIdTrimmed.isBlank()) {
+            return flowOf(PagingData.empty<Task>())
         }
+
+        val statusTrimmed = status.trim()
+        val normalizedStatus =
+            statusTrimmed.takeIf { value ->
+                value.isBlank() ||
+                    TaskStatus.entries.any { taskStatus ->
+                        taskStatus.apiValue == value
+                    }
+            } ?: return flowOf(PagingData.empty<Task>())
+
+        return tasksRepository.getTasks(
+            status = normalizedStatus,
+            keyword = keyword.trim(),
+            userId = userIdTrimmed,
+        )
     }
+}

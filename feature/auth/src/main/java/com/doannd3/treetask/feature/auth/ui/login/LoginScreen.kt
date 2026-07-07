@@ -31,10 +31,15 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.repeatOnLifecycle
 import com.doannd3.treetask.core.common.asString
+import com.doannd3.treetask.core.designsystem.component.AppLoadingDialog
 import com.doannd3.treetask.core.designsystem.component.CommonButton
 import com.doannd3.treetask.core.designsystem.component.EmailInput
-import com.doannd3.treetask.core.designsystem.component.LocalGlobalAppState
 import com.doannd3.treetask.core.designsystem.component.PasswordInput
+import com.doannd3.treetask.core.designsystem.component.message.AppDialogType
+import com.doannd3.treetask.core.designsystem.component.message.AppMessage
+import com.doannd3.treetask.core.designsystem.component.message.AppMessageDialogHost
+import com.doannd3.treetask.core.designsystem.component.message.AppMessageId
+import com.doannd3.treetask.core.designsystem.component.message.rememberAppMessageHostState
 import com.doannd3.treetask.core.designsystem.theme.AppPreviewLightDark
 import com.doannd3.treetask.core.designsystem.theme.TreeTaskTheme
 import com.doannd3.treetask.core.designsystem.util.rememberDebouncedClick
@@ -49,15 +54,20 @@ fun LoginRoute(
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
 
-    val globalAppState = LocalGlobalAppState.current
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
+    val messageHostState = rememberAppMessageHostState()
 
     LoginScreen(
         state = state,
         onEvent = viewModel::onEvent,
         onNavigateToRegister = onNavigateToRegister,
         onNavigateToForgotPassword = onNavigateToForgotPassword,
+    )
+
+    AppMessageDialogHost(
+        state = messageHostState,
+        onAcknowledged = {},
     )
 
     LaunchedEffect(viewModel.effect, lifecycleOwner) {
@@ -69,28 +79,30 @@ fun LoginRoute(
                     }
 
                     is LoginEffect.ShowErrorMessage -> {
-                        val errorStr = effect.message.asString(context)
-                        globalAppState.showError(errorStr)
+                        messageHostState.enqueue(
+                            AppMessage(
+                                id = LoginMessageIds.Error,
+                                message = effect.message.asString(context),
+                                type = AppDialogType.Error,
+                            ),
+                        )
                     }
                 }
             }
         }
     }
 
-    // Lỗi crash/unexpected từ BaseViewModel (CoroutineExceptionHandler)
     LaunchedEffect(viewModel.baseErrorEffect, lifecycleOwner) {
         lifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
             viewModel.baseErrorEffect.collect { message ->
-                globalAppState.showError(message.asString(context))
+                messageHostState.enqueue(
+                    AppMessage(
+                        id = LoginMessageIds.Error,
+                        message = message.asString(context),
+                        type = AppDialogType.Error,
+                    ),
+                )
             }
-        }
-    }
-
-    LaunchedEffect(state.isLoading) {
-        if (state.isLoading) {
-            globalAppState.showLoading()
-        } else {
-            globalAppState.hideLoading()
         }
     }
 }
@@ -113,15 +125,34 @@ internal fun LoginScreen(
             onNavigateToForgotPassword = onNavigateToForgotPassword,
         )
     }
+
+    AppLoadingDialog(isLoading = state.isLoading)
+}
+
+@AppPreviewLightDark
+@Composable
+private fun LoginScreenPreview() {
+    TreeTaskTheme {
+        LoginScreen(
+            state =
+            LoginState(
+                email = "demo@gmail.com",
+                password = "123456",
+            ),
+            onEvent = {},
+            onNavigateToRegister = {},
+            onNavigateToForgotPassword = {},
+        )
+    }
 }
 
 @Composable
 internal fun LoginContent(
-    modifier: Modifier = Modifier,
     state: LoginState,
     onEvent: (LoginEvent) -> Unit,
     onNavigateToRegister: () -> Unit,
     onNavigateToForgotPassword: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     val onSubmitLoginDebounced =
         rememberDebouncedClick {
@@ -133,11 +164,11 @@ internal fun LoginContent(
 
     Column(
         modifier =
-            modifier
-                .fillMaxSize()
-                .verticalScroll(rememberScrollState())
-                .padding(16.dp)
-                .imePadding(),
+        modifier
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState())
+            .padding(16.dp)
+            .imePadding(),
         verticalArrangement = Arrangement.Center,
     ) {
         TreeTaskAppName()
@@ -159,9 +190,9 @@ internal fun LoginContent(
 
         PasswordInput(
             modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .focusRequester(passwordFocusRequester),
+            Modifier
+                .fillMaxWidth()
+                .focusRequester(passwordFocusRequester),
             label = stringResource(R.string.auth_password_hint),
             password = state.password,
             passwordVisible = state.passwordVisible,
@@ -193,19 +224,6 @@ internal fun LoginContent(
     }
 }
 
-@AppPreviewLightDark
-@Composable
-private fun LoginScreenPreview() {
-    TreeTaskTheme {
-        LoginScreen(
-            state =
-                LoginState(
-                    email = "demo@gmail.com",
-                    password = "123456",
-                ),
-            onEvent = {},
-            onNavigateToRegister = {},
-            onNavigateToForgotPassword = {},
-        )
-    }
+private object LoginMessageIds {
+    val Error = AppMessageId("login-error")
 }

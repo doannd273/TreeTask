@@ -73,11 +73,11 @@ private fun EmailStepPreview() {
         Surface(color = MaterialTheme.colorScheme.background) {
             EmailStep(
                 state =
-                    ForgotPasswordState(
-                        email = "doan@gmail.com",
-                        step = ForgotPasswordStep.EmailInput,
-                        isLoading = false,
-                    ),
+                ForgotPasswordState(
+                    email = "doan@gmail.com",
+                    step = ForgotPasswordStep.EmailInput,
+                    isLoading = false,
+                ),
                 onEvent = {},
             )
         }
@@ -91,11 +91,11 @@ private fun EmailStepLoadingPreview() {
         Surface(color = MaterialTheme.colorScheme.background) {
             EmailStep(
                 state =
-                    ForgotPasswordState(
-                        email = "doan@gmail.com",
-                        step = ForgotPasswordStep.EmailInput,
-                        isLoading = true,
-                    ),
+                ForgotPasswordState(
+                    email = "doan@gmail.com",
+                    step = ForgotPasswordStep.EmailInput,
+                    isLoading = true,
+                ),
                 onEvent = {},
             )
         }
@@ -149,9 +149,9 @@ internal fun ResetPasswordStep(
 
             PasswordInput(
                 modifier =
-                    Modifier
-                        .fillMaxWidth()
-                        .focusRequester(passwordFocusRequester),
+                Modifier
+                    .fillMaxWidth()
+                    .focusRequester(passwordFocusRequester),
                 label = stringResource(R.string.auth_new_password_hint),
                 password = state.newPassword,
                 passwordVisible = state.passwordVisible,
@@ -165,9 +165,9 @@ internal fun ResetPasswordStep(
 
             PasswordInput(
                 modifier =
-                    Modifier
-                        .fillMaxWidth()
-                        .focusRequester(confirmPasswordFocusRequester),
+                Modifier
+                    .fillMaxWidth()
+                    .focusRequester(confirmPasswordFocusRequester),
                 label = stringResource(R.string.auth_confirm_password_hint),
                 password = state.confirmPassword,
                 passwordVisible = state.confirmPasswordVisible,
@@ -208,14 +208,14 @@ private fun ResetPasswordStepPreview() {
         Surface(color = MaterialTheme.colorScheme.background) {
             ResetPasswordStep(
                 state =
-                    ForgotPasswordState(
-                        step = ForgotPasswordStep.ResetInput,
-                        email = "doan@gmail.com",
-                        otp = "123",
-                        newPassword = "",
-                        isLoading = false,
-                        confirmPassword = "",
-                    ),
+                ForgotPasswordState(
+                    step = ForgotPasswordStep.ResetInput,
+                    email = "doan@gmail.com",
+                    otp = "123",
+                    newPassword = "",
+                    isLoading = false,
+                    confirmPassword = "",
+                ),
                 onEvent = {},
             )
         }
@@ -229,16 +229,16 @@ private fun ResetPasswordStepFilledPreview() {
         Surface(color = MaterialTheme.colorScheme.background) {
             ResetPasswordStep(
                 state =
-                    ForgotPasswordState(
-                        step = ForgotPasswordStep.ResetInput,
-                        email = "doan@gmail.com",
-                        otp = "123456",
-                        newPassword = "password123",
-                        passwordVisible = false,
-                        isLoading = false,
-                        confirmPassword = "password124",
-                        confirmPasswordVisible = false,
-                    ),
+                ForgotPasswordState(
+                    step = ForgotPasswordStep.ResetInput,
+                    email = "doan@gmail.com",
+                    otp = "123456",
+                    newPassword = "password123",
+                    passwordVisible = false,
+                    isLoading = false,
+                    confirmPassword = "password124",
+                    confirmPasswordVisible = false,
+                ),
                 onEvent = {},
             )
         }
@@ -252,13 +252,13 @@ private fun ResetPasswordStepLoadingPreview() {
         Surface(color = MaterialTheme.colorScheme.background) {
             ResetPasswordStep(
                 state =
-                    ForgotPasswordState(
-                        step = ForgotPasswordStep.ResetInput,
-                        email = "doan@gmail.com",
-                        otp = "123456",
-                        newPassword = "password123",
-                        isLoading = true,
-                    ),
+                ForgotPasswordState(
+                    step = ForgotPasswordStep.ResetInput,
+                    email = "doan@gmail.com",
+                    otp = "123456",
+                    newPassword = "password123",
+                    isLoading = true,
+                ),
                 onEvent = {},
             )
         }

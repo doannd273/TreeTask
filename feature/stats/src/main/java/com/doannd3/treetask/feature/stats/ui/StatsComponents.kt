@@ -66,9 +66,9 @@ internal fun StatsSummaryCard(
     ) {
         Row(
             modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 24.dp),
+            Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp, vertical = 24.dp),
             horizontalArrangement = Arrangement.spacedBy(16.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
@@ -213,10 +213,10 @@ internal fun StatsStatusItem(
         ) {
             Box(
                 modifier =
-                    Modifier
-                        .size(16.dp)
-                        .clip(CircleShape)
-                        .background(taskStatus.statusColors().containerColor),
+                Modifier
+                    .size(16.dp)
+                    .clip(CircleShape)
+                    .background(taskStatus.statusColors().containerColor),
             )
 
             Spacer(Modifier.height(4.dp))
@@ -264,10 +264,10 @@ internal fun RecentTaskRow(
 ) {
     Row(
         modifier =
-            Modifier
-                .fillMaxWidth()
-                .clickable(onClick = onTaskClick)
-                .padding(horizontal = 16.dp, vertical = 12.dp),
+        Modifier
+            .fillMaxWidth()
+            .clickable(onClick = onTaskClick)
+            .padding(horizontal = 16.dp, vertical = 12.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(8.dp),
     ) {
@@ -282,12 +282,12 @@ internal fun RecentTaskRow(
 
         Box(
             modifier =
-                Modifier
-                    .wrapContentWidth()
-                    .clip(RoundedCornerShape(10.dp))
-                    .background(
-                        taskRecent.status.statusColors().containerColor,
-                    ).padding(horizontal = 4.dp, vertical = 2.dp),
+            Modifier
+                .wrapContentWidth()
+                .clip(RoundedCornerShape(10.dp))
+                .background(
+                    taskRecent.status.statusColors().containerColor,
+                ).padding(horizontal = 4.dp, vertical = 2.dp),
         ) {
             Text(
                 text = stringResource(taskRecent.status.labelRes()),
@@ -313,13 +313,13 @@ private fun RecentTaskRowPreview() {
         Surface(color = MaterialTheme.colorScheme.background) {
             RecentTaskRow(
                 taskRecent =
-                    RecentTaskSummary(
-                        id = "1",
-                        title = "Fix login token refresh bug",
-                        status = TaskStatus.DONE,
-                        createdAt = Instant.now(),
-                        dueDate = Instant.now(),
-                    ),
+                RecentTaskSummary(
+                    id = "1",
+                    title = "Fix login token refresh bug",
+                    status = TaskStatus.DONE,
+                    createdAt = Instant.now(),
+                    dueDate = Instant.now(),
+                ),
                 onTaskClick = {},
             )
         }
@@ -387,12 +387,12 @@ internal fun RecentTasksCard(
 
     Card(
         modifier =
-            Modifier.fillMaxWidth().padding(16.dp),
+        Modifier.fillMaxWidth().padding(16.dp),
         shape = RoundedCornerShape(10.dp),
         colors =
-            CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.surfaceContainer,
-            ),
+        CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surfaceContainer,
+        ),
     ) {
         Column {
             Text(
@@ -430,20 +430,20 @@ private fun RecentTasksCardPreview() {
         Surface(color = MaterialTheme.colorScheme.background) {
             RecentTasksCard(
                 tasks =
-                    (1..6).map { index ->
-                        RecentTaskSummary(
-                            id = index.toString(),
-                            title = "Recent task #$index with a long title to verify row cap and ellipsis",
-                            status = TaskStatus.entries[index % TaskStatus.entries.size],
-                            createdAt = Instant.parse("2026-05-20T08:00:00Z"),
-                            dueDate =
-                                if (index % 2 == 0) {
-                                    null
-                                } else {
-                                    Instant.parse("2026-05-25T17:00:00Z")
-                                },
-                        )
-                    },
+                (1..6).map { index ->
+                    RecentTaskSummary(
+                        id = index.toString(),
+                        title = "Recent task #$index with a long title to verify row cap and ellipsis",
+                        status = TaskStatus.entries[index % TaskStatus.entries.size],
+                        createdAt = Instant.parse("2026-05-20T08:00:00Z"),
+                        dueDate =
+                        if (index % 2 == 0) {
+                            null
+                        } else {
+                            Instant.parse("2026-05-25T17:00:00Z")
+                        },
+                    )
+                },
                 onTaskClick = {},
             )
         }
@@ -461,9 +461,9 @@ private fun LegendItem(status: TaskStatus) {
     ) {
         Box(
             modifier =
-                Modifier
-                    .size(10.dp)
-                    .background(status.statusColors().containerColor, CircleShape),
+            Modifier
+                .size(10.dp)
+                .background(status.statusColors().containerColor, CircleShape),
         )
 
         Spacer(Modifier.width(6.dp))
@@ -509,10 +509,10 @@ internal fun WorkloadBreakdownCard(
 
             Row(
                 modifier =
-                    Modifier
-                        .fillMaxWidth()
-                        .height(18.dp)
-                        .clip(RoundedCornerShape(50)),
+                Modifier
+                    .fillMaxWidth()
+                    .height(18.dp)
+                    .clip(RoundedCornerShape(50)),
             ) {
                 WorkloadSegment(todo, TaskStatus.TODO.statusColors().containerColor)
                 WorkloadSegment(inProgress, TaskStatus.IN_PROGRESS.statusColors().containerColor)
@@ -559,10 +559,10 @@ private fun RowScope.WorkloadSegment(
     if (value > 0) {
         Box(
             modifier =
-                Modifier
-                    .weight(value.toFloat())
-                    .fillMaxHeight()
-                    .background(color),
+            Modifier
+                .weight(value.toFloat())
+                .fillMaxHeight()
+                .background(color),
         )
     }
 }

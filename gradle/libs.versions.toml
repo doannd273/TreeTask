@@ -48,6 +48,7 @@ firebaseBom = "33.5.0"
 # Lint & Code Quality
 detekt = "1.23.6"
 ktlintConfig = "12.1.1"
+ktlintFormatter = "1.8.0"
 spotless = "6.25.0"
 
 # Testing

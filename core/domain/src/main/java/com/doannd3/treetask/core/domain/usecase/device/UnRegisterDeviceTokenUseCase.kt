@@ -6,17 +6,15 @@ import com.doannd3.treetask.core.domain.repository.DeviceRepository
 import com.doannd3.treetask.core.domain.validation.validationError
 import javax.inject.Inject
 
-class UnRegisterDeviceTokenUseCase
-    @Inject
-    constructor(
-        private val deviceRepository: DeviceRepository,
-    ) {
-        suspend operator fun invoke(token: String): ApiResult<Unit> {
-            val tokenTrimmed = token.trim()
-            if (tokenTrimmed.isBlank()) {
-                return validationError(R.string.common_error_device_token_empty)
-            }
-
-            return deviceRepository.unregisterToken(token = tokenTrimmed)
+class UnRegisterDeviceTokenUseCase @Inject constructor(
+    private val deviceRepository: DeviceRepository,
+) {
+    suspend operator fun invoke(token: String): ApiResult<Unit> {
+        val tokenTrimmed = token.trim()
+        if (tokenTrimmed.isBlank()) {
+            return validationError(R.string.common_error_device_token_empty)
         }
+
+        return deviceRepository.unregisterToken(token = tokenTrimmed)
     }
+}

@@ -35,4 +35,6 @@ dependencies {
     implementation(libs.paging.compose)
 
     implementation(libs.timber)
+
+    testImplementation(projects.core.testing)
 }

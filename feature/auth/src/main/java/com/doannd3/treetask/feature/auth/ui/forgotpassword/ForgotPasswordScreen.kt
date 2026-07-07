@@ -3,10 +3,8 @@ package com.doannd3.treetask.feature.auth.ui.forgotpassword
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.imePadding
-import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.rememberScrollState
@@ -24,8 +22,13 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.repeatOnLifecycle
 import com.doannd3.treetask.core.common.asString
+import com.doannd3.treetask.core.designsystem.component.AppLoadingDialog
 import com.doannd3.treetask.core.designsystem.component.CommonHeader
-import com.doannd3.treetask.core.designsystem.component.LocalGlobalAppState
+import com.doannd3.treetask.core.designsystem.component.message.AppDialogType
+import com.doannd3.treetask.core.designsystem.component.message.AppMessage
+import com.doannd3.treetask.core.designsystem.component.message.AppMessageDialogHost
+import com.doannd3.treetask.core.designsystem.component.message.AppMessageId
+import com.doannd3.treetask.core.designsystem.component.message.rememberAppMessageHostState
 import com.doannd3.treetask.core.designsystem.theme.AppPreviewLightDark
 import com.doannd3.treetask.core.designsystem.theme.TreeTaskTheme
 import com.doannd3.treetask.feature.auth.R
@@ -38,9 +41,9 @@ fun ForgotPasswordRoute(
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
 
-    val globalAppState = LocalGlobalAppState.current
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
+    val messageHostState = rememberAppMessageHostState()
 
     ForgotPasswordScreen(
         state = state,
@@ -48,33 +51,52 @@ fun ForgotPasswordRoute(
         onForgotPasswordBack = onForgotPasswordBack,
     )
 
+    AppMessageDialogHost(
+        state = messageHostState,
+        onAcknowledged = { message ->
+            if (message.id == ForgotPasswordMessageIds.ResetSuccess) {
+                viewModel.onEvent(ForgotPasswordEvent.ResetPasswordAcknowledged)
+            }
+        },
+    )
+
     LaunchedEffect(viewModel.effect, lifecycleOwner) {
         lifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
             viewModel.effect.collect { effect ->
                 when (effect) {
                     is ForgotPasswordEffect.ShowErrorMessage -> {
-                        val errorStr = effect.message.asString(context)
-                        globalAppState.showError(errorStr)
+                        messageHostState.enqueue(
+                            AppMessage(
+                                id = ForgotPasswordMessageIds.Error,
+                                message = effect.message.asString(context),
+                                type = AppDialogType.Error,
+                            ),
+                        )
                     }
 
                     is ForgotPasswordEffect.SendEmailSuccess -> {
-                        val successForgotPassword = effect.message.asString(context)
-                        globalAppState.showSuccess(
-                            message = successForgotPassword,
+                        messageHostState.enqueue(
+                            AppMessage(
+                                id = ForgotPasswordMessageIds.EmailSent,
+                                message = effect.message.asString(context),
+                                type = AppDialogType.Success,
+                            ),
                         )
                     }
 
                     is ForgotPasswordEffect.ResetPasswordSuccess -> {
-                        val successForgotPassword = effect.message.asString(context)
-                        globalAppState.showSuccess(
-                            message = successForgotPassword,
-                            onDismiss = {
-                                viewModel.onEvent(ForgotPasswordEvent.ResetPasswordAcknowledged)
-                            },
+                        messageHostState.enqueue(
+                            AppMessage(
+                                id = ForgotPasswordMessageIds.ResetSuccess,
+                                message = effect.message.asString(context),
+                                type = AppDialogType.Success,
+                            ),
                         )
                     }
 
-                    is ForgotPasswordEffect.NavigateToLogin -> onNavigateToLogin()
+                    is ForgotPasswordEffect.NavigateToLogin -> {
+                        onNavigateToLogin()
+                    }
                 }
             }
         }
@@ -83,16 +105,14 @@ fun ForgotPasswordRoute(
     LaunchedEffect(viewModel.baseErrorEffect, lifecycleOwner) {
         lifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
             viewModel.baseErrorEffect.collect { message ->
-                globalAppState.showError(message.asString(context))
+                messageHostState.enqueue(
+                    AppMessage(
+                        id = ForgotPasswordMessageIds.Error,
+                        message = message.asString(context),
+                        type = AppDialogType.Error,
+                    ),
+                )
             }
-        }
-    }
-
-    LaunchedEffect(state.isLoading) {
-        if (state.isLoading) {
-            globalAppState.showLoading()
-        } else {
-            globalAppState.hideLoading()
         }
     }
 }
@@ -108,10 +128,7 @@ internal fun ForgotPasswordScreen(
     }
 
     Scaffold(
-        contentWindowInsets =
-            WindowInsets.safeDrawing.only(
-                WindowInsetsSides.Horizontal + WindowInsetsSides.Bottom,
-            ),
+        contentWindowInsets = WindowInsets.safeDrawing,
         topBar = {
             CommonHeader(
                 title = stringResource(R.string.auth_forgot_password),
@@ -127,27 +144,62 @@ internal fun ForgotPasswordScreen(
     ) { paddingValues ->
         ForgotPasswordContent(
             modifier =
-                Modifier.padding(
-                    paddingValues = paddingValues,
-                ),
+            Modifier.padding(
+                paddingValues = paddingValues,
+            ),
             state = state,
             onEvent = onEvent,
+        )
+    }
+
+    AppLoadingDialog(isLoading = state.isLoading)
+}
+
+@AppPreviewLightDark
+@Composable
+private fun ForgotPasswordPreview() {
+    TreeTaskTheme {
+        ForgotPasswordScreen(
+            state =
+            ForgotPasswordState(
+                email = "demo@gmail.com",
+            ),
+            onEvent = {},
+            onForgotPasswordBack = {},
+        )
+    }
+}
+
+@AppPreviewLightDark
+@Composable
+private fun ForgotPasswordResetPreview() {
+    TreeTaskTheme {
+        ForgotPasswordScreen(
+            state =
+            ForgotPasswordState(
+                step = ForgotPasswordStep.ResetInput,
+                email = "demo@gmail.com",
+                otp = "123456",
+                newPassword = "password123",
+            ),
+            onEvent = {},
+            onForgotPasswordBack = {},
         )
     }
 }
 
 @Composable
 internal fun ForgotPasswordContent(
-    modifier: Modifier = Modifier,
     state: ForgotPasswordState,
     onEvent: (ForgotPasswordEvent) -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     Column(
         modifier =
-            modifier
-                .fillMaxSize()
-                .verticalScroll(rememberScrollState())
-                .imePadding(),
+        modifier
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState())
+            .imePadding(),
     ) {
         EmailStep(
             isVisible = (state.step == ForgotPasswordStep.EmailInput),
@@ -162,35 +214,8 @@ internal fun ForgotPasswordContent(
     }
 }
 
-@AppPreviewLightDark
-@Composable
-private fun ForgotPasswordPreview() {
-    TreeTaskTheme {
-        ForgotPasswordScreen(
-            state =
-                ForgotPasswordState(
-                    email = "demo@gmail.com",
-                ),
-            onEvent = {},
-            onForgotPasswordBack = {},
-        )
-    }
-}
-
-@AppPreviewLightDark
-@Composable
-private fun ForgotPasswordResetPreview() {
-    TreeTaskTheme {
-        ForgotPasswordScreen(
-            state =
-                ForgotPasswordState(
-                    step = ForgotPasswordStep.ResetInput,
-                    email = "demo@gmail.com",
-                    otp = "123456",
-                    newPassword = "password123",
-                ),
-            onEvent = {},
-            onForgotPasswordBack = {},
-        )
-    }
+private object ForgotPasswordMessageIds {
+    val Error = AppMessageId("forgot-password-error")
+    val EmailSent = AppMessageId("forgot-password-email-sent")
+    val ResetSuccess = AppMessageId("forgot-password-reset-success")
 }

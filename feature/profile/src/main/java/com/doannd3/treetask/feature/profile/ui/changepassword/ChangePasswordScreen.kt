@@ -2,10 +2,8 @@ package com.doannd3.treetask.feature.profile.ui.changepassword
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.imePadding
-import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.rememberScrollState
@@ -23,8 +21,13 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.repeatOnLifecycle
 import com.doannd3.treetask.core.common.asString
+import com.doannd3.treetask.core.designsystem.component.AppLoadingDialog
 import com.doannd3.treetask.core.designsystem.component.CommonHeader
-import com.doannd3.treetask.core.designsystem.component.LocalGlobalAppState
+import com.doannd3.treetask.core.designsystem.component.message.AppDialogType
+import com.doannd3.treetask.core.designsystem.component.message.AppMessage
+import com.doannd3.treetask.core.designsystem.component.message.AppMessageDialogHost
+import com.doannd3.treetask.core.designsystem.component.message.AppMessageId
+import com.doannd3.treetask.core.designsystem.component.message.rememberAppMessageHostState
 import com.doannd3.treetask.core.designsystem.theme.AppPreviewLightDark
 import com.doannd3.treetask.core.designsystem.theme.TreeTaskTheme
 import com.doannd3.treetask.feature.profile.R
@@ -36,9 +39,9 @@ fun ChangePasswordRoute(
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
 
-    val globalAppState = LocalGlobalAppState.current
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
+    val messageHostState = rememberAppMessageHostState()
 
     ChangePasswordScreen(
         state = state,
@@ -46,18 +49,37 @@ fun ChangePasswordRoute(
         onNavigateBack = onNavigateBack,
     )
 
+    AppMessageDialogHost(
+        state = messageHostState,
+        onAcknowledged = { message ->
+            if (message.id == ChangePasswordMessageIds.Success) {
+                viewModel.onEvent(ChangePasswordEvent.SuccessAcknowledged)
+            }
+        },
+    )
+
     LaunchedEffect(viewModel.effect, lifecycleOwner) {
         lifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
             viewModel.effect.collect { effect ->
                 when (effect) {
                     is ChangePasswordEffect.ShowErrorMessage -> {
-                        globalAppState.showError(effect.message.asString(context))
+                        messageHostState.enqueue(
+                            AppMessage(
+                                id = ChangePasswordMessageIds.Error,
+                                message = effect.message.asString(context),
+                                type = AppDialogType.Error,
+                            ),
+                        )
                     }
 
                     is ChangePasswordEffect.ShowSuccessMessage -> {
-                        globalAppState.showSuccess(effect.message.asString(context)) {
-                            viewModel.onEvent(ChangePasswordEvent.SuccessAcknowledged)
-                        }
+                        messageHostState.enqueue(
+                            AppMessage(
+                                id = ChangePasswordMessageIds.Success,
+                                message = effect.message.asString(context),
+                                type = AppDialogType.Success,
+                            ),
+                        )
                     }
 
                     is ChangePasswordEffect.NavigateBack -> {
@@ -71,16 +93,14 @@ fun ChangePasswordRoute(
     LaunchedEffect(viewModel.baseErrorEffect, lifecycleOwner) {
         lifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
             viewModel.baseErrorEffect.collect { message ->
-                globalAppState.showError(message.asString(context))
+                messageHostState.enqueue(
+                    AppMessage(
+                        id = ChangePasswordMessageIds.Error,
+                        message = message.asString(context),
+                        type = AppDialogType.Error,
+                    ),
+                )
             }
-        }
-    }
-
-    LaunchedEffect(state.isLoading) {
-        if (state.isLoading) {
-            globalAppState.showLoading()
-        } else {
-            globalAppState.hideLoading()
         }
     }
 }
@@ -93,9 +113,7 @@ internal fun ChangePasswordScreen(
 ) {
     Scaffold(
         contentWindowInsets =
-            WindowInsets.safeDrawing.only(
-                WindowInsetsSides.Horizontal + WindowInsetsSides.Bottom,
-            ),
+        WindowInsets.safeDrawing,
         topBar = {
             CommonHeader(
                 title = stringResource(R.string.profile_change_password_title),
@@ -104,31 +122,13 @@ internal fun ChangePasswordScreen(
         },
     ) { paddingValues ->
         ChangePasswordContent(
+            state = state,
+            onEvent = onEvent,
             modifier = Modifier.padding(paddingValues),
-            state = state,
-            onEvent = onEvent,
         )
     }
-}
 
-@Composable
-internal fun ChangePasswordContent(
-    modifier: Modifier = Modifier,
-    state: ChangePasswordState,
-    onEvent: (ChangePasswordEvent) -> Unit,
-) {
-    Column(
-        modifier =
-            modifier
-                .fillMaxSize()
-                .verticalScroll(rememberScrollState())
-                .imePadding(),
-    ) {
-        ChangePasswordForm(
-            state = state,
-            onEvent = onEvent,
-        )
-    }
+    AppLoadingDialog(isLoading = state.isLoading)
 }
 
 @AppPreviewLightDark
@@ -149,13 +149,38 @@ private fun ChangePasswordScreenFilledPreview() {
     TreeTaskTheme {
         ChangePasswordScreen(
             state =
-                ChangePasswordState(
-                    currentPassword = stringResource(R.string.profile_preview_current_password),
-                    newPassword = stringResource(R.string.profile_preview_new_password),
-                    confirmPassword = stringResource(R.string.profile_preview_new_password),
-                ),
+            ChangePasswordState(
+                currentPassword = stringResource(R.string.profile_preview_current_password),
+                newPassword = stringResource(R.string.profile_preview_new_password),
+                confirmPassword = stringResource(R.string.profile_preview_new_password),
+            ),
             onEvent = {},
             onNavigateBack = {},
         )
     }
+}
+
+@Composable
+internal fun ChangePasswordContent(
+    state: ChangePasswordState,
+    onEvent: (ChangePasswordEvent) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Column(
+        modifier =
+        modifier
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState())
+            .imePadding(),
+    ) {
+        ChangePasswordForm(
+            state = state,
+            onEvent = onEvent,
+        )
+    }
+}
+
+private object ChangePasswordMessageIds {
+    val Error = AppMessageId("change-password-error")
+    val Success = AppMessageId("change-password-success")
 }

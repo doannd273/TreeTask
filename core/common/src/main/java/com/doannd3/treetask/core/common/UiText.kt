@@ -18,7 +18,9 @@ sealed interface UiText {
 
 fun UiText.asString(context: Context): String {
     return when (this) {
-        is UiText.DynamicString -> value ?: context.getString(R.string.common_error_unknown)
+        is UiText.DynamicString -> {
+            value ?: context.getString(R.string.common_error_unknown)
+        }
 
         is UiText.StringResource -> {
             return when {

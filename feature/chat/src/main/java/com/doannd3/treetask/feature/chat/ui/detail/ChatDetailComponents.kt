@@ -56,10 +56,10 @@ internal fun ChatDetailLoadingState(modifier: Modifier = Modifier) {
     LazyColumn(
         modifier = modifier.fillMaxSize(),
         contentPadding =
-            PaddingValues(
-                horizontal = 16.dp,
-                vertical = 12.dp,
-            ),
+        PaddingValues(
+            horizontal = 16.dp,
+            vertical = 12.dp,
+        ),
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         items(
@@ -92,41 +92,41 @@ private fun ChatMessageLoadingBubble(placeholderColor: Color) {
     ) {
         Column(
             modifier =
-                Modifier.padding(
-                    horizontal = 14.dp,
-                    vertical = 10.dp,
-                ),
+            Modifier.padding(
+                horizontal = 14.dp,
+                vertical = 10.dp,
+            ),
             verticalArrangement = Arrangement.spacedBy(6.dp),
         ) {
             ChatDetailLoadingBlock(
                 modifier =
-                    Modifier
-                        .fillMaxWidth(0.42f)
-                        .height(14.dp),
+                Modifier
+                    .fillMaxWidth(0.42f)
+                    .height(14.dp),
                 color = placeholderColor,
             )
 
             ChatDetailLoadingBlock(
                 modifier =
-                    Modifier
-                        .fillMaxWidth()
-                        .height(18.dp),
+                Modifier
+                    .fillMaxWidth()
+                    .height(18.dp),
                 color = placeholderColor,
             )
 
             ChatDetailLoadingBlock(
                 modifier =
-                    Modifier
-                        .fillMaxWidth(0.72f)
-                        .height(18.dp),
+                Modifier
+                    .fillMaxWidth(0.72f)
+                    .height(18.dp),
                 color = placeholderColor,
             )
 
             ChatDetailLoadingBlock(
                 modifier =
-                    Modifier
-                        .width(46.dp)
-                        .height(12.dp),
+                Modifier
+                    .width(46.dp)
+                    .height(12.dp),
                 color = placeholderColor,
                 shape = RoundedCornerShape(4.dp),
             )
@@ -142,10 +142,10 @@ private fun ChatDetailLoadingBlock(
 ) {
     Box(
         modifier =
-            modifier.background(
-                color = color,
-                shape = shape,
-            ),
+        modifier.background(
+            color = color,
+            shape = shape,
+        ),
     )
 }
 
@@ -248,10 +248,10 @@ internal fun ChatMessageList(
     LazyColumn(
         modifier = modifier.fillMaxSize(),
         contentPadding =
-            PaddingValues(
-                horizontal = 16.dp,
-                vertical = 12.dp,
-            ),
+        PaddingValues(
+            horizontal = 16.dp,
+            vertical = 12.dp,
+        ),
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         if (isRefreshing) {
@@ -311,8 +311,8 @@ private fun ChatMessageListPreview() {
                 user = doan,
                 type = MessageType.TEXT,
                 content =
-                    "Almost done. I am checking the edge cases now, including a longer message " +
-                        "that should wrap without breaking the bubble layout.",
+                "Almost done. I am checking the edge cases now, including a longer message " +
+                    "that should wrap without breaking the bubble layout.",
                 createdAt = now.minusSeconds(3600),
             ),
         )
@@ -341,10 +341,10 @@ private fun ChatTypingIndicator() {
             Text(
                 text = stringResource(R.string.chat_typing_indicator),
                 modifier =
-                    Modifier.padding(
-                        horizontal = 14.dp,
-                        vertical = 8.dp,
-                    ),
+                Modifier.padding(
+                    horizontal = 14.dp,
+                    vertical = 8.dp,
+                ),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
@@ -394,10 +394,10 @@ private fun ChatMessageBubble(
         ) {
             Column(
                 modifier =
-                    Modifier.padding(
-                        horizontal = 14.dp,
-                        vertical = 10.dp,
-                    ),
+                Modifier.padding(
+                    horizontal = 14.dp,
+                    vertical = 10.dp,
+                ),
                 verticalArrangement = Arrangement.spacedBy(4.dp),
             ) {
                 Text(
@@ -435,9 +435,9 @@ internal fun ChatMessageComposer(
 
     Surface(
         modifier =
-            modifier
-                .fillMaxWidth()
-                .imePadding(),
+        modifier
+            .fillMaxWidth()
+            .imePadding(),
         color = MaterialTheme.colorScheme.surface,
     ) {
         Column {
@@ -445,9 +445,9 @@ internal fun ChatMessageComposer(
 
             Row(
                 modifier =
-                    Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 12.dp, vertical = 8.dp),
+                Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 12.dp, vertical = 8.dp),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
             ) {
@@ -463,17 +463,17 @@ internal fun ChatMessageComposer(
                     minLines = 1,
                     maxLines = 4,
                     keyboardOptions =
-                        KeyboardOptions(
-                            imeAction = ImeAction.Send,
-                        ),
+                    KeyboardOptions(
+                        imeAction = ImeAction.Send,
+                    ),
                     keyboardActions =
-                        KeyboardActions(
-                            onSend = {
-                                if (canSend) {
-                                    onSendClick()
-                                }
-                            },
-                        ),
+                    KeyboardActions(
+                        onSend = {
+                            if (canSend) {
+                                onSendClick()
+                            }
+                        },
+                    ),
                 )
 
                 FilledIconButton(

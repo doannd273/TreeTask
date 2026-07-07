@@ -2,6 +2,7 @@ package com.doannd3.treetask.feature.chat.ui.detail
 
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -16,7 +17,11 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.repeatOnLifecycle
 import com.doannd3.treetask.core.common.asString
 import com.doannd3.treetask.core.designsystem.component.CommonHeader
-import com.doannd3.treetask.core.designsystem.component.LocalGlobalAppState
+import com.doannd3.treetask.core.designsystem.component.message.AppDialogType
+import com.doannd3.treetask.core.designsystem.component.message.AppMessage
+import com.doannd3.treetask.core.designsystem.component.message.AppMessageDialogHost
+import com.doannd3.treetask.core.designsystem.component.message.AppMessageId
+import com.doannd3.treetask.core.designsystem.component.message.rememberAppMessageHostState
 import com.doannd3.treetask.core.designsystem.theme.AppPreviewLightDark
 import com.doannd3.treetask.core.designsystem.theme.TreeTaskTheme
 import com.doannd3.treetask.core.model.chat.Message
@@ -34,11 +39,16 @@ fun ChatDetailRoute(
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
 
-    val globalAppState = LocalGlobalAppState.current
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
+    val messageHostState = rememberAppMessageHostState()
 
     ChatDetailScreen(state = state, onEvent = viewModel::onEvent)
+
+    AppMessageDialogHost(
+        state = messageHostState,
+        onAcknowledged = {},
+    )
 
     LaunchedEffect(conversationId) {
         viewModel.onEvent(ChatDetailEvent.LoadMessages(conversationId = conversationId))
@@ -61,7 +71,13 @@ fun ChatDetailRoute(
             viewModel.effect.collect { effect ->
                 when (effect) {
                     is ChatDetailEffect.ShowErrorMessage -> {
-                        globalAppState.showError(effect.message.asString(context = context))
+                        messageHostState.enqueue(
+                            AppMessage(
+                                id = ChatDetailMessageIds.Error,
+                                message = effect.message.asString(context),
+                                type = AppDialogType.Error,
+                            ),
+                        )
                     }
 
                     ChatDetailEffect.NavigateBack -> {
@@ -75,7 +91,13 @@ fun ChatDetailRoute(
     LaunchedEffect(viewModel.baseErrorEffect, lifecycleOwner) {
         lifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
             viewModel.baseErrorEffect.collect { message ->
-                globalAppState.showError(message.asString(context))
+                messageHostState.enqueue(
+                    AppMessage(
+                        id = ChatDetailMessageIds.Error,
+                        message = message.asString(context),
+                        type = AppDialogType.Error,
+                    ),
+                )
             }
         }
     }
@@ -86,8 +108,15 @@ internal fun ChatDetailScreen(
     state: ChatDetailState,
     onEvent: (ChatDetailEvent) -> Unit,
 ) {
+    val messages = state.messages
+    val isLoading = state.isLoading
+    val isRefreshing = state.isRefreshing
+    val hasInitialLoadError = state.hasInitialLoadError
+    val isTyping = state.typingUserId != null
+    val currentUserId = state.currentUserId
+
     Scaffold(
-        contentWindowInsets = WindowInsets(0, 0, 0, 0),
+        contentWindowInsets = WindowInsets.safeDrawing,
         topBar = {
             CommonHeader(
                 title = stringResource(R.string.chat_detail_title),
@@ -108,44 +137,15 @@ internal fun ChatDetailScreen(
         },
     ) { paddingValues ->
         ChatDetailContent(
+            messages = messages,
+            isLoading = isLoading,
+            isRefreshing = isRefreshing,
+            hasInitialLoadError = hasInitialLoadError,
+            isTyping = isTyping,
+            currentUserId = currentUserId,
+            onRetry = { onEvent(ChatDetailEvent.Refresh) },
             modifier = Modifier.padding(paddingValues = paddingValues),
-            state = state,
-            onEvent = onEvent,
         )
-    }
-}
-
-@Composable
-internal fun ChatDetailContent(
-    modifier: Modifier = Modifier,
-    state: ChatDetailState,
-    onEvent: (ChatDetailEvent) -> Unit,
-) {
-    when {
-        state.isLoading && state.messages.isEmpty() -> {
-            ChatDetailLoadingState(modifier = modifier)
-        }
-
-        state.hasInitialLoadError && state.messages.isEmpty() -> {
-            ChatDetailErrorState(
-                modifier = modifier,
-                onRetry = { onEvent(ChatDetailEvent.Refresh) },
-            )
-        }
-
-        state.messages.isEmpty() && state.typingUserId == null -> {
-            ChatDetailEmptyState(modifier = modifier)
-        }
-
-        else -> {
-            ChatMessageList(
-                modifier = modifier,
-                messages = state.messages,
-                isRefreshing = state.isRefreshing,
-                isTyping = state.typingUserId != null,
-                currentUserId = state.currentUserId,
-            )
-        }
     }
 }
 
@@ -155,15 +155,54 @@ private fun ChatDetailScreenPreview() {
     TreeTaskTheme {
         ChatDetailScreen(
             state =
-                ChatDetailState(
-                    conversationId = "conversation-preview",
-                    currentUserId = "user-doan",
-                    messages = chatDetailPreviewMessages(),
-                    draftMessage = "Can you review this task?",
-                    isSending = false,
-                ),
+            ChatDetailState(
+                conversationId = "conversation-preview",
+                currentUserId = "user-doan",
+                messages = chatDetailPreviewMessages(),
+                draftMessage = "Can you review this task?",
+                isSending = false,
+            ),
             onEvent = {},
         )
+    }
+}
+
+@Composable
+internal fun ChatDetailContent(
+    messages: List<Message>,
+    isLoading: Boolean,
+    isRefreshing: Boolean,
+    hasInitialLoadError: Boolean,
+    isTyping: Boolean,
+    currentUserId: String?,
+    onRetry: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    when {
+        isLoading && messages.isEmpty() -> {
+            ChatDetailLoadingState(modifier = modifier)
+        }
+
+        hasInitialLoadError && messages.isEmpty() -> {
+            ChatDetailErrorState(
+                modifier = modifier,
+                onRetry = onRetry,
+            )
+        }
+
+        messages.isEmpty() && !isTyping -> {
+            ChatDetailEmptyState(modifier = modifier)
+        }
+
+        else -> {
+            ChatMessageList(
+                modifier = modifier,
+                messages = messages,
+                isRefreshing = isRefreshing,
+                isTyping = isTyping,
+                currentUserId = currentUserId,
+            )
+        }
     }
 }
 
@@ -204,4 +243,8 @@ private fun chatDetailPreviewMessages(): List<Message> {
             createdAt = now.minusSeconds(600),
         ),
     )
+}
+
+private object ChatDetailMessageIds {
+    val Error = AppMessageId("chat-detail-error")
 }

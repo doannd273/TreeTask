@@ -9,4 +9,6 @@ android {
     namespace = "com.doannd3.treetask.core.designsystem"
     resourcePrefix = "designsystem_"
 }
-dependencies {}
+dependencies {
+    testImplementation(projects.core.testing)
+}

@@ -38,19 +38,19 @@ fun AppLoadingDialog(
     Dialog(
         onDismissRequest = { },
         properties =
-            DialogProperties(
-                dismissOnBackPress = false,
-                dismissOnClickOutside = false,
-                usePlatformDefaultWidth = false,
-            ),
+        DialogProperties(
+            dismissOnBackPress = false,
+            dismissOnClickOutside = false,
+            usePlatformDefaultWidth = false,
+        ),
     ) {
         Surface(
             modifier =
-                modifier
-                    .widthIn(min = 136.dp, max = 220.dp)
-                    .semantics(mergeDescendants = true) {
-                        contentDescription = loadingText
-                    },
+            modifier
+                .widthIn(min = 136.dp, max = 220.dp)
+                .semantics(mergeDescendants = true) {
+                    contentDescription = loadingText
+                },
             shape = RoundedCornerShape(20.dp),
             color = MaterialTheme.colorScheme.surface,
             tonalElevation = 8.dp,

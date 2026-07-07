@@ -8,20 +8,20 @@ import timber.log.Timber
 import javax.inject.Inject
 
 class AppInfoInitializer
-    @Inject
-    constructor() : AppInitializer {
-        override val priority = InitializationPriority.NORMAL
+@Inject
+constructor() : AppInitializer {
+    override val priority = InitializationPriority.NORMAL
 
-        override fun init(application: Application) {
-            if (!BuildConfig.DEBUG) return
+    override fun init(application: Application) {
+        if (!BuildConfig.DEBUG) return
 
-            val isEmulator =
-                Build.FINGERPRINT.contains("generic") ||
-                    Build.MODEL.contains("Emulator") ||
-                    Build.MODEL.contains("Android SDK")
+        val isEmulator =
+            Build.FINGERPRINT.contains("generic") ||
+                Build.MODEL.contains("Emulator") ||
+                Build.MODEL.contains("Android SDK")
 
-            Timber.tag(AppTag.APP_INFO).d(
-                """
+        Timber.tag(AppTag.APP_INFO).d(
+            """
                 ┌─────────────────────────────────────────┐
                 │              APP BUILD INFO              │
                 ├─────────────────────────────────────────┤
@@ -34,7 +34,7 @@ class AppInfoInitializer
                 │ Android    : ${Build.VERSION.RELEASE} (API ${Build.VERSION.SDK_INT})
                 │ Emulator   : $isEmulator
                 └─────────────────────────────────────────┘
-                """.trimIndent(),
-            )
-        }
+            """.trimIndent(),
+        )
     }
+}

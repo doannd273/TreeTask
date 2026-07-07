@@ -93,13 +93,13 @@ class SendMessageUseCaseTest {
             id = "message-id",
             conversationId = "conversation-id",
             user =
-                User(
-                    id = "user-id",
-                    email = "user@treetask.com",
-                    fullName = "Doan ND",
-                    avatar = null,
-                    phone = null,
-                ),
+            User(
+                id = "user-id",
+                email = "user@treetask.com",
+                fullName = "Doan ND",
+                avatar = null,
+                phone = null,
+            ),
             type = MessageType.TEXT,
             content = "Hello",
             createdAt = Instant.parse("2026-05-31T00:00:00Z"),

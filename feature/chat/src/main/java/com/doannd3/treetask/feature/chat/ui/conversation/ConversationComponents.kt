@@ -61,18 +61,18 @@ internal fun ConversationLoadingState(modifier: Modifier = Modifier) {
         item(key = "conversation_loading_header") {
             Row(
                 modifier =
-                    Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 16.dp, vertical = 14.dp),
+                Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp, vertical = 14.dp),
                 horizontalArrangement = Arrangement.spacedBy(12.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Box(
                     modifier =
-                        Modifier
-                            .size(48.dp)
-                            .clip(CircleShape)
-                            .background(MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.55f)),
+                    Modifier
+                        .size(48.dp)
+                        .clip(CircleShape)
+                        .background(MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.55f)),
                     contentAlignment = Alignment.Center,
                 ) {
                     CircularProgressIndicator(
@@ -89,16 +89,16 @@ internal fun ConversationLoadingState(modifier: Modifier = Modifier) {
                 ) {
                     ConversationLoadingBlock(
                         modifier =
-                            Modifier
-                                .fillMaxWidth(0.48f)
-                                .height(20.dp),
+                        Modifier
+                            .fillMaxWidth(0.48f)
+                            .height(20.dp),
                         color = placeholderColor,
                     )
                     ConversationLoadingBlock(
                         modifier =
-                            Modifier
-                                .fillMaxWidth(0.72f)
-                                .height(14.dp),
+                        Modifier
+                            .fillMaxWidth(0.72f)
+                            .height(14.dp),
                         color = placeholderColor,
                     )
                 }
@@ -266,14 +266,14 @@ private fun ConversationListPreview() {
                 creatorId = "u1",
                 participants = listOf(mockUser),
                 lastMessage =
-                    Message(
-                        id = "m1",
-                        conversationId = "c1",
-                        user = mockUser,
-                        type = MessageType.TEXT,
-                        content = "Hey, are you free tomorrow?",
-                        createdAt = now,
-                    ),
+                Message(
+                    id = "m1",
+                    conversationId = "c1",
+                    user = mockUser,
+                    type = MessageType.TEXT,
+                    content = "Hey, are you free tomorrow?",
+                    createdAt = now,
+                ),
                 lastMessageAt = now,
             ),
             Conversation(
@@ -283,14 +283,14 @@ private fun ConversationListPreview() {
                 creatorId = "u1",
                 participants = listOf(mockUser),
                 lastMessage =
-                    Message(
-                        id = "m2",
-                        conversationId = "c2",
-                        user = mockUser,
-                        type = MessageType.TEXT,
-                        content = "Sprint review at 3pm",
-                        createdAt = now.minusSeconds(3600),
-                    ),
+                Message(
+                    id = "m2",
+                    conversationId = "c2",
+                    user = mockUser,
+                    type = MessageType.TEXT,
+                    content = "Sprint review at 3pm",
+                    createdAt = now.minusSeconds(3600),
+                ),
                 lastMessageAt = now.minusSeconds(3600),
             ),
             Conversation(
@@ -340,11 +340,11 @@ internal fun ConversationRow(
 
     Row(
         modifier =
-            modifier
-                .fillMaxWidth()
-                .clickable(
-                    onClick = onClick,
-                ).padding(horizontal = 16.dp, vertical = 12.dp),
+        modifier
+            .fillMaxWidth()
+            .clickable(
+                onClick = onClick,
+            ).padding(horizontal = 16.dp, vertical = 12.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(12.dp),
     ) {
@@ -386,9 +386,9 @@ internal fun ConversationRow(
 private fun ConversationLoadingRow(placeholderColor: Color) {
     Row(
         modifier =
-            Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp, vertical = 12.dp),
+        Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp, vertical = 12.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(12.dp),
     ) {
@@ -404,16 +404,16 @@ private fun ConversationLoadingRow(placeholderColor: Color) {
         ) {
             ConversationLoadingBlock(
                 modifier =
-                    Modifier
-                        .fillMaxWidth(0.66f)
-                        .height(18.dp),
+                Modifier
+                    .fillMaxWidth(0.66f)
+                    .height(18.dp),
                 color = placeholderColor,
             )
             ConversationLoadingBlock(
                 modifier =
-                    Modifier
-                        .fillMaxWidth(0.92f)
-                        .height(14.dp),
+                Modifier
+                    .fillMaxWidth(0.92f)
+                    .height(14.dp),
                 color = placeholderColor,
             )
         }
@@ -422,9 +422,9 @@ private fun ConversationLoadingRow(placeholderColor: Color) {
 
         ConversationLoadingBlock(
             modifier =
-                Modifier
-                    .width(42.dp)
-                    .height(14.dp),
+            Modifier
+                .width(42.dp)
+                .height(14.dp),
             color = placeholderColor,
         )
     }
@@ -438,10 +438,10 @@ private fun ConversationLoadingBlock(
 ) {
     Box(
         modifier =
-            modifier.background(
-                color = color,
-                shape = shape,
-            ),
+        modifier.background(
+            color = color,
+            shape = shape,
+        ),
     )
 }
 
@@ -460,10 +460,10 @@ private fun ConversationAvatar(
 
     Box(
         modifier =
-            modifier
-                .size(48.dp)
-                .clip(CircleShape)
-                .background(MaterialTheme.colorScheme.primaryContainer),
+        modifier
+            .size(48.dp)
+            .clip(CircleShape)
+            .background(MaterialTheme.colorScheme.primaryContainer),
         contentAlignment = Alignment.Center,
     ) {
         Text(

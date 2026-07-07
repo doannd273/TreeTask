@@ -44,9 +44,14 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.itemContentType
 import androidx.paging.compose.itemKey
 import com.doannd3.treetask.core.common.asString
+import com.doannd3.treetask.core.designsystem.component.AppLoadingDialog
 import com.doannd3.treetask.core.designsystem.component.CommonConfirmDialog
 import com.doannd3.treetask.core.designsystem.component.CommonSearch
-import com.doannd3.treetask.core.designsystem.component.LocalGlobalAppState
+import com.doannd3.treetask.core.designsystem.component.message.AppDialogType
+import com.doannd3.treetask.core.designsystem.component.message.AppMessage
+import com.doannd3.treetask.core.designsystem.component.message.AppMessageDialogHost
+import com.doannd3.treetask.core.designsystem.component.message.AppMessageId
+import com.doannd3.treetask.core.designsystem.component.message.rememberAppMessageHostState
 import com.doannd3.treetask.core.designsystem.theme.AppPreviewLightDark
 import com.doannd3.treetask.core.designsystem.theme.TreeTaskTheme
 import com.doannd3.treetask.core.model.task.Task
@@ -68,9 +73,9 @@ fun TasksRoute(
 
     val pagingItems = state.tasks.collectAsLazyPagingItems()
 
-    val globalAppState = LocalGlobalAppState.current
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
+    val messageHostState = rememberAppMessageHostState()
 
     val permissionChecker =
         remember(context) {
@@ -98,7 +103,9 @@ fun TasksRoute(
 
             PermissionStatus.Granted,
             PermissionStatus.NotRequired,
-            -> Unit
+            -> {
+                Unit
+            }
         }
     }
 
@@ -110,13 +117,23 @@ fun TasksRoute(
         onAddTaskClick = onAddTaskClick,
     )
 
+    AppMessageDialogHost(
+        state = messageHostState,
+        onAcknowledged = {},
+    )
+
     LaunchedEffect(viewModel.effect, lifecycleOwner) {
         lifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
             viewModel.effect.collect { effect ->
                 when (effect) {
                     is TasksEffect.ShowErrorMessage -> {
-                        val errorStr = effect.message.asString(context)
-                        globalAppState.showError(errorStr)
+                        messageHostState.enqueue(
+                            AppMessage(
+                                id = TasksMessageIds.Error,
+                                message = effect.message.asString(context),
+                                type = AppDialogType.Error,
+                            ),
+                        )
                     }
                 }
             }
@@ -127,16 +144,14 @@ fun TasksRoute(
     LaunchedEffect(viewModel.baseErrorEffect, lifecycleOwner) {
         lifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
             viewModel.baseErrorEffect.collect { message ->
-                globalAppState.showError(message.asString(context))
+                messageHostState.enqueue(
+                    AppMessage(
+                        id = TasksMessageIds.Error,
+                        message = message.asString(context),
+                        type = AppDialogType.Error,
+                    ),
+                )
             }
-        }
-    }
-
-    LaunchedEffect(state.isLoading) {
-        if (state.isLoading) {
-            globalAppState.showLoading()
-        } else {
-            globalAppState.hideLoading()
         }
     }
 }
@@ -149,6 +164,11 @@ internal fun TasksScreen(
     onTaskClick: (Task) -> Unit,
     onAddTaskClick: () -> Unit,
 ) {
+    val searchQuery = state.searchQuery
+    val taskStatusSelected = state.taskStatusSelected
+    val isLoadingSearch =
+        searchQuery.isNotBlank() && pagingItems.loadState.refresh is LoadState.Loading
+
     Scaffold(
         contentWindowInsets = WindowInsets.safeDrawing,
         floatingActionButton = {
@@ -163,151 +183,17 @@ internal fun TasksScreen(
         },
     ) { paddingValues ->
         TasksContent(
-            modifier = Modifier.padding(bottom = paddingValues.calculateBottomPadding()),
-            state = state,
+            searchQuery = searchQuery,
+            isLoadingSearch = isLoadingSearch,
+            taskStatusSelected = taskStatusSelected,
             pagingItems = pagingItems,
             onEvent = onEvent,
             onTaskClick = onTaskClick,
-        )
-    }
-}
-
-@Composable
-internal fun TasksContent(
-    modifier: Modifier = Modifier,
-    state: TasksState,
-    pagingItems: LazyPagingItems<Task>,
-    onEvent: (TasksEvent) -> Unit,
-    onTaskClick: (Task) -> Unit,
-) {
-    var showConfirmDialog by remember { mutableStateOf(false) }
-    var taskIdToDelete by remember { mutableStateOf<String?>(null) }
-
-    if (showConfirmDialog && taskIdToDelete != null) {
-        CommonConfirmDialog(
-            title = stringResource(R.string.tasks_delete_task_confirm_title),
-            message = stringResource(R.string.tasks_delete_task_confirm_message),
-            confirmLabel = stringResource(R.string.tasks_delete_task_confirm_button),
-            cancelLabel = stringResource(R.string.tasks_delete_task_cancel_button),
-            onConfirm = {
-                onEvent(TasksEvent.DeleteTask(taskIdToDelete!!))
-                showConfirmDialog = false
-                taskIdToDelete = null
-            },
-            onDismiss = {
-                showConfirmDialog = false
-                taskIdToDelete = null
-            },
+            modifier = Modifier.padding(paddingValues = paddingValues),
         )
     }
 
-    Column(
-        modifier =
-            modifier
-                .fillMaxSize()
-                .padding(16.dp),
-        verticalArrangement = Arrangement.Top,
-    ) {
-        CommonSearch(
-            hintText = R.string.tasks_search_hint,
-            isLoadingSearch = state.isLoadingSearch,
-            searchQuery = state.searchQuery,
-            onSearchChange = { onEvent(TasksEvent.SearchChanged(it)) },
-            onClearClick = { onEvent(TasksEvent.SearchQueryClear) },
-        )
-
-        TaskStatusChips(
-            taskStatusSelected = state.taskStatusSelected,
-            onFilterSelect = { onEvent(TasksEvent.FilterSelected(it)) },
-        )
-
-        if (pagingItems.itemCount == 0 && pagingItems.loadState.refresh is LoadState.NotLoading) {
-            TasksEmptyState(
-                modifier =
-                    Modifier
-                        .fillMaxWidth()
-                        .weight(1f),
-            )
-        }
-
-        LazyColumn(
-            modifier = Modifier.padding(top = 6.dp),
-        ) {
-            items(
-                count = pagingItems.itemCount,
-                key = pagingItems.itemKey { it.id },
-                contentType = pagingItems.itemContentType { "task" },
-            ) { index ->
-                val task = pagingItems[index] ?: return@items
-                SwipeToDeleteTaskItem(
-                    task = task,
-                    onClick = { onTaskClick(task) },
-                    onDeleteClick = {
-                        taskIdToDelete = task.id
-                        showConfirmDialog = true
-                    },
-                )
-            }
-
-            pagingItems.apply {
-                when {
-                    loadState.refresh is LoadState.Loading -> {
-                        item {
-                            Box(
-                                modifier = Modifier.fillParentMaxSize(),
-                                contentAlignment = Alignment.Center,
-                            ) {
-                                CircularProgressIndicator()
-                            }
-                        }
-                    }
-
-                    loadState.refresh is LoadState.Error -> {
-                        item {
-                            Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                                Text(
-                                    text = stringResource(R.string.tasks_refresh_error_message),
-                                    style = MaterialTheme.typography.bodyMedium,
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                    textAlign = TextAlign.Center,
-                                )
-                                TextButton(onClick = { retry() }) {
-                                    Text(text = stringResource(R.string.tasks_error_retry)) // "Connection error. Retry"
-                                }
-                            }
-                        }
-                    }
-
-                    loadState.append is LoadState.Loading -> {
-                        item {
-                            Box(
-                                modifier =
-                                    Modifier
-                                        .fillMaxWidth()
-                                        .padding(16.dp),
-                                contentAlignment = Alignment.Center,
-                            ) {
-                                CircularProgressIndicator()
-                            }
-                        }
-                    }
-
-                    loadState.append is LoadState.Error -> {
-                        item {
-                            Box(
-                                modifier = Modifier.fillMaxWidth(),
-                                contentAlignment = Alignment.Center,
-                            ) {
-                                TextButton(onClick = { retry() }) {
-                                    Text(text = stringResource(R.string.tasks_error_retry))
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
+    AppLoadingDialog(isLoading = state.isLoading)
 }
 
 @AppPreviewLightDark
@@ -356,4 +242,181 @@ private fun TasksScreenPreview() {
             onAddTaskClick = {},
         )
     }
+}
+
+@Composable
+internal fun TasksContent(
+    searchQuery: String,
+    isLoadingSearch: Boolean,
+    taskStatusSelected: TaskStatus?,
+    pagingItems: LazyPagingItems<Task>,
+    onEvent: (TasksEvent) -> Unit,
+    onTaskClick: (Task) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    var showConfirmDialog by remember { mutableStateOf(false) }
+    var taskIdToDelete by remember { mutableStateOf<String?>(null) }
+
+    if (showConfirmDialog && taskIdToDelete != null) {
+        CommonConfirmDialog(
+            title = stringResource(R.string.tasks_delete_task_confirm_title),
+            message = stringResource(R.string.tasks_delete_task_confirm_message),
+            confirmLabel = stringResource(R.string.tasks_delete_task_confirm_button),
+            cancelLabel = stringResource(R.string.tasks_delete_task_cancel_button),
+            onConfirm = {
+                onEvent(TasksEvent.DeleteTask(taskIdToDelete!!))
+                showConfirmDialog = false
+                taskIdToDelete = null
+            },
+            onDismiss = {
+                showConfirmDialog = false
+                taskIdToDelete = null
+            },
+        )
+    }
+
+    Column(
+        modifier =
+        modifier
+            .fillMaxSize()
+            .padding(16.dp),
+        verticalArrangement = Arrangement.Top,
+    ) {
+        TasksSearchAndFilters(
+            searchQuery = searchQuery,
+            isLoadingSearch = isLoadingSearch,
+            taskStatusSelected = taskStatusSelected,
+            onSearchChange = { onEvent(TasksEvent.SearchChanged(it)) },
+            onSearchClear = { onEvent(TasksEvent.SearchQueryClear) },
+            onFilterSelect = { onEvent(TasksEvent.FilterSelected(it)) },
+        )
+
+        TasksPagingContent(
+            pagingItems = pagingItems,
+            onTaskClick = onTaskClick,
+            onDeleteClick = { taskId ->
+                taskIdToDelete = taskId
+                showConfirmDialog = true
+            },
+            modifier =
+            Modifier
+                .fillMaxWidth()
+                .weight(1f),
+        )
+    }
+}
+
+@Composable
+private fun TasksSearchAndFilters(
+    searchQuery: String,
+    isLoadingSearch: Boolean,
+    taskStatusSelected: TaskStatus?,
+    onSearchChange: (String) -> Unit,
+    onSearchClear: () -> Unit,
+    onFilterSelect: (TaskStatus?) -> Unit,
+) {
+    CommonSearch(
+        hintText = R.string.tasks_search_hint,
+        isLoadingSearch = isLoadingSearch,
+        searchQuery = searchQuery,
+        onSearchChange = onSearchChange,
+        onClearClick = onSearchClear,
+    )
+
+    TaskStatusChips(
+        taskStatusSelected = taskStatusSelected,
+        onFilterSelect = onFilterSelect,
+    )
+}
+
+@Composable
+private fun TasksPagingContent(
+    pagingItems: LazyPagingItems<Task>,
+    onTaskClick: (Task) -> Unit,
+    onDeleteClick: (String) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    if (pagingItems.itemCount == 0 && pagingItems.loadState.refresh is LoadState.NotLoading) {
+        TasksEmptyState(modifier = modifier)
+        return
+    }
+
+    LazyColumn(
+        modifier = modifier.padding(top = 6.dp),
+    ) {
+        items(
+            count = pagingItems.itemCount,
+            key = pagingItems.itemKey { it.id },
+            contentType = pagingItems.itemContentType { "task" },
+        ) { index ->
+            val task = pagingItems[index] ?: return@items
+            SwipeToDeleteTaskItem(
+                task = task,
+                onClick = { onTaskClick(task) },
+                onDeleteClick = { onDeleteClick(task.id) },
+            )
+        }
+
+        pagingItems.apply {
+            when {
+                loadState.refresh is LoadState.Loading -> {
+                    item {
+                        Box(
+                            modifier = Modifier.fillParentMaxSize(),
+                            contentAlignment = Alignment.Center,
+                        ) {
+                            CircularProgressIndicator()
+                        }
+                    }
+                }
+
+                loadState.refresh is LoadState.Error -> {
+                    item {
+                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                            Text(
+                                text = stringResource(R.string.tasks_refresh_error_message),
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                textAlign = TextAlign.Center,
+                            )
+                            TextButton(onClick = { retry() }) {
+                                Text(text = stringResource(R.string.tasks_error_retry))
+                            }
+                        }
+                    }
+                }
+
+                loadState.append is LoadState.Loading -> {
+                    item {
+                        Box(
+                            modifier =
+                            Modifier
+                                .fillMaxWidth()
+                                .padding(16.dp),
+                            contentAlignment = Alignment.Center,
+                        ) {
+                            CircularProgressIndicator()
+                        }
+                    }
+                }
+
+                loadState.append is LoadState.Error -> {
+                    item {
+                        Box(
+                            modifier = Modifier.fillMaxWidth(),
+                            contentAlignment = Alignment.Center,
+                        ) {
+                            TextButton(onClick = { retry() }) {
+                                Text(text = stringResource(R.string.tasks_error_retry))
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+private object TasksMessageIds {
+    val Error = AppMessageId("tasks-error")
 }

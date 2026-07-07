@@ -6,27 +6,25 @@ import com.doannd3.treetask.core.domain.repository.ChatRealtimeRepository
 import com.doannd3.treetask.core.domain.validation.validationError
 import javax.inject.Inject
 
-class StartChatConversationRealtimeUseCase
-    @Inject
-    constructor(
-        private val chatRealtimeRepository: ChatRealtimeRepository,
-    ) {
-        suspend operator fun invoke(conversationId: String): ApiResult<Unit> {
-            if (conversationId.isBlank()) {
-                return validationError(R.string.common_error_conversation_id_empty)
-            }
-
-            val connectResult = chatRealtimeRepository.connect()
-            if (connectResult is ApiResult.Error) {
-                return connectResult
-            }
-
-            val joinResult =
-                chatRealtimeRepository.joinConversation(conversationId = conversationId)
-            if (joinResult is ApiResult.Error) {
-                chatRealtimeRepository.disconnect()
-            }
-
-            return joinResult
+class StartChatConversationRealtimeUseCase @Inject constructor(
+    private val chatRealtimeRepository: ChatRealtimeRepository,
+) {
+    suspend operator fun invoke(conversationId: String): ApiResult<Unit> {
+        if (conversationId.isBlank()) {
+            return validationError(R.string.common_error_conversation_id_empty)
         }
+
+        val connectResult = chatRealtimeRepository.connect()
+        if (connectResult is ApiResult.Error) {
+            return connectResult
+        }
+
+        val joinResult =
+            chatRealtimeRepository.joinConversation(conversationId = conversationId)
+        if (joinResult is ApiResult.Error) {
+            chatRealtimeRepository.disconnect()
+        }
+
+        return joinResult
     }
+}

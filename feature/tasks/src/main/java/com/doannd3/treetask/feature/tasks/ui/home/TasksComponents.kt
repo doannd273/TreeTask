@@ -113,9 +113,9 @@ private fun TasksEmptyStatePreview() {
     TreeTaskTheme {
         TasksEmptyState(
             modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .padding(32.dp),
+            Modifier
+                .fillMaxWidth()
+                .padding(32.dp),
         )
     }
 }
@@ -148,10 +148,10 @@ internal fun SwipeToDeleteTaskItem(
             val isActive = dismissState.dismissDirection == SwipeToDismissBoxValue.EndToStart
             Box(
                 modifier =
-                    Modifier
-                        .fillMaxSize()
-                        .background(if (isActive) MaterialTheme.colorScheme.error else Color.Transparent)
-                        .padding(end = 16.dp),
+                Modifier
+                    .fillMaxSize()
+                    .background(if (isActive) MaterialTheme.colorScheme.error else Color.Transparent)
+                    .padding(end = 16.dp),
                 contentAlignment = Alignment.CenterEnd,
             ) {
                 if (isActive) {
@@ -182,9 +182,9 @@ internal fun TaskItem(
     Card(
         onClick = onClick,
         modifier =
-            modifier
-                .fillMaxWidth()
-                .padding(vertical = 6.dp),
+        modifier
+            .fillMaxWidth()
+            .padding(vertical = 6.dp),
         shape = RoundedCornerShape(12.dp),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
@@ -255,12 +255,12 @@ internal fun StatusBadge(status: TaskStatus) {
 
     Row(
         modifier =
-            Modifier
-                .background(
-                    shape = RoundedCornerShape(3.dp),
-                    color = colors.containerColor,
-                )
-                .padding(vertical = 4.dp, horizontal = 8.dp),
+        Modifier
+            .background(
+                shape = RoundedCornerShape(3.dp),
+                color = colors.containerColor,
+            )
+            .padding(vertical = 4.dp, horizontal = 8.dp),
     ) {
         Text(
             text = stringResource(status.labelRes()),
@@ -284,16 +284,16 @@ private fun TaskItemPreview() {
     TreeTaskTheme {
         TaskItem(
             task =
-                Task(
-                    id = "1",
-                    userId = "user_1",
-                    title = "Fix login bug",
-                    description = "Crash when login with Google",
-                    status = TaskStatus.IN_PROGRESS,
-                    dueDate = Instant.parse("2026-04-20T10:00:00Z"),
-                    createdAt = Instant.parse("2026-04-10T08:00:00Z"),
-                    updatedAt = Instant.parse("2026-04-15T09:00:00Z"),
-                ),
+            Task(
+                id = "1",
+                userId = "user_1",
+                title = "Fix login bug",
+                description = "Crash when login with Google",
+                status = TaskStatus.IN_PROGRESS,
+                dueDate = Instant.parse("2026-04-20T10:00:00Z"),
+                createdAt = Instant.parse("2026-04-10T08:00:00Z"),
+                updatedAt = Instant.parse("2026-04-15T09:00:00Z"),
+            ),
             onClick = {},
             onDeleteClick = {},
         )

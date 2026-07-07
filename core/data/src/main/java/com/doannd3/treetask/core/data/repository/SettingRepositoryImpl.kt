@@ -8,22 +8,22 @@ import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 class SettingRepositoryImpl
-    @Inject
-    constructor(
-        private val appLanguageStorage: AppLanguageStorage,
-        private val darkModeStorage: DarkModeStorage,
-    ) : SettingRepository {
-        override fun getCachedAppLanguage(): Flow<AppLanguage> = appLanguageStorage.getAppLanguage()
+@Inject
+constructor(
+    private val appLanguageStorage: AppLanguageStorage,
+    private val darkModeStorage: DarkModeStorage,
+) : SettingRepository {
+    override fun getCachedAppLanguage(): Flow<AppLanguage> = appLanguageStorage.getAppLanguage()
 
-        override suspend fun saveAppLanguage(appLanguage: AppLanguage) {
-            appLanguageStorage.saveAppLanguage(appLanguage)
-        }
-
-        override fun getCachedDarkMode(): Flow<Boolean> {
-            return darkModeStorage.getDarkMode()
-        }
-
-        override suspend fun saveDarkMode(isDarkMode: Boolean) {
-            darkModeStorage.saveDarkMode(isDarkMode)
-        }
+    override suspend fun saveAppLanguage(appLanguage: AppLanguage) {
+        appLanguageStorage.saveAppLanguage(appLanguage)
     }
+
+    override fun getCachedDarkMode(): Flow<Boolean> {
+        return darkModeStorage.getDarkMode()
+    }
+
+    override suspend fun saveDarkMode(isDarkMode: Boolean) {
+        darkModeStorage.saveDarkMode(isDarkMode)
+    }
+}

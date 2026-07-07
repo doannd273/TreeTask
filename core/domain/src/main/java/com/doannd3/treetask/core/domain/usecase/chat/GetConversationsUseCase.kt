@@ -6,22 +6,20 @@ import com.doannd3.treetask.core.domain.validation.validatePagination
 import com.doannd3.treetask.core.model.chat.Conversation
 import javax.inject.Inject
 
-class GetConversationsUseCase
-    @Inject
-    constructor(
-        private val chatRepository: ChatRepository,
-    ) {
-        suspend operator fun invoke(
-            page: Int,
-            limit: Int,
-        ): ApiResult<List<Conversation>> {
-            validatePagination(page = page, limit = limit)?.let { error ->
-                return error
-            }
-
-            return chatRepository.getConversations(
-                page = page,
-                limit = limit,
-            )
+class GetConversationsUseCase @Inject constructor(
+    private val chatRepository: ChatRepository,
+) {
+    suspend operator fun invoke(
+        page: Int,
+        limit: Int,
+    ): ApiResult<List<Conversation>> {
+        validatePagination(page = page, limit = limit)?.let { error ->
+            return error
         }
+
+        return chatRepository.getConversations(
+            page = page,
+            limit = limit,
+        )
     }
+}

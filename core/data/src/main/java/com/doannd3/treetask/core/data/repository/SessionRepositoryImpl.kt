@@ -6,11 +6,11 @@ import kotlinx.coroutines.flow.first
 import javax.inject.Inject
 
 class SessionRepositoryImpl
-    @Inject
-    constructor(
-        private val tokenStorage: TokenStorage,
-    ) : SessionRepository {
-        override suspend fun hasStoredSession(): Boolean {
-            return !tokenStorage.getAccessToken().first().isNullOrBlank()
-        }
+@Inject
+constructor(
+    private val tokenStorage: TokenStorage,
+) : SessionRepository {
+    override suspend fun hasStoredSession(): Boolean {
+        return !tokenStorage.getAccessToken().first().isNullOrBlank()
     }
+}

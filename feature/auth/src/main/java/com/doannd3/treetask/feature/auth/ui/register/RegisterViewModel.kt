@@ -21,92 +21,90 @@ import com.doannd3.treetask.core.common.R as CommonR
 import com.doannd3.treetask.feature.auth.R as AuthR
 
 @HiltViewModel
-class RegisterViewModel
-    @Inject
-    constructor(
-        private val registerUseCase: RegisterUseCase,
-    ) : BaseViewModel(), MviViewModel<RegisterState, RegisterEvent, RegisterEffect> {
-        private val _uiState = MutableStateFlow(RegisterState())
-        override val uiState: StateFlow<RegisterState> = _uiState.asStateFlow()
+class RegisterViewModel @Inject constructor(
+    private val registerUseCase: RegisterUseCase,
+) : BaseViewModel(), MviViewModel<RegisterState, RegisterEvent, RegisterEffect> {
+    private val _uiState = MutableStateFlow(RegisterState())
+    override val uiState: StateFlow<RegisterState> = _uiState.asStateFlow()
 
-        private val _effect = MutableSharedFlow<RegisterEffect>()
-        override val effect: SharedFlow<RegisterEffect> = _effect.asSharedFlow()
+    private val _effect = MutableSharedFlow<RegisterEffect>()
+    override val effect: SharedFlow<RegisterEffect> = _effect.asSharedFlow()
 
-        override fun onEvent(event: RegisterEvent) {
-            when (event) {
-                is RegisterEvent.FullNameChanged -> {
-                    _uiState.update { it.copy(fullName = event.fullName) }
-                }
-                is RegisterEvent.EmailChanged -> {
-                    _uiState.update { it.copy(email = event.email) }
-                }
-                is RegisterEvent.PasswordChanged -> {
-                    _uiState.update { it.copy(password = event.password) }
-                }
-                is RegisterEvent.SubmitRegister -> {
-                    submitRegister()
-                }
-                is RegisterEvent.PasswordVisibleChanged -> {
-                    _uiState.update { it.copy(passwordVisible = event.passwordVisible) }
-                }
-                is RegisterEvent.SuccessAcknowledged -> {
-                    viewModelScope.launch {
-                        _effect.emit(RegisterEffect.NavigateToHome)
-                    }
-                }
-                is RegisterEvent.ConfirmPasswordChanged -> {
-                    _uiState.update { it.copy(confirmPassword = event.confirmPassword) }
-                }
-                is RegisterEvent.ConfirmPasswordVisibleChanged -> {
-                    _uiState.update { it.copy(confirmPasswordVisible = event.confirmPasswordVisible) }
-                }
+    override fun onEvent(event: RegisterEvent) {
+        when (event) {
+            is RegisterEvent.FullNameChanged -> {
+                _uiState.update { it.copy(fullName = event.fullName) }
             }
-        }
-
-        private fun submitRegister() {
-            val state = uiState.value
-
-            if (state.isLoading) {
-                return
+            is RegisterEvent.EmailChanged -> {
+                _uiState.update { it.copy(email = event.email) }
             }
-
-            if (state.password != state.confirmPassword) {
+            is RegisterEvent.PasswordChanged -> {
+                _uiState.update { it.copy(password = event.password) }
+            }
+            is RegisterEvent.SubmitRegister -> {
+                submitRegister()
+            }
+            is RegisterEvent.PasswordVisibleChanged -> {
+                _uiState.update { it.copy(passwordVisible = event.passwordVisible) }
+            }
+            is RegisterEvent.SuccessAcknowledged -> {
                 viewModelScope.launch {
-                    _effect.emit(
-                        RegisterEffect.ShowErrorMessage(
-                            UiText.StringResource(AuthR.string.auth_error_password_mismatch),
-                        ),
-                    )
-                }
-                return
-            }
-
-            executeSafe {
-                _uiState.update { it.copy(isLoading = true) }
-
-                val result = registerUseCase(state.fullName, state.email, state.password)
-
-                _uiState.update { it.copy(isLoading = false) }
-
-                when (result) {
-                    is ApiResult.Success -> {
-                        val message =
-                            result.message
-                                ?: UiText.StringResource(AuthR.string.auth_register_success)
-                        _effect.emit(RegisterEffect.ShowSuccessMessage(message))
-                    }
-                    is ApiResult.Error -> {
-                        val message =
-                            result.toDisplayMessage(
-                                UiText.StringResource(CommonR.string.common_error_unknown),
-                            )
-                        _effect.emit(RegisterEffect.ShowErrorMessage(message))
-                    }
+                    _effect.emit(RegisterEffect.NavigateToHome)
                 }
             }
-        }
-
-        override fun setLoading(isLoading: Boolean) {
-            _uiState.update { it.copy(isLoading = isLoading) }
+            is RegisterEvent.ConfirmPasswordChanged -> {
+                _uiState.update { it.copy(confirmPassword = event.confirmPassword) }
+            }
+            is RegisterEvent.ConfirmPasswordVisibleChanged -> {
+                _uiState.update { it.copy(confirmPasswordVisible = event.confirmPasswordVisible) }
+            }
         }
     }
+
+    private fun submitRegister() {
+        val state = uiState.value
+
+        if (state.isLoading) {
+            return
+        }
+
+        if (state.password != state.confirmPassword) {
+            viewModelScope.launch {
+                _effect.emit(
+                    RegisterEffect.ShowErrorMessage(
+                        UiText.StringResource(AuthR.string.auth_error_password_mismatch),
+                    ),
+                )
+            }
+            return
+        }
+
+        executeSafe {
+            _uiState.update { it.copy(isLoading = true) }
+
+            val result = registerUseCase(state.fullName, state.email, state.password)
+
+            _uiState.update { it.copy(isLoading = false) }
+
+            when (result) {
+                is ApiResult.Success -> {
+                    val message =
+                        result.message
+                            ?: UiText.StringResource(AuthR.string.auth_register_success)
+                    _effect.emit(RegisterEffect.ShowSuccessMessage(message))
+                }
+                is ApiResult.Error -> {
+                    val message =
+                        result.toDisplayMessage(
+                            UiText.StringResource(CommonR.string.common_error_unknown),
+                        )
+                    _effect.emit(RegisterEffect.ShowErrorMessage(message))
+                }
+            }
+        }
+    }
+
+    override fun setLoading(isLoading: Boolean) {
+        _uiState.update { it.copy(isLoading = isLoading) }
+    }
+}

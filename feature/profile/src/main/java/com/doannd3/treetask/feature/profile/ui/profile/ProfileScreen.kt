@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
@@ -26,8 +27,14 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.repeatOnLifecycle
 import com.doannd3.treetask.core.common.asString
-import com.doannd3.treetask.core.designsystem.component.LocalGlobalAppState
+import com.doannd3.treetask.core.designsystem.component.AppLoadingDialog
+import com.doannd3.treetask.core.designsystem.component.message.AppDialogType
+import com.doannd3.treetask.core.designsystem.component.message.AppMessage
+import com.doannd3.treetask.core.designsystem.component.message.AppMessageDialogHost
+import com.doannd3.treetask.core.designsystem.component.message.AppMessageId
+import com.doannd3.treetask.core.designsystem.component.message.rememberAppMessageHostState
 import com.doannd3.treetask.core.designsystem.theme.AppPreviewLightDark
+import com.doannd3.treetask.core.designsystem.theme.TreeTaskTheme
 import com.doannd3.treetask.core.designsystem.util.rememberDebouncedClick
 import com.doannd3.treetask.core.model.user.User
 import com.doannd3.treetask.feature.profile.R
@@ -41,13 +48,18 @@ fun ProfileRoute(
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
 
-    val globalAppState = LocalGlobalAppState.current
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
+    val messageHostState = rememberAppMessageHostState()
 
     ProfileScreen(
         state = state,
         onEvent = viewModel::onEvent,
+    )
+
+    AppMessageDialogHost(
+        state = messageHostState,
+        onAcknowledged = {},
     )
 
     LaunchedEffect(viewModel.effect, lifecycleOwner) {
@@ -59,8 +71,13 @@ fun ProfileRoute(
                     }
 
                     is ProfileEffect.ShowErrorMessage -> {
-                        val errorStr = effect.message.asString(context)
-                        globalAppState.showError(errorStr)
+                        messageHostState.enqueue(
+                            AppMessage(
+                                id = ProfileMessageIds.Error,
+                                message = effect.message.asString(context),
+                                type = AppDialogType.Error,
+                            ),
+                        )
                     }
 
                     ProfileEffect.NavigateToChangePassword -> {
@@ -78,16 +95,14 @@ fun ProfileRoute(
     LaunchedEffect(viewModel.baseErrorEffect, lifecycleOwner) {
         lifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
             viewModel.baseErrorEffect.collect { message ->
-                globalAppState.showError(message.asString(context))
+                messageHostState.enqueue(
+                    AppMessage(
+                        id = ProfileMessageIds.Error,
+                        message = message.asString(context),
+                        type = AppDialogType.Error,
+                    ),
+                )
             }
-        }
-    }
-
-    LaunchedEffect(state.isLoading) {
-        if (state.isLoading) {
-            globalAppState.showLoading()
-        } else {
-            globalAppState.hideLoading()
         }
     }
 }
@@ -98,21 +113,46 @@ internal fun ProfileScreen(
     onEvent: (ProfileEvent) -> Unit,
 ) {
     Scaffold(
-        contentWindowInsets = WindowInsets(0, 0, 0, 0),
+        contentWindowInsets = WindowInsets.safeDrawing,
     ) { paddingValues ->
         ProfileContent(
-            modifier = Modifier.padding(paddingValues),
             state = state,
             onEvent = onEvent,
+            modifier = Modifier.padding(paddingValues),
+        )
+    }
+
+    AppLoadingDialog(isLoading = state.isLoading)
+}
+
+@AppPreviewLightDark
+@Composable
+private fun ProfileScreenPreview() {
+    TreeTaskTheme {
+        ProfileScreen(
+            state =
+            ProfileState(
+                isLoading = false,
+                isDarkMode = false,
+                user =
+                User(
+                    id = stringResource(R.string.profile_preview_user_id),
+                    email = stringResource(R.string.profile_preview_email),
+                    fullName = stringResource(R.string.profile_preview_full_name),
+                    avatar = null,
+                    phone = stringResource(R.string.profile_preview_phone),
+                ),
+            ),
+            onEvent = {},
         )
     }
 }
 
 @Composable
 internal fun ProfileContent(
-    modifier: Modifier = Modifier,
     state: ProfileState,
     onEvent: (ProfileEvent) -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     val onSubmitLogoutDebounced =
         rememberDebouncedClick {
@@ -129,17 +169,17 @@ internal fun ProfileContent(
 
     Column(
         modifier =
-            modifier
-                .fillMaxSize()
-                .padding(horizontal = 16.dp, vertical = 24.dp),
+        modifier
+            .fillMaxSize()
+            .padding(horizontal = 16.dp, vertical = 24.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Column(
             modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .weight(1f)
-                    .verticalScroll(rememberScrollState()),
+            Modifier
+                .fillMaxWidth()
+                .weight(1f)
+                .verticalScroll(rememberScrollState()),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             state.user?.let { user ->
@@ -198,23 +238,6 @@ internal fun ProfileContent(
     }
 }
 
-@AppPreviewLightDark
-@Composable
-private fun ProfileScreenPreview() {
-    ProfileScreen(
-        state =
-            ProfileState(
-                isLoading = false,
-                isDarkMode = false,
-                user =
-                    User(
-                        id = stringResource(R.string.profile_preview_user_id),
-                        email = stringResource(R.string.profile_preview_email),
-                        fullName = stringResource(R.string.profile_preview_full_name),
-                        avatar = null,
-                        phone = stringResource(R.string.profile_preview_phone),
-                    ),
-            ),
-        onEvent = {},
-    )
+private object ProfileMessageIds {
+    val Error = AppMessageId("profile-error")
 }

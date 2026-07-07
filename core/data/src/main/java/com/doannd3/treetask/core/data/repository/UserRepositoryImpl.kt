@@ -33,92 +33,92 @@ private fun Uri.toAvatarPart(context: Context): MultipartBody.Part {
 }
 
 class UserRepositoryImpl
-    @Inject
-    constructor(
-        @ApplicationContext private val context: Context,
-        private val userService: UserService,
-        private val userStorage: UserStorage,
-    ) : UserRepository {
-        override suspend fun uploadFile(uri: Uri): ApiResult<String> {
-            val mimeType = context.contentResolver.getType(uri)
-            if (mimeType !in SUPPORTED_AVATAR_MIME_TYPES) {
-                return ApiResult.Error(
-                    appErrorCode = AppErrorCode.UNSUPPORTED_MEDIA_TYPE,
-                    exception = IllegalArgumentException("Unsupported MIME type: $mimeType"),
-                )
-            }
-            val avatarPart = uri.toAvatarPart(context)
-            val result = userService.uploadFile(avatar = avatarPart)
-            return result.mapSuccessResult { success ->
-                val data = success.data ?: return@mapSuccessResult missingResponseDataError()
-                val avatarUrl =
-                    data.avatar?.takeIf { it.isNotBlank() }
-                        ?: return@mapSuccessResult missingResponseDataError()
-
-                ApiResult.Success(
-                    data = avatarUrl,
-                    message = success.message,
-                )
-            }
+@Inject
+constructor(
+    @ApplicationContext private val context: Context,
+    private val userService: UserService,
+    private val userStorage: UserStorage,
+) : UserRepository {
+    override suspend fun uploadFile(uri: Uri): ApiResult<String> {
+        val mimeType = context.contentResolver.getType(uri)
+        if (mimeType !in SUPPORTED_AVATAR_MIME_TYPES) {
+            return ApiResult.Error(
+                appErrorCode = AppErrorCode.UNSUPPORTED_MEDIA_TYPE,
+                exception = IllegalArgumentException("Unsupported MIME type: $mimeType"),
+            )
         }
+        val avatarPart = uri.toAvatarPart(context)
+        val result = userService.uploadFile(avatar = avatarPart)
+        return result.mapSuccessResult { success ->
+            val data = success.data ?: return@mapSuccessResult missingResponseDataError()
+            val avatarUrl =
+                data.avatar?.takeIf { it.isNotBlank() }
+                    ?: return@mapSuccessResult missingResponseDataError()
 
-        override suspend fun updateProfile(
-            fullName: String,
-            phone: String,
-            avatar: String,
-        ): ApiResult<User> {
-            val request =
-                UpdateProfileRequest(
-                    fullName = fullName,
-                    phone = phone,
-                    avatar = avatar,
-                )
-
-            val result = userService.updateProfile(request = request)
-            return result.mapSuccessResult { success ->
-                val data = success.data ?: return@mapSuccessResult missingResponseDataError()
-                val user = data.toUserOrNull() ?: return@mapSuccessResult missingResponseDataError()
-
-                userStorage.saveUserProfile(user = user)
-                ApiResult.Success(message = success.message, data = user)
-            }
-        }
-
-        override suspend fun getProfile(): ApiResult<User> {
-            val result = userService.getProfile()
-            return result.mapSuccessResult { success ->
-                val data = success.data ?: return@mapSuccessResult missingResponseDataError()
-                val user = data.toUserOrNull() ?: return@mapSuccessResult missingResponseDataError()
-
-                userStorage.saveUserProfile(user = user)
-                ApiResult.Success(data = user)
-            }
-        }
-
-        override suspend fun changePassword(
-            currentPassword: String,
-            newPassword: String,
-        ): ApiResult<String> {
-            val body =
-                ChangePasswordRequest(
-                    currentPassword = currentPassword,
-                    newPassword = newPassword,
-                )
-            val result = userService.changePassword(body = body)
-            return result.mapSuccessResult { success ->
-                ApiResult.Success(message = success.message)
-            }
-        }
-
-        override fun getCachedProfile(): Flow<User?> = userStorage.getUserProfile()
-
-        companion object {
-            private val SUPPORTED_AVATAR_MIME_TYPES =
-                setOf(
-                    "image/jpeg",
-                    "image/jpg",
-                    "image/png",
-                    "image/webp",
-                )
+            ApiResult.Success(
+                data = avatarUrl,
+                message = success.message,
+            )
         }
     }
+
+    override suspend fun updateProfile(
+        fullName: String,
+        phone: String,
+        avatar: String,
+    ): ApiResult<User> {
+        val request =
+            UpdateProfileRequest(
+                fullName = fullName,
+                phone = phone,
+                avatar = avatar,
+            )
+
+        val result = userService.updateProfile(request = request)
+        return result.mapSuccessResult { success ->
+            val data = success.data ?: return@mapSuccessResult missingResponseDataError()
+            val user = data.toUserOrNull() ?: return@mapSuccessResult missingResponseDataError()
+
+            userStorage.saveUserProfile(user = user)
+            ApiResult.Success(message = success.message, data = user)
+        }
+    }
+
+    override suspend fun getProfile(): ApiResult<User> {
+        val result = userService.getProfile()
+        return result.mapSuccessResult { success ->
+            val data = success.data ?: return@mapSuccessResult missingResponseDataError()
+            val user = data.toUserOrNull() ?: return@mapSuccessResult missingResponseDataError()
+
+            userStorage.saveUserProfile(user = user)
+            ApiResult.Success(data = user)
+        }
+    }
+
+    override suspend fun changePassword(
+        currentPassword: String,
+        newPassword: String,
+    ): ApiResult<String> {
+        val body =
+            ChangePasswordRequest(
+                currentPassword = currentPassword,
+                newPassword = newPassword,
+            )
+        val result = userService.changePassword(body = body)
+        return result.mapSuccessResult { success ->
+            ApiResult.Success(message = success.message)
+        }
+    }
+
+    override fun getCachedProfile(): Flow<User?> = userStorage.getUserProfile()
+
+    companion object {
+        private val SUPPORTED_AVATAR_MIME_TYPES =
+            setOf(
+                "image/jpeg",
+                "image/jpg",
+                "image/png",
+                "image/webp",
+            )
+    }
+}

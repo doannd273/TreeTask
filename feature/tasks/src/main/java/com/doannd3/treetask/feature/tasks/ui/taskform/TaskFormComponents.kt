@@ -58,21 +58,21 @@ internal fun TaskTitleInput(
         enabled = enabled,
         readOnly = readOnly,
         colors =
-            OutlinedTextFieldDefaults.colors(
-                focusedTextColor = MaterialTheme.colorScheme.onSurface,
-                unfocusedTextColor = MaterialTheme.colorScheme.onSurfaceVariant,
-            ),
+        OutlinedTextFieldDefaults.colors(
+            focusedTextColor = MaterialTheme.colorScheme.onSurface,
+            unfocusedTextColor = MaterialTheme.colorScheme.onSurfaceVariant,
+        ),
         textStyle = MaterialTheme.typography.bodyMedium,
         singleLine = true,
         keyboardOptions =
-            KeyboardOptions(
-                keyboardType = KeyboardType.Text,
-                imeAction = ImeAction.Next,
-            ),
+        KeyboardOptions(
+            keyboardType = KeyboardType.Text,
+            imeAction = ImeAction.Next,
+        ),
         keyboardActions =
-            KeyboardActions(
-                onNext = { onImeNext() },
-            ),
+        KeyboardActions(
+            onNext = { onImeNext() },
+        ),
         value = title,
         onValueChange = onTitleChange,
         label = { Text(text = stringResource(R.string.tasks_add_task_title_label)) },
@@ -110,27 +110,27 @@ internal fun TaskDescriptionInput(
 ) {
     OutlinedTextField(
         modifier =
-            modifier
-                .fillMaxWidth()
-                .heightIn(min = 120.dp),
+        modifier
+            .fillMaxWidth()
+            .heightIn(min = 120.dp),
         enabled = enabled,
         readOnly = readOnly,
         colors =
-            OutlinedTextFieldDefaults.colors(
-                focusedTextColor = MaterialTheme.colorScheme.onSurface,
-                unfocusedTextColor = MaterialTheme.colorScheme.onSurfaceVariant,
-            ),
+        OutlinedTextFieldDefaults.colors(
+            focusedTextColor = MaterialTheme.colorScheme.onSurface,
+            unfocusedTextColor = MaterialTheme.colorScheme.onSurfaceVariant,
+        ),
         textStyle = MaterialTheme.typography.bodyMedium,
         minLines = 4,
         keyboardOptions =
-            KeyboardOptions(
-                keyboardType = KeyboardType.Text,
-                imeAction = ImeAction.Next,
-            ),
+        KeyboardOptions(
+            keyboardType = KeyboardType.Text,
+            imeAction = ImeAction.Next,
+        ),
         keyboardActions =
-            KeyboardActions(
-                onNext = { onImeNext() },
-            ),
+        KeyboardActions(
+            onNext = { onImeNext() },
+        ),
         value = description,
         onValueChange = onDescriptionChange,
         label = { Text(text = stringResource(R.string.tasks_add_task_description_label)) },
@@ -247,9 +247,9 @@ internal fun AppDatePickerDialog(
         rememberDatePickerState(
             initialSelectedDateMillis = selectedDateMillis,
             selectableDates =
-                object : SelectableDates {
-                    override fun isSelectableDate(utcTimeMillis: Long): Boolean = utcTimeMillis >= today
-                },
+            object : SelectableDates {
+                override fun isSelectableDate(utcTimeMillis: Long): Boolean = utcTimeMillis >= today
+            },
         )
     DatePickerDialog(
         onDismissRequest = onDismiss,
@@ -303,16 +303,16 @@ internal fun TaskDueDateInput(
             enabled = enabled,
             readOnly = true,
             colors =
-                OutlinedTextFieldDefaults.colors(
-                    focusedTextColor = MaterialTheme.colorScheme.onSurface,
-                    unfocusedTextColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                    focusedBorderColor = MaterialTheme.colorScheme.outline,
-                    unfocusedBorderColor = MaterialTheme.colorScheme.outline,
-                    focusedLabelColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                    unfocusedLabelColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                    focusedPlaceholderColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                    unfocusedPlaceholderColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                ),
+            OutlinedTextFieldDefaults.colors(
+                focusedTextColor = MaterialTheme.colorScheme.onSurface,
+                unfocusedTextColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                focusedBorderColor = MaterialTheme.colorScheme.outline,
+                unfocusedBorderColor = MaterialTheme.colorScheme.outline,
+                focusedLabelColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                unfocusedLabelColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                focusedPlaceholderColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                unfocusedPlaceholderColor = MaterialTheme.colorScheme.onSurfaceVariant,
+            ),
             textStyle = MaterialTheme.typography.bodyMedium,
             singleLine = true,
             value = dueDate,
@@ -325,25 +325,25 @@ internal fun TaskDueDateInput(
     } else {
         Box(
             modifier =
-                Modifier.clickable(enabled = enabled) {
-                    onDueDateClick()
-                },
+            Modifier.clickable(enabled = enabled) {
+                onDueDateClick()
+            },
         ) {
             OutlinedTextField(
                 modifier = modifier.fillMaxWidth(),
                 // Always disabled to prevent touch/focus interception; Box.clickable handles tap.
                 enabled = false,
                 colors =
-                    if (enabled) {
-                        OutlinedTextFieldDefaults.colors(
-                            disabledTextColor = MaterialTheme.colorScheme.onSurface,
-                            disabledBorderColor = MaterialTheme.colorScheme.outline,
-                            disabledLabelColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                            disabledPlaceholderColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                        )
-                    } else {
-                        OutlinedTextFieldDefaults.colors()
-                    },
+                if (enabled) {
+                    OutlinedTextFieldDefaults.colors(
+                        disabledTextColor = MaterialTheme.colorScheme.onSurface,
+                        disabledBorderColor = MaterialTheme.colorScheme.outline,
+                        disabledLabelColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                        disabledPlaceholderColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                } else {
+                    OutlinedTextFieldDefaults.colors()
+                },
                 textStyle = MaterialTheme.typography.bodyMedium,
                 singleLine = true,
                 value = dueDate,
@@ -383,14 +383,14 @@ internal fun TaskSubmitButton(
     CommonButton(
         modifier = modifier,
         buttonText =
-            stringResource(
-                when {
-                    isLoading && isEditMode -> R.string.tasks_edit_task_submit_loading
-                    isLoading -> R.string.tasks_add_task_submit_loading
-                    isEditMode -> R.string.tasks_edit_task_submit
-                    else -> R.string.tasks_add_task_submit
-                },
-            ),
+        stringResource(
+            when {
+                isLoading && isEditMode -> R.string.tasks_edit_task_submit_loading
+                isLoading -> R.string.tasks_add_task_submit_loading
+                isEditMode -> R.string.tasks_edit_task_submit
+                else -> R.string.tasks_add_task_submit
+            },
+        ),
         isEnable = !isLoading,
         onSubmit = onSubmit,
     )

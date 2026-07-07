@@ -29,28 +29,32 @@ data class TaskStatusColors(
 fun TaskStatus.statusColors(): TaskStatusColors {
     val colorScheme = MaterialTheme.colorScheme
     return when (this) {
-        TaskStatus.TODO ->
+        TaskStatus.TODO -> {
             TaskStatusColors(
                 containerColor = colorScheme.secondary,
                 contentColor = colorScheme.onSecondary,
             )
+        }
 
-        TaskStatus.IN_PROGRESS ->
+        TaskStatus.IN_PROGRESS -> {
             TaskStatusColors(
                 containerColor = colorScheme.primary,
                 contentColor = colorScheme.onPrimary,
             )
+        }
 
-        TaskStatus.PENDING ->
+        TaskStatus.PENDING -> {
             TaskStatusColors(
                 containerColor = colorScheme.error,
                 contentColor = colorScheme.onError,
             )
+        }
 
-        TaskStatus.DONE ->
+        TaskStatus.DONE -> {
             TaskStatusColors(
                 containerColor = MaterialTheme.treeTaskColors.success,
                 contentColor = MaterialTheme.treeTaskColors.onSuccess,
             )
+        }
     }
 }

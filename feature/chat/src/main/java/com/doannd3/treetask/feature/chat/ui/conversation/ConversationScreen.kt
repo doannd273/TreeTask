@@ -2,6 +2,7 @@ package com.doannd3.treetask.feature.chat.ui.conversation
 
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -18,9 +19,12 @@ import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.repeatOnLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.doannd3.treetask.core.common.asString
-import com.doannd3.treetask.core.designsystem.component.LocalGlobalAppState
+import com.doannd3.treetask.core.designsystem.component.message.AppDialogType
+import com.doannd3.treetask.core.designsystem.component.message.AppMessage
+import com.doannd3.treetask.core.designsystem.component.message.AppMessageDialogHost
+import com.doannd3.treetask.core.designsystem.component.message.AppMessageId
+import com.doannd3.treetask.core.designsystem.component.message.rememberAppMessageHostState
 import com.doannd3.treetask.core.designsystem.theme.AppPreviewLightDark
 import com.doannd3.treetask.core.designsystem.theme.TreeTaskTheme
 import com.doannd3.treetask.core.model.chat.Conversation
@@ -37,9 +41,9 @@ fun ConversationRoute(
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
 
-    val globalAppState = LocalGlobalAppState.current
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
+    val messageHostState = rememberAppMessageHostState()
 
     var shouldRefreshOnReturnFromDetail by rememberSaveable {
         mutableStateOf(false)
@@ -48,6 +52,11 @@ fun ConversationRoute(
     ConversationScreen(
         state = state,
         onEvent = viewModel::onEvent,
+    )
+
+    AppMessageDialogHost(
+        state = messageHostState,
+        onAcknowledged = {},
     )
 
     DisposableEffect(lifecycleOwner) {
@@ -75,8 +84,13 @@ fun ConversationRoute(
             viewModel.effect.collect { effect ->
                 when (effect) {
                     is ConversationEffect.ShowErrorMessage -> {
-                        val errorStr = effect.message.asString(context)
-                        globalAppState.showError(errorStr)
+                        messageHostState.enqueue(
+                            AppMessage(
+                                id = ConversationMessageIds.Error,
+                                message = effect.message.asString(context),
+                                type = AppDialogType.Error,
+                            ),
+                        )
                     }
 
                     is ConversationEffect.NavigateToChatDetail -> {
@@ -91,7 +105,13 @@ fun ConversationRoute(
     LaunchedEffect(viewModel.baseErrorEffect, lifecycleOwner) {
         lifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
             viewModel.baseErrorEffect.collect { message ->
-                globalAppState.showError(message.asString(context))
+                messageHostState.enqueue(
+                    AppMessage(
+                        id = ConversationMessageIds.Error,
+                        message = message.asString(context),
+                        type = AppDialogType.Error,
+                    ),
+                )
             }
         }
     }
@@ -103,21 +123,79 @@ internal fun ConversationScreen(
     onEvent: (ConversationEvent) -> Unit,
 ) {
     Scaffold(
-        contentWindowInsets = WindowInsets(0, 0, 0, 0),
+        contentWindowInsets = WindowInsets.safeDrawing,
     ) { paddingValues ->
         ConversationContent(
-            modifier = Modifier.padding(paddingValues = paddingValues),
             state = state,
             onEvent = onEvent,
+            modifier = Modifier.padding(paddingValues = paddingValues),
+        )
+    }
+}
+
+@AppPreviewLightDark
+@Composable
+private fun ConversationScreenPreview() {
+    val now = Instant.now()
+    val mockUser =
+        User(
+            id = "u1",
+            email = "alice@example.com",
+            fullName = "Alice Nguyen",
+            avatar = null,
+            phone = null,
+        )
+    val mockConversations =
+        listOf(
+            Conversation(
+                id = "c1",
+                type = ConversationType.PRIVATE,
+                name = "",
+                creatorId = "u1",
+                participants = listOf(mockUser),
+                lastMessage =
+                Message(
+                    id = "m1",
+                    conversationId = "c1",
+                    user = mockUser,
+                    type = MessageType.TEXT,
+                    content = "Hey, are you free tomorrow?",
+                    createdAt = now,
+                ),
+                lastMessageAt = now,
+            ),
+            Conversation(
+                id = "c2",
+                type = ConversationType.GROUP,
+                name = "Team TreeTask",
+                creatorId = "u1",
+                participants = listOf(mockUser),
+                lastMessage =
+                Message(
+                    id = "m2",
+                    conversationId = "c2",
+                    user = mockUser,
+                    type = MessageType.TEXT,
+                    content = "Sprint review at 3pm",
+                    createdAt = now.minusSeconds(3600),
+                ),
+                lastMessageAt = now.minusSeconds(3600),
+            ),
+        )
+
+    TreeTaskTheme {
+        ConversationScreen(
+            state = ConversationState(conversations = mockConversations),
+            onEvent = {},
         )
     }
 }
 
 @Composable
 internal fun ConversationContent(
-    modifier: Modifier = Modifier,
     state: ConversationState,
     onEvent: (ConversationEvent) -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     when {
         state.isLoading && state.conversations.isEmpty() -> {
@@ -148,60 +226,6 @@ internal fun ConversationContent(
     }
 }
 
-@AppPreviewLightDark
-@Composable
-private fun ConversationScreenPreview() {
-    val now = Instant.now()
-    val mockUser =
-        User(
-            id = "u1",
-            email = "alice@example.com",
-            fullName = "Alice Nguyen",
-            avatar = null,
-            phone = null,
-        )
-    val mockConversations =
-        listOf(
-            Conversation(
-                id = "c1",
-                type = ConversationType.PRIVATE,
-                name = "",
-                creatorId = "u1",
-                participants = listOf(mockUser),
-                lastMessage =
-                    Message(
-                        id = "m1",
-                        conversationId = "c1",
-                        user = mockUser,
-                        type = MessageType.TEXT,
-                        content = "Hey, are you free tomorrow?",
-                        createdAt = now,
-                    ),
-                lastMessageAt = now,
-            ),
-            Conversation(
-                id = "c2",
-                type = ConversationType.GROUP,
-                name = "Team TreeTask",
-                creatorId = "u1",
-                participants = listOf(mockUser),
-                lastMessage =
-                    Message(
-                        id = "m2",
-                        conversationId = "c2",
-                        user = mockUser,
-                        type = MessageType.TEXT,
-                        content = "Sprint review at 3pm",
-                        createdAt = now.minusSeconds(3600),
-                    ),
-                lastMessageAt = now.minusSeconds(3600),
-            ),
-        )
-
-    TreeTaskTheme {
-        ConversationScreen(
-            state = ConversationState(conversations = mockConversations),
-            onEvent = {},
-        )
-    }
+private object ConversationMessageIds {
+    val Error = AppMessageId("conversation-error")
 }
