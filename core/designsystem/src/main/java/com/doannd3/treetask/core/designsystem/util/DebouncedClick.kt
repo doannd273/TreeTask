@@ -19,11 +19,13 @@ fun rememberDebouncedClick(
     var lastClickTime by remember { mutableLongStateOf(0) }
     val currentOnClick by rememberUpdatedState(onClick)
 
-    return {
-        val now = SystemClock.elapsedRealtime()
-        if (now - lastClickTime >= intervalMillis) {
-            lastClickTime = now
-            currentOnClick()
+    return remember(intervalMillis) {
+        {
+            val now = SystemClock.elapsedRealtime()
+            if (now - lastClickTime >= intervalMillis) {
+                lastClickTime = now
+                currentOnClick()
+            }
         }
     }
 }

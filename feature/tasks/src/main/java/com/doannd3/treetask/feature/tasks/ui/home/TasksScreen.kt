@@ -23,6 +23,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -76,6 +77,7 @@ fun TasksRoute(
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
     val messageHostState = rememberAppMessageHostState()
+    val currentContext by rememberUpdatedState(context)
 
     val permissionChecker =
         remember(context) {
@@ -91,7 +93,7 @@ fun TasksRoute(
         ) {
             hasRequestedNotificationPermission = true
         }
-    LaunchedEffect(Unit) {
+    LaunchedEffect(permissionChecker) {
         if (hasRequestedNotificationPermission) return@LaunchedEffect
 
         when (val status = permissionChecker.check(AppPermission.PostNotification)) {
@@ -112,7 +114,10 @@ fun TasksRoute(
     TasksScreen(
         state = state,
         pagingItems = pagingItems,
-        onEvent = viewModel::onEvent,
+        onSearchChange = { viewModel.onEvent(TasksEvent.SearchChanged(it)) },
+        onSearchClear = { viewModel.onEvent(TasksEvent.SearchQueryClear) },
+        onFilterSelect = { viewModel.onEvent(TasksEvent.FilterSelected(it)) },
+        onDeleteTask = { viewModel.onEvent(TasksEvent.DeleteTask(it)) },
         onTaskClick = onTaskClick,
         onAddTaskClick = onAddTaskClick,
     )
@@ -130,7 +135,7 @@ fun TasksRoute(
                         messageHostState.enqueue(
                             AppMessage(
                                 id = TasksMessageIds.Error,
-                                message = effect.message.asString(context),
+                                message = effect.message.asString(currentContext),
                                 type = AppDialogType.Error,
                             ),
                         )
@@ -147,7 +152,7 @@ fun TasksRoute(
                 messageHostState.enqueue(
                     AppMessage(
                         id = TasksMessageIds.Error,
-                        message = message.asString(context),
+                        message = message.asString(currentContext),
                         type = AppDialogType.Error,
                     ),
                 )
@@ -160,7 +165,10 @@ fun TasksRoute(
 internal fun TasksScreen(
     state: TasksState,
     pagingItems: LazyPagingItems<Task>,
-    onEvent: (TasksEvent) -> Unit,
+    onSearchChange: (String) -> Unit,
+    onSearchClear: () -> Unit,
+    onFilterSelect: (TaskStatus?) -> Unit,
+    onDeleteTask: (String) -> Unit,
     onTaskClick: (Task) -> Unit,
     onAddTaskClick: () -> Unit,
 ) {
@@ -187,7 +195,10 @@ internal fun TasksScreen(
             isLoadingSearch = isLoadingSearch,
             taskStatusSelected = taskStatusSelected,
             pagingItems = pagingItems,
-            onEvent = onEvent,
+            onSearchChange = onSearchChange,
+            onSearchClear = onSearchClear,
+            onFilterSelect = onFilterSelect,
+            onDeleteTask = onDeleteTask,
             onTaskClick = onTaskClick,
             modifier = Modifier.padding(paddingValues = paddingValues),
         )
@@ -237,7 +248,10 @@ private fun TasksScreenPreview() {
         TasksScreen(
             state = sampleTasksState,
             pagingItems = pagingItems,
-            onEvent = {},
+            onSearchChange = {},
+            onSearchClear = {},
+            onFilterSelect = {},
+            onDeleteTask = {},
             onTaskClick = {},
             onAddTaskClick = {},
         )
@@ -250,26 +264,26 @@ internal fun TasksContent(
     isLoadingSearch: Boolean,
     taskStatusSelected: TaskStatus?,
     pagingItems: LazyPagingItems<Task>,
-    onEvent: (TasksEvent) -> Unit,
+    onSearchChange: (String) -> Unit,
+    onSearchClear: () -> Unit,
+    onFilterSelect: (TaskStatus?) -> Unit,
+    onDeleteTask: (String) -> Unit,
     onTaskClick: (Task) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    var showConfirmDialog by remember { mutableStateOf(false) }
-    var taskIdToDelete by remember { mutableStateOf<String?>(null) }
+    var taskIdToDelete by rememberSaveable { mutableStateOf<String?>(null) }
 
-    if (showConfirmDialog && taskIdToDelete != null) {
+    taskIdToDelete?.let { pendingTaskId ->
         CommonConfirmDialog(
             title = stringResource(R.string.tasks_delete_task_confirm_title),
             message = stringResource(R.string.tasks_delete_task_confirm_message),
             confirmLabel = stringResource(R.string.tasks_delete_task_confirm_button),
             cancelLabel = stringResource(R.string.tasks_delete_task_cancel_button),
             onConfirm = {
-                onEvent(TasksEvent.DeleteTask(taskIdToDelete!!))
-                showConfirmDialog = false
+                onDeleteTask(pendingTaskId)
                 taskIdToDelete = null
             },
             onDismiss = {
-                showConfirmDialog = false
                 taskIdToDelete = null
             },
         )
@@ -286,9 +300,9 @@ internal fun TasksContent(
             searchQuery = searchQuery,
             isLoadingSearch = isLoadingSearch,
             taskStatusSelected = taskStatusSelected,
-            onSearchChange = { onEvent(TasksEvent.SearchChanged(it)) },
-            onSearchClear = { onEvent(TasksEvent.SearchQueryClear) },
-            onFilterSelect = { onEvent(TasksEvent.FilterSelected(it)) },
+            onSearchChange = onSearchChange,
+            onSearchClear = onSearchClear,
+            onFilterSelect = onFilterSelect,
         )
 
         TasksPagingContent(
@@ -296,7 +310,6 @@ internal fun TasksContent(
             onTaskClick = onTaskClick,
             onDeleteClick = { taskId ->
                 taskIdToDelete = taskId
-                showConfirmDialog = true
             },
             modifier =
             Modifier

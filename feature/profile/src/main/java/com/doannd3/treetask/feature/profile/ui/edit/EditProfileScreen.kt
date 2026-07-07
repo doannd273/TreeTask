@@ -1,5 +1,6 @@
 package com.doannd3.treetask.feature.profile.ui.edit
 
+import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
@@ -15,6 +16,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -44,10 +46,16 @@ fun EditProfileRoute(
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     val lifecycleOwner = LocalLifecycleOwner.current
     val messageHostState = rememberAppMessageHostState()
+    val currentContext by rememberUpdatedState(context)
+    val currentOnNavigateBack by rememberUpdatedState(onNavigateBack)
 
     EditProfileScreen(
         state = state,
-        onEvent = viewModel::onEvent,
+        onAvatarChange = { viewModel.onEvent(EditProfileEvent.AvatarChanged(avatarUri = it)) },
+        onFullNameChange = { viewModel.onEvent(EditProfileEvent.FullNameChanged(it)) },
+        onPhoneChange = { viewModel.onEvent(EditProfileEvent.PhoneChanged(it)) },
+        onSubmitEditProfile = { viewModel.onEvent(EditProfileEvent.SubmitEditProfile) },
+        onBackClick = { viewModel.onEvent(EditProfileEvent.BackClicked) },
     )
 
     AppMessageDialogHost(
@@ -64,14 +72,14 @@ fun EditProfileRoute(
             viewModel.effect.collect { effect ->
                 when (effect) {
                     EditProfileEffect.NavigateBack -> {
-                        onNavigateBack()
+                        currentOnNavigateBack()
                     }
 
                     is EditProfileEffect.ShowErrorMessage -> {
                         messageHostState.enqueue(
                             AppMessage(
                                 id = EditProfileMessageIds.Error,
-                                message = effect.message.asString(context),
+                                message = effect.message.asString(currentContext),
                                 type = AppDialogType.Error,
                             ),
                         )
@@ -81,7 +89,7 @@ fun EditProfileRoute(
                         messageHostState.enqueue(
                             AppMessage(
                                 id = EditProfileMessageIds.Success,
-                                message = effect.message.asString(context),
+                                message = effect.message.asString(currentContext),
                                 type = AppDialogType.Success,
                             ),
                         )
@@ -97,7 +105,7 @@ fun EditProfileRoute(
                 messageHostState.enqueue(
                     AppMessage(
                         id = EditProfileMessageIds.Error,
-                        message = message.asString(context),
+                        message = message.asString(currentContext),
                         type = AppDialogType.Error,
                     ),
                 )
@@ -109,7 +117,11 @@ fun EditProfileRoute(
 @Composable
 internal fun EditProfileScreen(
     state: EditProfileState,
-    onEvent: (EditProfileEvent) -> Unit,
+    onAvatarChange: (Uri?) -> Unit,
+    onFullNameChange: (String) -> Unit,
+    onPhoneChange: (String) -> Unit,
+    onSubmitEditProfile: () -> Unit,
+    onBackClick: () -> Unit,
 ) {
     Scaffold(
         contentWindowInsets =
@@ -117,13 +129,16 @@ internal fun EditProfileScreen(
         topBar = {
             CommonHeader(
                 title = stringResource(R.string.profile_edit_title),
-                onNavigateBack = { onEvent(EditProfileEvent.BackClicked) },
+                onNavigateBack = onBackClick,
             )
         },
     ) { paddingValues ->
         EditProfileContent(
             state = state,
-            onEvent = onEvent,
+            onAvatarChange = onAvatarChange,
+            onFullNameChange = onFullNameChange,
+            onPhoneChange = onPhoneChange,
+            onSubmitEditProfile = onSubmitEditProfile,
             modifier = Modifier.padding(paddingValues),
         )
     }
@@ -137,7 +152,11 @@ private fun EditProfileScreenPreview() {
     TreeTaskTheme {
         EditProfileScreen(
             state = EditProfileState(),
-            onEvent = {},
+            onAvatarChange = {},
+            onFullNameChange = {},
+            onPhoneChange = {},
+            onSubmitEditProfile = {},
+            onBackClick = {},
         )
     }
 }
@@ -145,7 +164,10 @@ private fun EditProfileScreenPreview() {
 @Composable
 internal fun EditProfileContent(
     state: EditProfileState,
-    onEvent: (EditProfileEvent) -> Unit,
+    onAvatarChange: (Uri?) -> Unit,
+    onFullNameChange: (String) -> Unit,
+    onPhoneChange: (String) -> Unit,
+    onSubmitEditProfile: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val launcher =
@@ -153,7 +175,7 @@ internal fun EditProfileContent(
             contract = ActivityResultContracts.PickVisualMedia(),
         ) { uri ->
             if (uri != null) {
-                onEvent(EditProfileEvent.AvatarChanged(avatarUri = uri))
+                onAvatarChange(uri)
             }
         }
 
@@ -178,8 +200,13 @@ internal fun EditProfileContent(
         )
 
         EditProfileForm(
-            state = state,
-            onEvent = onEvent,
+            email = state.email,
+            fullName = state.fullName,
+            phone = state.phone,
+            isLoading = state.isLoading,
+            onFullNameChange = onFullNameChange,
+            onPhoneChange = onPhoneChange,
+            onSubmitEditProfile = onSubmitEditProfile,
         )
     }
 }

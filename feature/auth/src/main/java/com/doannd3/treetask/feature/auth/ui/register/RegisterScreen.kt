@@ -16,6 +16,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
@@ -56,10 +57,20 @@ fun RegisterRoute(
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
     val messageHostState = rememberAppMessageHostState()
+    val currentContext by rememberUpdatedState(context)
+    val currentOnNavigateToHome by rememberUpdatedState(onNavigateToHome)
 
     RegisterScreen(
         state = state,
-        onEvent = viewModel::onEvent,
+        onFullNameChange = { viewModel.onEvent(RegisterEvent.FullNameChanged(it)) },
+        onEmailChange = { viewModel.onEvent(RegisterEvent.EmailChanged(it)) },
+        onPasswordChange = { viewModel.onEvent(RegisterEvent.PasswordChanged(it)) },
+        onConfirmPasswordChange = { viewModel.onEvent(RegisterEvent.ConfirmPasswordChanged(it)) },
+        onPasswordVisibleChange = { viewModel.onEvent(RegisterEvent.PasswordVisibleChanged(it)) },
+        onConfirmPasswordVisibleChange = {
+            viewModel.onEvent(RegisterEvent.ConfirmPasswordVisibleChanged(it))
+        },
+        onSubmitRegister = { viewModel.onEvent(RegisterEvent.SubmitRegister) },
         onRegisterBack = onRegisterBack,
     )
 
@@ -80,7 +91,7 @@ fun RegisterRoute(
                         messageHostState.enqueue(
                             AppMessage(
                                 id = RegisterMessageIds.Success,
-                                message = effect.message.asString(context),
+                                message = effect.message.asString(currentContext),
                                 type = AppDialogType.Success,
                             ),
                         )
@@ -90,14 +101,14 @@ fun RegisterRoute(
                         messageHostState.enqueue(
                             AppMessage(
                                 id = RegisterMessageIds.Error,
-                                message = effect.message.asString(context),
+                                message = effect.message.asString(currentContext),
                                 type = AppDialogType.Error,
                             ),
                         )
                     }
 
                     is RegisterEffect.NavigateToHome -> {
-                        onNavigateToHome()
+                        currentOnNavigateToHome()
                     }
                 }
             }
@@ -111,7 +122,7 @@ fun RegisterRoute(
                 messageHostState.enqueue(
                     AppMessage(
                         id = RegisterMessageIds.Error,
-                        message = message.asString(context),
+                        message = message.asString(currentContext),
                         type = AppDialogType.Error,
                     ),
                 )
@@ -123,7 +134,13 @@ fun RegisterRoute(
 @Composable
 internal fun RegisterScreen(
     state: RegisterState,
-    onEvent: (RegisterEvent) -> Unit,
+    onFullNameChange: (String) -> Unit,
+    onEmailChange: (String) -> Unit,
+    onPasswordChange: (String) -> Unit,
+    onConfirmPasswordChange: (String) -> Unit,
+    onPasswordVisibleChange: (Boolean) -> Unit,
+    onConfirmPasswordVisibleChange: (Boolean) -> Unit,
+    onSubmitRegister: () -> Unit,
     onRegisterBack: () -> Unit,
 ) {
     Scaffold(
@@ -138,7 +155,13 @@ internal fun RegisterScreen(
     ) { paddingValues ->
         RegisterContent(
             state = state,
-            onEvent = onEvent,
+            onFullNameChange = onFullNameChange,
+            onEmailChange = onEmailChange,
+            onPasswordChange = onPasswordChange,
+            onConfirmPasswordChange = onConfirmPasswordChange,
+            onPasswordVisibleChange = onPasswordVisibleChange,
+            onConfirmPasswordVisibleChange = onConfirmPasswordVisibleChange,
+            onSubmitRegister = onSubmitRegister,
             onRegisterBack = onRegisterBack,
             modifier =
             Modifier.padding(
@@ -162,7 +185,13 @@ private fun RegisterScreenPreview() {
                 password = "123456",
                 confirmPassword = "12321",
             ),
-            onEvent = {},
+            onFullNameChange = {},
+            onEmailChange = {},
+            onPasswordChange = {},
+            onConfirmPasswordChange = {},
+            onPasswordVisibleChange = {},
+            onConfirmPasswordVisibleChange = {},
+            onSubmitRegister = {},
             onRegisterBack = {},
         )
     }
@@ -171,13 +200,19 @@ private fun RegisterScreenPreview() {
 @Composable
 internal fun RegisterContent(
     state: RegisterState,
-    onEvent: (RegisterEvent) -> Unit,
+    onFullNameChange: (String) -> Unit,
+    onEmailChange: (String) -> Unit,
+    onPasswordChange: (String) -> Unit,
+    onConfirmPasswordChange: (String) -> Unit,
+    onPasswordVisibleChange: (Boolean) -> Unit,
+    onConfirmPasswordVisibleChange: (Boolean) -> Unit,
+    onSubmitRegister: () -> Unit,
     onRegisterBack: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val onSubmitRegisterDebounced =
         rememberDebouncedClick {
-            onEvent(RegisterEvent.SubmitRegister)
+            onSubmitRegister()
         }
 
     val emailFocusRequester = remember { FocusRequester() }
@@ -197,7 +232,7 @@ internal fun RegisterContent(
         ) {
             FullNameInput(
                 fullName = state.fullName,
-                onFullNameChange = { onEvent(RegisterEvent.FullNameChanged(it)) },
+                onFullNameChange = onFullNameChange,
                 onImeNext = {
                     emailFocusRequester.requestFocus()
                 },
@@ -212,7 +247,7 @@ internal fun RegisterContent(
                     .focusRequester(emailFocusRequester),
                 label = stringResource(R.string.auth_email_hint),
                 email = state.email,
-                onEmailChange = { onEvent(RegisterEvent.EmailChanged(it)) },
+                onEmailChange = onEmailChange,
                 imeAction = ImeAction.Next,
                 onImeNext = {
                     passwordFocusRequester.requestFocus()
@@ -229,8 +264,8 @@ internal fun RegisterContent(
                 label = stringResource(R.string.auth_password_hint),
                 password = state.password,
                 passwordVisible = state.passwordVisible,
-                onPasswordChange = { onEvent(RegisterEvent.PasswordChanged(it)) },
-                onPasswordVisibleChange = { onEvent(RegisterEvent.PasswordVisibleChanged(it)) },
+                onPasswordChange = onPasswordChange,
+                onPasswordVisibleChange = onPasswordVisibleChange,
                 imeAction = ImeAction.Next,
                 onImeNext = {
                     confirmPasswordFocusRequester.requestFocus()
@@ -247,8 +282,8 @@ internal fun RegisterContent(
                 label = stringResource(R.string.auth_confirm_password_hint),
                 password = state.confirmPassword,
                 passwordVisible = state.confirmPasswordVisible,
-                onPasswordChange = { onEvent(RegisterEvent.ConfirmPasswordChanged(it)) },
-                onPasswordVisibleChange = { onEvent(RegisterEvent.ConfirmPasswordVisibleChanged(it)) },
+                onPasswordChange = onConfirmPasswordChange,
+                onPasswordVisibleChange = onConfirmPasswordVisibleChange,
                 imeAction = ImeAction.Done,
                 onImeDone = {
                     focusManager.clearFocus()

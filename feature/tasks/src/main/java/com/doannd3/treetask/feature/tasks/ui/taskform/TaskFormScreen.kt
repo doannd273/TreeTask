@@ -15,6 +15,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
@@ -53,10 +54,17 @@ fun TaskFormRoute(
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
     val messageHostState = rememberAppMessageHostState()
+    val currentContext by rememberUpdatedState(context)
+    val currentOnNavigateBack by rememberUpdatedState(onNavigateBack)
 
     TaskFormScreen(
         state = state,
-        onEvent = viewModel::onEvent,
+        onBackClick = { viewModel.onEvent(TaskFormEvent.BackClicked) },
+        onTitleChange = { viewModel.onEvent(TaskFormEvent.TitleChanged(it)) },
+        onDescriptionChange = { viewModel.onEvent(TaskFormEvent.DescriptionChanged(it)) },
+        onStatusChange = { viewModel.onEvent(TaskFormEvent.StatusChanged(it)) },
+        onDueDateChange = { viewModel.onEvent(TaskFormEvent.DueDateChanged(it)) },
+        onSubmitTaskForm = { viewModel.onEvent(TaskFormEvent.SubmitTaskForm) },
     )
 
     AppMessageDialogHost(
@@ -76,7 +84,7 @@ fun TaskFormRoute(
                         messageHostState.enqueue(
                             AppMessage(
                                 id = TaskFormMessageIds.Error,
-                                message = effect.message.asString(context),
+                                message = effect.message.asString(currentContext),
                                 type = AppDialogType.Error,
                             ),
                         )
@@ -86,14 +94,14 @@ fun TaskFormRoute(
                         messageHostState.enqueue(
                             AppMessage(
                                 id = TaskFormMessageIds.Success,
-                                message = effect.message.asString(context),
+                                message = effect.message.asString(currentContext),
                                 type = AppDialogType.Success,
                             ),
                         )
                     }
 
                     is TaskFormEffect.NavigateBack -> {
-                        onNavigateBack()
+                        currentOnNavigateBack()
                     }
                 }
             }
@@ -106,7 +114,7 @@ fun TaskFormRoute(
                 messageHostState.enqueue(
                     AppMessage(
                         id = TaskFormMessageIds.Error,
-                        message = message.asString(context),
+                        message = message.asString(currentContext),
                         type = AppDialogType.Error,
                     ),
                 )
@@ -118,26 +126,49 @@ fun TaskFormRoute(
 @Composable
 internal fun TaskFormScreen(
     state: TaskFormState,
-    onEvent: (TaskFormEvent) -> Unit,
+    onBackClick: () -> Unit,
+    onTitleChange: (String) -> Unit,
+    onDescriptionChange: (String) -> Unit,
+    onStatusChange: (TaskStatus) -> Unit,
+    onDueDateChange: (String) -> Unit,
+    onSubmitTaskForm: () -> Unit,
 ) {
+    val context = LocalContext.current
+    val screenTitle = state.screenTitle?.asString(context).orEmpty()
+    val mode = state.mode
+    val title = state.title
+    val description = state.description
+    val status = state.status
+    val dueDate = state.dueDate
+    val isLoading = state.isLoading
+
     Scaffold(
         contentWindowInsets =
         WindowInsets.safeDrawing,
         topBar = {
             CommonHeader(
-                title = state.screenTitle?.asString(LocalContext.current).orEmpty(),
-                onNavigateBack = { onEvent(TaskFormEvent.BackClicked) },
+                title = screenTitle,
+                onNavigateBack = onBackClick,
             )
         },
     ) { paddingValues ->
         TaskFormContent(
-            state = state,
-            onEvent = onEvent,
+            mode = mode,
+            title = title,
+            description = description,
+            status = status,
+            dueDate = dueDate,
+            isLoading = isLoading,
+            onTitleChange = onTitleChange,
+            onDescriptionChange = onDescriptionChange,
+            onStatusChange = onStatusChange,
+            onDueDateChange = onDueDateChange,
+            onSubmitTaskForm = onSubmitTaskForm,
             modifier = Modifier.padding(paddingValues),
         )
     }
 
-    AppLoadingDialog(isLoading = state.isLoading || state.isLoadingTask)
+    AppLoadingDialog(isLoading = isLoading || state.isLoadingTask)
 }
 
 @AppPreviewLightDark
@@ -146,42 +177,56 @@ private fun TaskFormScreenPreview() {
     TreeTaskTheme {
         TaskFormScreen(
             state = TaskFormState(),
-            onEvent = {},
+            onBackClick = {},
+            onTitleChange = {},
+            onDescriptionChange = {},
+            onStatusChange = {},
+            onDueDateChange = {},
+            onSubmitTaskForm = {},
         )
     }
 }
 
 @Composable
 internal fun TaskFormContent(
-    state: TaskFormState,
-    onEvent: (TaskFormEvent) -> Unit,
+    mode: TaskFormMode,
+    title: String,
+    description: String,
+    status: TaskStatus,
+    dueDate: String,
+    isLoading: Boolean,
+    onTitleChange: (String) -> Unit,
+    onDescriptionChange: (String) -> Unit,
+    onStatusChange: (TaskStatus) -> Unit,
+    onDueDateChange: (String) -> Unit,
+    onSubmitTaskForm: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val descriptionFocusRequester = remember { FocusRequester() }
     val focusManager = LocalFocusManager.current
     val onSubmitTaskFormDebounced =
         rememberDebouncedClick {
-            onEvent(TaskFormEvent.SubmitTaskForm)
+            onSubmitTaskForm()
         }
-    val isInputEnabled = !state.isLoading
-    val isEditable = state.mode.isEditable
+    val isInputEnabled = !isLoading
+    val isEditable = mode.isEditable
     val isReadOnly = !isEditable
 
     var showDatePicker by remember { mutableStateOf(false) }
     val displayText =
-        remember(state.dueDate) {
-            state.dueDate.ymdToDmy()
+        remember(dueDate) {
+            dueDate.ymdToDmy()
         }
     val initialMillis =
-        remember(state.dueDate) {
-            state.dueDate.ymdToEpochMillis()
+        remember(dueDate) {
+            dueDate.ymdToEpochMillis()
         }
 
     if (showDatePicker && isEditable) {
         AppDatePickerDialog(
             selectedDateMillis = initialMillis,
             onDismiss = { showDatePicker = false },
-            onDateSelected = { onEvent(TaskFormEvent.DueDateChanged(it.toYmdDate())) },
+            onDateSelected = { onDueDateChange(it.toYmdDate()) },
         )
     }
 
@@ -197,30 +242,30 @@ internal fun TaskFormContent(
             verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
             TaskTitleInput(
-                title = state.title,
+                title = title,
                 enabled = isInputEnabled,
                 readOnly = isReadOnly,
-                onTitleChange = { onEvent(TaskFormEvent.TitleChanged(it)) },
+                onTitleChange = onTitleChange,
                 onImeNext = { descriptionFocusRequester.requestFocus() },
             )
 
             TaskDescriptionInput(
                 modifier =
                 Modifier.focusRequester(descriptionFocusRequester),
-                description = state.description,
+                description = description,
                 enabled = isInputEnabled,
                 readOnly = isReadOnly,
-                onDescriptionChange = { onEvent(TaskFormEvent.DescriptionChanged(it)) },
+                onDescriptionChange = onDescriptionChange,
                 onImeNext = {
                     focusManager.clearFocus()
                 },
             )
 
             TaskStatusSelector(
-                selectedStatus = state.status,
+                selectedStatus = status,
                 enabled = isInputEnabled,
                 readOnly = isReadOnly,
-                onStatusChange = { onEvent(TaskFormEvent.StatusChanged(it)) },
+                onStatusChange = onStatusChange,
             )
 
             TaskDueDateInput(
@@ -233,8 +278,8 @@ internal fun TaskFormContent(
             if (isEditable) {
                 TaskSubmitButton(
                     modifier = Modifier.padding(top = 8.dp),
-                    isLoading = state.isLoading,
-                    isEditMode = state.mode.isEdit,
+                    isLoading = isLoading,
+                    isEditMode = mode.isEdit,
                     onSubmit = {
                         focusManager.clearFocus()
                         onSubmitTaskFormDebounced()
@@ -250,14 +295,17 @@ internal fun TaskFormContent(
 private fun TaskFormContentPreview() {
     TreeTaskTheme {
         TaskFormContent(
-            state =
-            TaskFormState(
-                title = "Prepare sprint planning",
-                description = "Review backlog and define priorities for the next sprint.",
-                status = TaskStatus.IN_PROGRESS,
-                dueDate = "2026-05-31",
-            ),
-            onEvent = {},
+            mode = TaskFormMode.ADD,
+            title = "Prepare sprint planning",
+            description = "Review backlog and define priorities for the next sprint.",
+            status = TaskStatus.IN_PROGRESS,
+            dueDate = "2026-05-31",
+            isLoading = false,
+            onTitleChange = {},
+            onDescriptionChange = {},
+            onStatusChange = {},
+            onDueDateChange = {},
+            onSubmitTaskForm = {},
         )
     }
 }
@@ -267,15 +315,17 @@ private fun TaskFormContentPreview() {
 private fun TaskFormContentReadOnlyPreview() {
     TreeTaskTheme {
         TaskFormContent(
-            state =
-            TaskFormState(
-                mode = TaskFormMode.VIEW,
-                title = "Review dashboard analytics",
-                description = "Check completion rate and recent task behavior before release.",
-                status = TaskStatus.DONE,
-                dueDate = "2026-06-02",
-            ),
-            onEvent = {},
+            mode = TaskFormMode.VIEW,
+            title = "Review dashboard analytics",
+            description = "Check completion rate and recent task behavior before release.",
+            status = TaskStatus.DONE,
+            dueDate = "2026-06-02",
+            isLoading = false,
+            onTitleChange = {},
+            onDescriptionChange = {},
+            onStatusChange = {},
+            onDueDateChange = {},
+            onSubmitTaskForm = {},
         )
     }
 }

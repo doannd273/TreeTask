@@ -8,6 +8,19 @@ This document describes the conventions currently used in TreeTask. If this docu
 - Prefer immutable data: `val`, `data class`, and sealed class/object for state/event/effect.
 - Use `data object` for sealed `Event`/`Effect` variants that carry no payload.
 - Use Hilt constructor injection when a class needs dependencies.
+- For constructor-injected Kotlin classes, keep the header normalized as `class Foo @Inject constructor(...)`.
+  Do not intentionally split `class`, `@Inject`, and `constructor` across separate indentation levels.
+- Prefer this member order when it improves scanability:
+  - constructor dependencies in the class header
+  - state/effect blocks, keeping each private backing property adjacent to its public exposed property
+  - init
+  - public API / event entry points
+  - overrides
+  - private implementation
+  - companion object
+
+  This is a readability guideline, not a strict auto-format or lint rule.
+  Keep closely related logic together when that improves clarity.
 - Use named arguments when calling service/repository/storage boundary methods with request or domain parameters.
   For request bodies, always name the body parameter, for example `request = LoginRequest(...)` or `body = ResetPasswordRequest(...)`.
 - Build multi-field request/body DTOs before calling service methods.
@@ -48,6 +61,12 @@ This document describes the conventions currently used in TreeTask. If this docu
 
 ## Naming
 
+- Classes, interfaces, objects, enums, and composables use `PascalCase`.
+- Functions, properties, parameters, and local variables use `camelCase`.
+- Constants use `UPPER_SNAKE_CASE`.
+- Boolean names should prefer readable prefixes such as `is`, `has`, `should`, or `can` when they describe state or capability.
+- Backing properties should stay explicit and adjacent to the exposed property, for example `_uiState` next to `uiState`.
+- Avoid vague names such as `data`, `item`, `model`, or `result` when a more specific domain name is available.
 - Screen route composable: `<Name>Route`.
 - Render composable: `<Name>Screen`, `<Name>Content`.
 - Small component: domain-specific name such as `TaskItem`, `SearchTaskInput`.
@@ -90,6 +109,12 @@ plugins {
 ## Formatting and Static Analysis
 
 Spotless/ktlint formats Kotlin and Gradle Kotlin DSL.
+
+TreeTask uses a pinned ktlint formatter version plus a curated rule override set in
+`build-logic/convention/src/main/kotlin/AndroidSpotlessConventionPlugin.kt`.
+Keep formatter policy centralized there instead of adding per-module overrides.
+
+For the reusable formatter recipe and migration notes, see `docs/FORMATTER_CONVENTION.md`.
 
 ```bash
 ./gradlew spotlessCheck

@@ -16,6 +16,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -36,6 +37,7 @@ import com.doannd3.treetask.core.designsystem.component.message.rememberAppMessa
 import com.doannd3.treetask.core.designsystem.theme.AppPreviewLightDark
 import com.doannd3.treetask.core.designsystem.theme.TreeTaskTheme
 import com.doannd3.treetask.core.designsystem.util.rememberDebouncedClick
+import com.doannd3.treetask.core.model.profile.AppLanguage
 import com.doannd3.treetask.core.model.user.User
 import com.doannd3.treetask.feature.profile.R
 
@@ -51,10 +53,20 @@ fun ProfileRoute(
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
     val messageHostState = rememberAppMessageHostState()
+    val currentContext by rememberUpdatedState(context)
+    val currentOnNavigateToLogin by rememberUpdatedState(onNavigateToLogin)
+    val currentOnNavigateToChangePassword by rememberUpdatedState(onNavigateToChangePassword)
+    val currentOnNavigateToEditProfile by rememberUpdatedState(onNavigateToEditProfile)
 
     ProfileScreen(
         state = state,
-        onEvent = viewModel::onEvent,
+        onSubmitLogout = { viewModel.onEvent(ProfileEvent.SubmitLogout) },
+        onOpenLanguagePicker = { viewModel.onEvent(ProfileEvent.OpenLanguagePicker) },
+        onDismissLanguagePicker = { viewModel.onEvent(ProfileEvent.DismissLanguagePicker) },
+        onLanguageSelect = { viewModel.onEvent(ProfileEvent.SelectLanguage(it)) },
+        onNavigateToEditProfile = { viewModel.onEvent(ProfileEvent.NavigateEditProfile) },
+        onNavigateToChangePassword = { viewModel.onEvent(ProfileEvent.NavigateChangePassword) },
+        onDarkModeChange = { viewModel.onEvent(ProfileEvent.ToggleDarkMode(it)) },
     )
 
     AppMessageDialogHost(
@@ -67,25 +79,25 @@ fun ProfileRoute(
             viewModel.effect.collect { effect ->
                 when (effect) {
                     is ProfileEffect.NavigateToLogin -> {
-                        onNavigateToLogin()
+                        currentOnNavigateToLogin()
                     }
 
                     is ProfileEffect.ShowErrorMessage -> {
                         messageHostState.enqueue(
                             AppMessage(
                                 id = ProfileMessageIds.Error,
-                                message = effect.message.asString(context),
+                                message = effect.message.asString(currentContext),
                                 type = AppDialogType.Error,
                             ),
                         )
                     }
 
                     ProfileEffect.NavigateToChangePassword -> {
-                        onNavigateToChangePassword()
+                        currentOnNavigateToChangePassword()
                     }
 
                     ProfileEffect.NavigateToEditProfile -> {
-                        onNavigateToEditProfile()
+                        currentOnNavigateToEditProfile()
                     }
                 }
             }
@@ -98,7 +110,7 @@ fun ProfileRoute(
                 messageHostState.enqueue(
                     AppMessage(
                         id = ProfileMessageIds.Error,
-                        message = message.asString(context),
+                        message = message.asString(currentContext),
                         type = AppDialogType.Error,
                     ),
                 )
@@ -110,14 +122,26 @@ fun ProfileRoute(
 @Composable
 internal fun ProfileScreen(
     state: ProfileState,
-    onEvent: (ProfileEvent) -> Unit,
+    onSubmitLogout: () -> Unit,
+    onOpenLanguagePicker: () -> Unit,
+    onDismissLanguagePicker: () -> Unit,
+    onLanguageSelect: (AppLanguage) -> Unit,
+    onNavigateToEditProfile: () -> Unit,
+    onNavigateToChangePassword: () -> Unit,
+    onDarkModeChange: (Boolean) -> Unit,
 ) {
     Scaffold(
         contentWindowInsets = WindowInsets.safeDrawing,
     ) { paddingValues ->
         ProfileContent(
             state = state,
-            onEvent = onEvent,
+            onSubmitLogout = onSubmitLogout,
+            onOpenLanguagePicker = onOpenLanguagePicker,
+            onDismissLanguagePicker = onDismissLanguagePicker,
+            onLanguageSelect = onLanguageSelect,
+            onNavigateToEditProfile = onNavigateToEditProfile,
+            onNavigateToChangePassword = onNavigateToChangePassword,
+            onDarkModeChange = onDarkModeChange,
             modifier = Modifier.padding(paddingValues),
         )
     }
@@ -143,7 +167,13 @@ private fun ProfileScreenPreview() {
                     phone = stringResource(R.string.profile_preview_phone),
                 ),
             ),
-            onEvent = {},
+            onSubmitLogout = {},
+            onOpenLanguagePicker = {},
+            onDismissLanguagePicker = {},
+            onLanguageSelect = {},
+            onNavigateToEditProfile = {},
+            onNavigateToChangePassword = {},
+            onDarkModeChange = {},
         )
     }
 }
@@ -151,19 +181,31 @@ private fun ProfileScreenPreview() {
 @Composable
 internal fun ProfileContent(
     state: ProfileState,
-    onEvent: (ProfileEvent) -> Unit,
+    onSubmitLogout: () -> Unit,
+    onOpenLanguagePicker: () -> Unit,
+    onDismissLanguagePicker: () -> Unit,
+    onLanguageSelect: (AppLanguage) -> Unit,
+    onNavigateToEditProfile: () -> Unit,
+    onNavigateToChangePassword: () -> Unit,
+    onDarkModeChange: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val selectedLanguage = state.selectedLanguage
+    val showLanguagePicker = state.showLanguagePicker
+    val isLoading = state.isLoading
+    val user = state.user
+    val isDarkMode = state.isDarkMode
+
     val onSubmitLogoutDebounced =
         rememberDebouncedClick {
-            onEvent(ProfileEvent.SubmitLogout)
+            onSubmitLogout()
         }
 
-    if (state.showLanguagePicker) {
+    if (showLanguagePicker) {
         LanguagePickerBottomSheet(
-            currentLanguage = state.selectedLanguage,
-            onLanguageSelected = { onEvent(ProfileEvent.SelectLanguage(it)) },
-            onDismiss = { onEvent(ProfileEvent.DismissLanguagePicker) },
+            currentLanguage = selectedLanguage,
+            onLanguageSelected = onLanguageSelect,
+            onDismiss = onDismissLanguagePicker,
         )
     }
 
@@ -182,12 +224,12 @@ internal fun ProfileContent(
                 .verticalScroll(rememberScrollState()),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            state.user?.let { user ->
+            user?.let { profileUser ->
                 ProfileHeader(
-                    avatarUrl = user.avatar,
-                    fullName = user.fullName,
-                    email = user.email,
-                    phone = user.phone,
+                    avatarUrl = profileUser.avatar,
+                    fullName = profileUser.fullName,
+                    email = profileUser.email,
+                    phone = profileUser.phone,
                 )
                 Spacer(Modifier.height(32.dp))
             }
@@ -196,12 +238,12 @@ internal fun ProfileContent(
                 ProfileItem(
                     iconRes = R.drawable.profile_ic_edit_profile,
                     title = stringResource(R.string.profile_menu_edit_profile),
-                    onClick = { onEvent(ProfileEvent.NavigateEditProfile) },
+                    onClick = onNavigateToEditProfile,
                 )
                 ProfileItem(
                     iconRes = R.drawable.profile_ic_change_password,
                     title = stringResource(R.string.profile_menu_change_password),
-                    onClick = { onEvent(ProfileEvent.NavigateChangePassword) },
+                    onClick = onNavigateToChangePassword,
                 )
             }
 
@@ -211,20 +253,20 @@ internal fun ProfileContent(
                 ProfileSwitchItem(
                     iconRes = R.drawable.profile_ic_dark_mode,
                     title = stringResource(R.string.profile_menu_dark_mode),
-                    checked = state.isDarkMode,
-                    onCheckedChange = { onEvent(ProfileEvent.ToggleDarkMode(it)) },
+                    checked = isDarkMode,
+                    onCheckedChange = onDarkModeChange,
                 )
                 ProfileItem(
                     iconRes = R.drawable.profile_ic_language,
                     title = stringResource(R.string.profile_menu_language),
                     trailing = {
                         Text(
-                            text = stringResource(state.selectedLanguage.displayNameResId()),
+                            text = stringResource(selectedLanguage.displayNameResId()),
                             style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                         )
                     },
-                    onClick = { onEvent(ProfileEvent.OpenLanguagePicker) },
+                    onClick = onOpenLanguagePicker,
                 )
             }
         }
@@ -232,7 +274,7 @@ internal fun ProfileContent(
         Spacer(Modifier.height(16.dp))
 
         LogoutButton(
-            isEnable = !state.isLoading,
+            isEnable = !isLoading,
             onSubmitLogout = onSubmitLogoutDebounced,
         )
     }

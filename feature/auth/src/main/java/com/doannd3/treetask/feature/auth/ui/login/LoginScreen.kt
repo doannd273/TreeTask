@@ -17,6 +17,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
@@ -57,10 +58,15 @@ fun LoginRoute(
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
     val messageHostState = rememberAppMessageHostState()
+    val currentContext by rememberUpdatedState(context)
+    val currentOnNavigateToHome by rememberUpdatedState(onNavigateToHome)
 
     LoginScreen(
         state = state,
-        onEvent = viewModel::onEvent,
+        onEmailChange = { viewModel.onEvent(LoginEvent.EmailChanged(it)) },
+        onPasswordChange = { viewModel.onEvent(LoginEvent.PasswordChanged(it)) },
+        onPasswordVisibleChange = { viewModel.onEvent(LoginEvent.PasswordVisibleChanged(it)) },
+        onSubmitLogin = { viewModel.onEvent(LoginEvent.SubmitLogin) },
         onNavigateToRegister = onNavigateToRegister,
         onNavigateToForgotPassword = onNavigateToForgotPassword,
     )
@@ -75,14 +81,14 @@ fun LoginRoute(
             viewModel.effect.collect { effect ->
                 when (effect) {
                     is LoginEffect.NavigateToHome -> {
-                        onNavigateToHome()
+                        currentOnNavigateToHome()
                     }
 
                     is LoginEffect.ShowErrorMessage -> {
                         messageHostState.enqueue(
                             AppMessage(
                                 id = LoginMessageIds.Error,
-                                message = effect.message.asString(context),
+                                message = effect.message.asString(currentContext),
                                 type = AppDialogType.Error,
                             ),
                         )
@@ -98,7 +104,7 @@ fun LoginRoute(
                 messageHostState.enqueue(
                     AppMessage(
                         id = LoginMessageIds.Error,
-                        message = message.asString(context),
+                        message = message.asString(currentContext),
                         type = AppDialogType.Error,
                     ),
                 )
@@ -110,7 +116,10 @@ fun LoginRoute(
 @Composable
 internal fun LoginScreen(
     state: LoginState,
-    onEvent: (LoginEvent) -> Unit,
+    onEmailChange: (String) -> Unit,
+    onPasswordChange: (String) -> Unit,
+    onPasswordVisibleChange: (Boolean) -> Unit,
+    onSubmitLogin: () -> Unit,
     onNavigateToRegister: () -> Unit,
     onNavigateToForgotPassword: () -> Unit,
 ) {
@@ -120,7 +129,10 @@ internal fun LoginScreen(
         LoginContent(
             modifier = Modifier.padding(paddingValues = paddingValues),
             state = state,
-            onEvent = onEvent,
+            onEmailChange = onEmailChange,
+            onPasswordChange = onPasswordChange,
+            onPasswordVisibleChange = onPasswordVisibleChange,
+            onSubmitLogin = onSubmitLogin,
             onNavigateToRegister = onNavigateToRegister,
             onNavigateToForgotPassword = onNavigateToForgotPassword,
         )
@@ -139,7 +151,10 @@ private fun LoginScreenPreview() {
                 email = "demo@gmail.com",
                 password = "123456",
             ),
-            onEvent = {},
+            onEmailChange = {},
+            onPasswordChange = {},
+            onPasswordVisibleChange = {},
+            onSubmitLogin = {},
             onNavigateToRegister = {},
             onNavigateToForgotPassword = {},
         )
@@ -149,14 +164,17 @@ private fun LoginScreenPreview() {
 @Composable
 internal fun LoginContent(
     state: LoginState,
-    onEvent: (LoginEvent) -> Unit,
+    onEmailChange: (String) -> Unit,
+    onPasswordChange: (String) -> Unit,
+    onPasswordVisibleChange: (Boolean) -> Unit,
+    onSubmitLogin: () -> Unit,
     onNavigateToRegister: () -> Unit,
     onNavigateToForgotPassword: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val onSubmitLoginDebounced =
         rememberDebouncedClick {
-            onEvent(LoginEvent.SubmitLogin)
+            onSubmitLogin()
         }
 
     val passwordFocusRequester = remember { FocusRequester() }
@@ -179,7 +197,7 @@ internal fun LoginContent(
             modifier = Modifier.fillMaxWidth(),
             label = stringResource(R.string.auth_email_hint),
             email = state.email,
-            onEmailChange = { onEvent(LoginEvent.EmailChanged(it)) },
+            onEmailChange = onEmailChange,
             imeAction = ImeAction.Next,
             onImeNext = {
                 passwordFocusRequester.requestFocus()
@@ -196,8 +214,8 @@ internal fun LoginContent(
             label = stringResource(R.string.auth_password_hint),
             password = state.password,
             passwordVisible = state.passwordVisible,
-            onPasswordChange = { onEvent(LoginEvent.PasswordChanged(it)) },
-            onPasswordVisibleChange = { onEvent(LoginEvent.PasswordVisibleChanged(it)) },
+            onPasswordChange = onPasswordChange,
+            onPasswordVisibleChange = onPasswordVisibleChange,
             onImeDone = {
                 focusManager.clearFocus()
                 onSubmitLoginDebounced()

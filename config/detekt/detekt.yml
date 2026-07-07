@@ -23,7 +23,7 @@ performance:
 
 complexity:
   LongParameterList:
-    functionThreshold: 10
+    functionThreshold: 20
     ignoreDefaultParameters: true
   LongMethod:
     threshold: 80

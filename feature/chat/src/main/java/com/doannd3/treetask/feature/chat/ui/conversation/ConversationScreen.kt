@@ -9,6 +9,7 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -44,6 +45,8 @@ fun ConversationRoute(
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
     val messageHostState = rememberAppMessageHostState()
+    val currentContext by rememberUpdatedState(context)
+    val currentOnNavigationToChatDetail by rememberUpdatedState(onNavigationToChatDetail)
 
     var shouldRefreshOnReturnFromDetail by rememberSaveable {
         mutableStateOf(false)
@@ -51,7 +54,8 @@ fun ConversationRoute(
 
     ConversationScreen(
         state = state,
-        onEvent = viewModel::onEvent,
+        onRefresh = { viewModel.onEvent(ConversationEvent.Refresh) },
+        onConversationClick = { viewModel.onEvent(ConversationEvent.ConversationClicked(it)) },
     )
 
     AppMessageDialogHost(
@@ -59,7 +63,7 @@ fun ConversationRoute(
         onAcknowledged = {},
     )
 
-    DisposableEffect(lifecycleOwner) {
+    DisposableEffect(lifecycleOwner, viewModel) {
         val observer =
             LifecycleEventObserver { _, event ->
                 if (event == Lifecycle.Event.ON_RESUME && shouldRefreshOnReturnFromDetail) {
@@ -75,7 +79,7 @@ fun ConversationRoute(
         }
     }
 
-    LaunchedEffect(Unit) {
+    LaunchedEffect(viewModel) {
         viewModel.onEvent(ConversationEvent.LoadConversations)
     }
 
@@ -87,7 +91,7 @@ fun ConversationRoute(
                         messageHostState.enqueue(
                             AppMessage(
                                 id = ConversationMessageIds.Error,
-                                message = effect.message.asString(context),
+                                message = effect.message.asString(currentContext),
                                 type = AppDialogType.Error,
                             ),
                         )
@@ -95,7 +99,7 @@ fun ConversationRoute(
 
                     is ConversationEffect.NavigateToChatDetail -> {
                         shouldRefreshOnReturnFromDetail = true
-                        onNavigationToChatDetail(effect.conversationId)
+                        currentOnNavigationToChatDetail(effect.conversationId)
                     }
                 }
             }
@@ -108,7 +112,7 @@ fun ConversationRoute(
                 messageHostState.enqueue(
                     AppMessage(
                         id = ConversationMessageIds.Error,
-                        message = message.asString(context),
+                        message = message.asString(currentContext),
                         type = AppDialogType.Error,
                     ),
                 )
@@ -120,14 +124,16 @@ fun ConversationRoute(
 @Composable
 internal fun ConversationScreen(
     state: ConversationState,
-    onEvent: (ConversationEvent) -> Unit,
+    onRefresh: () -> Unit,
+    onConversationClick: (Conversation) -> Unit,
 ) {
     Scaffold(
         contentWindowInsets = WindowInsets.safeDrawing,
     ) { paddingValues ->
         ConversationContent(
             state = state,
-            onEvent = onEvent,
+            onRefresh = onRefresh,
+            onConversationClick = onConversationClick,
             modifier = Modifier.padding(paddingValues = paddingValues),
         )
     }
@@ -186,7 +192,8 @@ private fun ConversationScreenPreview() {
     TreeTaskTheme {
         ConversationScreen(
             state = ConversationState(conversations = mockConversations),
-            onEvent = {},
+            onRefresh = {},
+            onConversationClick = {},
         )
     }
 }
@@ -194,7 +201,8 @@ private fun ConversationScreenPreview() {
 @Composable
 internal fun ConversationContent(
     state: ConversationState,
-    onEvent: (ConversationEvent) -> Unit,
+    onRefresh: () -> Unit,
+    onConversationClick: (Conversation) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     when {
@@ -205,7 +213,7 @@ internal fun ConversationContent(
         state.hasInitialLoadError && state.conversations.isEmpty() -> {
             ConversationErrorState(
                 modifier = modifier,
-                onRetry = { onEvent(ConversationEvent.Refresh) },
+                onRetry = onRefresh,
             )
         }
 
@@ -218,9 +226,7 @@ internal fun ConversationContent(
                 modifier = modifier,
                 conversations = state.conversations,
                 isRefresh = state.isRefreshing,
-                onConversationClick = {
-                    onEvent(ConversationEvent.ConversationClicked(it))
-                },
+                onConversationClick = onConversationClick,
             )
         }
     }

@@ -12,6 +12,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -42,10 +43,24 @@ fun ChangePasswordRoute(
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
     val messageHostState = rememberAppMessageHostState()
+    val currentContext by rememberUpdatedState(context)
+    val currentOnNavigateBack by rememberUpdatedState(onNavigateBack)
 
     ChangePasswordScreen(
         state = state,
-        onEvent = viewModel::onEvent,
+        onCurrentPasswordChange = { viewModel.onEvent(ChangePasswordEvent.CurrentPasswordChanged(it)) },
+        onNewPasswordChange = { viewModel.onEvent(ChangePasswordEvent.NewPasswordChanged(it)) },
+        onConfirmPasswordChange = { viewModel.onEvent(ChangePasswordEvent.ConfirmPasswordChanged(it)) },
+        onCurrentPasswordVisibleChange = {
+            viewModel.onEvent(ChangePasswordEvent.CurrentPasswordVisibleChanged(it))
+        },
+        onNewPasswordVisibleChange = {
+            viewModel.onEvent(ChangePasswordEvent.NewPasswordVisibleChanged(it))
+        },
+        onConfirmPasswordVisibleChange = {
+            viewModel.onEvent(ChangePasswordEvent.ConfirmPasswordVisibleChanged(it))
+        },
+        onSubmitChangePassword = { viewModel.onEvent(ChangePasswordEvent.SubmitChangePassword) },
         onNavigateBack = onNavigateBack,
     )
 
@@ -66,7 +81,7 @@ fun ChangePasswordRoute(
                         messageHostState.enqueue(
                             AppMessage(
                                 id = ChangePasswordMessageIds.Error,
-                                message = effect.message.asString(context),
+                                message = effect.message.asString(currentContext),
                                 type = AppDialogType.Error,
                             ),
                         )
@@ -76,14 +91,14 @@ fun ChangePasswordRoute(
                         messageHostState.enqueue(
                             AppMessage(
                                 id = ChangePasswordMessageIds.Success,
-                                message = effect.message.asString(context),
+                                message = effect.message.asString(currentContext),
                                 type = AppDialogType.Success,
                             ),
                         )
                     }
 
                     is ChangePasswordEffect.NavigateBack -> {
-                        onNavigateBack()
+                        currentOnNavigateBack()
                     }
                 }
             }
@@ -96,7 +111,7 @@ fun ChangePasswordRoute(
                 messageHostState.enqueue(
                     AppMessage(
                         id = ChangePasswordMessageIds.Error,
-                        message = message.asString(context),
+                        message = message.asString(currentContext),
                         type = AppDialogType.Error,
                     ),
                 )
@@ -108,7 +123,13 @@ fun ChangePasswordRoute(
 @Composable
 internal fun ChangePasswordScreen(
     state: ChangePasswordState,
-    onEvent: (ChangePasswordEvent) -> Unit,
+    onCurrentPasswordChange: (String) -> Unit,
+    onNewPasswordChange: (String) -> Unit,
+    onConfirmPasswordChange: (String) -> Unit,
+    onCurrentPasswordVisibleChange: (Boolean) -> Unit,
+    onNewPasswordVisibleChange: (Boolean) -> Unit,
+    onConfirmPasswordVisibleChange: (Boolean) -> Unit,
+    onSubmitChangePassword: () -> Unit,
     onNavigateBack: () -> Unit,
 ) {
     Scaffold(
@@ -123,7 +144,13 @@ internal fun ChangePasswordScreen(
     ) { paddingValues ->
         ChangePasswordContent(
             state = state,
-            onEvent = onEvent,
+            onCurrentPasswordChange = onCurrentPasswordChange,
+            onNewPasswordChange = onNewPasswordChange,
+            onConfirmPasswordChange = onConfirmPasswordChange,
+            onCurrentPasswordVisibleChange = onCurrentPasswordVisibleChange,
+            onNewPasswordVisibleChange = onNewPasswordVisibleChange,
+            onConfirmPasswordVisibleChange = onConfirmPasswordVisibleChange,
+            onSubmitChangePassword = onSubmitChangePassword,
             modifier = Modifier.padding(paddingValues),
         )
     }
@@ -137,7 +164,13 @@ private fun ChangePasswordScreenPreview() {
     TreeTaskTheme {
         ChangePasswordScreen(
             state = ChangePasswordState(),
-            onEvent = {},
+            onCurrentPasswordChange = {},
+            onNewPasswordChange = {},
+            onConfirmPasswordChange = {},
+            onCurrentPasswordVisibleChange = {},
+            onNewPasswordVisibleChange = {},
+            onConfirmPasswordVisibleChange = {},
+            onSubmitChangePassword = {},
             onNavigateBack = {},
         )
     }
@@ -154,7 +187,13 @@ private fun ChangePasswordScreenFilledPreview() {
                 newPassword = stringResource(R.string.profile_preview_new_password),
                 confirmPassword = stringResource(R.string.profile_preview_new_password),
             ),
-            onEvent = {},
+            onCurrentPasswordChange = {},
+            onNewPasswordChange = {},
+            onConfirmPasswordChange = {},
+            onCurrentPasswordVisibleChange = {},
+            onNewPasswordVisibleChange = {},
+            onConfirmPasswordVisibleChange = {},
+            onSubmitChangePassword = {},
             onNavigateBack = {},
         )
     }
@@ -163,7 +202,13 @@ private fun ChangePasswordScreenFilledPreview() {
 @Composable
 internal fun ChangePasswordContent(
     state: ChangePasswordState,
-    onEvent: (ChangePasswordEvent) -> Unit,
+    onCurrentPasswordChange: (String) -> Unit,
+    onNewPasswordChange: (String) -> Unit,
+    onConfirmPasswordChange: (String) -> Unit,
+    onCurrentPasswordVisibleChange: (Boolean) -> Unit,
+    onNewPasswordVisibleChange: (Boolean) -> Unit,
+    onConfirmPasswordVisibleChange: (Boolean) -> Unit,
+    onSubmitChangePassword: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -175,7 +220,13 @@ internal fun ChangePasswordContent(
     ) {
         ChangePasswordForm(
             state = state,
-            onEvent = onEvent,
+            onCurrentPasswordChange = onCurrentPasswordChange,
+            onNewPasswordChange = onNewPasswordChange,
+            onConfirmPasswordChange = onConfirmPasswordChange,
+            onCurrentPasswordVisibleChange = onCurrentPasswordVisibleChange,
+            onNewPasswordVisibleChange = onNewPasswordVisibleChange,
+            onConfirmPasswordVisibleChange = onConfirmPasswordVisibleChange,
+            onSubmitChangePassword = onSubmitChangePassword,
         )
     }
 }

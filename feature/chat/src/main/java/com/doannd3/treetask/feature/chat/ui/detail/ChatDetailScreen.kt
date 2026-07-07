@@ -7,6 +7,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -42,19 +43,27 @@ fun ChatDetailRoute(
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
     val messageHostState = rememberAppMessageHostState()
+    val currentContext by rememberUpdatedState(context)
+    val currentOnBackClick by rememberUpdatedState(onBackClick)
 
-    ChatDetailScreen(state = state, onEvent = viewModel::onEvent)
+    ChatDetailScreen(
+        state = state,
+        onBackClick = { viewModel.onEvent(ChatDetailEvent.BackClick) },
+        onMessageChange = { viewModel.onEvent(ChatDetailEvent.MessageChanged(message = it)) },
+        onSendClick = { viewModel.onEvent(ChatDetailEvent.SendMessageClicked) },
+        onRefresh = { viewModel.onEvent(ChatDetailEvent.Refresh) },
+    )
 
     AppMessageDialogHost(
         state = messageHostState,
         onAcknowledged = {},
     )
 
-    LaunchedEffect(conversationId) {
+    LaunchedEffect(conversationId, viewModel) {
         viewModel.onEvent(ChatDetailEvent.LoadMessages(conversationId = conversationId))
     }
 
-    LaunchedEffect(conversationId, lifecycleOwner) {
+    LaunchedEffect(conversationId, lifecycleOwner, viewModel) {
         lifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
             viewModel.onEvent(ChatDetailEvent.StartRealtime(conversationId = conversationId))
 
@@ -74,14 +83,14 @@ fun ChatDetailRoute(
                         messageHostState.enqueue(
                             AppMessage(
                                 id = ChatDetailMessageIds.Error,
-                                message = effect.message.asString(context),
+                                message = effect.message.asString(currentContext),
                                 type = AppDialogType.Error,
                             ),
                         )
                     }
 
                     ChatDetailEffect.NavigateBack -> {
-                        onBackClick()
+                        currentOnBackClick()
                     }
                 }
             }
@@ -94,7 +103,7 @@ fun ChatDetailRoute(
                 messageHostState.enqueue(
                     AppMessage(
                         id = ChatDetailMessageIds.Error,
-                        message = message.asString(context),
+                        message = message.asString(currentContext),
                         type = AppDialogType.Error,
                     ),
                 )
@@ -106,7 +115,10 @@ fun ChatDetailRoute(
 @Composable
 internal fun ChatDetailScreen(
     state: ChatDetailState,
-    onEvent: (ChatDetailEvent) -> Unit,
+    onBackClick: () -> Unit,
+    onMessageChange: (String) -> Unit,
+    onSendClick: () -> Unit,
+    onRefresh: () -> Unit,
 ) {
     val messages = state.messages
     val isLoading = state.isLoading
@@ -114,25 +126,23 @@ internal fun ChatDetailScreen(
     val hasInitialLoadError = state.hasInitialLoadError
     val isTyping = state.typingUserId != null
     val currentUserId = state.currentUserId
+    val draftMessage = state.draftMessage
+    val isSending = state.isSending
 
     Scaffold(
         contentWindowInsets = WindowInsets.safeDrawing,
         topBar = {
             CommonHeader(
                 title = stringResource(R.string.chat_detail_title),
-                onNavigateBack = { onEvent(ChatDetailEvent.BackClick) },
+                onNavigateBack = onBackClick,
             )
         },
         bottomBar = {
             ChatMessageComposer(
-                message = state.draftMessage,
-                isSending = state.isSending,
-                onMessageChange = { message ->
-                    onEvent(ChatDetailEvent.MessageChanged(message = message))
-                },
-                onSendClick = {
-                    onEvent(ChatDetailEvent.SendMessageClicked)
-                },
+                message = draftMessage,
+                isSending = isSending,
+                onMessageChange = onMessageChange,
+                onSendClick = onSendClick,
             )
         },
     ) { paddingValues ->
@@ -143,7 +153,7 @@ internal fun ChatDetailScreen(
             hasInitialLoadError = hasInitialLoadError,
             isTyping = isTyping,
             currentUserId = currentUserId,
-            onRetry = { onEvent(ChatDetailEvent.Refresh) },
+            onRetry = onRefresh,
             modifier = Modifier.padding(paddingValues = paddingValues),
         )
     }
@@ -162,7 +172,10 @@ private fun ChatDetailScreenPreview() {
                 draftMessage = "Can you review this task?",
                 isSending = false,
             ),
-            onEvent = {},
+            onBackClick = {},
+            onMessageChange = {},
+            onSendClick = {},
+            onRefresh = {},
         )
     }
 }

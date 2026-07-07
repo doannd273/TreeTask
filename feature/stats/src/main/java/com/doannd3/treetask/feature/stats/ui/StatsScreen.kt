@@ -11,6 +11,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
@@ -44,10 +45,11 @@ fun StatsRoute(
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
     val messageHostState = rememberAppMessageHostState()
+    val currentContext by rememberUpdatedState(context)
 
     StatsScreen(
         state = state,
-        onEvent = viewModel::onEvent,
+        onRefresh = { viewModel.onEvent(StatsEvent.Refresh) },
         onRecentTaskClick = onRecentTaskClick,
     )
 
@@ -64,7 +66,7 @@ fun StatsRoute(
                         messageHostState.enqueue(
                             AppMessage(
                                 id = StatsMessageIds.Error,
-                                message = effect.message.asString(context),
+                                message = effect.message.asString(currentContext),
                                 type = AppDialogType.Error,
                             ),
                         )
@@ -80,7 +82,7 @@ fun StatsRoute(
                 messageHostState.enqueue(
                     AppMessage(
                         id = StatsMessageIds.Error,
-                        message = message.asString(context),
+                        message = message.asString(currentContext),
                         type = AppDialogType.Error,
                     ),
                 )
@@ -92,21 +94,27 @@ fun StatsRoute(
 @Composable
 internal fun StatsScreen(
     state: StatsState,
-    onEvent: (StatsEvent) -> Unit,
+    onRefresh: () -> Unit,
     onRecentTaskClick: (String) -> Unit,
 ) {
+    val isLoading = state.isLoading
+    val taskStats = state.taskStats
+    val hasInitialLoadError = state.hasInitialLoadError
+
     Scaffold(
         contentWindowInsets = WindowInsets.safeDrawing,
     ) { paddingValues ->
         StatsContent(
-            state = state,
-            onEvent = onEvent,
+            isLoading = isLoading,
+            taskStats = taskStats,
+            hasInitialLoadError = hasInitialLoadError,
+            onRefresh = onRefresh,
             onRecentTaskClick = onRecentTaskClick,
             modifier = Modifier.padding(paddingValues),
         )
     }
 
-    AppLoadingDialog(isLoading = state.isLoading && state.taskStats != null)
+    AppLoadingDialog(isLoading = isLoading && taskStats != null)
 }
 
 @AppPreviewLightDark
@@ -157,7 +165,7 @@ private fun StatsScreenDataPreview() {
                     ),
                 ),
             ),
-            onEvent = {},
+            onRefresh = {},
             onRecentTaskClick = {},
         )
     }
@@ -165,35 +173,37 @@ private fun StatsScreenDataPreview() {
 
 @Composable
 internal fun StatsContent(
-    state: StatsState,
-    onEvent: (StatsEvent) -> Unit,
+    isLoading: Boolean,
+    taskStats: TaskStats?,
+    hasInitialLoadError: Boolean,
+    onRefresh: () -> Unit,
     onRecentTaskClick: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     when {
-        state.isLoading && state.taskStats == null -> {
+        isLoading && taskStats == null -> {
             StatsLoadingState(modifier = modifier)
         }
 
-        state.hasInitialLoadError -> {
+        hasInitialLoadError -> {
             StatsErrorState(
                 modifier = modifier,
-                onRetry = { onEvent(StatsEvent.Refresh) },
+                onRetry = onRefresh,
             )
         }
 
-        state.taskStats == null -> {
+        taskStats == null -> {
             StatsLoadingState(modifier = modifier)
         }
 
-        state.isEmpty -> {
+        taskStats.total == 0 -> {
             StatsEmptyState(modifier = modifier)
         }
 
         else -> {
             StatsDataContent(
                 modifier = modifier,
-                stats = state.taskStats,
+                stats = taskStats,
                 onRecentTaskClick = onRecentTaskClick,
             )
         }

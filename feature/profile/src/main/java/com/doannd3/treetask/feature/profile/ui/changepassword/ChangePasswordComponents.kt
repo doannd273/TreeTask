@@ -29,7 +29,13 @@ import com.doannd3.treetask.feature.profile.R
 @Composable
 internal fun ChangePasswordForm(
     state: ChangePasswordState,
-    onEvent: (ChangePasswordEvent) -> Unit,
+    onCurrentPasswordChange: (String) -> Unit,
+    onNewPasswordChange: (String) -> Unit,
+    onConfirmPasswordChange: (String) -> Unit,
+    onCurrentPasswordVisibleChange: (Boolean) -> Unit,
+    onNewPasswordVisibleChange: (Boolean) -> Unit,
+    onConfirmPasswordVisibleChange: (Boolean) -> Unit,
+    onSubmitChangePassword: () -> Unit,
 ) {
     val currentPasswordFocusRequester = remember { FocusRequester() }
     val newPasswordFocusRequester = remember { FocusRequester() }
@@ -37,7 +43,7 @@ internal fun ChangePasswordForm(
     val focusManager = LocalFocusManager.current
     val onSubmitDebounced =
         rememberDebouncedClick {
-            onEvent(ChangePasswordEvent.SubmitChangePassword)
+            onSubmitChangePassword()
         }
 
     Column(
@@ -58,8 +64,8 @@ internal fun ChangePasswordForm(
             enabled = !state.isLoading,
             imeAction = ImeAction.Next,
             onImeNext = { newPasswordFocusRequester.requestFocus() },
-            onPasswordChange = { onEvent(ChangePasswordEvent.CurrentPasswordChanged(it)) },
-            onPasswordVisibleChange = { onEvent(ChangePasswordEvent.CurrentPasswordVisibleChanged(it)) },
+            onPasswordChange = onCurrentPasswordChange,
+            onPasswordVisibleChange = onCurrentPasswordVisibleChange,
         )
 
         PasswordInput(
@@ -73,8 +79,8 @@ internal fun ChangePasswordForm(
             enabled = !state.isLoading,
             imeAction = ImeAction.Next,
             onImeNext = { confirmPasswordFocusRequester.requestFocus() },
-            onPasswordChange = { onEvent(ChangePasswordEvent.NewPasswordChanged(it)) },
-            onPasswordVisibleChange = { onEvent(ChangePasswordEvent.NewPasswordVisibleChanged(it)) },
+            onPasswordChange = onNewPasswordChange,
+            onPasswordVisibleChange = onNewPasswordVisibleChange,
         )
 
         PasswordInput(
@@ -91,8 +97,8 @@ internal fun ChangePasswordForm(
                 focusManager.clearFocus()
                 onSubmitDebounced()
             },
-            onPasswordChange = { onEvent(ChangePasswordEvent.ConfirmPasswordChanged(it)) },
-            onPasswordVisibleChange = { onEvent(ChangePasswordEvent.ConfirmPasswordVisibleChanged(it)) },
+            onPasswordChange = onConfirmPasswordChange,
+            onPasswordVisibleChange = onConfirmPasswordVisibleChange,
         )
 
         Spacer(modifier = Modifier.height(8.dp))
@@ -112,7 +118,13 @@ private fun ChangePasswordFormPreview() {
         Surface(color = MaterialTheme.colorScheme.background) {
             ChangePasswordForm(
                 state = ChangePasswordState(),
-                onEvent = {},
+                onCurrentPasswordChange = {},
+                onNewPasswordChange = {},
+                onConfirmPasswordChange = {},
+                onCurrentPasswordVisibleChange = {},
+                onNewPasswordVisibleChange = {},
+                onConfirmPasswordVisibleChange = {},
+                onSubmitChangePassword = {},
             )
         }
     }
@@ -130,7 +142,13 @@ private fun ChangePasswordFormFilledPreview() {
                     newPassword = stringResource(R.string.profile_preview_new_password),
                     confirmPassword = stringResource(R.string.profile_preview_new_password),
                 ),
-                onEvent = {},
+                onCurrentPasswordChange = {},
+                onNewPasswordChange = {},
+                onConfirmPasswordChange = {},
+                onCurrentPasswordVisibleChange = {},
+                onNewPasswordVisibleChange = {},
+                onConfirmPasswordVisibleChange = {},
+                onSubmitChangePassword = {},
             )
         }
     }

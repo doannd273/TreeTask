@@ -104,14 +104,19 @@ private fun AvatarPickerPreview() {
 
 @Composable
 internal fun EditProfileForm(
-    state: EditProfileState,
-    onEvent: (EditProfileEvent) -> Unit,
+    email: String,
+    fullName: String,
+    phone: String,
+    isLoading: Boolean,
+    onFullNameChange: (String) -> Unit,
+    onPhoneChange: (String) -> Unit,
+    onSubmitEditProfile: () -> Unit,
 ) {
     val phoneFocusRequester = remember { FocusRequester() }
     val focusManager = LocalFocusManager.current
     val onSaveDebounced =
         rememberDebouncedClick {
-            onEvent(EditProfileEvent.SubmitEditProfile)
+            onSubmitEditProfile()
         }
 
     Column(
@@ -124,7 +129,7 @@ internal fun EditProfileForm(
         // Email
         OutlinedTextField(
             modifier = Modifier.fillMaxWidth(),
-            value = state.email,
+            value = email,
             onValueChange = {},
             label = { Text(text = stringResource(R.string.profile_edit_email_label)) },
             enabled = false,
@@ -134,10 +139,10 @@ internal fun EditProfileForm(
         // Full Name
         OutlinedTextField(
             modifier = Modifier.fillMaxWidth(),
-            value = state.fullName,
-            onValueChange = { onEvent(EditProfileEvent.FullNameChanged(it)) },
+            value = fullName,
+            onValueChange = onFullNameChange,
             label = { Text(text = stringResource(R.string.profile_edit_full_name_label)) },
-            enabled = !state.isLoading,
+            enabled = !isLoading,
             singleLine = true,
             keyboardOptions =
             KeyboardOptions(
@@ -155,10 +160,10 @@ internal fun EditProfileForm(
             Modifier
                 .fillMaxWidth()
                 .focusRequester(phoneFocusRequester),
-            value = state.phone,
-            onValueChange = { onEvent(EditProfileEvent.PhoneChanged(it)) },
+            value = phone,
+            onValueChange = onPhoneChange,
             label = { Text(text = stringResource(R.string.profile_edit_phone_label)) },
-            enabled = !state.isLoading,
+            enabled = !isLoading,
             singleLine = true,
             keyboardOptions =
             KeyboardOptions(
@@ -178,7 +183,7 @@ internal fun EditProfileForm(
 
         CommonButton(
             buttonText = stringResource(R.string.profile_edit_save_action),
-            isEnable = !state.isLoading,
+            isEnable = !isLoading,
             onSubmit = onSaveDebounced,
         )
     }
@@ -190,13 +195,13 @@ private fun EditProfileFormPreview() {
     TreeTaskTheme {
         Surface(color = MaterialTheme.colorScheme.background) {
             EditProfileForm(
-                state =
-                EditProfileState(
-                    email = stringResource(R.string.profile_preview_email),
-                    fullName = stringResource(R.string.profile_preview_full_name),
-                    phone = stringResource(R.string.profile_preview_phone),
-                ),
-                onEvent = {},
+                email = stringResource(R.string.profile_preview_email),
+                fullName = stringResource(R.string.profile_preview_full_name),
+                phone = stringResource(R.string.profile_preview_phone),
+                isLoading = false,
+                onFullNameChange = {},
+                onPhoneChange = {},
+                onSubmitEditProfile = {},
             )
         }
     }
