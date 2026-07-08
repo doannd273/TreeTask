@@ -205,17 +205,17 @@ internal fun LanguageItemRow(
 
     Row(
         modifier =
-            Modifier
-                .fillMaxWidth()
-                .then(
-                    if (onClick != null) {
-                        Modifier.clickable(onClick = onClick)
-                    } else {
-                        Modifier
-                    },
-                ).padding(
-                    vertical = 8.dp,
-                ),
+        Modifier
+            .fillMaxWidth()
+            .then(
+                if (onClick != null) {
+                    Modifier.clickable(onClick = onClick)
+                } else {
+                    Modifier
+                },
+            ).padding(
+                vertical = 8.dp,
+            ),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Image(
@@ -288,9 +288,9 @@ internal fun ProfileHeader(
             contentDescription = stringResource(R.string.profile_cd_user_avatar),
             contentScale = ContentScale.Crop,
             modifier =
-                Modifier
-                    .size(72.dp)
-                    .clip(CircleShape),
+            Modifier
+                .size(72.dp)
+                .clip(CircleShape),
             placeholder = painterResource(R.drawable.profile_ic_avatar),
             error = painterResource(R.drawable.profile_ic_avatar),
         )
@@ -346,13 +346,13 @@ internal fun ProfileSwitchItem(
 ) {
     Row(
         modifier =
-            Modifier
-                .fillMaxWidth()
-                .toggleable(
-                    value = checked,
-                    onValueChange = onCheckedChange,
-                    role = Role.Switch,
-                ).padding(horizontal = 16.dp, vertical = 24.dp),
+        Modifier
+            .fillMaxWidth()
+            .toggleable(
+                value = checked,
+                onValueChange = onCheckedChange,
+                role = Role.Switch,
+            ).padding(horizontal = 16.dp, vertical = 24.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Icon(
@@ -414,15 +414,15 @@ internal fun ProfileItem(
 
     Row(
         modifier =
-            Modifier
-                .fillMaxWidth()
-                .then(
-                    if (onClick != null && enabled) {
-                        Modifier.clickable(onClick = onClick)
-                    } else {
-                        Modifier
-                    },
-                ).padding(horizontal = 16.dp, vertical = 14.dp),
+        Modifier
+            .fillMaxWidth()
+            .then(
+                if (onClick != null && enabled) {
+                    Modifier.clickable(onClick = onClick)
+                } else {
+                    Modifier
+                },
+            ).padding(horizontal = 16.dp, vertical = 14.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Icon(
@@ -512,9 +512,9 @@ internal fun ProfileSection(
             modifier = Modifier.fillMaxWidth(),
             shape = RoundedCornerShape(12.dp),
             colors =
-                CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
-                ),
+            CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
+            ),
         ) {
             Column {
                 content()
@@ -559,10 +559,10 @@ internal fun LogoutButton(
         enabled = isEnable,
         modifier = Modifier.fillMaxWidth(),
         colors =
-            ButtonDefaults.buttonColors(
-                containerColor = MaterialTheme.colorScheme.errorContainer,
-                contentColor = MaterialTheme.colorScheme.onErrorContainer,
-            ),
+        ButtonDefaults.buttonColors(
+            containerColor = MaterialTheme.colorScheme.errorContainer,
+            contentColor = MaterialTheme.colorScheme.onErrorContainer,
+        ),
         shape = RoundedCornerShape(12.dp),
     ) {
         Text(
@@ -579,9 +579,9 @@ private fun LogoutButtonPreview() {
     TreeTaskTheme {
         Surface(
             modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp),
+            Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
             color = MaterialTheme.colorScheme.background,
         ) {
             LogoutButton(

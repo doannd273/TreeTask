@@ -144,13 +144,18 @@ fun ExampleRoute(
     onBack: () -> Unit,
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
-    val globalAppState = LocalGlobalAppState.current
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
+    val messageHostState = rememberAppMessageHostState()
 
     ExampleScreen(
         state = state,
         onEvent = viewModel::onEvent,
+    )
+
+    AppMessageDialogHost(
+        state = messageHostState,
+        onAcknowledged = {},
     )
 
     LaunchedEffect(viewModel.effect, lifecycleOwner) {
@@ -159,7 +164,13 @@ fun ExampleRoute(
                 when (effect) {
                     ExampleEffect.NavigateBack -> onBack()
                     is ExampleEffect.ShowErrorMessage -> {
-                        globalAppState.showError(effect.message.asString(context))
+                        messageHostState.enqueue(
+                            AppMessage(
+                                id = ExampleMessageIds.Error,
+                                message = effect.message.asString(context),
+                                type = AppDialogType.Error,
+                            ),
+                        )
                     }
                 }
             }
@@ -169,13 +180,15 @@ fun ExampleRoute(
     LaunchedEffect(viewModel.baseErrorEffect, lifecycleOwner) {
         lifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
             viewModel.baseErrorEffect.collect { message ->
-                globalAppState.showError(message.asString(context))
+                messageHostState.enqueue(
+                    AppMessage(
+                        id = ExampleMessageIds.Error,
+                        message = message.asString(context),
+                        type = AppDialogType.Error,
+                    ),
+                )
             }
         }
-    }
-
-    LaunchedEffect(state.isLoading) {
-        if (state.isLoading) globalAppState.showLoading() else globalAppState.hideLoading()
     }
 }
 
@@ -184,10 +197,13 @@ internal fun ExampleScreen(
     state: ExampleState,
     onEvent: (ExampleEvent) -> Unit,
 ) {
-    ExampleContent(
-        state = state,
-        onEvent = onEvent,
-    )
+    ExampleContent(state = state, onEvent = onEvent)
+
+    AppLoadingDialog(isLoading = state.isLoading)
+}
+
+private object ExampleMessageIds {
+    val Error = AppMessageId("example-error")
 }
 ```
 

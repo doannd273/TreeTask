@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="ui_status_todo">Cần làm</string>
+    <string name="ui_status_in_progress">Đang làm</string>
+    <string name="ui_status_pending">Đang chờ</string>
+    <string name="ui_status_done">Hoàn thành</string>
+</resources>

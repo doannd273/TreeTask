@@ -21,10 +21,10 @@ fun AnalyticsHelper.logTaskCreated(
         AnalyticsEvent(
             type = "task_created",
             extras =
-                listOf(
-                    Param("task_id", taskId),
-                    Param("task_type", taskType),
-                ),
+            listOf(
+                Param("task_id", taskId),
+                Param("task_type", taskType),
+            ),
         ),
     )
 }

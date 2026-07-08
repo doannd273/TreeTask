@@ -5,11 +5,13 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
@@ -19,7 +21,12 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.repeatOnLifecycle
 import com.doannd3.treetask.core.common.asString
-import com.doannd3.treetask.core.designsystem.component.LocalGlobalAppState
+import com.doannd3.treetask.core.designsystem.component.AppLoadingDialog
+import com.doannd3.treetask.core.designsystem.component.message.AppDialogType
+import com.doannd3.treetask.core.designsystem.component.message.AppMessage
+import com.doannd3.treetask.core.designsystem.component.message.AppMessageDialogHost
+import com.doannd3.treetask.core.designsystem.component.message.AppMessageId
+import com.doannd3.treetask.core.designsystem.component.message.rememberAppMessageHostState
 import com.doannd3.treetask.core.designsystem.theme.AppPreviewLightDark
 import com.doannd3.treetask.core.designsystem.theme.TreeTaskTheme
 import com.doannd3.treetask.core.model.stats.RecentTaskSummary
@@ -35,14 +42,20 @@ fun StatsRoute(
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
 
-    val globalAppState = LocalGlobalAppState.current
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
+    val messageHostState = rememberAppMessageHostState()
+    val currentContext by rememberUpdatedState(context)
 
     StatsScreen(
         state = state,
-        onEvent = viewModel::onEvent,
+        onRefresh = { viewModel.onEvent(StatsEvent.Refresh) },
         onRecentTaskClick = onRecentTaskClick,
+    )
+
+    AppMessageDialogHost(
+        state = messageHostState,
+        onAcknowledged = {},
     )
 
     LaunchedEffect(viewModel.effect, lifecycleOwner) {
@@ -50,8 +63,13 @@ fun StatsRoute(
             viewModel.effect.collect { effect ->
                 when (effect) {
                     is StatsEffect.ShowErrorMessage -> {
-                        val errorStr = effect.message.asString(context)
-                        globalAppState.showError(errorStr)
+                        messageHostState.enqueue(
+                            AppMessage(
+                                id = StatsMessageIds.Error,
+                                message = effect.message.asString(currentContext),
+                                type = AppDialogType.Error,
+                            ),
+                        )
                     }
                 }
             }
@@ -61,7 +79,13 @@ fun StatsRoute(
     LaunchedEffect(viewModel.baseErrorEffect, lifecycleOwner) {
         lifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
             viewModel.baseErrorEffect.collect { message ->
-                globalAppState.showError(message.asString(context))
+                messageHostState.enqueue(
+                    AppMessage(
+                        id = StatsMessageIds.Error,
+                        message = message.asString(currentContext),
+                        type = AppDialogType.Error,
+                    ),
+                )
             }
         }
     }
@@ -70,52 +94,116 @@ fun StatsRoute(
 @Composable
 internal fun StatsScreen(
     state: StatsState,
-    onEvent: (StatsEvent) -> Unit,
+    onRefresh: () -> Unit,
     onRecentTaskClick: (String) -> Unit,
 ) {
+    val isLoading = state.isLoading
+    val taskStats = state.taskStats
+    val hasInitialLoadError = state.hasInitialLoadError
+
     Scaffold(
-        contentWindowInsets = WindowInsets(0, 0, 0, 0),
+        contentWindowInsets = WindowInsets.safeDrawing,
     ) { paddingValues ->
         StatsContent(
-            modifier = Modifier.padding(paddingValues),
-            state = state,
-            onEvent = onEvent,
+            isLoading = isLoading,
+            taskStats = taskStats,
+            hasInitialLoadError = hasInitialLoadError,
+            onRefresh = onRefresh,
             onRecentTaskClick = onRecentTaskClick,
+            modifier = Modifier.padding(paddingValues),
+        )
+    }
+
+    AppLoadingDialog(isLoading = isLoading && taskStats != null)
+}
+
+@AppPreviewLightDark
+@Composable
+private fun StatsScreenDataPreview() {
+    TreeTaskTheme {
+        StatsScreen(
+            state =
+            StatsState(
+                taskStats =
+                TaskStats(
+                    total = 37,
+                    todo = 8,
+                    inProgress = 6,
+                    pending = 3,
+                    done = 20,
+                    completionRate = 54.0,
+                    recentTasks =
+                    listOf(
+                        RecentTaskSummary(
+                            id = "1",
+                            title = "Fix login token refresh",
+                            status = TaskStatus.DONE,
+                            createdAt = Instant.parse("2026-05-20T08:00:00Z"),
+                            dueDate = Instant.parse("2026-05-25T17:00:00Z"),
+                        ),
+                        RecentTaskSummary(
+                            id = "2",
+                            title = "Implement stats screen UI",
+                            status = TaskStatus.IN_PROGRESS,
+                            createdAt = Instant.parse("2026-05-28T09:00:00Z"),
+                            dueDate = Instant.parse("2026-06-05T17:00:00Z"),
+                        ),
+                        RecentTaskSummary(
+                            id = "3",
+                            title = "Write unit tests for auth flow",
+                            status = TaskStatus.TODO,
+                            createdAt = Instant.parse("2026-05-30T10:00:00Z"),
+                            dueDate = null,
+                        ),
+                        RecentTaskSummary(
+                            id = "4",
+                            title = "Design review with team",
+                            status = TaskStatus.PENDING,
+                            createdAt = Instant.parse("2026-05-29T14:00:00Z"),
+                            dueDate = Instant.parse("2026-06-03T12:00:00Z"),
+                        ),
+                    ),
+                ),
+            ),
+            onRefresh = {},
+            onRecentTaskClick = {},
         )
     }
 }
 
 @Composable
 internal fun StatsContent(
-    modifier: Modifier = Modifier,
-    state: StatsState,
-    onEvent: (StatsEvent) -> Unit,
+    isLoading: Boolean,
+    taskStats: TaskStats?,
+    hasInitialLoadError: Boolean,
+    onRefresh: () -> Unit,
     onRecentTaskClick: (String) -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     when {
-        state.isLoading && state.taskStats == null -> {
+        isLoading && taskStats == null -> {
             StatsLoadingState(modifier = modifier)
         }
 
-        state.hasInitialLoadError -> {
+        hasInitialLoadError -> {
             StatsErrorState(
                 modifier = modifier,
-                onRetry = { onEvent(StatsEvent.Refresh) },
+                onRetry = onRefresh,
             )
         }
 
-        state.taskStats == null -> {
+        taskStats == null -> {
             StatsLoadingState(modifier = modifier)
         }
 
-        state.isEmpty -> {
+        taskStats.total == 0 -> {
             StatsEmptyState(modifier = modifier)
         }
 
         else -> {
             StatsDataContent(
                 modifier = modifier,
-                stats = state.taskStats,
+                stats = taskStats,
                 onRecentTaskClick = onRecentTaskClick,
             )
         }
@@ -124,9 +212,9 @@ internal fun StatsContent(
 
 @Composable
 private fun StatsDataContent(
-    modifier: Modifier = Modifier,
     stats: TaskStats,
     onRecentTaskClick: (String) -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     val completionRate = stats.completionRate.roundToInt().coerceIn(0, 100)
 
@@ -172,56 +260,6 @@ private fun StatsDataContent(
     }
 }
 
-@AppPreviewLightDark
-@Composable
-private fun StatsScreenDataPreview() {
-    TreeTaskTheme {
-        StatsScreen(
-            state =
-                StatsState(
-                    taskStats =
-                        TaskStats(
-                            total = 37,
-                            todo = 8,
-                            inProgress = 6,
-                            pending = 3,
-                            done = 20,
-                            completionRate = 54.0,
-                            recentTasks =
-                                listOf(
-                                    RecentTaskSummary(
-                                        id = "1",
-                                        title = "Fix login token refresh",
-                                        status = TaskStatus.DONE,
-                                        createdAt = Instant.parse("2026-05-20T08:00:00Z"),
-                                        dueDate = Instant.parse("2026-05-25T17:00:00Z"),
-                                    ),
-                                    RecentTaskSummary(
-                                        id = "2",
-                                        title = "Implement stats screen UI",
-                                        status = TaskStatus.IN_PROGRESS,
-                                        createdAt = Instant.parse("2026-05-28T09:00:00Z"),
-                                        dueDate = Instant.parse("2026-06-05T17:00:00Z"),
-                                    ),
-                                    RecentTaskSummary(
-                                        id = "3",
-                                        title = "Write unit tests for auth flow",
-                                        status = TaskStatus.TODO,
-                                        createdAt = Instant.parse("2026-05-30T10:00:00Z"),
-                                        dueDate = null,
-                                    ),
-                                    RecentTaskSummary(
-                                        id = "4",
-                                        title = "Design review with team",
-                                        status = TaskStatus.PENDING,
-                                        createdAt = Instant.parse("2026-05-29T14:00:00Z"),
-                                        dueDate = Instant.parse("2026-06-03T12:00:00Z"),
-                                    ),
-                                ),
-                        ),
-                ),
-            onEvent = {},
-            onRecentTaskClick = {},
-        )
-    }
+private object StatsMessageIds {
+    val Error = AppMessageId("stats-error")
 }

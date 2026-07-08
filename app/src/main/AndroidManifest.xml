@@ -36,7 +36,9 @@
             android:windowSoftInputMode="adjustResize"
             android:exported="true"
             android:launchMode="singleTop"
-            android:theme="@style/Theme.TreeTask">
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.TreeTask"
+            tools:ignore="DiscouragedApi,LockedOrientationActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

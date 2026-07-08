@@ -24,6 +24,8 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
@@ -34,86 +36,100 @@ import com.doannd3.treetask.core.common.R as CommonR
 
 @OptIn(FlowPreview::class)
 @HiltViewModel
-class TasksViewModel
-    @Inject
-    constructor(
-        private val getTasksUseCase: GetTasksUseCase,
-        private val deleteTaskUseCase: DeleteTaskUseCase,
-        private val observeCurrentUserIdUseCase: ObserveCurrentUserIdUseCase,
-    ) : BaseViewModel(),
-        MviViewModel<TasksState, TasksEvent, TasksEffect> {
-        override fun setLoading(isLoading: Boolean) {
-            _uiState.update { it.copy(isLoading = isLoading) }
-        }
+class TasksViewModel @Inject constructor(
+    private val getTasksUseCase: GetTasksUseCase,
+    private val deleteTaskUseCase: DeleteTaskUseCase,
+    private val observeCurrentUserIdUseCase: ObserveCurrentUserIdUseCase,
+) : BaseViewModel(),
+    MviViewModel<TasksState, TasksEvent, TasksEffect> {
+    override fun setLoading(isLoading: Boolean) {
+        _uiState.update { it.copy(isLoading = isLoading) }
+    }
 
-        private val _uiState = MutableStateFlow(TasksState())
-        override val uiState: StateFlow<TasksState> = _uiState.asStateFlow()
+    private val _uiState = MutableStateFlow(TasksState())
+    override val uiState: StateFlow<TasksState> = _uiState.asStateFlow()
 
-        private val _effect = MutableSharedFlow<TasksEffect>()
-        override val effect: SharedFlow<TasksEffect> = _effect.asSharedFlow()
+    private val _effect = MutableSharedFlow<TasksEffect>()
+    override val effect: SharedFlow<TasksEffect> = _effect.asSharedFlow()
 
-        private fun getPagingTasks(): Flow<PagingData<Task>> =
+    private fun getPagingTasks(): Flow<PagingData<Task>> =
+        combine(
             uiState
-                .map {
-                    Triple(it.searchQuery, it.taskStatusSelected, it.userId)
-                }.distinctUntilChanged()
-                .flatMapLatest { (query, status, userId) ->
-                    getTasksUseCase(
-                        keyword = query,
-                        status = status?.apiValue ?: "",
-                        userId = userId,
-                    )
-                }.cachedIn(viewModelScope)
-
-        init {
-            // Giả sử bạn lấy userId từ storage khi init
-            viewModelScope.launch {
-                observeCurrentUserIdUseCase().collect { userId ->
-                    _uiState.update { it.copy(userId = userId) }
-                }
-            }
-            // Gán flow paging vào state
-            _uiState.update { it.copy(tasks = getPagingTasks()) }
+                .map { it.searchQuery.trim() }
+                .distinctUntilChanged()
+                .debounce { query ->
+                    if (query.isEmpty()) 0L else SEARCH_DEBOUNCE_MILLIS
+                },
+            uiState
+                .map { it.taskStatusSelected }
+                .distinctUntilChanged(),
+            uiState
+                .map { it.userId.trim() }
+                .distinctUntilChanged(),
+        ) { query, status, userId ->
+            Triple(query, status, userId)
         }
+            .flatMapLatest { (query, status, userId) ->
+                getTasksUseCase(
+                    keyword = query,
+                    status = status?.apiValue ?: "",
+                    userId = userId,
+                )
+            }.cachedIn(viewModelScope)
 
-        override fun onEvent(event: TasksEvent) {
-            when (event) {
-                is TasksEvent.SearchChanged -> {
-                    _uiState.update { it.copy(searchQuery = event.searchQuery) }
-                }
-
-                is TasksEvent.FilterSelected -> {
-                    _uiState.update { it.copy(taskStatusSelected = event.taskStatusSelected) }
-                }
-
-                is TasksEvent.SearchQueryClear -> {
-                    _uiState.update { it.copy(searchQuery = "") }
-                }
-
-                TasksEvent.Refresh -> {
-                }
-
-                is TasksEvent.DeleteTask -> {
-                    deleteTask(taskId = event.taskId)
-                }
+    init {
+        // Giả sử bạn lấy userId từ storage khi init
+        viewModelScope.launch {
+            observeCurrentUserIdUseCase().collect { userId ->
+                _uiState.update { it.copy(userId = userId) }
             }
         }
+        // Gán flow paging vào state
+        _uiState.update { it.copy(tasks = getPagingTasks()) }
+    }
 
-        private fun deleteTask(taskId: String) {
-            executeSafe {
-                _uiState.update { it.copy(isLoading = true) }
-                val result = deleteTaskUseCase(taskId = taskId)
-                _uiState.update { it.copy(isLoading = false) }
-                when (result) {
-                    is ApiResult.Success -> { }
-                    is ApiResult.Error -> {
-                        val message =
-                            result.toDisplayMessage(
-                                UiText.StringResource(CommonR.string.common_error_unknown),
-                            )
-                        _effect.emit(TasksEffect.ShowErrorMessage(message))
-                    }
+    override fun onEvent(event: TasksEvent) {
+        when (event) {
+            is TasksEvent.SearchChanged -> {
+                _uiState.update { it.copy(searchQuery = event.searchQuery) }
+            }
+
+            is TasksEvent.FilterSelected -> {
+                _uiState.update { it.copy(taskStatusSelected = event.taskStatusSelected) }
+            }
+
+            is TasksEvent.SearchQueryClear -> {
+                _uiState.update { it.copy(searchQuery = "") }
+            }
+
+            TasksEvent.Refresh -> {
+            }
+
+            is TasksEvent.DeleteTask -> {
+                deleteTask(taskId = event.taskId)
+            }
+        }
+    }
+
+    private fun deleteTask(taskId: String) {
+        executeSafe {
+            _uiState.update { it.copy(isLoading = true) }
+            val result = deleteTaskUseCase(taskId = taskId)
+            _uiState.update { it.copy(isLoading = false) }
+            when (result) {
+                is ApiResult.Success -> { }
+                is ApiResult.Error -> {
+                    val message =
+                        result.toDisplayMessage(
+                            UiText.StringResource(CommonR.string.common_error_unknown),
+                        )
+                    _effect.emit(TasksEffect.ShowErrorMessage(message))
                 }
             }
         }
     }
+
+    companion object {
+        internal const val SEARCH_DEBOUNCE_MILLIS = 350L
+    }
+}

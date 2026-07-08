@@ -45,20 +45,20 @@ internal fun StatsLoadingState(modifier: Modifier = Modifier) {
             ) {
                 Row(
                     modifier =
-                        Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 16.dp, vertical = 24.dp),
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp, vertical = 24.dp),
                     horizontalArrangement = Arrangement.spacedBy(16.dp),
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
                     Box(
                         modifier =
-                            Modifier
-                                .size(64.dp)
-                                .background(
-                                    color = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.55f),
-                                    shape = CircleShape,
-                                ),
+                        Modifier
+                            .size(64.dp)
+                            .background(
+                                color = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.55f),
+                                shape = CircleShape,
+                            ),
                         contentAlignment = Alignment.Center,
                     ) {
                         CircularProgressIndicator(
@@ -184,9 +184,9 @@ internal fun StatsLoadingState(modifier: Modifier = Modifier) {
                     repeat(3) { index ->
                         Row(
                             modifier =
-                                Modifier
-                                    .fillMaxWidth()
-                                    .padding(horizontal = 16.dp, vertical = 12.dp),
+                            Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 16.dp, vertical = 12.dp),
                             horizontalArrangement = Arrangement.spacedBy(8.dp),
                             verticalAlignment = Alignment.CenterVertically,
                         ) {
@@ -234,10 +234,10 @@ private fun LoadingBlock(
 ) {
     Box(
         modifier =
-            modifier
-                .background(
-                    color = color,
-                    shape = shape,
-                ),
+        modifier
+            .background(
+                color = color,
+                shape = shape,
+            ),
     )
 }

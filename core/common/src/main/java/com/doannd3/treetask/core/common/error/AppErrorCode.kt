@@ -11,12 +11,15 @@ enum class AppErrorCode {
 
 fun AppErrorCode.toUiText(): UiText =
     when (this) {
-        AppErrorCode.MISSING_RESPONSE_DATA ->
+        AppErrorCode.MISSING_RESPONSE_DATA -> {
             UiText.StringResource(R.string.common_missing_response_data)
+        }
 
-        AppErrorCode.UNSUPPORTED_MEDIA_TYPE ->
+        AppErrorCode.UNSUPPORTED_MEDIA_TYPE -> {
             UiText.StringResource(R.string.common_error_unsupported_media_type)
+        }
 
-        AppErrorCode.UNKNOWN ->
+        AppErrorCode.UNKNOWN -> {
             UiText.StringResource(R.string.common_error_unknown)
+        }
     }

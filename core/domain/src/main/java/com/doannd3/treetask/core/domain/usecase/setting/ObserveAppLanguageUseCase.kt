@@ -5,12 +5,10 @@ import com.doannd3.treetask.core.model.profile.AppLanguage
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
-class ObserveAppLanguageUseCase
-    @Inject
-    constructor(
-        private val settingRepository: SettingRepository,
-    ) {
-        operator fun invoke(): Flow<AppLanguage> {
-            return settingRepository.getCachedAppLanguage()
-        }
+class ObserveAppLanguageUseCase @Inject constructor(
+    private val settingRepository: SettingRepository,
+) {
+    operator fun invoke(): Flow<AppLanguage> {
+        return settingRepository.getCachedAppLanguage()
     }
+}

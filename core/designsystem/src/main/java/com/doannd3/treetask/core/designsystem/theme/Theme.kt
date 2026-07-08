@@ -74,9 +74,13 @@ fun TreeTaskTheme(
                 if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
             }
 
-            darkTheme -> DarkColorScheme
+            darkTheme -> {
+                DarkColorScheme
+            }
 
-            else -> LightColorScheme
+            else -> {
+                LightColorScheme
+            }
         }
 
     val treeTaskColors = if (darkTheme) DarkTreeTaskColors else LightTreeTaskColors

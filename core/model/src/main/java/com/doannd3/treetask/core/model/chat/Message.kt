@@ -6,7 +6,8 @@ import java.time.Instant
 data class Message(
     val id: String,
     val conversationId: String,
-    val sender: User,
+    val user: User,
+    val type: MessageType,
     val content: String,
     val createdAt: Instant,
 )

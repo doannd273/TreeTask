@@ -41,10 +41,10 @@ fun NavController.navigateToEditTask(
 ) {
     this.navigate(
         route =
-            EditTaskDestination(
-                taskId = taskId,
-                mode = TaskFormMode.EDIT.name,
-            ),
+        EditTaskDestination(
+            taskId = taskId,
+            mode = TaskFormMode.EDIT.name,
+        ),
         navOptions = navOptions,
     )
 }
@@ -55,10 +55,10 @@ fun NavController.navigateToViewTask(
 ) {
     this.navigate(
         route =
-            ViewTaskDestination(
-                taskId = taskId,
-                mode = TaskFormMode.VIEW.name,
-            ),
+        ViewTaskDestination(
+            taskId = taskId,
+            mode = TaskFormMode.VIEW.name,
+        ),
         navOptions = navOptions,
     )
 }

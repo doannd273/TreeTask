@@ -25,16 +25,16 @@ This file tracks architecture issues and tech debt found during module-by-module
 - **Location**: `core/designsystem/src/main/java/com/doannd3/treetask/core/designsystem/component/GlobalAppState.kt`
 - **Issue**: `GlobalAppState` and `LocalGlobalAppState` live in the design system module and are consumed directly by `app` and feature screens for global dialog/loading orchestration.
 - **Impact**: Feature modules become coupled to `core:designsystem` for app-level state, while the design system ideally stays focused on stateless UI foundations such as theme, colors, dialogs, loading, link text, click behavior, and debug overlay.
-- **Target solution**: Keep this as-is for now. If the presentation layer grows, move app-level state/composition locals to a dedicated `core:presentation` or `core:ui-common` module and leave `core:designsystem` for reusable UI primitives/theme.
+- **Resolution**: Removed `GlobalAppState`/`LocalGlobalAppState` from `core:designsystem` and `app`. Screens now own loading and message presentation through shared primitives such as `AppLoadingDialog` and `AppMessageDialogHost`.
 - **Priority**: Low
-- **Status**: Deferred until UI/presentation boundaries need cleanup
+- **Status**: Resolved
 
 ## `feature:auth` Duplicates Route Side-Effect Wiring
 
 - **Location**: `feature/auth/src/main/java/com/doannd3/treetask/feature/auth/ui`
-- **Issue**: Login, register, and forgot-password routes each manually collect feature effects, `baseErrorEffect`, and loading state, then bridge them to `LocalGlobalAppState`.
+- **Issue**: Login, register, and forgot-password routes each manually collect feature effects, `baseErrorEffect`, and loading state, then wire them to UI presentation primitives in-place.
 - **Impact**: Lifecycle/effect glue is repeated across auth screens and can drift as new screens add loading, dialog, or one-shot effect handling.
-- **Target solution**: After the audit, consider a small presentation helper for lifecycle-aware effect collection and global loading/error bridging, or move this pattern into a shared `core:presentation`/`core:ui-common` layer.
+- **Target solution**: After the audit, consider a small presentation helper for lifecycle-aware effect collection and screen-owned dialog/loading wiring, or move this pattern into a shared `core:presentation`/`core:ui-common` layer.
 - **Priority**: Low
 - **Status**: Deferred until more feature screens are audited
 

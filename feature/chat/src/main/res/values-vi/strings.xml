@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="chat_empty_conversations">Chưa có cuộc trò chuyện nào</string>
+    <string name="chat_error_conversations">Không thể tải danh sách trò chuyện</string>
+    <string name="chat_retry">Thử lại</string>
+    <string name="chat_no_messages_yet">Chưa có tin nhắn</string>
+    <string name="chat_unknown_conversation">Cuộc trò chuyện</string>
+    <string name="chat_time_yesterday">Hôm qua</string>
+    <string name="chat_time_monday">Thứ 2</string>
+    <string name="chat_time_tuesday">Thứ 3</string>
+    <string name="chat_time_wednesday">Thứ 4</string>
+    <string name="chat_time_thursday">Thứ 5</string>
+    <string name="chat_time_friday">Thứ 6</string>
+    <string name="chat_time_saturday">Thứ 7</string>
+    <string name="chat_time_sunday">Chủ Nhật</string>
+    <string name="chat_detail_title">Trò chuyện</string>
+    <string name="chat_detail_placeholder">Cuộc trò chuyện %1$s</string>
+    <string name="chat_error_messages">Không thể tải tin nhắn</string>
+    <string name="chat_unknown_sender">Người gửi không xác định</string>
+    <string name="chat_typing_indicator">Có người đang nhập...</string>
+    <string name="chat_message_input_placeholder">Nhập tin nhắn</string>
+    <string name="chat_send_message">Gửi tin nhắn</string>
+</resources>

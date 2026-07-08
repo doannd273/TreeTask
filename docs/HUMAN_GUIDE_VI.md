@@ -169,7 +169,7 @@ Khi thêm một feature hoặc màn hình mới, đi theo thứ tự này:
 `CompositionLocal`:
 
 - Cơ chế truyền dependency/state xuống Compose tree.
-- Project đang dùng `LocalGlobalAppState` cho global loading/dialog.
+- Chỉ dùng khi state thật sự cần chia sẻ theo tree; project không còn dùng `LocalGlobalAppState` cho loading/dialog màn hình nữa.
 
 ## Khi phân vân nên làm gì?
 

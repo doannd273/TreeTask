@@ -10,5 +10,5 @@ android {
     resourcePrefix = "designsystem_"
 }
 dependencies {
-    implementation(projects.core.model)
+    testImplementation(projects.core.testing)
 }

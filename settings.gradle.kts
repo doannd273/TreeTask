@@ -40,6 +40,7 @@ include(":core:testing")
 include(":core:notification")
 include(":core:analytics")
 include(":core:permission")
+include(":core:ui")
 
 // feature
 include(":feature:auth")

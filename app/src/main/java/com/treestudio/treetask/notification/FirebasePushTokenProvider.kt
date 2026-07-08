@@ -6,9 +6,9 @@ import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
 class FirebasePushTokenProvider
-    @Inject
-    constructor() : PushTokenProvider {
-        override suspend fun getToken(): String? {
-            return FirebaseMessaging.getInstance().token.await()
-        }
+@Inject
+constructor() : PushTokenProvider {
+    override suspend fun getToken(): String? {
+        return FirebaseMessaging.getInstance().token.await()
     }
+}

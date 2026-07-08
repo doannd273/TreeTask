@@ -8,7 +8,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
 
 data class TasksState(
-    val isLoadingSearch: Boolean = false,
     val isLoading: Boolean = false,
     val tasks: Flow<PagingData<Task>> = flowOf(PagingData.empty()),
     val searchQuery: String = "",

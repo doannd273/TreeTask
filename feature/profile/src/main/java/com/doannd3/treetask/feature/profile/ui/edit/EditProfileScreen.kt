@@ -1,14 +1,13 @@
 package com.doannd3.treetask.feature.profile.ui.edit
 
+import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.imePadding
-import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.rememberScrollState
@@ -17,6 +16,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -26,8 +26,13 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.repeatOnLifecycle
 import com.doannd3.treetask.core.common.asString
+import com.doannd3.treetask.core.designsystem.component.AppLoadingDialog
 import com.doannd3.treetask.core.designsystem.component.CommonHeader
-import com.doannd3.treetask.core.designsystem.component.LocalGlobalAppState
+import com.doannd3.treetask.core.designsystem.component.message.AppDialogType
+import com.doannd3.treetask.core.designsystem.component.message.AppMessage
+import com.doannd3.treetask.core.designsystem.component.message.AppMessageDialogHost
+import com.doannd3.treetask.core.designsystem.component.message.AppMessageId
+import com.doannd3.treetask.core.designsystem.component.message.rememberAppMessageHostState
 import com.doannd3.treetask.core.designsystem.theme.AppPreviewLightDark
 import com.doannd3.treetask.core.designsystem.theme.TreeTaskTheme
 import com.doannd3.treetask.feature.profile.R
@@ -37,14 +42,29 @@ fun EditProfileRoute(
     viewModel: EditProfileViewModel = hiltViewModel(),
     onNavigateBack: () -> Unit,
 ) {
-    val globalAppState = LocalGlobalAppState.current
     val context = LocalContext.current
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     val lifecycleOwner = LocalLifecycleOwner.current
+    val messageHostState = rememberAppMessageHostState()
+    val currentContext by rememberUpdatedState(context)
+    val currentOnNavigateBack by rememberUpdatedState(onNavigateBack)
 
     EditProfileScreen(
         state = state,
-        onEvent = viewModel::onEvent,
+        onAvatarChange = { viewModel.onEvent(EditProfileEvent.AvatarChanged(avatarUri = it)) },
+        onFullNameChange = { viewModel.onEvent(EditProfileEvent.FullNameChanged(it)) },
+        onPhoneChange = { viewModel.onEvent(EditProfileEvent.PhoneChanged(it)) },
+        onSubmitEditProfile = { viewModel.onEvent(EditProfileEvent.SubmitEditProfile) },
+        onBackClick = { viewModel.onEvent(EditProfileEvent.BackClicked) },
+    )
+
+    AppMessageDialogHost(
+        state = messageHostState,
+        onAcknowledged = { message ->
+            if (message.id == EditProfileMessageIds.Success) {
+                viewModel.onEvent(EditProfileEvent.SuccessAcknowledged)
+            }
+        },
     )
 
     LaunchedEffect(viewModel.effect, lifecycleOwner) {
@@ -52,17 +72,27 @@ fun EditProfileRoute(
             viewModel.effect.collect { effect ->
                 when (effect) {
                     EditProfileEffect.NavigateBack -> {
-                        onNavigateBack()
+                        currentOnNavigateBack()
                     }
 
                     is EditProfileEffect.ShowErrorMessage -> {
-                        globalAppState.showError(effect.message.asString(context))
+                        messageHostState.enqueue(
+                            AppMessage(
+                                id = EditProfileMessageIds.Error,
+                                message = effect.message.asString(currentContext),
+                                type = AppDialogType.Error,
+                            ),
+                        )
                     }
 
                     is EditProfileEffect.ShowSuccessMessage -> {
-                        globalAppState.showSuccess(effect.message.asString(context)) {
-                            viewModel.onEvent(EditProfileEvent.SuccessAcknowledged)
-                        }
+                        messageHostState.enqueue(
+                            AppMessage(
+                                id = EditProfileMessageIds.Success,
+                                message = effect.message.asString(currentContext),
+                                type = AppDialogType.Success,
+                            ),
+                        )
                     }
                 }
             }
@@ -72,16 +102,14 @@ fun EditProfileRoute(
     LaunchedEffect(viewModel.baseErrorEffect, lifecycleOwner) {
         lifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
             viewModel.baseErrorEffect.collect { message ->
-                globalAppState.showError(message.asString(context))
+                messageHostState.enqueue(
+                    AppMessage(
+                        id = EditProfileMessageIds.Error,
+                        message = message.asString(currentContext),
+                        type = AppDialogType.Error,
+                    ),
+                )
             }
-        }
-    }
-
-    LaunchedEffect(state.isLoading) {
-        if (state.isLoading) {
-            globalAppState.showLoading()
-        } else {
-            globalAppState.hideLoading()
         }
     }
 }
@@ -89,26 +117,33 @@ fun EditProfileRoute(
 @Composable
 internal fun EditProfileScreen(
     state: EditProfileState,
-    onEvent: (EditProfileEvent) -> Unit,
+    onAvatarChange: (Uri?) -> Unit,
+    onFullNameChange: (String) -> Unit,
+    onPhoneChange: (String) -> Unit,
+    onSubmitEditProfile: () -> Unit,
+    onBackClick: () -> Unit,
 ) {
     Scaffold(
         contentWindowInsets =
-            WindowInsets.safeDrawing.only(
-                WindowInsetsSides.Horizontal + WindowInsetsSides.Bottom,
-            ),
+        WindowInsets.safeDrawing,
         topBar = {
             CommonHeader(
                 title = stringResource(R.string.profile_edit_title),
-                onNavigateBack = { onEvent(EditProfileEvent.BackClicked) },
+                onNavigateBack = onBackClick,
             )
         },
     ) { paddingValues ->
         EditProfileContent(
-            modifier = Modifier.padding(paddingValues),
             state = state,
-            onEvent = onEvent,
+            onAvatarChange = onAvatarChange,
+            onFullNameChange = onFullNameChange,
+            onPhoneChange = onPhoneChange,
+            onSubmitEditProfile = onSubmitEditProfile,
+            modifier = Modifier.padding(paddingValues),
         )
     }
+
+    AppLoadingDialog(isLoading = state.isLoading)
 }
 
 @AppPreviewLightDark
@@ -117,32 +152,39 @@ private fun EditProfileScreenPreview() {
     TreeTaskTheme {
         EditProfileScreen(
             state = EditProfileState(),
-            onEvent = {},
+            onAvatarChange = {},
+            onFullNameChange = {},
+            onPhoneChange = {},
+            onSubmitEditProfile = {},
+            onBackClick = {},
         )
     }
 }
 
 @Composable
 internal fun EditProfileContent(
-    modifier: Modifier = Modifier,
     state: EditProfileState,
-    onEvent: (EditProfileEvent) -> Unit,
+    onAvatarChange: (Uri?) -> Unit,
+    onFullNameChange: (String) -> Unit,
+    onPhoneChange: (String) -> Unit,
+    onSubmitEditProfile: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     val launcher =
         rememberLauncherForActivityResult(
             contract = ActivityResultContracts.PickVisualMedia(),
         ) { uri ->
             if (uri != null) {
-                onEvent(EditProfileEvent.AvatarChanged(avatarUri = uri))
+                onAvatarChange(uri)
             }
         }
 
     Column(
         modifier =
-            modifier
-                .fillMaxSize()
-                .verticalScroll(rememberScrollState())
-                .imePadding(),
+        modifier
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState())
+            .imePadding(),
     ) {
         AvatarPicker(
             isEnable = !state.isLoading,
@@ -158,8 +200,18 @@ internal fun EditProfileContent(
         )
 
         EditProfileForm(
-            state = state,
-            onEvent = onEvent,
+            email = state.email,
+            fullName = state.fullName,
+            phone = state.phone,
+            isLoading = state.isLoading,
+            onFullNameChange = onFullNameChange,
+            onPhoneChange = onPhoneChange,
+            onSubmitEditProfile = onSubmitEditProfile,
         )
     }
+}
+
+private object EditProfileMessageIds {
+    val Error = AppMessageId("edit-profile-error")
+    val Success = AppMessageId("edit-profile-success")
 }

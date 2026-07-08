@@ -40,24 +40,24 @@ internal fun AlreadyHaveAccountTextButton(onRegisterBack: () -> Unit) {
         LinkText(
             text = text,
             links =
-                listOf(
-                    LinkPart(
-                        text = loginText,
-                        tag = LinkTag.LOGIN.name,
-                        onClick = onRegisterBack,
-                    ),
+            listOf(
+                LinkPart(
+                    text = loginText,
+                    tag = LinkTag.LOGIN.name,
+                    onClick = onRegisterBack,
                 ),
+            ),
             parentStyle =
-                TextStyle(
-                    color = MaterialTheme.colorScheme.primary,
-                    fontSize = 15.sp,
-                ),
+            TextStyle(
+                color = MaterialTheme.colorScheme.primary,
+                fontSize = 15.sp,
+            ),
             linkStyle =
-                SpanStyle(
-                    color = MaterialTheme.colorScheme.primary,
-                    fontSize = 15.sp,
-                    textDecoration = TextDecoration.Underline,
-                ),
+            SpanStyle(
+                color = MaterialTheme.colorScheme.primary,
+                fontSize = 15.sp,
+                textDecoration = TextDecoration.Underline,
+            ),
         )
     }
 }
@@ -86,17 +86,17 @@ internal fun FullNameInput(
     OutlinedTextField(
         modifier = modifier.fillMaxWidth(),
         colors =
-            OutlinedTextFieldDefaults.colors(
-                focusedTextColor = MaterialTheme.colorScheme.onSurface,
-                unfocusedTextColor = MaterialTheme.colorScheme.onSurfaceVariant,
-            ),
+        OutlinedTextFieldDefaults.colors(
+            focusedTextColor = MaterialTheme.colorScheme.onSurface,
+            unfocusedTextColor = MaterialTheme.colorScheme.onSurfaceVariant,
+        ),
         textStyle = TextStyle(fontSize = 15.sp),
         singleLine = true,
         keyboardOptions =
-            KeyboardOptions(
-                keyboardType = KeyboardType.Text,
-                imeAction = ImeAction.Next,
-            ),
+        KeyboardOptions(
+            keyboardType = KeyboardType.Text,
+            imeAction = ImeAction.Next,
+        ),
         keyboardActions = KeyboardActions(onNext = { onImeNext() }),
         value = fullName,
         onValueChange = { onFullNameChange(it) },

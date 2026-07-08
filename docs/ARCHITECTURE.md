@@ -160,7 +160,7 @@ Route composable:
 - Obtain the ViewModel with `hiltViewModel()`.
 - Collect state with `collectAsStateWithLifecycle()`.
 - Collect effects with `repeatOnLifecycle(Lifecycle.State.STARTED)`.
-- Bridge global loading/error through `LocalGlobalAppState`.
+- Own loading/error UI inside the route or screen using shared components such as `AppMessageDialogHost` and `AppLoadingDialog`.
 - For dialog dismissal that should navigate, send an acknowledgement event to the ViewModel, let the ViewModel emit a navigation effect, then execute navigation in the Route.
 
 ## Navigation

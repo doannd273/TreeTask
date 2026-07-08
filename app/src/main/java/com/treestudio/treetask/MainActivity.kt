@@ -1,7 +1,9 @@
 package com.treestudio.treetask
 
 import android.content.Intent
+import android.graphics.Color
 import android.os.Bundle
+import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
@@ -9,6 +11,7 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
@@ -67,7 +70,12 @@ class MainActivity : AppCompatActivity() {
                 }
             }
 
-            TreeTaskTheme(darkTheme = viewModel.isDarkMode) {
+            val isDarkMode = viewModel.isDarkMode
+            SideEffect {
+                configureEdgeToEdge(isDarkMode = isDarkMode)
+            }
+
+            TreeTaskTheme(darkTheme = isDarkMode) {
                 viewModel.startDestination?.let { dest ->
                     LaunchedEffect(dest) {
                         consumeInitialIntentIfNeeded()
@@ -119,6 +127,32 @@ class MainActivity : AppCompatActivity() {
         pendingTaskId = null
     }
 
+    private fun configureEdgeToEdge(isDarkMode: Boolean) {
+        val statusBarStyle =
+            if (isDarkMode) {
+                SystemBarStyle.dark(scrim = Color.TRANSPARENT)
+            } else {
+                SystemBarStyle.light(
+                    scrim = Color.TRANSPARENT,
+                    darkScrim = Color.TRANSPARENT,
+                )
+            }
+        val navigationBarStyle =
+            if (isDarkMode) {
+                SystemBarStyle.dark(scrim = Color.TRANSPARENT)
+            } else {
+                SystemBarStyle.light(
+                    scrim = Color.TRANSPARENT,
+                    darkScrim = DARK_NAVIGATION_BAR_SCRIM,
+                )
+            }
+
+        enableEdgeToEdge(
+            statusBarStyle = statusBarStyle,
+            navigationBarStyle = navigationBarStyle,
+        )
+    }
+
     private fun requestDebugNotificationPermissionForChuckerIfNeeded() {
         if (!BuildConfig.DEBUG) return
 
@@ -134,5 +168,9 @@ class MainActivity : AppCompatActivity() {
                 Unit
             }
         }
+    }
+
+    private companion object {
+        val DARK_NAVIGATION_BAR_SCRIM: Int = Color.argb(0x80, 0x1B, 0x1B, 0x1B)
     }
 }

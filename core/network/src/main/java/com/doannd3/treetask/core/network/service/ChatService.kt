@@ -6,6 +6,7 @@ import com.doannd3.treetask.core.network.model.request.SendMessageRequest
 import com.doannd3.treetask.core.network.model.response.ConversationResponse
 import com.doannd3.treetask.core.network.model.response.ConversationsListResponse
 import com.doannd3.treetask.core.network.model.response.MessageResponse
+import com.doannd3.treetask.core.network.model.response.MessagesListResponse
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
@@ -29,6 +30,13 @@ interface ChatService {
     suspend fun sendMessage(
         @Body request: SendMessageRequest,
     ): ApiResult<MessageResponse>
+
+    @GET("/api/messages/getMessages/{conversationId}")
+    suspend fun getMessages(
+        @Path("conversationId") conversationId: String,
+        @Query("page") page: Int,
+        @Query("limit") limit: Int,
+    ): ApiResult<MessagesListResponse>
 
     @PUT("/api/conversations/updateConversation/{conversationId}")
     suspend fun updateConversation(

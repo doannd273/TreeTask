@@ -17,6 +17,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
@@ -31,10 +32,15 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.repeatOnLifecycle
 import com.doannd3.treetask.core.common.asString
+import com.doannd3.treetask.core.designsystem.component.AppLoadingDialog
 import com.doannd3.treetask.core.designsystem.component.CommonButton
 import com.doannd3.treetask.core.designsystem.component.EmailInput
-import com.doannd3.treetask.core.designsystem.component.LocalGlobalAppState
 import com.doannd3.treetask.core.designsystem.component.PasswordInput
+import com.doannd3.treetask.core.designsystem.component.message.AppDialogType
+import com.doannd3.treetask.core.designsystem.component.message.AppMessage
+import com.doannd3.treetask.core.designsystem.component.message.AppMessageDialogHost
+import com.doannd3.treetask.core.designsystem.component.message.AppMessageId
+import com.doannd3.treetask.core.designsystem.component.message.rememberAppMessageHostState
 import com.doannd3.treetask.core.designsystem.theme.AppPreviewLightDark
 import com.doannd3.treetask.core.designsystem.theme.TreeTaskTheme
 import com.doannd3.treetask.core.designsystem.util.rememberDebouncedClick
@@ -49,15 +55,25 @@ fun LoginRoute(
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
 
-    val globalAppState = LocalGlobalAppState.current
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
+    val messageHostState = rememberAppMessageHostState()
+    val currentContext by rememberUpdatedState(context)
+    val currentOnNavigateToHome by rememberUpdatedState(onNavigateToHome)
 
     LoginScreen(
         state = state,
-        onEvent = viewModel::onEvent,
+        onEmailChange = { viewModel.onEvent(LoginEvent.EmailChanged(it)) },
+        onPasswordChange = { viewModel.onEvent(LoginEvent.PasswordChanged(it)) },
+        onPasswordVisibleChange = { viewModel.onEvent(LoginEvent.PasswordVisibleChanged(it)) },
+        onSubmitLogin = { viewModel.onEvent(LoginEvent.SubmitLogin) },
         onNavigateToRegister = onNavigateToRegister,
         onNavigateToForgotPassword = onNavigateToForgotPassword,
+    )
+
+    AppMessageDialogHost(
+        state = messageHostState,
+        onAcknowledged = {},
     )
 
     LaunchedEffect(viewModel.effect, lifecycleOwner) {
@@ -65,32 +81,34 @@ fun LoginRoute(
             viewModel.effect.collect { effect ->
                 when (effect) {
                     is LoginEffect.NavigateToHome -> {
-                        onNavigateToHome()
+                        currentOnNavigateToHome()
                     }
 
                     is LoginEffect.ShowErrorMessage -> {
-                        val errorStr = effect.message.asString(context)
-                        globalAppState.showError(errorStr)
+                        messageHostState.enqueue(
+                            AppMessage(
+                                id = LoginMessageIds.Error,
+                                message = effect.message.asString(currentContext),
+                                type = AppDialogType.Error,
+                            ),
+                        )
                     }
                 }
             }
         }
     }
 
-    // Lỗi crash/unexpected từ BaseViewModel (CoroutineExceptionHandler)
     LaunchedEffect(viewModel.baseErrorEffect, lifecycleOwner) {
         lifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
             viewModel.baseErrorEffect.collect { message ->
-                globalAppState.showError(message.asString(context))
+                messageHostState.enqueue(
+                    AppMessage(
+                        id = LoginMessageIds.Error,
+                        message = message.asString(currentContext),
+                        type = AppDialogType.Error,
+                    ),
+                )
             }
-        }
-    }
-
-    LaunchedEffect(state.isLoading) {
-        if (state.isLoading) {
-            globalAppState.showLoading()
-        } else {
-            globalAppState.hideLoading()
         }
     }
 }
@@ -98,7 +116,10 @@ fun LoginRoute(
 @Composable
 internal fun LoginScreen(
     state: LoginState,
-    onEvent: (LoginEvent) -> Unit,
+    onEmailChange: (String) -> Unit,
+    onPasswordChange: (String) -> Unit,
+    onPasswordVisibleChange: (Boolean) -> Unit,
+    onSubmitLogin: () -> Unit,
     onNavigateToRegister: () -> Unit,
     onNavigateToForgotPassword: () -> Unit,
 ) {
@@ -108,24 +129,52 @@ internal fun LoginScreen(
         LoginContent(
             modifier = Modifier.padding(paddingValues = paddingValues),
             state = state,
-            onEvent = onEvent,
+            onEmailChange = onEmailChange,
+            onPasswordChange = onPasswordChange,
+            onPasswordVisibleChange = onPasswordVisibleChange,
+            onSubmitLogin = onSubmitLogin,
             onNavigateToRegister = onNavigateToRegister,
             onNavigateToForgotPassword = onNavigateToForgotPassword,
+        )
+    }
+
+    AppLoadingDialog(isLoading = state.isLoading)
+}
+
+@AppPreviewLightDark
+@Composable
+private fun LoginScreenPreview() {
+    TreeTaskTheme {
+        LoginScreen(
+            state =
+            LoginState(
+                email = "demo@gmail.com",
+                password = "123456",
+            ),
+            onEmailChange = {},
+            onPasswordChange = {},
+            onPasswordVisibleChange = {},
+            onSubmitLogin = {},
+            onNavigateToRegister = {},
+            onNavigateToForgotPassword = {},
         )
     }
 }
 
 @Composable
 internal fun LoginContent(
-    modifier: Modifier = Modifier,
     state: LoginState,
-    onEvent: (LoginEvent) -> Unit,
+    onEmailChange: (String) -> Unit,
+    onPasswordChange: (String) -> Unit,
+    onPasswordVisibleChange: (Boolean) -> Unit,
+    onSubmitLogin: () -> Unit,
     onNavigateToRegister: () -> Unit,
     onNavigateToForgotPassword: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     val onSubmitLoginDebounced =
         rememberDebouncedClick {
-            onEvent(LoginEvent.SubmitLogin)
+            onSubmitLogin()
         }
 
     val passwordFocusRequester = remember { FocusRequester() }
@@ -133,11 +182,11 @@ internal fun LoginContent(
 
     Column(
         modifier =
-            modifier
-                .fillMaxSize()
-                .verticalScroll(rememberScrollState())
-                .padding(16.dp)
-                .imePadding(),
+        modifier
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState())
+            .padding(16.dp)
+            .imePadding(),
         verticalArrangement = Arrangement.Center,
     ) {
         TreeTaskAppName()
@@ -148,7 +197,7 @@ internal fun LoginContent(
             modifier = Modifier.fillMaxWidth(),
             label = stringResource(R.string.auth_email_hint),
             email = state.email,
-            onEmailChange = { onEvent(LoginEvent.EmailChanged(it)) },
+            onEmailChange = onEmailChange,
             imeAction = ImeAction.Next,
             onImeNext = {
                 passwordFocusRequester.requestFocus()
@@ -159,14 +208,14 @@ internal fun LoginContent(
 
         PasswordInput(
             modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .focusRequester(passwordFocusRequester),
+            Modifier
+                .fillMaxWidth()
+                .focusRequester(passwordFocusRequester),
             label = stringResource(R.string.auth_password_hint),
             password = state.password,
             passwordVisible = state.passwordVisible,
-            onPasswordChange = { onEvent(LoginEvent.PasswordChanged(it)) },
-            onPasswordVisibleChange = { onEvent(LoginEvent.PasswordVisibleChanged(it)) },
+            onPasswordChange = onPasswordChange,
+            onPasswordVisibleChange = onPasswordVisibleChange,
             onImeDone = {
                 focusManager.clearFocus()
                 onSubmitLoginDebounced()
@@ -193,19 +242,6 @@ internal fun LoginContent(
     }
 }
 
-@AppPreviewLightDark
-@Composable
-private fun LoginScreenPreview() {
-    TreeTaskTheme {
-        LoginScreen(
-            state =
-                LoginState(
-                    email = "demo@gmail.com",
-                    password = "123456",
-                ),
-            onEvent = {},
-            onNavigateToRegister = {},
-            onNavigateToForgotPassword = {},
-        )
-    }
+private object LoginMessageIds {
+    val Error = AppMessageId("login-error")
 }

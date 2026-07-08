@@ -13,6 +13,7 @@ import com.doannd3.treetask.feature.auth.navigation.navigateToAuthGraph
 import com.doannd3.treetask.feature.auth.navigation.navigateToForgotPassword
 import com.doannd3.treetask.feature.auth.navigation.navigateToRegister
 import com.doannd3.treetask.feature.chat.navigation.chatGraph
+import com.doannd3.treetask.feature.chat.navigation.navigateToChatDetail
 import com.doannd3.treetask.feature.profile.navigation.navigateToChangePassword
 import com.doannd3.treetask.feature.profile.navigation.navigateToEditProfile
 import com.doannd3.treetask.feature.profile.navigation.profileGraph
@@ -42,25 +43,25 @@ fun TreeTaskNavHost(
     ) {
         navController.navigateToTasksGraph(
             navOptions =
-                navOptions {
-                    if (clearAuthBackStack) {
-                        popUpTo(AuthGraphDestination) {
-                            inclusive = true
-                        }
-                    } else {
-                        popUpTo(navController.graph.startDestinationId) {
-                            saveState = true
-                        }
+            navOptions {
+                if (clearAuthBackStack) {
+                    popUpTo(AuthGraphDestination) {
+                        inclusive = true
                     }
-                    launchSingleTop = true
-                },
+                } else {
+                    popUpTo(navController.graph.startDestinationId) {
+                        saveState = true
+                    }
+                }
+                launchSingleTop = true
+            },
         )
         navController.navigateToEditTask(
             taskId = taskId,
             navOptions =
-                navOptions {
-                    launchSingleTop = true
-                },
+            navOptions {
+                launchSingleTop = true
+            },
         )
         currentOnPendingTaskConsumed()
     }
@@ -81,12 +82,12 @@ fun TreeTaskNavHost(
                 } else {
                     navController.navigateToTasksGraph(
                         navOptions =
-                            navOptions {
-                                popUpTo(AuthGraphDestination) {
-                                    inclusive = true
-                                }
-                                launchSingleTop = true
-                            },
+                        navOptions {
+                            popUpTo(AuthGraphDestination) {
+                                inclusive = true
+                            }
+                            launchSingleTop = true
+                        },
                     )
                 }
             },
@@ -119,7 +120,14 @@ fun TreeTaskNavHost(
             },
         )
 
-        chatGraph()
+        chatGraph(
+            onNavigateToBack = {
+                navController.popBackStack()
+            },
+            onNavigateToChatDetail = { conversationId ->
+                navController.navigateToChatDetail(conversationId = conversationId)
+            },
+        )
 
         statsGraph(
             onRecentTaskClick = { taskId ->
@@ -131,12 +139,12 @@ fun TreeTaskNavHost(
             onNavigateToLogin = {
                 navController.navigateToAuthGraph(
                     navOptions =
-                        navOptions {
-                            popUpTo(navController.graph.id) {
-                                inclusive = true
-                            }
-                            launchSingleTop = true
-                        },
+                    navOptions {
+                        popUpTo(navController.graph.id) {
+                            inclusive = true
+                        }
+                        launchSingleTop = true
+                    },
                 )
             },
             onNavigateBack = {

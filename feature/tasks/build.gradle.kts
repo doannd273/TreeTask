@@ -24,6 +24,7 @@ dependencies {
     implementation(projects.core.designsystem)
     implementation(projects.core.analytics)
     implementation(projects.core.permission)
+    implementation(projects.core.ui)
 
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.lifecycle.viewmodel.compose)
@@ -34,4 +35,6 @@ dependencies {
     implementation(libs.paging.compose)
 
     implementation(libs.timber)
+
+    testImplementation(projects.core.testing)
 }

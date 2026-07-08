@@ -25,7 +25,7 @@ retrofitSerialization = "1.0.0"
 okhttp = "4.12.0"
 kotlinxSerialization = "1.7.3"
 chucker = "4.0.0"
-socketIo = "4.8.0"
+socketIo = "2.1.2"
 
 # Storage & DB
 room = "2.6.1"
@@ -48,6 +48,7 @@ firebaseBom = "33.5.0"
 # Lint & Code Quality
 detekt = "1.23.6"
 ktlintConfig = "12.1.1"
+ktlintFormatter = "1.8.0"
 spotless = "6.25.0"
 
 # Testing
