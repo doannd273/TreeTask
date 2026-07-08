@@ -115,7 +115,6 @@ fun RegisterRoute(
         }
     }
 
-    // Lỗi crash/unexpected từ BaseViewModel (CoroutineExceptionHandler)
     LaunchedEffect(viewModel.baseErrorEffect, lifecycleOwner) {
         lifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
             viewModel.baseErrorEffect.collect { message ->

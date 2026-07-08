@@ -32,17 +32,19 @@ class MainViewModel @Inject constructor(
     private val observeDarkModeUseCase: ObserveDarkModeUseCase,
     networkMonitor: NetworkMonitor,
 ) : BaseViewModel() {
-    var isLoadingMain by mutableStateOf(true)
-        private set
-
     var appLanguageTag by mutableStateOf<String?>(null)
         private set
 
     var isDarkMode by mutableStateOf(false)
         private set
 
+    private var isThemeReady by mutableStateOf(false)
+
     var startDestination by mutableStateOf<Any?>(null)
         private set
+
+    val isLoadingMain: Boolean
+        get() = !isThemeReady || startDestination == null
 
     val isOnline: StateFlow<Boolean> =
         networkMonitor.isOnline
@@ -60,8 +62,13 @@ class MainViewModel @Inject constructor(
         }
 
         executeSafe {
-            observeDarkModeUseCase().collect { enabled ->
-                this@MainViewModel.isDarkMode = enabled
+            try {
+                observeDarkModeUseCase().collect { enabled ->
+                    this@MainViewModel.isDarkMode = enabled
+                    isThemeReady = true
+                }
+            } finally {
+                isThemeReady = true
             }
         }
 
@@ -69,7 +76,6 @@ class MainViewModel @Inject constructor(
             val token = tokenStorage.getAccessToken().first()
             if (token.isNullOrEmpty()) {
                 startDestination = AuthGraphDestination
-                isLoadingMain = false
                 return@executeSafe
             }
 
@@ -77,7 +83,6 @@ class MainViewModel @Inject constructor(
             when (result) {
                 is ApiResult.Success -> {
                     startDestination = TasksGraphDestination
-                    isLoadingMain = false
                 }
 
                 is ApiResult.Error -> {
@@ -88,7 +93,6 @@ class MainViewModel @Inject constructor(
                         val cached = userRepository.getCachedProfile().first()
                         startDestination = if (cached != null) TasksGraphDestination else AuthGraphDestination
                     }
-                    isLoadingMain = false
                 }
             }
         }
